@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    use HasFactory;
+
+    protected $table = 'products'; // Tên bảng trong database
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'price',
+        'description',
+        'brand_id',
+        'category_id',
+        'image', // Ảnh chính (nếu có)
+        'status',
+    ];
+
+    /**
+     * Mối quan hệ với bảng danh mục (Category)
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Mối quan hệ với bảng thương hiệu (Brand)
+     */
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    /**
+     * Mối quan hệ với bảng product_images (Ảnh sản phẩm)
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+}
