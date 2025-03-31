@@ -8,9 +8,21 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    public function getAll()
+    // public function getAll($perPage = 2)
+    // {
+    //     // Trả về Query Builder và phân trang
+    //     return Product::with('images')->paginate($perPage);
+    // }
+    public function getAllWithSearch($search = null, $perPage = 5)
     {
-        return Product::with('images')->get();
+        $query = Product::with('category', 'brand', 'images'); 
+    
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+    
+        // Phân trang kết quả
+        return $query->paginate($perPage);
     }
 
     public function findById($id)
@@ -115,5 +127,9 @@ class ProductService
         $image->delete();
 
         return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
+    }
+    public function search($query)
+    {
+        return Product::where('name', 'LIKE', "%$query%")->with('images')->get();
     }
 }

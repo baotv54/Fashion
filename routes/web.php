@@ -5,6 +5,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\SizeController;
 use App\Http\Controllers\FaceBookController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +64,25 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}/edit', [BrandController::class, 'edit'])->name('brands.edit');
             Route::put('/{id}', [BrandController::class, 'update'])->name('brands.update');
             Route::delete('/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
+        });
+        // Routes cho màu sắc (Colors)
+        Route::prefix('colors')->name('colors.')->group(function () {
+            Route::get('/', [ColorController::class, 'index'])->name('index'); // Danh sách màu sắc
+            Route::get('/create', [ColorController::class, 'create'])->name('create'); // Form thêm mới
+            Route::post('/store', [ColorController::class, 'store'])->name('store'); // Xử lý thêm mới
+            Route::get('/{color}/edit', [ColorController::class, 'edit'])->name('edit'); // Form chỉnh sửa
+            Route::put('/{color}', [ColorController::class, 'update'])->name('update'); // Xử lý cập nhật
+            Route::delete('/{color}', [ColorController::class, 'destroy'])->name('destroy'); // Xóa màu
+        });
+
+        // Routes cho kích thước (Sizes)
+        Route::prefix('sizes')->name('sizes.')->group(function () {
+            Route::get('/', [SizeController::class, 'index'])->name('index');
+            Route::get('/create', [SizeController::class, 'create'])->name('create');
+            Route::post('/store', [SizeController::class, 'store'])->name('store');
+            Route::get('/{size}/edit', [SizeController::class, 'edit'])->name('edit');
+            Route::put('/{size}', [SizeController::class, 'update'])->name('update');
+            Route::delete('/{size}', [SizeController::class, 'destroy'])->name('destroy');
         });
     });
 });

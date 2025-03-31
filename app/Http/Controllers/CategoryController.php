@@ -40,35 +40,74 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
-            'status' => 'boolean'
+            'parent_id' => 'nullable|exists:categories,id', // parent_id có thể null hoặc phải tồn tại trong bảng categories
+            'status' => 'boolean',
         ]);
-
-        $this->categoryService->createCategory($data);
-        return redirect()->route('categories.index')->with('success', 'Danh mục đã được tạo!');
+    
+        // Sử dụng CategoryService để tạo danh mục
+        $category = $this->categoryService->createCategory($data);
+    
+        // Nếu thêm danh mục con, quay lại trang chỉnh sửa danh mục cha
+        if ($data['parent_id']) {
+            return redirect()->route('categories.edit', $data['parent_id'])->with('success', 'Danh mục con đã được thêm!');
+        }
+    
+        // Nếu thêm danh mục cha, quay về trang index
+        return redirect()->route('categories.index')->with('success', 'Danh mục cha đã được thêm!');
     }
 
     /**
      * Hiển thị form sửa danh mục
      */
-    public function edit(Category $category)
+
+    public function edit($id)
     {
-        $categories = Category::whereNull('parent_id')->where('id', '!=', $category->id)->get(); // Không cho chọn chính nó làm cha
+        $category = Category::findOrFail($id); // Tìm danh mục theo ID
+        $categories = Category::whereNull('parent_id')->where('id', '!=', $id)->get(); // Lấy danh mục cha (trừ chính nó)
         return view('categories.edit', compact('category', 'categories'));
     }
 
     /**
      * Cập nhật danh mục
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
-            'status' => 'boolean'
+            'status' => 'boolean',
         ]);
+    
+        $category = Category::findOrFail($id);
+        $category->update($data);
+    
+        // Nếu danh mục là danh mục cha, giữ lại trên trang chỉnh sửa danh mục cha
+        if (is_null($category->parent_id)) {
+            return redirect()->route('categories.edit', $category->id)->with('success', 'Danh mục cha đã được cập nhật!');
+        }
+    
+        // Nếu danh mục là danh mục con, giữ lại trên trang chỉnh sửa danh mục cha
+        return redirect()->route('categories.edit', $category->parent_id)->with('success', 'Danh mục con đã được cập nhật!');
+    }
 
-        $this->categoryService->updateCategory($category->id, $data);
-        return redirect()->route('categories.index')->with('success', 'Danh mục đã được cập nhật!');
+
+    /**
+     * Xóa danh mục
+     */
+    public function destroy($id)
+    {
+        $category = Category::findOrFail($id);
+    
+        // Lưu lại parent_id trước khi xóa
+        $parentId = $category->parent_id;
+    
+        $category->delete();
+    
+        // Nếu xóa danh mục con, quay lại trang chỉnh sửa danh mục cha
+        if ($parentId) {
+            return redirect()->route('categories.edit', $parentId)->with('success', 'Danh mục con đã được xóa!');
+        }
+    
+        // Nếu xóa danh mục cha, quay về trang index
+        return redirect()->route('categories.index')->with('success', 'Danh mục cha đã được xóa!');
     }
 }

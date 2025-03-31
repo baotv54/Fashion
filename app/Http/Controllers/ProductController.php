@@ -23,10 +23,13 @@ class ProductController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->getAll();
-        return view('admin.products.index', compact('products'));
+        $search = $request->input('search');
+    
+        $products = $this->productService->getAllWithSearch($search, 5); 
+    
+        return view('admin.products.index', compact('products', 'search'));
     }
 
     public function create()
@@ -131,5 +134,12 @@ class ProductController extends Controller
         $image->delete();
 
         return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
+    }
+    // tìm kiếm sản phẩm theo tên
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $products = $this->productService->search($query);
+        return view('admin.products.index', compact('products'));
     }
 }
