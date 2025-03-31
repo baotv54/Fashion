@@ -7,6 +7,7 @@ use App\Services\BrandService;
 use App\Services\CategoryService;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -86,7 +87,9 @@ class ProductController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $data = $request->except('images');
+        $data = $request->except('images', 'keep_images');
+        $data['keep_images'] = $request->input('keep_images', []); // Lấy danh sách ID hình ảnh cần giữ lại
+
         $product = $this->productService->findById($id);
 
         if (!$product) {
@@ -95,10 +98,9 @@ class ProductController extends Controller
 
         $this->productService->update($id, $data);
 
-        // Xử lý hình ảnh
+        // Xử lý hình ảnh mới
         if ($request->hasFile('images')) {
-            $this->productService->deleteImage($id); // Xóa ảnh cũ
-            $this->productService->addImage($id, $request->file('images')); // Thêm ảnh mới
+            $this->productService->addImage($id, $request->file('images'));
         }
 
         return redirect()->route('products.index')->with('success', 'Cập nhật sản phẩm thành công.');
@@ -111,6 +113,7 @@ class ProductController extends Controller
         $this->productService->delete($id);
         return redirect()->route('products.index')->with('success', 'Xóa sản phẩm thành công.');
     }
+
     public function deleteImage($id)
     {
         $image = ProductImage::find($id);

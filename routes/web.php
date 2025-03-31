@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\FaceBookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,8 +16,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/auth/google', [GoogleController::class, 'googlepage'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'googlecallback'])->name('google.callback');
 
-// Routes quản lý sản phẩm
+Route::get('/auth/facebook', [FaceBookController::class, 'FaceBookPage'])->name('facebook.login');
+Route::get('/auth/facebook/callback', [FaceBookController::class, 'FaceBookCallback'])->name('facebook.callback');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

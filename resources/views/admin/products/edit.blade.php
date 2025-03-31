@@ -80,6 +80,7 @@
                 <div id="image-{{ $image->id }}" class="position-relative">
                     <img src="{{ asset($image->image_path) }}" alt="Ảnh sản phẩm" width="100" class="border rounded">
                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 delete-image-btn" data-id="{{ $image->id }}">X</button>
+                    <input type="hidden" name="keep_images[]" value="{{ $image->id }}">
                 </div>
                 @endforeach
             </div>
@@ -120,7 +121,7 @@
                 const imageId = this.getAttribute('data-id');
 
                 if (confirm("Bạn có chắc muốn xóa ảnh này không?")) {
-                    fetch(`/products/delete-image/${imageId}`, {
+                    fetch(`/admin/products/delete-image/${imageId}`, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -136,6 +137,9 @@
                             if (data.success) {
                                 const imageElement = document.getElementById(`image-${imageId}`);
                                 imageElement.remove(); // Xóa ảnh khỏi giao diện
+                                // Xóa input hidden tương ứng
+                                const hiddenInput = document.querySelector(`input[value="${imageId}"]`);
+                                if (hiddenInput) hiddenInput.remove();
                             } else {
                                 alert("Xóa ảnh thất bại: " + data.message);
                             }

@@ -38,6 +38,8 @@
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
+            <a href="{{ route('google.login') }}" class="btn btn-danger ms-3">Login with Google</a>
+            <a href="{{ route('facebook.login') }}" class="btn btn-primary ms-3"> Login with Facebook</a>
 
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}
