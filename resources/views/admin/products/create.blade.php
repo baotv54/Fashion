@@ -85,9 +85,18 @@
             </div>
         </div>
 
-        <!-- Upload nhiều ảnh -->
+        <!-- Hình ảnh chính -->
         <div class="mb-3">
-            <label for="images" class="form-label">Ảnh sản phẩm</label>
+            <label for="image" class="form-label">Hình ảnh chính</label>
+            <input type="file" name="image" class="form-control" id="image" accept="image/*" onchange="previewPrimaryImage(event)">
+            <div id="primaryImagePreview" class="mt-2">
+                <!-- Preview hình ảnh chính -->
+            </div>
+        </div>
+
+        <!-- Upload nhiều ảnh phụ -->
+        <div class="mb-3">
+            <label for="images" class="form-label">Ảnh sản phẩm phụ</label>
             <input type="file" name="images[]" class="form-control" id="images" accept="image/*" multiple onchange="previewImages(event)">
             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
         </div>
@@ -99,6 +108,28 @@
 
 <!-- Script hiển thị preview ảnh -->
 <script>
+function previewPrimaryImage(event) {
+    let preview = document.getElementById("primaryImagePreview");
+    preview.innerHTML = ""; // Xóa ảnh cũ
+    let file = event.target.files[0];
+
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "me-2 mb-2";
+            img.style.width = "150px";
+            img.style.height = "150px";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "5px";
+            img.style.boxShadow = "0 0 5px rgba(0,0,0,0.2)";
+            preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 function previewImages(event) {
     let preview = document.getElementById("imagePreview");
     preview.innerHTML = ""; // Xóa ảnh cũ

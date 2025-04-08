@@ -38,11 +38,13 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    /**
-     * Mối quan hệ với bảng product_images (Ảnh sản phẩm)
-     */
+
     public function images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->morphMany(Image::class, 'imageable');
+    }
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
     }
 }

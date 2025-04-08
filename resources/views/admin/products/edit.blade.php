@@ -97,11 +97,33 @@
                     <textarea name="description" class="form-control" id="description" rows="4">{{ old('description', $product->description) }}</textarea>
                 </div>
 
-                <!-- Hình ảnh sản phẩm hiện tại -->
+                <!-- Hình ảnh chính của sản phẩm -->
                 <div class="mb-3">
-                    <label class="form-label">Hình ảnh sản phẩm</label>
+                    <label for="image" class="form-label">Hình ảnh chính</label>
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card shadow-sm">
+                                <img src="{{ asset($product->image) }}" class="card-img-top img-fluid" style="height: 120px; object-fit: cover;">
+                                <div class="card-body p-2 text-center">
+                                    <input type="hidden" name="keep_images[]" value="main">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-container-main d-flex flex-wrap mt-3"></div>
+                </div>
+
+                <!-- Thay đổi hình ảnh chính -->
+                <div class="mb-3">
+                    <label for="new_image" class="form-label">Thay đổi hình ảnh chính</label>
+                    <input type="file" name="image" class="form-control" id="image" accept="image/*">                </div>
+
+                <!-- Hình ảnh phụ -->
+                <div class="mb-3">
+                    <label class="form-label">Chọn Hình Phụ</label>
                     <div class="row">
                         @foreach ($product->images as $image)
+                        @if (!$image->is_main)
                         <div class="col-md-3 col-6 mb-3" id="image-{{ $image->id }}">
                             <div class="card shadow-sm">
                                 <img src="{{ asset($image->image_path) }}" class="card-img-top img-fluid" style="height: 120px; object-fit: cover;">
@@ -113,10 +135,10 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                         @endforeach
                     </div>
                 </div>
-
 
                 <!-- Upload hình ảnh mới -->
                 <div class="mb-3">
@@ -176,6 +198,24 @@
                 };
                 reader.readAsDataURL(file);
             });
+        });
+
+        // Preview ảnh tải lên cho hình ảnh chính
+        document.getElementById('image').addEventListener('change', function(event) {
+            const previewContainer = document.querySelector('.preview-container-main');
+            previewContainer.innerHTML = ''; // Clear previous preview
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.width = 120;
+                    img.classList.add('border', 'rounded', 'shadow-sm', 'me-2');
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
         });
     });
 </script>

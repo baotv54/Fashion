@@ -8,10 +8,22 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\FaceBookController;
+use App\Http\Controllers\ProductVariantController;
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\AttributeValueController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('/home', function () {
+    return view('Frontend.index');
+});
+Route::get('/cart', function () {
+    return view('Frontend.pages.cart');
+});
+Route::get('/view', function () {
+    return view('Frontend.pages.converse-all');
 });
 
 Route::get('/dashboard', function () {
@@ -37,15 +49,44 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
         // Routes quản lý sản phẩm
         Route::prefix('products')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('products.index'); // Hiển thị danh sách sản phẩm
-            Route::get('/create', [ProductController::class, 'create'])->name('products.create'); // Form thêm sản phẩm
-            Route::post('/', [ProductController::class, 'store'])->name('products.store'); // Xử lý thêm sản phẩm
-            Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Form chỉnh sửa
-            Route::put('/{id}', [ProductController::class, 'update'])->name('products.update'); // Cập nhật sản phẩm
-            Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy'); // Xóa sản phẩm
-            Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage'); // Xóa ảnh sản phẩm
+            Route::get('/', [ProductController::class, 'index'])->name('products.index');
+            Route::get('/create', [ProductController::class, 'create'])->name('products.create');
+            Route::post('/', [ProductController::class, 'store'])->name('products.store');
+            Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+            Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');
+            Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+            Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
+            Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
+        });
+        
+        Route::prefix('products/{productId}/variants')->group(function () {
+            Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
+            Route::get('/create', [ProductVariantController::class, 'create'])->name('product_variants.create');
+            Route::post('/store', [ProductVariantController::class, 'store'])->name('product_variants.store');
+            Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
+            Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
+            Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+        });
+        
+        // Routes cho Attribute
+        Route::prefix('attributes')->group(function () {
+            Route::get('/', [AttributeController::class, 'index'])->name('attributes.index');
+            Route::get('/create', [AttributeController::class, 'create'])->name('attributes.create');
+            Route::post('/', [AttributeController::class, 'store'])->name('attributes.store');
+            Route::get('/{id}/edit', [AttributeController::class, 'edit'])->name('attributes.edit');
+            Route::put('/{id}', [AttributeController::class, 'update'])->name('attributes.update');
+            Route::delete('/{id}', [AttributeController::class, 'destroy'])->name('attributes.destroy');
         });
 
+        // Routes cho Attribute Value
+        Route::prefix('attributes/{attributeId}/attribute_values')->group(function () {
+            Route::get('/', [AttributeValueController::class, 'index'])->name('attribute_values.index');
+            Route::get('/create', [AttributeValueController::class, 'create'])->name('attribute_values.create');
+            Route::post('/', [AttributeValueController::class, 'store'])->name('attribute_values.store');
+            Route::get('/{id}/edit', [AttributeValueController::class, 'edit'])->name('attribute_values.edit');
+            Route::put('/{id}', [AttributeValueController::class, 'update'])->name('attribute_values.update');
+            Route::delete('/{id}', [AttributeValueController::class, 'destroy'])->name('attribute_values.destroy');
+        });
         // Routes quản lý danh mục sản phẩm
         Route::prefix('categories')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
@@ -67,12 +108,12 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         });
         // Routes cho màu sắc (Colors)
         Route::prefix('colors')->name('colors.')->group(function () {
-            Route::get('/', [ColorController::class, 'index'])->name('index'); // Danh sách màu sắc
-            Route::get('/create', [ColorController::class, 'create'])->name('create'); // Form thêm mới
-            Route::post('/store', [ColorController::class, 'store'])->name('store'); // Xử lý thêm mới
-            Route::get('/{color}/edit', [ColorController::class, 'edit'])->name('edit'); // Form chỉnh sửa
-            Route::put('/{color}', [ColorController::class, 'update'])->name('update'); // Xử lý cập nhật
-            Route::delete('/{color}', [ColorController::class, 'destroy'])->name('destroy'); // Xóa màu
+            Route::get('/', [ColorController::class, 'index'])->name('index');
+            Route::get('/create', [ColorController::class, 'create'])->name('create');
+            Route::post('/store', [ColorController::class, 'store'])->name('store');
+            Route::get('/{color}/edit', [ColorController::class, 'edit'])->name('edit');
+            Route::put('/{color}', [ColorController::class, 'update'])->name('update');
+            Route::delete('/{color}', [ColorController::class, 'destroy'])->name('destroy');
         });
 
         // Routes cho kích thước (Sizes)
