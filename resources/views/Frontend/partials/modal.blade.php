@@ -235,6 +235,44 @@
             <p class="shop-wishlist-modal-null wcs-null w-100 text-center">Chưa có sản phẩm trong danh sách yêu thích</p>
         </div>
     </div>
+    <div class="container">
+        <div class="shop-wishlist-modal-body slick-initialized slick-slider slick-dotted">
+            <div class="slick-list draggable">
+                <div class="slick-track" style="opacity: 1; width: 454px; transform: translate3d(0px, 0px, 0px);">
+                    <div class="product-item product-item-small slick-slide slick-current slick-active" data-id="102679979" data-handle="chuck-taylor-all-star-classic-121184" data-slick-index="0" aria-hidden="false" style="width: 454px;" tabindex="0" role="tabpanel" id="slick-slide50" aria-describedby="slick-slide-control50">
+                        <div class="product-item-small-wrap">
+                            <div class="product-item-small-image">
+                                <a href="/chuck-taylor-all-star-classic-121184" aria-label="Chuck Taylor All Star Classic - 121184" class="product-item-small-image-link" title="Chuck Taylor All Star Classic - 121184" tabindex="0">
+                                    <img width="240" height="240" loading="lazy" class="w-auto" src="https://bizweb.dktcdn.net/100/493/370/products/121184-drake-650x650-3be016cc519b40a09093df5718bdbaf9-jpeg.jpg?v=1699864031380" alt="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184">
+                                </a>
+                            </div>
+                            <div class="product-item-small-info">
+                                <h3 class="product-item-small-info-title">
+                                    <a href="/chuck-taylor-all-star-classic-121184" aria-label="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184" tabindex="0">Chuck Taylor All Star Classic - 121184</a>
+                                </h3>
+                                <p class="product-item-small-info-price">
+                                    <strong>4.399.000₫</strong>
+                                </p>
+                                <div class="sapo-product-reviews-badge" data-id="33445636"></div>
+                                <div class="product-item-small-info-action">
+                                    <button type="button" title="Thêm vào giỏ hàng" class="shop-addLoop-button" data-type="shop-addLoop-button" tabindex="0">Thêm vào giỏ</button>
+                                    <button type="button" title="Xoá yêu thích" class="shop-wishlist-button-remove" data-type="shop-wishlist-button-remove" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 448 448.00446" style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
+                                            <g>
+                                                <path d="m283.429688 45.714844h-73.140626v-18.285156c0-15.125-12.304687-27.429688-27.429687-27.429688h-54.855469c-15.125 0-27.429687 12.304688-27.429687 27.429688v18.285156h-73.144531c-15.125 0-27.42578175 12.304687-27.42578175 27.429687v45.710938h18.28515575v301.71875c0 15.125 12.300782 27.429687 27.425782 27.429687h219.429687c15.125 0 27.429688-12.304687 27.429688-27.429687v-301.71875h18.285156v-45.710938c0-15.125-12.304687-27.429687-27.429687-27.429687zm-164.570313-18.285156c0-5.042969 4.097656-9.144532 9.144531-9.144532h54.855469c5.046875 0 9.144531 4.101563 9.144531 9.144532v18.285156h-73.144531zm155.429687 393.144531c0 5.046875-4.097656 9.144531-9.144531 9.144531h-219.429687c-5.042969 0-9.140625-4.097656-9.140625-9.144531v-301.71875h237.714843zm18.285157-320.003907h-274.285157v-27.425781c0-5.042969 4.097657-9.144531 9.140626-9.144531h256c5.046874 0 9.144531 4.101562 9.144531 9.144531zm0 0" fill="#000000" data-original="#000000" class=""></path>
+                                                <path d="m210.289062 384.003906c5.054688 0 9.140626-4.089844 9.140626-9.140625v-201.148437c0-5.050782-4.085938-9.144532-9.140626-9.144532-5.054687 0-9.144531 4.09375-9.144531 9.144532v201.148437c0 5.050781 4.089844 9.140625 9.144531 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
+                                                <path d="m155.429688 384.003906c5.054687 0 9.144531-4.089844 9.144531-9.140625v-201.148437c0-5.050782-4.089844-9.144532-9.144531-9.144532-5.050782 0-9.140626 4.09375-9.140626 9.144532v201.148437c0 5.050781 4.089844 9.140625 9.140626 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
+                                                <path d="m100.574219 384.003906c5.054687 0 9.140625-4.089844 9.140625-9.140625v-201.148437c0-5.050782-4.085938-9.144532-9.140625-9.144532-5.054688 0-9.144531 4.09375-9.144531 9.144532v201.148437c0 5.050781 4.089843 9.140625 9.144531 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
+                                            </g>
+                                        </svg></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="slick-dots" role="tablist"></ul>
+        </div>
+    </div>
 </div>
 
 
@@ -263,7 +301,7 @@
 
 
 
-<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModal"
+<!-- <div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModal"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -410,7 +448,7 @@
             <button class="closeModal"><i class="lni lni-close"></i></button>
         </div>
     </div>
-</div>
+</div> -->
 <div class="popup-sapo">
     <div class="icon">
         <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
@@ -445,3 +483,40 @@
         </a>
     </div>
 </div>
+
+
+<!-- <div class="sweet-alert showSweetAlert visible" data-custom-class="" data-has-cancel-button="true" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="true" data-animation="pop" data-timer="null" style="display: block; margin-top: -169px;">
+    <div class="sa-icon sa-error" style="display: none;">
+        <span class="sa-x-mark">
+            <span class="sa-line sa-left"></span>
+            <span class="sa-line sa-right"></span>
+        </span>
+    </div>
+    <div class="sa-icon sa-warning" style="display: none;">
+        <span class="sa-body"></span>
+        <span class="sa-dot"></span>
+    </div>
+    <div class="sa-icon sa-info" style="display: none;"></div>
+    <div class="sa-icon sa-success animate" style="display: block;">
+        <span class="sa-line sa-tip animateSuccessTip"></span>
+        <span class="sa-line sa-long animateSuccessLong"></span>
+
+        <div class="sa-placeholder"></div>
+        <div class="sa-fix"></div>
+    </div>
+    <div class="sa-icon sa-custom" style="display: none;"></div>
+    <h2>Cảm ơn bạn!</h2>
+    <p style="display: block;">Sản phẩm đã được thêm vào giỏ thành công</p>
+    <fieldset>
+        <input type="text" tabindex="3" placeholder="">
+        <div class="sa-input-error"></div>
+    </fieldset>
+    <div class="sa-error-container">
+        <div class="icon">!</div>
+        <p>Not valid!</p>
+    </div>
+    <div class="sa-button-container">
+        <button class="cancel" tabindex="2" style="display: inline-block;">Tiếp tục mua sắm</button>
+        <button class="confirm" tabindex="1" style="display: inline-block; background-color: var(--color_main);">Đến giỏ hàng</button>
+    </div>
+</div> -->

@@ -20,4 +20,16 @@ class VariantAttributeValue extends Model
     {
         return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
     }
+    
+    public function attribute()
+    {
+        return $this->hasOneThrough(
+            Attribute::class,
+            AttributeValue::class,
+            'id', // Foreign key on AttributeValue table
+            'id', // Foreign key on Attribute table
+            'attribute_value_id', // Local key on VariantAttributeValue table
+            'attribute_id' // Local key on AttributeValue table
+        );
+    }
 }

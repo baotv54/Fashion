@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    public function getAll($perPage = 2)
+    public function getAll($perPage = 5)
     {
         // Trả về Query Builder và phân trang
         return Product::with('images')->paginate($perPage);
@@ -45,13 +45,13 @@ class ProductService
     public function update($id, $data)
     {
         $product = Product::findOrFail($id);
-    
+
         // Cập nhật các thông tin khác của sản phẩm
         $product->update($data);
-    
+
         // Lấy danh sách ID hình ảnh cần giữ lại
         $keepImageIds = isset($data['keep_images']) ? $data['keep_images'] : [];
-    
+
         // Xóa các hình ảnh không nằm trong danh sách này
         $product->images()->whereNotIn('id', $keepImageIds)->each(function ($image) {
             if (file_exists(public_path($image->image_path))) {
@@ -59,15 +59,15 @@ class ProductService
             }
             $image->delete();
         });
-    
+
         // Thêm hình ảnh mới (nếu có)
         if (!empty($data['images'])) {
             $this->addImage($id, $data['images']);
         }
-    
+
         return $product;
     }
-    
+
 
 
 
@@ -80,49 +80,56 @@ class ProductService
     public function addImage($productId, $images)
     {
         $product = Product::find($productId);
-    
+
         foreach ($images as $imageFile) {
             // Tạo tên file độc nhất với thời gian và tên gốc của file
             $fileName = time() . '_' . $imageFile->getClientOriginalName();
-    
+
             // Đường dẫn lưu file trong thư mục public/uploads/products
             $destinationPath = public_path('uploads/products');
-    
+
             // Di chuyển file đến thư mục public/uploads/products
             $imageFile->move($destinationPath, $fileName);
-    
+
             // Lưu đường dẫn file vào database với đầy đủ thông tin polymorphic
             $product->images()->create([
                 'image_path' => 'uploads/products/' . $fileName
             ]);
         }
     }
-    
 
 
 
 
-public function deleteImage($id)
-{
-    $image = Image::find($id);
 
-    if (!$image) {
-        return response()->json(['success' => false, 'message' => 'Hình ảnh không tồn tại.'], 404);
+    public function deleteImage($id)
+    {
+        $image = Image::find($id);
+
+        if (!$image) {
+            return response()->json(['success' => false, 'message' => 'Hình ảnh không tồn tại.'], 404);
+        }
+
+        // Xóa file vật lý trong thư mục public/uploads/products
+        if (file_exists(public_path($image->image_path))) {
+            unlink(public_path($image->image_path));
+        }
+
+        // Xóa bản ghi trong database
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
     }
-
-    // Xóa file vật lý trong thư mục public/uploads/products
-    if (file_exists(public_path($image->image_path))) {
-        unlink(public_path($image->image_path));
-    }
-
-    // Xóa bản ghi trong database
-    $image->delete();
-
-    return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
-}
 
     public function search($query)
     {
         return Product::where('name', 'LIKE', "%$query%")->with('images')->get();
+    }
+    public function getProductWithVariants($id)
+    {
+        return Product::with([
+            'images',
+            'productVariants.attributeValues.attribute' // lấy luôn cả tên thuộc tính (Color, Size, ...)
+        ])->findOrFail($id);
     }
 }

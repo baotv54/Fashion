@@ -5,9 +5,10 @@ use App\Models\Image;
 use App\Services\ProductService;
 use App\Services\BrandService;
 use App\Services\CategoryService;
-use App\Models\ProductImage;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -33,8 +34,18 @@ class ProductController extends Controller
     public function homepage()
     {
         $products = $this->productService->getAll();
-        return view('layouts.frontend.index', compact('products'));
+        $carts =  Cart::content();
+        return view('Frontend.index', compact('products', 'carts'));
     }
+    public function show($id)
+    {
+        $carts =  Cart::content();
+
+        $product = Product::with('images')->findOrFail($id);
+        $images = $product->images; 
+        return view('Frontend.pages.product_detail', compact('product', 'images', 'carts'));
+    }
+    
 
     public function create()
     {

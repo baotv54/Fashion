@@ -24,6 +24,12 @@
                     <x-nav-link :href="route('brands.index')" :active="request()->routeIs('brands.*')">
                         {{ __('Brands') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('coupons.index')" :active="request()->routeIs('coupons.*')">
+                        {{ __('Coupons') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                        {{ __('Orders') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -87,6 +93,12 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('brands.index')" :active="request()->routeIs('brands.*')">
                 {{ __('Brands') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('coupons.index')" :active="request()->routeIs('coupons.*')">
+                {{ __('Coupons') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                {{ __('Orders') }}
             </x-responsive-nav-link>
         </div>
 

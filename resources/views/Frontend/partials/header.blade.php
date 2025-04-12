@@ -20,14 +20,14 @@
                             </button>
                         </li>
                         <li class="active">
-                            <a href="index.html" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
+                            <a href="/home" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
                         </li>
                         <li class="hasChild">
-                            <a href="converse-allfc2c.html?view=vertical" title="Converse All" aria-label="Converse All">Converse All<span>›</span></a>
-                            <ul class="menu1">
+                            <a href="/view" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
+                            <!-- <ul class="menu1">
                                 <li><a href="converse-allfc2c.html?view=vertical" title="Converse All Style 1" aria-label="Converse All Style 1">Converse All Style 1</a></li>
                                 <li><a href="converse-allc267.html?view=horizontal" title="Converse All Style 2" aria-label="Converse All Style 2">Converse All Style 2</a></li>
-                            </ul>
+                            </ul> -->
                         </li>
                         <li class="hasChild">
                             <a href="collections/allfc2c.html?view=vertical" title="Classic" aria-label="Classic">Classic<span>›</span></a>
@@ -112,27 +112,27 @@
                             <ul class="shop-social">
                                 <li>
                                     <a href="https://www.facebook.com/" target="_blank" aria-label="F1GENZ Shoes - Facebook" title="F1GENZ Shoes - Facebook">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Facebook" src="{{ asset('images/facebook_icon.png') }}" alt="F1GENZ Shoes - Facebook">
+                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Facebook" src="{{ asset('images/facebook__6__53aaa8d352524d3eb025af5203eaa437_icon.png') }}" alt="F1GENZ Shoes - Facebook">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.youtube.com/" target="_blank" aria-label="F1GENZ Shoes - Youtube" title="F1GENZ Shoes - Youtube">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Youtube" src="{{ asset('images/youtube_icon.png') }}" alt="F1GENZ Shoes - Youtube">
+                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Youtube" src="{{ asset('images/youtube__5__4f04522e10494557a651f53a33ad4d76_icon.png') }}" alt="F1GENZ Shoes - Youtube">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.pinterest.com/" target="_blank" aria-label="F1GENZ Shoes - Pinterest" title="F1GENZ Shoes - Pinterest">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Pinterest" src="{{ asset('images/pinterest_icon.png') }}" alt="F1GENZ Shoes - Pinterest">
+                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Pinterest" src="{{ asset('images/pinterest_a1a15995132a4275845412deba5f1193_icon.png') }}" alt="F1GENZ Shoes - Pinterest">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.tiktok.com/" target="_blank" aria-label="F1GENZ Shoes - TikTok" title="F1GENZ Shoes - TikTok">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - TikTok" src="{{ asset('images/tiktok_icon.png') }}" alt="F1GENZ Shoes - TikTok">
+                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - TikTok" src="{{ asset('images/tik-tok_d85bb4e7468c43ac9ed5437649b7405c_icon.png') }}" alt="F1GENZ Shoes - TikTok">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.instagram.com/" target="_blank" aria-label="F1GENZ Shoes - Instagram" title="F1GENZ Shoes - Instagram">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Instagram" src="{{ asset('images/instagram_icon.png') }}" alt="F1GENZ Shoes - Instagram">
+                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Instagram" src="{{ asset('images/instagram__3__7de3ebbce1f24003b516ca6c1d7c24d5_icon.png') }}" alt="F1GENZ Shoes - Instagram">
                                     </a>
                                 </li>
                             </ul>
@@ -152,10 +152,17 @@
                     <button class="tool-search-overplay" title="Đóng"></button>
                     <div class="tool-search-smart"></div>
                 </form>
-                <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
-                    data-target="#accountLogin" data-whatever="@accountLogin" title="Tài khoản">
-                    <i class="fal fa-user"></i>
-                </button>
+                @auth
+                    <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
+                        title="Tài khoản">
+                        <a href="/order-history"><i class="fal fa-user"></i></a>
+                    </button>
+                @else
+                    <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
+                        title="Tài khoản">
+                        <a href="/login"><i class="fal fa-user"></i></a>
+                    </button>
+                @endauth
                 <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
                     <i class="fal fa-bars"></i>
                 </button>
@@ -165,7 +172,7 @@
                 </button>
                 <button class="shop-tool has-count" type="button" data-type="shop-cart-header" title="Giỏ hàng">
                     <i class="fal fa-shopping-bag"></i>
-                    <span class="shop-cart-count">0</span>
+                    <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
             </div>
         </div>
