@@ -38,7 +38,7 @@ class CouponController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate hình ảnh
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate hình ảnh
         ]);
 
         $data = $request->all();
@@ -80,7 +80,7 @@ class CouponController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $data = $request->all();
@@ -163,13 +163,27 @@ class CouponController extends Controller
             'discount' => $discount,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Mã giảm giá đã được áp dụng!', 'discount' => $discount]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Mã giảm giá đã được áp dụng!',
+            'code' => $coupon->code,
+            'type' => $coupon->type,
+            'value' => $coupon->value,
+            'discount' => $discount,
+            'total' => $cartTotal - $discount
+        ]);
     }
     public function removeCoupon()
     {
+        $discount = Session::has('coupon') ? Session::get('coupon.discount') : 0;
+
         // Xóa mã giảm giá khỏi session
         Session::forget('coupon');
 
-        return response()->json(['success' => true, 'message' => 'Mã giảm giá đã được xóa!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Mã giảm giá đã được xóa!',
+            'discount' => 0
+        ]);
     }
 }

@@ -47,4 +47,15 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+    public function attributeValues()
+    {
+        return $this->hasManyThrough(
+            AttributeValue::class,
+            VariantAttributeValue::class,
+            'variant_id', // foreign key in variant_attribute_values
+            'id',         // foreign key in attribute_values
+            'id',         // local key in products
+            'attribute_value_id' // local key in variant_attribute_values
+        );
+    }
 }

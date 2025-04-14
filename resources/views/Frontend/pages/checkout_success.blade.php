@@ -41,7 +41,81 @@
 
 	<!-- Begin checkout custom css -->
 	<style>
-	</style>
+	.thankyou-section {
+		text-align: center;
+		margin-top: 40px;
+	}
+	.thankyou-icon svg {
+		margin-bottom: 20px;
+	}
+	.thankyou-title {
+		font-size: 28px;
+		font-weight: bold;
+		color: #2ecc71;
+	}
+	.thankyou-text {
+		font-size: 16px;
+		color: #555;
+	}
+	.section-title {
+		font-size: 20px;
+		margin-top: 40px;
+		margin-bottom: 10px;
+		color: #333;
+		border-bottom: 1px solid #ddd;
+		padding-bottom: 8px;
+	}
+	.order-summary, .customer-info, .shipping-info {
+		background: #f9f9f9;
+		padding: 15px 20px;
+		border-radius: 6px;
+		margin-bottom: 20px;
+	}
+	.product-table, .total-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+	}
+	.product-table th, .product-table td,
+	.total-table td {
+		border: 1px solid #ddd;
+		padding: 10px;
+		text-align: left;
+	}
+	.total-table td {
+		text-align: right;
+	}
+	.total-row td {
+		font-weight: bold;
+		color: #000;
+		font-size: 16px;
+	}
+	.actions {
+		text-align: center;
+		margin-top: 40px;
+	}
+	.actions .btn {
+		display: inline-block;
+		padding: 12px 20px;
+		font-size: 16px;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		margin: 0 10px;
+		text-decoration: none;
+		color: white;
+	}
+	.btn-primary {
+		background-color: #2ecc71;
+	}
+	.btn-secondary {
+		background-color: #3498db;
+	}
+	.btn:hover {
+		opacity: 0.9;
+	}
+</style>
+
 	<!-- End checkout custom css -->
 
 	<script src="{{asset('js/libphonenumber-v3.2.30.min.js')}}"></script>

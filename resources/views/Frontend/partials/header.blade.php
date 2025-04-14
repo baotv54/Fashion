@@ -2,7 +2,7 @@
     <div class="container">
         <div class="headers2-wrap">
             <div class="headers2-left">
-                <a href="index.html" aria-label="F1GENZ Shoes">
+                <a href="/" aria-label="F1GENZ Shoes">
                     <img src="{{ asset('images/shop_logo_imagee889.png') }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
                 </a>
             </div>
@@ -155,12 +155,12 @@
                 @auth
                     <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
                         title="Tài khoản">
-                        <a href="/order-history"><i class="fal fa-user"></i></a>
+                        <a href="/account"><i class="fal fa-user"></i></a>
                     </button>
                 @else
                     <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
                         title="Tài khoản">
-                        <a href="/login"><i class="fal fa-user"></i></a>
+                        <a href="/Login"><i class="fal fa-user"></i></a>
                     </button>
                 @endauth
                 <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">

@@ -19,14 +19,15 @@ use App\Http\Controllers\OrderController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('Frontend.index');
+// });
 // Route::get('/home', function () {
 //     return view('Frontend.index');
 // });
 
-Route::get('/home', [ProductController::class, 'homepage'])->name('Frontend.index');
+Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
+
 
 // Route::get('/cart', function () {
 //     return view('Frontend.pages.cart');
@@ -34,12 +35,14 @@ Route::get('/home', [ProductController::class, 'homepage'])->name('Frontend.inde
 Route::get('/view', function () {
     return view('Frontend.pages.converse-all');
 });
-Route::get('/testlogin', function () {
+Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
 });
-Route::get('/product-detail', function () {
-    return view('Frontend.pages.product_detail');
+Route::get('/Register', function () {
+    return view('Frontend.pages.account.register');
 });
+
+
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -48,13 +51,9 @@ Route::get('/cart/remove', [CartController::class, 'remove'])->name('cart.remove
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
-
-
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/address/province', [AddressController::class, 'getProvince']);
+Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict']);
+Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard']);
 
 Route::get('/auth/google', [GoogleController::class, 'googlepage'])->name('google.login');
 Route::get('/auth/google/callback', [GoogleController::class, 'googlecallback'])->name('google.callback');
@@ -62,10 +61,35 @@ Route::get('/auth/google/callback', [GoogleController::class, 'googlecallback'])
 Route::get('/auth/facebook', [FaceBookController::class, 'FaceBookPage'])->name('facebook.login');
 Route::get('/auth/facebook/callback', [FaceBookController::class, 'FaceBookCallback'])->name('facebook.callback');
 
+
+Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSuccess'])->name('checkout.success');
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+
 Route::middleware('auth')->group(function () {
+    // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Account routes
+    Route::get('/account', function () {
+        return view('Frontend.pages.account.index');
+    });
+    Route::get('/account/addresses', [AddressController::class, 'index'])->name('addresses.index');
+    Route::post('/account/addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::put('/account/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update');
+    Route::post('/account/addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
+    Route::delete('/account/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    // Order routes
+    Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
+    Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
+    Route::post('/order/{id}/update-address', [OrderController::class, 'updateAddress'])->name('user.orders.updateAddress');
 });
 
 
@@ -177,7 +201,10 @@ Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard'])-
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::post('/checkout/vnpay', [CheckoutController::class, 'vnpay_payment'])->name('checkout.vnpay');
 Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpay_return'])->name('checkout.vnpay_return');
-Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSuccess'])->name('checkout.success');
+
+
+Route::get('/checkout/momo-return', [CheckoutController::class, 'momo_return'])->name('checkout.momo-return');
+Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name('checkout.momo-ipn');
 // Route::get('/checkout/success', function () {
 //     return view('Frontend.pages.checkout_success');
 // })->name('checkout.success');
@@ -186,12 +213,7 @@ Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSucces
 //     Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
 //     Route::post('/order/{id}/update-address', [OrderController::class, 'updateAddress'])->name('user.orders.updateAddress');
 // });
-Route::get('/address/province', [AddressController::class, 'getProvince']);
-Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict']);
-Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard']);
-Route::get('/acc', function () {
-    return view('Frontend.pages.account.index');
-});
+
 // Route::get('/address', function () {
 //     return view('Frontend.pages.account.address');
 // });
@@ -199,16 +221,6 @@ Route::get('/acc', function () {
 //     return view('Frontend.pages.account.order-detail');
 // });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/account/addresses', [AddressController::class, 'index'])->name('addresses.index');
-    Route::post('/account/addresses', [AddressController::class, 'store'])->name('addresses.store');
-    Route::put('/account/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update'); // Thêm route cập nhật
-    Route::post('/account/addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
-    Route::delete('/account/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
-
-    Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
-    Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
-    Route::post('/order/{id}/update-address', [OrderController::class, 'updateAddress'])->name('user.orders.updateAddress');
-});
+Route::post('/product/get-variant', [ProductController::class, 'getVariant'])->name('product.getVariant');
 
 require __DIR__ . '/auth.php';

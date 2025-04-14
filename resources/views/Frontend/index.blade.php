@@ -185,74 +185,30 @@
         <section class="home-coupon">
             <div class="container">
                 <div class="home-coupon-wrap">
+                    @foreach ($coupons as $coupon)
                     <div class="home-coupon-item">
-                        <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES">
-                        <div class="home-coupon-content">
+                    <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES">
+                    <div class="home-coupon-content">
                             <div class="home-coupon-content-head">
-                                <h3>Mã : F1SHOES</h3>
-                                <img loading="lazy" decoding="async" src="{{ asset('images/home_coupon_item_image_1e889.png')}}" title="Mã : F1SHOES" alt="Mã : F1SHOES">
-                                <p>Mã giảm 10% khi mua 1 sản phẩm</p>
-                            </div>
+                                <h3>Mã : {{ $coupon->code }}</h3>
+                                <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}" title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
+                                <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
+                                </div>
                             <div class="home-coupon-content-foot">
-                                <button data-type="coupon-policy" data-coupon="F1SHOES" title="Điều kiện áp dụng">
+                                <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}" title="Điều kiện áp dụng">
                                     Điều kiện áp dụng
-                                    <span class="home-coupon-content-info">- Mã giảm 10% khi mua 1 sản phẩm. - Mỗi khách hàng được sử dụng tối đa 1 lần. - Số lượng voucher có hạn</span>
+                                    <span class="home-coupon-content-info">
+                                        - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
+                                        - Giá trị giảm: {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }} <br>
+                                        - Áp dụng cho đơn hàng tối thiểu: {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }} <br>
+                                        - Hạn sử dụng: {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
+                                    </span>
                                 </button>
-                                <button data-type="coupon-copy" data-coupon="F1SHOES">Sao chép mã</button>
+                                <button data-type="coupon-copy" data-coupon="{{ $coupon->code }}">Sao chép mã</button>
                             </div>
                         </div>
                     </div>
-                    <div class="home-coupon-item">
-                        <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES2">
-                        <div class="home-coupon-content">
-                            <div class="home-coupon-content-head">
-                                <h3>Mã : F1SHOES2</h3>
-                                <img loading="lazy" decoding="async" src="{{ asset('images/home_coupon_item_image_2e889.png')}}" title="Mã : F1SHOES2" alt="Mã : F1SHOES2">
-                                <p>Mã giảm 13% khi mua 2 sản phẩm</p>
-                            </div>
-                            <div class="home-coupon-content-foot">
-                                <button data-type="coupon-policy" data-coupon="F1SHOES2" title="Điều kiện áp dụng">
-                                    Điều kiện áp dụng
-                                    <span class="home-coupon-content-info">- Mã giảm 13% khi mua 2 sản phẩm - Mỗi khách hàng được sử dụng tối đa 1 lần - Số lượng voucher có hạn</span>
-                                </button>
-                                <button data-type="coupon-copy" data-coupon="F1SHOES2">Sao chép mã</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home-coupon-item">
-                        <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES3">
-                        <div class="home-coupon-content">
-                            <div class="home-coupon-content-head">
-                                <h3>Mã : F1SHOES3</h3>
-                                <img loading="lazy" decoding="async" src="{{ asset('images/home_coupon_item_image_3e889.png')}}" title="Mã : F1SHOES3" alt="Mã : F1SHOES3">
-                                <p>Mã giảm 18% khi mua 3 sản phẩm</p>
-                            </div>
-                            <div class="home-coupon-content-foot">
-                                <button data-type="coupon-policy" data-coupon="F1SHOES3" title="Điều kiện áp dụng">
-                                    Điều kiện áp dụng
-                                    <span class="home-coupon-content-info">- Mã giảm 18% khi mua 3 sản phẩm - Mỗi khách hàng được sử dụng tối đa 1 lần - Số lượng voucher có hạn</span>
-                                </button>
-                                <button data-type="coupon-copy" data-coupon="F1SHOES3">Sao chép mã</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="home-coupon-item">
-                        <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES4">
-                        <div class="home-coupon-content">
-                            <div class="home-coupon-content-head">
-                                <h3>Mã : F1SHOES4</h3>
-                                <img loading="lazy" decoding="async" src="{{ asset('images/home_coupon_item_image_4e889.png')}}" title="Mã : F1SHOES4" alt="Mã : F1SHOES4">
-                                <p>Mã giảm 20% khi mua 4 sản phẩm</p>
-                            </div>
-                            <div class="home-coupon-content-foot">
-                                <button data-type="coupon-policy" data-coupon="F1SHOES4" title="Điều kiện áp dụng">
-                                    Điều kiện áp dụng
-                                    <span class="home-coupon-content-info">- Mã giảm 20% khi mua 4 sản phẩm - Mỗi khách hàng được sử dụng tối đa 1 lần - Số lượng voucher có hạn</span>
-                                </button>
-                                <button data-type="coupon-copy" data-coupon="F1SHOES4">Sao chép mã</button>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>

@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Helpers\GHNHelper;
 
 class AddressController extends Controller
 {
@@ -25,7 +27,12 @@ class AddressController extends Controller
             'ward' => 'required',
         ]);
 
-        // Nếu là địa chỉ mặc định, bỏ mặc định của các địa chỉ khác
+        // Lấy tên từ GHN API
+        $provinceName = GHNHelper::getProvinceName($request->province);
+        $districtName = GHNHelper::getDistrictName($request->district);
+        $wardName = GHNHelper::getWardName($request->ward, $request->district);
+
+        // Nếu là địa chỉ mặc định, bỏ mặc định các địa chỉ khác
         if ($request->has('is_default')) {
             Address::where('user_id', Auth::id())->update(['is_default' => false]);
         }
@@ -35,9 +42,9 @@ class AddressController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
-            'province' => $request->province,
-            'district' => $request->district,
-            'ward' => $request->ward,
+            'province' => $provinceName,   // lưu tên
+            'district' => $districtName,   // lưu tên
+            'ward' => $wardName,           // lưu tên
             'is_default' => $request->has('is_default'),
         ]);
 
@@ -66,6 +73,8 @@ class AddressController extends Controller
 
         return redirect()->route('addresses.index')->with('success', 'Xóa địa chỉ thành công!');
     }
+
+    // Lấy danh sách tỉnh
     public function getProvince()
     {
         $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/province";
@@ -81,6 +90,7 @@ class AddressController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
+    // Lấy danh sách quận theo tỉnh
     public function getDistrict($provinceId)
     {
         $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/district?province_id=$provinceId";
@@ -96,6 +106,7 @@ class AddressController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
+    // Lấy danh sách phường theo quận
     public function getWard($districtId)
     {
         $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/ward?district_id=$districtId";

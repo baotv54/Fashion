@@ -131,7 +131,7 @@
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
                                                     <label for="billingProvince" class="">Tỉnh thành</label>
                                                     <select name="billingProvince" id="billingProvince" class="field__input field__input--select" required>
-                                                        <option value="">Chọn tỉnh/thành</option>
+                                                    <input type="hidden" name="billingProvinceName" id="billingProvinceName">
                                                     </select>
                                                 </div>
                                             </div>
@@ -140,7 +140,7 @@
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
                                                     <label for="billingDistrict" class="">Quận huyện (tùy chọn)</label>
                                                     <select name="billingDistrict" id="billingDistrict" class="field__input field__input--select" required>
-                                                        <option value="">Chọn quận/huyện</option>
+                                                    <input type="hidden" name="billingDistrictName" id="billingDistrictName">
                                                     </select>
                                                 </div>
                                             </div>
@@ -149,7 +149,7 @@
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
                                                     <label for="billingWard" class="">Phường xã (tùy chọn)</label>
                                                     <select name="billingWard" id="billingWard" class="field__input field__input--select" required>
-                                                        <option value="">Chọn phường/xã</option>
+                                                    <input type="hidden" name="billingWardName" id="billingWardName">
                                                     </select>
                                                 </div>
                                             </div>
@@ -275,8 +275,25 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <!-- Phương thức thanh toán: Momo -->
+                                            <div class="content-box__row">
+                                                <div class="radio-wrapper">
+                                                    <div class="radio__input">
+                                                        <input name="paymentMethod" id="paymentMethod-momo"
+                                                            type="radio" class="input-radio"
+                                                            value="momo" required>
+                                                    </div>
+                                                    <label for="paymentMethod-momo" class="radio__label">
+                                                        <span class="radio__label__primary">Thanh toán qua Momo</span>
+                                                        <span class="radio__label__accessory">
+                                                            <span class="radio__label__icon">
+                                                                <i class="payment-icon payment-icon--momo"></i>
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
                                 </section>
                             </div>
                         </article>
@@ -511,6 +528,10 @@
             const districtSelect = document.getElementById('billingDistrict');
             const wardSelect = document.getElementById('billingWard');
 
+            const provinceNameInput = document.getElementById('billingProvinceName');
+            const districtNameInput = document.getElementById('billingDistrictName');
+            const wardNameInput = document.getElementById('billingWardName');
+
             // Load provinces
             fetch('/address/province')
                 .then(response => response.json())
@@ -521,11 +542,16 @@
                     });
                 });
 
-            // Load districts when a province is selected
+            // Load districts when province changes
             provinceSelect.addEventListener('change', function() {
                 const provinceId = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+                provinceNameInput.value = selectedOption.text;
+
                 districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>'; // Reset wards
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                districtNameInput.value = '';
+                wardNameInput.value = '';
 
                 if (provinceId) {
                     fetch(`/address/district/${provinceId}`)
@@ -538,10 +564,14 @@
                 }
             });
 
-            // Load wards when a district is selected
+            // Load wards when district changes
             districtSelect.addEventListener('change', function() {
                 const districtId = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+                districtNameInput.value = selectedOption.text;
+
                 wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                wardNameInput.value = '';
 
                 if (districtId) {
                     fetch(`/address/ward/${districtId}`)
@@ -553,7 +583,14 @@
                         });
                 }
             });
+
+            // Update ward name
+            wardSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                wardNameInput.value = selectedOption.text;
+            });
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('applyCoupon').addEventListener('click', function() {
                 const couponCode = document.getElementById('reductionCode').value;
@@ -581,8 +618,17 @@
                     })
                     .then(data => {
                         if (data.success) {
+                            // Hiển thị thông báo thành công
                             alert('Áp dụng mã giảm giá thành công!');
-                            location.reload();
+
+                            // Thêm phần hiển thị mã giảm giá mà không reload trang
+                            updateCouponDisplay(data.code, data.discount);
+
+                            // Cập nhật tổng tiền
+                            updateOrderTotal(data.discount);
+
+                            // Xóa giá trị trong ô input
+                            document.getElementById('reductionCode').value = '';
                         } else {
                             alert(data.message || 'Mã giảm giá không hợp lệ!');
                         }
@@ -592,33 +638,126 @@
                         alert('Đã xảy ra lỗi khi áp dụng mã giảm giá!');
                     });
             });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('removeCoupon').addEventListener('click', function() {
-                fetch('/remove-coupon', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Có lỗi xảy ra khi xóa mã giảm giá!');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            location.reload(); // Reload lại trang để cập nhật giá trị
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Đã xảy ra lỗi khi xóa mã giảm giá!');
-                    });
+
+            // Xử lý xóa mã giảm giá
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'removeCoupon') {
+                    fetch('/remove-coupon', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Có lỗi xảy ra khi xóa mã giảm giá!');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);
+                                // Xóa phần hiển thị mã giảm giá
+                                removeCouponDisplay();
+                                // Cập nhật lại tổng tiền
+                                updateOrderTotal(0);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Đã xảy ra lỗi khi xóa mã giảm giá!');
+                        });
+                }
             });
+
+            // Hàm cập nhật hiển thị mã giảm giá
+            function updateCouponDisplay(code, discount) {
+                const discountContainer = document.getElementById('discountCode');
+
+                // Kiểm tra nếu đã có thông báo giảm giá thì xóa đi
+                const existingAlert = discountContainer.querySelector('.alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                // Tạo và thêm thông báo giảm giá mới
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success mt-3';
+                alertDiv.innerHTML = `
+            <strong>Mã giảm giá:</strong> ${code}<br>
+            <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
+            <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">Xóa mã</button>
+        `;
+
+                discountContainer.appendChild(alertDiv);
+
+                // Thêm dòng giảm giá vào bảng tổng tiền
+                addDiscountRow(code, discount);
+            }
+
+            // Hàm xóa hiển thị mã giảm giá
+            function removeCouponDisplay() {
+                // Xóa thông báo mã giảm giá
+                const discountContainer = document.getElementById('discountCode');
+                const existingAlert = discountContainer.querySelector('.alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+
+                // Xóa dòng giảm giá trong bảng tổng tiền
+                removeDiscountRow();
+            }
+
+            // Hàm thêm dòng giảm giá vào bảng tổng tiền
+            function addDiscountRow(code, discount) {
+                const tbody = document.querySelector('.total-line-table__tbody');
+
+                // Kiểm tra nếu đã có dòng giảm giá thì xóa đi
+                const existingDiscountRow = tbody.querySelector('.total-line--discount');
+                if (existingDiscountRow) {
+                    existingDiscountRow.remove();
+                }
+
+                // Tạo dòng giảm giá mới
+                const discountRow = document.createElement('tr');
+                discountRow.className = 'total-line total-line--discount';
+                discountRow.innerHTML = `
+            <th class="total-line__name">
+                Giảm giá (${code})
+            </th>
+            <td class="total-line__price">
+                -${new Intl.NumberFormat('vi-VN').format(discount)}₫
+            </td>
+        `;
+
+                // Chèn dòng giảm giá sau dòng tạm tính
+                const subtotalRow = tbody.querySelector('.total-line--subtotal');
+                subtotalRow.after(discountRow);
+            }
+
+            // Hàm xóa dòng giảm giá khỏi bảng tổng tiền
+            function removeDiscountRow() {
+                const tbody = document.querySelector('.total-line-table__tbody');
+                const existingDiscountRow = tbody.querySelector('.total-line--discount');
+                if (existingDiscountRow) {
+                    existingDiscountRow.remove();
+                }
+            }
+
+            // Hàm cập nhật tổng tiền
+            function updateOrderTotal(discount) {
+                // Lấy tạm tính
+                const subtotalText = document.querySelector('.total-line--subtotal .total-line__price').textContent;
+                const subtotal = parseFloat(subtotalText.replace(/[^\d]/g, ''));
+
+                // Tính tổng tiền mới (giả sử phí vận chuyển là 0)
+                const newTotal = subtotal - discount;
+
+                // Cập nhật hiển thị tổng tiền
+                const totalPriceElement = document.querySelector('.payment-due__price');
+                totalPriceElement.textContent = new Intl.NumberFormat('vi-VN').format(newTotal) + '₫';
+            }
         });
     </script>
 </body>

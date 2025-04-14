@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Image;
@@ -6,8 +7,9 @@ use App\Services\ProductService;
 use App\Services\BrandService;
 use App\Services\CategoryService;
 use App\Models\Product;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use App\Models\Coupon;
+use App\Models\ProductVariant;
+use App\Models\Attribute;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 
@@ -27,7 +29,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $products = $this->productService->getAllWithSearch($search, 5); 
+        $products = $this->productService->getAllWithSearch($search, 5);
         return view('admin.products.index', compact('products', 'search'));
     }
 
@@ -35,17 +37,76 @@ class ProductController extends Controller
     {
         $products = $this->productService->getAll();
         $carts =  Cart::content();
-        return view('Frontend.index', compact('products', 'carts'));
+        $coupons = Coupon::latest()->take(4)->get();
+        return view('Frontend.index', compact('products', 'carts', 'coupons'));
     }
     public function show($id)
     {
-        $carts =  Cart::content();
+        $carts = Cart::content();
 
-        $product = Product::with('images')->findOrFail($id);
-        $images = $product->images; 
-        return view('Frontend.pages.product_detail', compact('product', 'images', 'carts'));
+        $product = Product::with(['images', 'variants.attributeValues'])->findOrFail($id);
+        $images = $product->images;
+
+        // Lấy attribute "Màu"
+        $colorAttr = Attribute::where('name', 'Màu')->first();
+        $colors = $colorAttr
+            ? $product->variants
+            ->flatMap(function ($variant) {
+                return $variant->attributeValues;
+            })
+            ->where('attribute_id', $colorAttr->id)
+            ->unique('id')
+            : collect();
+
+        // Lấy attribute "Kích Thước"
+        $sizeAttr = Attribute::where('name', 'Kích Thước')->first();
+        $sizes = $sizeAttr
+            ? $product->variants
+            ->flatMap(function ($variant) {
+                return $variant->attributeValues;
+            })
+            ->where('attribute_id', $sizeAttr->id)
+            ->unique('id')
+            : collect();
+
+        return view('Frontend.pages.product_detail', compact('product', 'images', 'carts', 'colors', 'sizes'));
     }
-    
+    public function getVariant(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer',
+            'color_id'   => 'required|integer',
+            'size_id'    => 'required|integer',
+        ]);
+
+        // Tìm biến thể đúng với tổ hợp attribute values
+        $variant = ProductVariant::where('product_id', $request->product_id)
+            ->whereHas('attributeValues', function ($q) use ($request) {
+                $q->where('attribute_value_id', $request->color_id);
+            })
+            ->whereHas('attributeValues', function ($q) use ($request) {
+                $q->where('attribute_value_id', $request->size_id);
+            })
+            ->first();
+
+        if ($variant) {
+            return response()->json([
+                'success' => true,
+                'variant' => [
+                    'id'        => $variant->id,
+                    'price'     => number_format($variant->price) . ' VNĐ',
+                    'stock'     => $variant->stock,
+                    'image'     => asset($variant->image),
+                ]
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy biến thể phù hợp.',
+            ]);
+        }
+    }
+
 
     public function create()
     {
@@ -66,25 +127,25 @@ class ProductController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'status' => 'required|boolean',
         ]);
-    
+
         $data = $request->except('images'); // Bỏ dữ liệu hình ảnh ra để xử lý riêng
         $product = $this->productService->create($data); // Tạo sản phẩm mới
-    
+
         // Xử lý hình ảnh chính (Lưu tạm thời)
         if ($request->hasFile('image')) {
             $imageFile = $request->file('image');
             $fileName = time() . '_' . $imageFile->getClientOriginalName();
             $imageFile->move(public_path('uploads/products'), $fileName);
-    
+
             // Cập nhật cột image trong bảng products (Lưu tạm thời)
             $product->update(['image' => 'uploads/products/' . $fileName]);
         }
-    
+
         // Xử lý hình ảnh phụ
         if ($request->hasFile('images')) {
             $this->productService->addImage($product->id, $request->file('images'));
         }
-    
+
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
     }
 
@@ -101,56 +162,56 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'slug' => 'required|unique:products,slug,' . $id,
-        'price' => 'required|numeric|min:0',
-        'description' => 'nullable|string',
-        'brand_id' => 'required|exists:brands,id',
-        'category_id' => 'required|exists:categories,id',
-        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        'status' => 'required|boolean',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Kiểm tra hình ảnh chính
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|unique:products,slug,' . $id,
+            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'brand_id' => 'required|exists:brands,id',
+            'category_id' => 'required|exists:categories,id',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Kiểm tra hình ảnh chính
+        ]);
 
-    $data = $request->except('images', 'image'); // Bỏ dữ liệu hình ảnh ra để xử lý riêng
-    $product = $this->productService->findById($id);
+        $data = $request->except('images', 'image'); // Bỏ dữ liệu hình ảnh ra để xử lý riêng
+        $product = $this->productService->findById($id);
 
-    if (!$product) {
-        return redirect()->route('products.index')->with('error', 'Sản phẩm không tồn tại.');
-    }
-
-    // Cập nhật thông tin sản phẩm (không bao gồm hình ảnh)
-    $this->productService->update($id, $data);
-
-    // Cập nhật hình ảnh chính nếu có
-    if ($request->hasFile('image')) {
-        $imageFile = $request->file('image');
-        $fileName = time() . '_' . $imageFile->getClientOriginalName();
-        $imagePath = 'uploads/products/' . $fileName;
-
-        // Xóa hình ảnh cũ nếu có
-        if ($product->image && file_exists(public_path($product->image))) {
-            unlink(public_path($product->image)); // Xóa hình cũ
+        if (!$product) {
+            return redirect()->route('products.index')->with('error', 'Sản phẩm không tồn tại.');
         }
 
-        // Di chuyển hình ảnh mới vào thư mục public/uploads/products
-        $imageFile->move(public_path('uploads/products'), $fileName);
+        // Cập nhật thông tin sản phẩm (không bao gồm hình ảnh)
+        $this->productService->update($id, $data);
 
-        // Cập nhật cột hình ảnh chính trong bảng products
-        $product->update(['image' => $imagePath]);
+        // Cập nhật hình ảnh chính nếu có
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $fileName = time() . '_' . $imageFile->getClientOriginalName();
+            $imagePath = 'uploads/products/' . $fileName;
+
+            // Xóa hình ảnh cũ nếu có
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image)); // Xóa hình cũ
+            }
+
+            // Di chuyển hình ảnh mới vào thư mục public/uploads/products
+            $imageFile->move(public_path('uploads/products'), $fileName);
+
+            // Cập nhật cột hình ảnh chính trong bảng products
+            $product->update(['image' => $imagePath]);
+        }
+
+        // Xử lý hình ảnh phụ nếu có
+        if ($request->hasFile('images')) {
+            $this->productService->addImage($id, $request->file('images'));
+        }
+
+        return redirect()->route('products.index')->with('success', 'Cập nhật sản phẩm thành công.');
     }
 
-    // Xử lý hình ảnh phụ nếu có
-    if ($request->hasFile('images')) {
-        $this->productService->addImage($id, $request->file('images'));
-    }
 
-    return redirect()->route('products.index')->with('success', 'Cập nhật sản phẩm thành công.');
-}
-
-    
 
     public function destroy($id)
     {
@@ -161,22 +222,22 @@ class ProductController extends Controller
     public function deleteImage($id)
     {
         $image = Image::find($id);
-    
+
         if (!$image) {
             return response()->json(['success' => false, 'message' => 'Hình ảnh không tồn tại.'], 404);
         }
-    
+
         // Xóa file vật lý trong thư mục public/uploads/products
         if (file_exists(public_path($image->image_path))) {
             unlink(public_path($image->image_path));
         }
-    
+
         // Xóa bản ghi trong database
         $image->delete();
-    
+
         return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
     }
-    
+
     // tìm kiếm sản phẩm theo tên
     public function search(Request $request)
     {
