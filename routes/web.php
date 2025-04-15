@@ -16,6 +16,8 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\StatisticsController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +44,9 @@ Route::get('/Register', function () {
     return view('Frontend.pages.account.register');
 });
 
+Route::get('/db', function () {
+    return view('layouts.Dashboard');
+});
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
@@ -90,6 +95,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
     Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
     Route::post('/order/{id}/update-address', [OrderController::class, 'updateAddress'])->name('user.orders.updateAddress');
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
+    Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
+
+    // Routes cho đánh giá sản phẩm
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 
@@ -188,6 +201,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}', [OrderController::class, 'show'])->name('orders.details');
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         });
+        Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
+        Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
     });
 });
 

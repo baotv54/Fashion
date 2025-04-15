@@ -50,6 +50,33 @@ class AddressController extends Controller
 
         return redirect()->route('addresses.index')->with('success', 'Thêm địa chỉ thành công!');
     }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:15',
+            'address' => 'required|max:255',
+            'province' => 'required',
+            'district' => 'required',
+            'ward' => 'required',
+        ]);
+
+        $address = Address::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        $provinceName = GHNHelper::getProvinceName($request->province);
+        $districtName = GHNHelper::getDistrictName($request->district);
+        $wardName = GHNHelper::getWardName($request->ward, $request->district);
+
+        $address->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'province' => $provinceName,
+            'district' => $districtName,
+            'ward' => $wardName,
+        ]);
+        return redirect()->route('addresses.index')->with('success', 'Cập nhật địa chỉ thành công!');
+    }
 
     // Đặt địa chỉ mặc định
     public function setDefault($id)

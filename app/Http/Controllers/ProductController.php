@@ -11,6 +11,8 @@ use App\Models\Coupon;
 use App\Models\ProductVariant;
 use App\Models\Attribute;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Models\OrderDetail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -42,35 +44,73 @@ class ProductController extends Controller
     }
     public function show($id)
     {
+ 
+    
         $carts = Cart::content();
-
-        $product = Product::with(['images', 'variants.attributeValues'])->findOrFail($id);
+    
+        // Load quan hệ: hình ảnh, biến thể, đánh giá đã duyệt và user đánh giá
+        $product = Product::with([
+            'images',
+            'variants.attributeValues',
+            'reviews' => function ($query) {
+                $query->where('is_approved', true)->latest();
+            },
+            'reviews.user'
+        ])->findOrFail($id);
+    
         $images = $product->images;
-
+    
         // Lấy attribute "Màu"
         $colorAttr = Attribute::where('name', 'Màu')->first();
         $colors = $colorAttr
             ? $product->variants
-            ->flatMap(function ($variant) {
-                return $variant->attributeValues;
-            })
-            ->where('attribute_id', $colorAttr->id)
-            ->unique('id')
+                ->flatMap(function ($variant) {
+                    return $variant->attributeValues;
+                })
+                ->where('attribute_id', $colorAttr->id)
+                ->unique('id')
             : collect();
-
+    
         // Lấy attribute "Kích Thước"
         $sizeAttr = Attribute::where('name', 'Kích Thước')->first();
         $sizes = $sizeAttr
             ? $product->variants
-            ->flatMap(function ($variant) {
-                return $variant->attributeValues;
-            })
-            ->where('attribute_id', $sizeAttr->id)
-            ->unique('id')
+                ->flatMap(function ($variant) {
+                    return $variant->attributeValues;
+                })
+                ->where('attribute_id', $sizeAttr->id)
+                ->unique('id')
             : collect();
-
-        return view('Frontend.pages.product_detail', compact('product', 'images', 'carts', 'colors', 'sizes'));
+    
+        // Lấy sản phẩm liên quan: cùng danh mục, loại trừ sản phẩm hiện tại
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->latest()
+            ->take(8)
+            ->get();
+    
+        // Kiểm tra user hiện tại đã mua sản phẩm chưa (để gửi đánh giá)
+        $hasPurchased = false;
+        if (Auth::check()) {
+            $hasPurchased = OrderDetail::where('product_id', $product->id)
+                ->whereHas('order', function ($query) {
+                    $query->where('user_id', Auth::id());
+                })->exists();
+        }
+    
+        return view('Frontend.pages.product_detail', compact(
+            'product',
+            'images',
+            'carts',
+            'colors',
+            'sizes',
+            'relatedProducts',
+            'hasPurchased'
+        ));
     }
+    
+
+
     public function getVariant(Request $request)
     {
         $request->validate([

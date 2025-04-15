@@ -35,7 +35,6 @@ class CheckoutController extends Controller
             return $this->vnpay_payment($request);
         }
         $orderCode = 'ORDER-' . strtoupper(uniqid());
-        // Tính toán tổng giá trị đơn hàng
         $subtotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
         $discount = floatval(Session::get('coupon.discount', 0));
         $total = $subtotal - $discount;
@@ -55,7 +54,7 @@ class CheckoutController extends Controller
             'discount' => $discount,
             'total' => $total,
             'payment_method' => $request->paymentMethod,
-            'status' => 'pending',
+            'status' => 'ordered',
         ]);
 
         foreach (Cart::content() as $cartItem) {
@@ -72,10 +71,10 @@ class CheckoutController extends Controller
 
             $coupon = Coupon::where('code', $code)->first();
             if ($coupon) {
-                $coupon->increment('used'); // Tăng số lần đã sử dụng lên 1
+                $coupon->increment('used'); 
             }
 
-            Session::forget('coupon'); // Xóa coupon khỏi session sau khi dùng xong
+            Session::forget('coupon'); 
         }
 
 
@@ -101,8 +100,8 @@ class CheckoutController extends Controller
             'name' => $request->billingName,
             'phone' => $request->billingPhone,
             'address' => $request->billingAddress,
-            'province' => $request->billingProvinceName, // ✅ dùng tên
-            'district' => $request->billingDistrictName, // ✅ dùng tên
+            'province' => $request->billingProvinceName,
+            'district' => $request->billingDistrictName,
             'ward' => $request->billingWardName,
             'note' => $request->note,
             'subtotal' => $subtotal,

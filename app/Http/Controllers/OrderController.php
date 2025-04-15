@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Gloudemans\Shoppingcart\Facades\Cart;
+
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -80,7 +82,7 @@ class OrderController extends Controller
     {
         // Lấy thông tin đơn hàng từ cơ sở dữ liệu
         $order = Order::with('orderDetails')->findOrFail($order_id);
-    
+
         return view('Frontend.pages.checkout_success', compact('order'));
     }
     public function getProvince()
@@ -124,5 +126,44 @@ class OrderController extends Controller
         $response = file_get_contents($url, false, $context);
         $data = json_decode($response, true);
         return response()->json($data['data'] ?? []);
+    }
+
+    public function cancelOrder($id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['ordered', 'processing', 'confirmed'])
+            ->firstOrFail();
+
+        $order->status = 'cancelled';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
+    }
+
+
+    public function reorder($id)
+    {
+        $order = Order::with('orderDetails.product')
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        foreach ($order->orderDetails as $item) {
+            if ($item->product) {
+                Cart::add([
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'qty' => $item->quantity,
+                    'price' => $item->price,
+                    'options' => [
+                        // Nếu có variant: 'size' => $item->size, 'color' => $item->color,...
+                        'image' => $item->product->image,
+                    ]
+                ]);
+            }
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Các sản phẩm đã được thêm lại vào giỏ hàng.');
     }
 }

@@ -58,4 +58,9 @@ class Product extends Model
             'attribute_value_id' // local key in variant_attribute_values
         );
     }
+    public function reviews()
+{
+    return $this->hasMany(\App\Models\ProductReview::class);
+}
+
 }

@@ -107,7 +107,7 @@
 
 
 
-     <script>
+    <script>
         window.F1GENZ_vars = {
             template: "customers/account",
             formatMoney: "amount_no_decimals_with_comma_separator₫",
@@ -3723,94 +3723,105 @@
 </head>
 
 <body class="">
-  @include('Frontend.partials.header')
- <main class="main-layout">
-    <div class="op_address"></div>
-    <div class="acc">
-        <div class="container-fluid">
-            <div class="acc-wrap">
-                <div class="acc-sidebar">
-                    <span><img width="64" height="64" src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&font-size=.5" alt="{{ Auth::user()->name }}" title="{{ Auth::user()->name }}" /></span>
-                    <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
-                    <ul>
-                            <li><a href="/account" aria-label="Thông tin tài khoản" title="Thông tin tài khoản">Thông tin tài khoản</a></li>
-                            <li><a href="/order-history" aria-label="Đơn hàng của bạn" title="Đơn hàng của bạn">Đơn hàng của bạn</a></li>
-                            <li><a href="/account/addresses" aria-label="Danh sách địa chỉ" title="Danh sách địa chỉ">Danh sách địa chỉ</a></li>
-                            <li><a href="/account/changepassword" aria-label="Đổi mật khẩu" title="Đổi mật khẩu">Đổi mật khẩu</a></li>
-                            <li><a href="/account/logout" aria-label="Đăng xuất" title="Đăng xuất">Đăng xuất</a></li>
+    @include('Frontend.partials.header')
+    <main class="main-layout py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    <div class="text-center mb-4">
+                        <img width="64" height="64" class="rounded-circle"
+                            src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&font-size=.5"
+                            alt="{{ Auth::user()->name }}" />
+                        <h5 class="mt-2">Xin chào, <b>{{ Auth::user()->name }}</b></h5>
+                    </div>
+                    <ul class="list-group">
+                        <a href="/account" class="list-group-item">Thông tin tài khoản</a>
+                        <a href="/order-history" class="list-group-item">Đơn hàng của bạn</a>
+                        <a href="/account/addresses" class="list-group-item active">Danh sách địa chỉ</a>
+                        <a href="/account/changepassword" class="list-group-item">Đổi mật khẩu</a>
+                        <a href="/account/logout" class="list-group-item">Đăng xuất</a>
                     </ul>
                 </div>
-                <div class="acc-data acc-data-addresses">
-                    <h1>Danh sách địa chỉ</h1>
-                    <div class="addresses-list">
+
+                <!-- Main content -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>📍 Danh sách địa chỉ</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addresses-new-modal">+ Thêm địa chỉ</button>
+                    </div>
+
+                    <!-- Danh sách địa chỉ -->
+                    <div class="row g-3">
                         @foreach ($addresses as $address)
-                        <div class="addresses-item" data-id="{{ $address->id }}">
-                            <p>
-                                <strong>Họ tên: </strong>
-                                {{ $address->name }} {{ $address->is_default ? '(Địa chỉ mặc định)' : '' }}
-                            </p>
-                            <p>
-                                <strong>Địa chỉ: </strong>
-                                {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}
-                            </p>
-                            <p>
-                                <strong>Số điện thoại:</strong>
-                                {{ $address->phone }}
-                            </p>
-                            <form action="{{ route('addresses.setDefault', $address->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-primary" {{ $address->is_default ? 'disabled' : '' }}>Đặt làm mặc định</button>
-                            </form>
-                            <button title="Chỉnh sửa địa chỉ" type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">Chỉnh sửa</button>
-                            <form action="{{ route('addresses.destroy', $address->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                            </form>
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <p><strong>Họ tên:</strong> {{ $address->name }}
+                                        @if ($address->is_default)
+                                        <span class="badge bg-success ms-2">Mặc định</span>
+                                        @endif
+                                    </p>
+                                    <p><strong>Địa chỉ:</strong> {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}</p>
+                                    <p><strong>SĐT:</strong> {{ $address->phone }}</p>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <form method="POST" action="{{ route('addresses.setDefault', $address->id) }}">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-primary btn-sm" {{ $address->is_default ? 'disabled' : '' }}>Mặc định</button>
+                                    </form>
+                                    <div>
+                                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">Chỉnh sửa</button>
+                                        <form method="POST" action="{{ route('addresses.destroy', $address->id) }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Modal chỉnh sửa địa chỉ -->
-                        <div class="modal fade" id="edit_address_{{ $address->id }}" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <h2>Chỉnh sửa địa chỉ</h2>
+                        <!-- Modal chỉnh sửa -->
+                        <div class="modal fade" id="edit_address_{{ $address->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content p-4">
+                                    <h5 class="mb-3">✏️ Chỉnh sửa địa chỉ</h5>
                                     <form method="POST" action="{{ route('addresses.update', $address->id) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="form_address">
-                                            <div class="field">
+                                        @csrf @method('PUT')
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
                                                 <label>Họ tên</label>
-                                                <input type="text" name="name" class="form-control" required value="{{ $address->name }}">
+                                                <input type="text" name="name" value="{{ $address->name }}" class="form-control" required>
                                             </div>
-                                            <div class="field">
+                                            <div class="col-md-6">
                                                 <label>Số điện thoại</label>
-                                                <input type="text" name="phone" class="form-control" required value="{{ $address->phone }}">
+                                                <input type="text" name="phone" value="{{ $address->phone }}" class="form-control" required>
                                             </div>
-                                            <div class="field">
+                                            <div class="col-12">
                                                 <label>Địa chỉ</label>
-                                                <input type="text" name="address" class="form-control" required value="{{ $address->address }}">
+                                                <input type="text" name="address" value="{{ $address->address }}" class="form-control" required>
                                             </div>
-                                            <div class="field">
-                                                <label>Tỉnh thành</label>
+                                            <div class="col-md-4">
+                                                <label>Tỉnh/Thành</label>
                                                 <select name="province" class="form-control province-select" data-id="{{ $address->id }}" required>
                                                     <option value="{{ $address->province }}" selected>{{ $address->province }}</option>
                                                 </select>
                                             </div>
-                                            <div class="field">
-                                                <label>Quận huyện</label>
+                                            <div class="col-md-4">
+                                                <label>Quận/Huyện</label>
                                                 <select name="district" class="form-control district-select" data-id="{{ $address->id }}" required>
                                                     <option value="{{ $address->district }}" selected>{{ $address->district }}</option>
                                                 </select>
                                             </div>
-                                            <div class="field">
-                                                <label>Phường xã</label>
+                                            <div class="col-md-4">
+                                                <label>Phường/Xã</label>
                                                 <select name="ward" class="form-control ward-select" data-id="{{ $address->id }}" required>
                                                     <option value="{{ $address->ward }}" selected>{{ $address->ward }}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="addresses-new-modal-action">
-                                            <button type="submit" class="btn btn-primary">Cập nhật địa chỉ</button>
+                                        <div class="text-end mt-4">
+                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
                                         </div>
                                     </form>
                                 </div>
@@ -3818,160 +3829,161 @@
                         </div>
                         @endforeach
                     </div>
-                    <div class="shop-pagination"></div>
-                    <button class="btn-edit-addr btn btn-primary" data-bs-toggle="modal" data-bs-target="#addresses-new-modal" type="button" title="Thêm địa chỉ mới">Thêm địa chỉ mới</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal thêm địa chỉ mới -->
-    <div class="modal fade" id="addresses-new-modal" tabindex="-1" aria-labelledby="newAddressLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <h2>Thêm địa chỉ mới</h2>
-                <form method="POST" action="{{ route('addresses.store') }}">
-                    @csrf
-                    <div class="form_address">
-                        <div class="field">
-                            <label>Họ tên</label>
-                            <input type="text" name="name" class="form-control" required>
+        <!-- Modal thêm mới -->
+        <div class="modal fade" id="addresses-new-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content p-4">
+                    <h5 class="mb-3">➕ Thêm địa chỉ mới</h5>
+                    <form method="POST" action="{{ route('addresses.store') }}">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label>Họ tên</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Số điện thoại</label>
+                                <input type="text" name="phone" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label>Địa chỉ</label>
+                                <input type="text" name="address" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Tỉnh/Thành</label>
+                                <select name="province" class="form-control province-select" required>
+                                    <option value="">Chọn tỉnh/thành</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Quận/Huyện</label>
+                                <select name="district" class="form-control district-select" required>
+                                    <option value="">Chọn quận/huyện</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Phường/Xã</label>
+                                <select name="ward" class="form-control ward-select" required>
+                                    <option value="">Chọn phường/xã</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input" name="is_default" value="1">
+                                    <label class="form-check-label">Đặt làm địa chỉ mặc định</label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="field">
-                            <label>Số điện thoại</label>
-                            <input type="text" name="phone" class="form-control" required>
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-success">Thêm địa chỉ</button>
                         </div>
-                        <div class="field">
-                            <label>Địa chỉ</label>
-                            <input type="text" name="address" class="form-control" required>
-                        </div>
-                        <div class="field">
-                            <label>Tỉnh thành</label>
-                            <select name="province" class="form-control province-select" required>
-                                <option value="">Chọn tỉnh/thành</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label>Quận huyện</label>
-                            <select name="district" class="form-control district-select" required>
-                                <option value="">Chọn quận/huyện</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label>Phường xã</label>
-                            <select name="ward" class="form-control ward-select" required>
-                                <option value="">Chọn phường/xã</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <input type="checkbox" name="is_default" value="1">
-                            <label>Đặt làm địa chỉ mặc định</label>
-                        </div>
-                    </div>
-                    <div class="addresses-new-modal-action">
-                        <button type="submit" class="btn btn-primary">Thêm địa chỉ</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
-   @include('Frontend.partials.footer')
-   @include('Frontend.partials.modal')
+    </main>
+
+    @include('Frontend.partials.footer')
+    @include('Frontend.partials.modal')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-    // Load provinces for all modals
-            document.querySelectorAll('.province-select').forEach(function (provinceSelect) {
-                const id = provinceSelect.getAttribute('data-id');
-                fetch('/address/province')
-                    .then(response => response.json())
-                    .then(data => {
-                        provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
-                        data.forEach(province => {
-                            provinceSelect.innerHTML += `<option value="${province.ProvinceName}" ${province.ProvinceName === provinceSelect.value ? 'selected' : ''}>${province.ProvinceName}</option>`;
-                        });
-                    });
-
-                // Load districts when province changes
-                provinceSelect.addEventListener('change', function () {
-                    const districtSelect = document.querySelector(`.district-select[data-id="${id}"]`);
-                    const wardSelect = document.querySelector(`.ward-select[data-id="${id}"]`);
-                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-
-                    if (this.value) {
-                        fetch(`/address/district/${this.value}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                data.forEach(district => {
-                                    districtSelect.innerHTML += `<option value="${district.DistrictName}">${district.DistrictName}</option>`;
-                                });
-                            });
+document.addEventListener("DOMContentLoaded", function () {
+    function loadProvinces(select, selectedName = null, callback = null) {
+        fetch('/address/province')
+            .then(res => res.json())
+            .then(data => {
+                select.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
+                data.forEach(item => {
+                    const option = new Option(item.ProvinceName, item.ProvinceID);
+                    if (item.ProvinceName === selectedName) {
+                        option.selected = true;
                     }
+                    select.append(option);
                 });
+                if (callback) callback(select.value);
+            });
+    }
 
-                // Load wards when district changes
-                document.querySelector(`.district-select[data-id="${id}"]`).addEventListener('change', function () {
-                    const wardSelect = document.querySelector(`.ward-select[data-id="${id}"]`);
-                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-
-                    if (this.value) {
-                        fetch(`/address/ward/${this.value}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                data.forEach(ward => {
-                                    wardSelect.innerHTML += `<option value="${ward.WardName}">${ward.WardName}</option>`;
-                                });
-                            });
+    function loadDistricts(provinceId, select, selectedName = null, callback = null) {
+        fetch(`/address/district/${provinceId}`)
+            .then(res => res.json())
+            .then(data => {
+                select.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                data.forEach(item => {
+                    const option = new Option(item.DistrictName, item.DistrictID);
+                    if (item.DistrictName === selectedName) {
+                        option.selected = true;
                     }
+                    select.append(option);
+                });
+                if (callback) callback(select.value);
+            });
+    }
+
+    function loadWards(districtId, select, selectedName = null) {
+        fetch(`/address/ward/${districtId}`)
+            .then(res => res.json())
+            .then(data => {
+                select.innerHTML = '<option value="">Chọn phường/xã</option>';
+                data.forEach(item => {
+                    const option = new Option(item.WardName, item.WardCode);
+                    if (item.WardName === selectedName) {
+                        option.selected = true;
+                    }
+                    select.append(option);
+                });
+            });
+    }
+
+    // Khi mở modal chỉnh sửa
+    document.querySelectorAll('[id^="edit_address_"]').forEach(modal => {
+        modal.addEventListener('show.bs.modal', function () {
+            const form = modal.querySelector('form');
+            const provinceName = form.querySelector('select[name="province"] option[selected]').textContent;
+            const districtName = form.querySelector('select[name="district"] option[selected]').textContent;
+            const wardName = form.querySelector('select[name="ward"] option[selected]').textContent;
+
+            const provinceSelect = form.querySelector('select[name="province"]');
+            const districtSelect = form.querySelector('select[name="district"]');
+            const wardSelect = form.querySelector('select[name="ward"]');
+
+            loadProvinces(provinceSelect, provinceName, (provinceId) => {
+                loadDistricts(provinceId, districtSelect, districtName, (districtId) => {
+                    loadWards(districtId, wardSelect, wardName);
                 });
             });
         });
-        $("body").removeClass("preload");
-        document.addEventListener('lazybeforeunveil', function(e) {
-            var bg = e.target.getAttribute('data-bg');
-            if (bg) e.target.style.backgroundImage = 'url(' + bg + ')';
-        });
-        if (window.noPS) {
-            window.addEventListener("load", (event) => {
-                if ($('input[name="Token"]').length > 0) {
-                    $.getScript('https://www.google.com/recaptcha/api.js?render=6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK').done(function(s, r) {
-                        $('head').append(s);
-                        $('input[name="Token"]').each(function() {
-                            var flagId = $(this).attr('id');
-                            grecaptcha.ready(function() {
-                                grecaptcha.execute('6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK', {
-                                        action: 'submit'
-                                    })
-                                    .then(function(token) {
-                                        document.getElementById(flagId).value = token;
-                                    });
-                            });
-                        })
-                    });
-                }
+    });
 
-                $('img[loading="lazy"]').each(function() {
-                    $(this).removeAttr('loading');
-                })
-            });
-        } else {
-            // Jquery touch
-            jQuery.event.special.touchstart = {
-                setup: function(e, t, n) {
-                    this.addEventListener("touchstart", n, {
-                        passive: !t.includes("noPreventDefault")
-                    })
-                }
-            }, jQuery.event.special.touchmove = {
-                setup: function(e, t, n) {
-                    this.addEventListener("touchmove", n, {
-                        passive: !t.includes("noPreventDefault")
-                    })
-                }
-            };
+    // Với form thêm mới: chỉ load tỉnh
+    document.querySelectorAll('.province-select').forEach(select => {
+        if (select.options.length <= 1) {
+            loadProvinces(select);
         }
-    </script> <button class="overplay-all" title="Đóng"></button>
+
+        select.addEventListener('change', function () {
+            const form = this.closest('form');
+            const districtSelect = form.querySelector('.district-select');
+            const wardSelect = form.querySelector('.ward-select');
+            loadDistricts(this.value, districtSelect);
+            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+        });
+    });
+
+    document.querySelectorAll('.district-select').forEach(select => {
+        select.addEventListener('change', function () {
+            const form = this.closest('form');
+            const wardSelect = form.querySelector('.ward-select');
+            loadWards(this.value, wardSelect);
+        });
+    });
+});
+</script>
+
+    <button class="overplay-all" title="Đóng"></button>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

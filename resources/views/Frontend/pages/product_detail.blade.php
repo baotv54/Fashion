@@ -107,9 +107,247 @@
 
 
 
+		<!-- <style>
+            .sapo-product-reviews-summary,
+            #sapo-product-reviews-noitem {
+                background-color: rgba(128, 187, 53, 0.1)
+            }
 
+            .bpr-summary-average {
+                color: #80BB35
+            }
 
+            .sapo-product-reviews-star {
+                color: #ffbe00
+            }
 
+            .btn-new-review {
+                background-color: #80BB35;
+                border-color: #80BB35
+            }
+
+            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter input:checked~.checkmark {
+                color: #80BB35;
+                border-color: #80BB35
+            }
+
+            #sapo-product-reviews-frm #fileAttach svg path {
+                fill: #80BB35
+            }
+
+            #sapo-product-reviews-frm .bpr-button-submit {
+                background-color: #80BB35;
+                border-color: #80BB35
+            }
+
+            .sapo-review-verified,
+            .sapo-review-actions {
+                color: #80BB35
+            }
+
+            .icon-verified path {
+                fill: #80BB35
+            }
+
+            #sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .sapo-review-reply-item .sapo-review-reply-author .is-admin {
+                background-color: #80BB35;
+                border-color: #80BB35
+            }
+
+            .simple-pagination li span.current,
+            .simple-pagination li a.current {
+                color: #80BB35;
+                border-color: #80BB35;
+            }
+
+            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4,
+            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p {
+                background-color: #80BB35;
+                border-color: #80BB35;
+            }
+
+            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4.active,
+            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p.active {
+                color: #80BB35
+            }
+
+            #sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .btn-show-prev {
+                background-color: rgba(128, 187, 53, 0.1);
+                color: #80BB35
+            }
+
+            .bpr-success-popup .icon-checked svg path {
+                fill: #80BB35
+            }
+
+            .sapo-review-reply-form .bpr-form-actions .bpr-reply-button-submit {
+                border-color: #80BB35;
+                background: #80BB35;
+            }
+        </style> -->
+
+		<style>
+							.sapo-product-reviews {
+					font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+					max-width: 100%;
+					margin: 20px 0;
+				}
+
+				.sapo-product-reviews-summary {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					padding: 15px;
+					background-color: #f8f9fa;
+					border-radius: 8px;
+					margin-bottom: 20px;
+				}
+
+				.bpr-summary {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				}
+
+				.bpr-summary-average {
+					font-size: 32px;
+					font-weight: bold;
+					color: #333;
+				}
+
+				.max-score {
+					font-size: 18px;
+					color: #777;
+				}
+
+				.rating-stars {
+					margin: 10px 0;
+					color: #ffc107;
+					font-size: 20px;
+				}
+
+				.rating-stars i {
+					margin: 0 2px;
+				}
+
+				.btn-new-review {
+					padding: 8px 16px;
+					border-radius: 4px;
+					background-color: #17a2b8;
+					color: white;
+					border: none;
+					font-weight: 500;
+					transition: all 0.3s;
+				}
+
+				.btn-new-review:hover {
+					background-color: #138496;
+				}
+
+				/* Styling cho danh sách đánh giá */
+				.sapo-product-reviews-list {
+					margin-top: 30px;
+				}
+
+				.sapo-review {
+					padding: 15px;
+					border-bottom: 1px solid #eee;
+					margin-bottom: 15px;
+				}
+
+				.sapo-review-header {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					margin-bottom: 10px;
+				}
+
+				.sapo-review-author {
+					font-weight: bold;
+					font-size: 16px;
+				}
+
+				.sapo-review-body {
+					margin: 15px 0;
+				}
+
+				.sapo-review-verified {
+					display: flex;
+					align-items: center;
+					color: #28a745;
+					font-size: 14px;
+					margin-bottom: 10px;
+				}
+
+				.icon-verified {
+					width: 16px;
+					height: 16px;
+					margin-right: 5px;
+				}
+
+				.sapo-review-content-body {
+					display: block;
+					line-height: 1.6;
+				}
+
+				.sapo-review-actions {
+					font-size: 13px;
+					color: #777;
+				}
+
+				.sapo-review-actions ul {
+					list-style: none;
+					padding: 0;
+					margin: 0;
+				}
+
+				/* Styling cho form đánh giá */
+				#review-form {
+					background-color: #f8f9fa;
+					padding: 20px;
+					border-radius: 8px;
+				}
+
+				.star-rating {
+					margin: 15px 0;
+				}
+
+				.stars {
+					display: flex;
+					flex-direction: row-reverse;
+					justify-content: flex-end;
+				}
+
+				.star-item {
+					font-size: 30px;
+					color: #ffc107;
+					cursor: pointer;
+					margin-right: 5px;
+				}
+
+				.star-item:hover,
+				.star-item:hover ~ .star-item {
+					color: #ffc107;
+				}
+
+				textarea.form-control {
+					resize: vertical;
+					min-height: 100px;
+				}
+
+				.btn-success {
+					background-color: #28a745;
+					border: none;
+					padding: 10px 20px;
+					border-radius: 4px;
+					font-weight: 500;
+					transition: all 0.3s;
+				}
+
+				.btn-success:hover {
+					background-color: #218838;
+				}
+		</style>
 
 
 
@@ -197,7 +435,7 @@
 		.home-main-slider .home-main-slider-items:not(.slick-slider) .home-main-slider-item {
 			min-width: 100%;
 		}
-	</style>
+	</styl>
 
 	<link rel="dns-prefetch" href="index.html">
 	<link rel="dns-prefetch" href="http://hstatic.net/">
@@ -576,6 +814,124 @@
 
 		</div>
 
+
+		<div id="sapo-product-reviews" class="sapo-product-reviews" data-id="{{ $product->id }}">
+    <div id="sapo-product-reviews-sub">
+        <div class="sapo-product-reviews-summary">
+            <div class="summary-filter">
+                <div class="sapo-product-reviews-action">
+                    <div itemscope itemtype="http://schema.org/Product">
+                        <span style="display:none" itemprop="name">{{ $product->name }}</span>
+
+                        @php
+                            $reviews = $product->reviews ?? collect();
+                            $totalReviews = $reviews->count();
+                            $averageRating = $reviews->avg('rating') ?? 0;
+                            $userReview = auth()->check() ? $reviews->firstWhere('user_id', auth()->id()) : null;
+                        @endphp
+
+                        <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="bpr-summary">
+                            <span style="display:none" itemprop="itemReviewed">{{ $product->name }}</span>
+                            <meta content="5" itemprop="bestRating">
+                            <meta content="1" itemprop="worstRating">
+                            <div class="bpr-summary-average">
+                                <span itemprop="ratingValue">{{ number_format($averageRating, 1) }}</span>
+                                <span class="max-score">/5</span>
+                            </div>
+                            <div class="rating-stars">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <i class="fa fa-star{{ $i <= floor($averageRating) ? '' : '-o' }}"></i>
+                                @endfor
+                            </div>
+                            <p>(<span itemprop="ratingCount">{{ $totalReviews }}</span> đánh giá)</p>
+                        </div>
+                    </div>
+
+                    @auth
+                        @if ($hasPurchased && $userReview === null)
+                            <button type="button" class="btn btn-primary btn-new-review"
+                                onclick="document.getElementById('review-form').scrollIntoView({ behavior: 'smooth' })">
+                                Gửi đánh giá của bạn
+                            </button>
+                        @elseif($userReview)
+                            <div class="alert alert-info mt-3">
+                                Bạn đã đánh giá sản phẩm này.
+                                <a href="{{ route('reviews.edit', $userReview->id) }}" class="btn btn-sm btn-outline-primary">Chỉnh sửa đánh giá</a>
+                            </div>
+                        @else
+                            <div class="alert alert-warning mt-3">
+                                ⚠️ Bạn cần <strong>mua sản phẩm</strong> để có thể đánh giá.
+                            </div>
+                        @endif
+                    @else
+                        <p><a href="{{ route('login') }}" class="btn btn-outline-primary">Đăng nhập</a> để gửi đánh giá</p>
+                    @endauth
+                </div>
+            </div>
+        </div>
+
+        {{-- Danh sách đánh giá --}}
+        <div id="bpr-list" class="sapo-product-reviews-list mt-4">
+            @forelse ($reviews as $review)
+                <div class="sapo-review mb-3 p-3 border rounded">
+                    <div class="sapo-review-header d-flex justify-content-between">
+                        <strong class="sapo-review-author">{{ $review->user->name ?? 'Ẩn danh' }}</strong>
+                        <div class="rating-stars text-warning">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="fa fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="sapo-review-body mt-2">
+                        <div class="sapo-review-verified text-success small mb-1">
+                            <i class="fa fa-check-circle"></i> Đã mua hàng tại F1GENZ Shoes
+                        </div>
+                        <div class="sapo-review-content-body" itemprop="description">{{ $review->comment }}</div>
+                    </div>
+                    <div class="sapo-review-actions text-muted small mt-2">
+                        <span itemprop="datePublished">{{ $review->created_at->format('H:i d/m/Y') }}</span>
+                    </div>
+                </div>
+            @empty
+                <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+            @endforelse
+        </div>
+
+        {{-- Form gửi đánh giá --}}
+        @auth
+            @if ($hasPurchased && $userReview === null)
+                <div id="review-form" class="mt-5">
+                    <form method="POST" action="{{ route('reviews.store', $product->id) }}">
+                        @csrf
+                        <h4 class="mb-3">Đánh giá sản phẩm</h4>
+
+                        {{-- Chọn sao --}}
+                        <div class="form-group mb-3">
+                            <label for="rating">Số sao:</label>
+                            <input type="hidden" name="rating" id="selected-rating" value="5">
+                            <div class="stars">
+                                @for ($i = 5; $i >= 1; $i--)
+                                    <i class="fa fa-star star-item" data-rating="{{ $i }}"></i>
+                                @endfor
+                            </div>
+                        </div>
+
+                        {{-- Nội dung --}}
+                        <div class="form-group mb-3">
+                            <label for="comment">Nội dung:</label>
+                            <textarea name="comment" id="comment" rows="4" class="form-control" placeholder="Nhập nội dung đánh giá...">{{ old('comment') }}</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Gửi đánh giá</button>
+                    </form>
+                </div>
+            @endif
+        @endauth
+    </div>
+</div>
+
+
+
 		<!-- <div class="sapo-buyxgety-module-detail-v2"></div>
 		<div class="main-product-description">
 			<div class="main-product-description-left ">
@@ -694,537 +1050,66 @@
 
 		</div> -->
 
-		<!-- <div class="main-product-relate">
-			<div class="section-title-all">
-				<h2>Sản phẩm liên quan</h2>
-			</div>
-			<div class="main-product-relate-data">
-				<div class="product-item" data-id="102679987" data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445638"></div>
-							<span class="product-item-discount">-11%</span> <a class="product-item-link" href="converse-chuck-taylor-all-star-mono-leather-low-top.html" aria-label="Converse Chuck Taylor All Star Mono Leather Low Top" title="Converse Chuck Taylor All Star Mono Leather Low Top">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/136823c-5-650x650-15ff91e141be424b95a2892abf3fe169-jpege39c.jpg?v=1699864035783"
-									alt="Converse Chuck Taylor All Star Mono Leather Low Top"
-									title="Converse Chuck Taylor All Star Mono Leather Low Top">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/136823c-2-650x650-a1096454688d47c693bad810d9321f85-jpege39c.jpg?v=1699864035783"
-									alt="Converse Chuck Taylor All Star Mono Leather Low Top"
-									title="Converse Chuck Taylor All Star Mono Leather Low Top">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="converse-chuck-taylor-all-star-mono-leather-low-top.html" aria-label="Converse Chuck Taylor All Star Mono Leather Low Top">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Mono Leather Low Top"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/136823c-2-650x650-a1096454688d47c693bad810d9321f85-jpege39c.jpg?v=1699864035783" alt="Converse Chuck Taylor All Star Mono Leather Low Top">
-									</a>
-								</li>
-								<li>
-									<a href="converse-chuck-taylor-all-star-mono-leather-low-top.html" aria-label="Converse Chuck Taylor All Star Mono Leather Low Top">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Mono Leather Low Top"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/136823c-1-650x650-f30ba8e6f4ca46e593e49c10cf33e7dd-jpege39c.jpg?v=1699864035783" alt="Converse Chuck Taylor All Star Mono Leather Low Top">
-									</a>
-								</li>
-								<li>
-									<a href="converse-chuck-taylor-all-star-mono-leather-low-top.html" aria-label="Converse Chuck Taylor All Star Mono Leather Low Top">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Mono Leather Low Top"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/136823c-3-650x650-ca3915e0f3f844de85221ac1eeecd853-jpege39c.jpg?v=1699864035783" alt="Converse Chuck Taylor All Star Mono Leather Low Top">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="converse-chuck-taylor-all-star-mono-leather-low-top.html" aria-label="Converse Chuck Taylor All Star Mono Leather Low Top" title="Converse Chuck Taylor All Star Mono Leather Low Top">Converse Chuck Taylor All Star Mono Leather Low Top</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.900.000₫</span>
-								<del>2.139.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445638"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679983" data-handle="chuck-taylor-all-star-classic">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445637"></div>
-							<span class="product-item-discount">-13%</span> <a class="product-item-link" href="chuck-taylor-all-star-classic.html" aria-label="Chuck Taylor All Star Classic" title="Chuck Taylor All Star Classic">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/121176-drake-650x650-65cdda7193cb40b9977bfd6379e567c5-jpeg92f9.jpg?v=1699864033743"
-									alt="Chuck Taylor All Star Classic"
-									title="Chuck Taylor All Star Classic">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/121176-drake2-650x650-b62837853a4d4d739ba4f556c2cd82bb-jpeg92f9.jpg?v=1699864033743"
-									alt="Chuck Taylor All Star Classic"
-									title="Chuck Taylor All Star Classic">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic.html" aria-label="Chuck Taylor All Star Classic">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121176-drake2-650x650-b62837853a4d4d739ba4f556c2cd82bb-jpeg92f9.jpg?v=1699864033743" alt="Chuck Taylor All Star Classic">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic.html" aria-label="Chuck Taylor All Star Classic">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121176-drake4-650x650-fdf7ea31c9444facbe9574aac96d2594-jpeg92f9.png?v=1699864033743" alt="Chuck Taylor All Star Classic">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic.html" aria-label="Chuck Taylor All Star Classic">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121176-drake5-650x650-0c86d0e9e2014659a3f9c87acbf6dbb5-jpeg92f9.jpg?v=1699864033743" alt="Chuck Taylor All Star Classic">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic.html" aria-label="Chuck Taylor All Star Classic" title="Chuck Taylor All Star Classic">Chuck Taylor All Star Classic</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.309.000₫</span>
-								<del>1.500.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">new</span>
-									<span class="product-item-detail-info-tag">freeship</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445637"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679979" data-handle="chuck-taylor-all-star-classic-121184">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge noSale" data-id="33445636"></div>
-							<a class="product-item-link" href="chuck-taylor-all-star-classic-121184.html" aria-label="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/121184-drake-650x650-3be016cc519b40a09093df5718bdbaf9-jpeg2a24.jpg?v=1699864031380"
-									alt="Chuck Taylor All Star Classic - 121184"
-									title="Chuck Taylor All Star Classic - 121184">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/121184-drake1-650x650-21b3c20f79d8491a993fc5a0744756b2-jpeg2a24.png?v=1699864031380"
-									alt="Chuck Taylor All Star Classic - 121184"
-									title="Chuck Taylor All Star Classic - 121184">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic-121184.html" aria-label="Chuck Taylor All Star Classic - 121184">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 121184"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121184-drake1-650x650-21b3c20f79d8491a993fc5a0744756b2-jpeg2a24.jpg?v=1699864031380" alt="Chuck Taylor All Star Classic - 121184">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-121184.html" aria-label="Chuck Taylor All Star Classic - 121184">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 121184"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121184-drake2-650x650-e8371211b05e47dfa5d17f7db84c2f01-jpeg2a24.jpg?v=1699864031380" alt="Chuck Taylor All Star Classic - 121184">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-121184.html" aria-label="Chuck Taylor All Star Classic - 121184">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 121184"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/121184-drake3-650x650-d31f396223b14739862640b120cb26db-jpeg2a24.jpg?v=1699864031380" alt="Chuck Taylor All Star Classic - 121184">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic-121184.html" aria-label="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184">Chuck Taylor All Star Classic - 121184</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>4.399.000₫</span>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">freeship</span>
-									<span class="product-item-detail-info-tag">new</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445636"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679975" data-handle="chuck-taylor-all-star-classic-r">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445635"></div>
-							<span class="product-item-discount">-18%</span> <a class="product-item-link" href="chuck-taylor-all-star-classic-r.html" aria-label="Chuck Taylor All Star Classic R" title="Chuck Taylor All Star Classic R">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/126196-002-650x650-115fc0e823304481a9e282f4c63c4e42-jpeg2172.jpg?v=1699864029033"
-									alt="Chuck Taylor All Star Classic R"
-									title="Chuck Taylor All Star Classic R">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/126196-drake1-1-650x650-92cc0a3ce2b94489b7d9c2b7879e8964-jpeg2172.png?v=1699864029033"
-									alt="Chuck Taylor All Star Classic R"
-									title="Chuck Taylor All Star Classic R">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic-r.html" aria-label="Chuck Taylor All Star Classic R">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic R"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/126196-drake1-1-650x650-92cc0a3ce2b94489b7d9c2b7879e8964-jpeg2172.jpg?v=1699864029033" alt="Chuck Taylor All Star Classic R">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-r.html" aria-label="Chuck Taylor All Star Classic R">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic R"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/126196-drake2-1-650x650-db9dd9d3dc3d4ae4aa590fff4f81ea5b-jpeg2172.jpg?v=1699864029033" alt="Chuck Taylor All Star Classic R">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-r.html" aria-label="Chuck Taylor All Star Classic R">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic R"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/126196-drake3-1-650x650-bfd60a5f8e55446182efb0ef519d28bf-jpeg2172.jpg?v=1699864029033" alt="Chuck Taylor All Star Classic R">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic-r.html" aria-label="Chuck Taylor All Star Classic R" title="Chuck Taylor All Star Classic R">Chuck Taylor All Star Classic R</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.359.000₫</span>
-								<del>1.659.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">new</span>
-									<span class="product-item-detail-info-tag">freeship</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445635"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679971" data-handle="chuck-taylor-all-star-classic-127440">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445634"></div>
-							<span class="product-item-discount">-14%</span> <a class="product-item-link" href="chuck-taylor-all-star-classic-127440.html" aria-label="Chuck Taylor All Star Classic - 127440" title="Chuck Taylor All Star Classic - 127440">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/127440-drake-650x650-ac03230c5cb64fe481d19063beee86a8-jpeg3699.jpg?v=1699864026270"
-									alt="Chuck Taylor All Star Classic - 127440"
-									title="Chuck Taylor All Star Classic - 127440">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/127440-drake1-1-650x650-b62ac2b96214438c9b4030bbbb361359-jpeg3699.jpg?v=1699864026270"
-									alt="Chuck Taylor All Star Classic - 127440"
-									title="Chuck Taylor All Star Classic - 127440">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic-127440.html" aria-label="Chuck Taylor All Star Classic - 127440">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 127440"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/127440-drake1-1-650x650-b62ac2b96214438c9b4030bbbb361359-jpeg3699.jpg?v=1699864026270" alt="Chuck Taylor All Star Classic - 127440">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-127440.html" aria-label="Chuck Taylor All Star Classic - 127440">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 127440"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/127440-drake2-1-650x650-fb92f6e486904261a4e6b372195be5d5-jpeg3699.png?v=1699864026270" alt="Chuck Taylor All Star Classic - 127440">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-127440.html" aria-label="Chuck Taylor All Star Classic - 127440">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - 127440"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/127440-drake3-1-650x650-f7c3d13070a44458b47e2280c6d70a72-jpeg3699.jpg?v=1699864026270" alt="Chuck Taylor All Star Classic - 127440">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic-127440.html" aria-label="Chuck Taylor All Star Classic - 127440" title="Chuck Taylor All Star Classic - 127440">Chuck Taylor All Star Classic - 127440</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.459.000₫</span>
-								<del>1.690.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">freeship</span>
-									<span class="product-item-detail-info-tag">được yêu thích</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445634"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679967" data-handle="chuck-taylor-all-star-classic-b">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445633"></div>
-							<span class="product-item-discount">-18%</span> <a class="product-item-link" href="chuck-taylor-all-star-classic-b.html" aria-label="Chuck Taylor All Star Classic B" title="Chuck Taylor All Star Classic B">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/m5039-650x650-2622d34a5dc34334a35aa75cda0e4b04-jpegd560.jpg?v=1699864023877"
-									alt="Chuck Taylor All Star Classic B"
-									title="Chuck Taylor All Star Classic B">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/m5039-drake1-650x650-cb07a70df0a7475f9b55a08019cf3be9-jpegd560.jpg?v=1699864023877"
-									alt="Chuck Taylor All Star Classic B"
-									title="Chuck Taylor All Star Classic B">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic-b.html" aria-label="Chuck Taylor All Star Classic B">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic B"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m5039-drake1-650x650-cb07a70df0a7475f9b55a08019cf3be9-jpegd560.jpg?v=1699864023877" alt="Chuck Taylor All Star Classic B">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-b.html" aria-label="Chuck Taylor All Star Classic B">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic B"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m5039-drake2-650x650-dca31adf97e44f80a63616596fe6b5d7-jpegd560.jpg?v=1699864023877" alt="Chuck Taylor All Star Classic B">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-b.html" aria-label="Chuck Taylor All Star Classic B">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic B"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m5039-drake3-650x650-0155066cde3b43af8973426296f1677a-jpegd560.jpg?v=1699864023877" alt="Chuck Taylor All Star Classic B">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic-b.html" aria-label="Chuck Taylor All Star Classic B" title="Chuck Taylor All Star Classic B">Chuck Taylor All Star Classic B</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.359.000₫</span>
-								<del>1.659.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">hot</span>
-									<span class="product-item-detail-info-tag">new</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445633"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679963" data-handle="chuck-taylor-all-star-classic-m3310">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge " data-id="33445632"></div>
-							<span class="product-item-discount">-14%</span> <a class="product-item-link" href="chuck-taylor-all-star-classic-m3310.html" aria-label="Chuck Taylor All Star Classic - M3310" title="Chuck Taylor All Star Classic - M3310">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/m3310-drake1-650x650-66ac5af047724835b8bc5546f376050b-jpeg9223.jpg?v=1699864021483"
-									alt="Chuck Taylor All Star Classic - M3310"
-									title="Chuck Taylor All Star Classic - M3310">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/m3310-drake2-650x650-5fa0da1010a5460db5954e1824439e88-jpeg9223.png?v=1699864021483"
-									alt="Chuck Taylor All Star Classic - M3310"
-									title="Chuck Taylor All Star Classic - M3310">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="chuck-taylor-all-star-classic-m3310.html" aria-label="Chuck Taylor All Star Classic - M3310">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - M3310"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m3310-drake2-650x650-5fa0da1010a5460db5954e1824439e88-jpeg9223.jpg?v=1699864021483" alt="Chuck Taylor All Star Classic - M3310">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-m3310.html" aria-label="Chuck Taylor All Star Classic - M3310">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - M3310"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m3310-drake3-650x650-c7f0d1317c694eccabee832634346f75-jpeg9223.jpg?v=1699864021483" alt="Chuck Taylor All Star Classic - M3310">
-									</a>
-								</li>
-								<li>
-									<a href="chuck-taylor-all-star-classic-m3310.html" aria-label="Chuck Taylor All Star Classic - M3310">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Chuck Taylor All Star Classic - M3310"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/m3310c-1-650x650-b7297d7e59594d18a2c086eac13720a9-jpeg9223.jpg?v=1699864021483" alt="Chuck Taylor All Star Classic - M3310">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="chuck-taylor-all-star-classic-m3310.html" aria-label="Chuck Taylor All Star Classic - M3310" title="Chuck Taylor All Star Classic - M3310">Chuck Taylor All Star Classic - M3310</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.459.000₫</span>
-								<del>1.690.000₫</del>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">new</span>
-									<span class="product-item-detail-info-tag">hot trend</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445632"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="product-item" data-id="102679959" data-handle="converse-chuck-taylor-all-star-archive-paint-splatter">
-					<div class="product-item-wrap">
-						<div class="product-item-image hasThumbs hasThumbsIcon">
-							<div class="sapo-buyxgety-badge noSale" data-id="33445631"></div>
-							<a class="product-item-link" href="converse-chuck-taylor-all-star-archive-paint-splatter.html" aria-label="Converse Chuck Taylor All Star Archive Paint Splatter" title="Converse Chuck Taylor All Star Archive Paint Splatter">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/170802c-650x650-b54bad4b49f8453a87b8858aa91829b3-jpeg4333.jpg?v=1699864019490"
-									alt="Converse Chuck Taylor All Star Archive Paint Splatter"
-									title="Converse Chuck Taylor All Star Archive Paint Splatter">
-								<img class="w-auto" loading="lazy" width="480" height="480"
-									src="../bizweb.dktcdn.net/thumb/large/100/493/370/products/170802c-5-650x650-f1ad72b73f61442c9bc64ae498e389f5-jpeg4333.jpg?v=1699864019490"
-									alt="Converse Chuck Taylor All Star Archive Paint Splatter"
-									title="Converse Chuck Taylor All Star Archive Paint Splatter">
-							</a>
-							<ul class="product-item-thumbs">
-								<li>
-									<a href="converse-chuck-taylor-all-star-archive-paint-splatter.html" aria-label="Converse Chuck Taylor All Star Archive Paint Splatter">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Archive Paint Splatter"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/170802c-5-650x650-f1ad72b73f61442c9bc64ae498e389f5-jpeg4333.jpg?v=1699864019490" alt="Converse Chuck Taylor All Star Archive Paint Splatter">
-									</a>
-								</li>
-								<li>
-									<a href="converse-chuck-taylor-all-star-archive-paint-splatter.html" aria-label="Converse Chuck Taylor All Star Archive Paint Splatter">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Archive Paint Splatter"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/170802c-6-650x650-213a19bdd00e4ea585a7d04f3d5f72b4-jpeg4333.jpg?v=1699864019490" alt="Converse Chuck Taylor All Star Archive Paint Splatter">
-									</a>
-								</li>
-								<li>
-									<a href="converse-chuck-taylor-all-star-archive-paint-splatter.html" aria-label="Converse Chuck Taylor All Star Archive Paint Splatter">
-										<img class="w-auto" loading="lazy" decoding="async" width="50" height="50" title="Converse Chuck Taylor All Star Archive Paint Splatter"
-											src="../bizweb.dktcdn.net/thumb/thumb/100/493/370/products/170802c-4-650x650-57668f692b544a5c9eaba4ed4fa1df85-jpeg4333.jpg?v=1699864019490" alt="Converse Chuck Taylor All Star Archive Paint Splatter">
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="product-item-action">
-							<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 512 512" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M359.511,37.984c-38.907,0-75.282,14.653-103.511,41.478c-28.229-26.825-64.605-41.478-103.511-41.478 C68.406,37.984,0,108.033,0,194.135c0,49.918,42.543,112.126,126.449,184.895c61.346,53.204,123.555,93.023,124.176,93.419 c1.639,1.045,3.507,1.567,5.375,1.567c1.868,0,3.736-0.523,5.376-1.568c0.621-0.396,62.83-40.215,124.176-93.419 C469.457,306.26,512,244.052,512,194.135C512,108.033,443.594,37.984,359.511,37.984z M372.62,363.771 c-49.885,43.284-100.379,77.567-116.62,88.301c-16.216-10.715-66.578-44.903-116.448-88.153C61.34,296.089,20,237.378,20,194.135 C20,119.06,79.435,57.984,152.489,57.984c36.726,0,70.877,15.094,96.161,42.501c1.893,2.052,4.558,3.219,7.35,3.219 s5.457-1.167,7.35-3.219c25.285-27.406,59.435-42.5,96.161-42.5C432.565,57.984,492,119.06,492,194.135 C492,237.344,450.719,296.003,372.62,363.771z" fill="#000000" data-original="#000000"></path>
-									<path d="M347.379,93.307l-0.376,0.065c-5.438,0.966-9.063,6.157-8.097,11.595c0.861,4.846,5.078,8.252,9.834,8.252 c0.581,0,1.17-0.051,1.76-0.156l0.199-0.034c5.446-0.917,9.118-6.075,8.201-11.521C357.983,96.06,352.82,92.393,347.379,93.307z" fill="#000000" data-original="#000000"></path>
-									<path d="M439.056,131.382c-12.278-16.867-29.718-29.43-49.106-35.375c-5.281-1.621-10.873,1.349-12.492,6.629 c-1.619,5.28,1.349,10.873,6.629,12.492c31.959,9.8,54.279,41.078,54.279,76.063c0,5.523,4.477,10,10,10s10-4.477,9.999-10.001 C458.365,169.416,451.688,148.735,439.056,131.382z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-							<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 612.01 612.01" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
-								</svg></button>
-							<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
-									<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
-								</svg></button>
-						</div>
-						<div class="product-item-detail">
-							<h3 class="product-item-detail-name">
-								<a href="converse-chuck-taylor-all-star-archive-paint-splatter.html" aria-label="Converse Chuck Taylor All Star Archive Paint Splatter" title="Converse Chuck Taylor All Star Archive Paint Splatter">Converse Chuck Taylor All Star Archive Paint Splatter</a>
-							</h3>
-							<div class="product-item-detail-price">
-								<span>1.800.000₫</span>
-							</div>
-							<div class="product-item-detail-info">
-								<div class="product-item-detail-info-data">
-									<span class="product-item-detail-info-tag">mua nhiều</span>
-									<span class="product-item-detail-info-tag">new</span>
-								</div>
-								<div class="sapo-product-reviews-badge" data-id="33445631"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> -->
+		<div class="main-product-relate">
+    <div class="section-title-all">
+        <h2>Sản phẩm liên quan</h2>
+    </div>
+    <div class="main-product-relate-data">
+        @foreach($relatedProducts as $product)
+        <div class="product-item" data-id="{{ $product->id }}" data-handle="{{ Str::slug($product->name) }}">
+            <div class="product-item-wrap">
+                <div class="product-item-image hasThumbs hasThumbsIcon">
+                    <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+                    @if($product->discount)
+                        <span class="product-item-discount">-{{ $product->discount }}%</span>
+                    @endif
+                    <a class="product-item-link" href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
+                        <img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
+                        <img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image2 ?? $product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
+                    </a>
+                    <ul class="product-item-thumbs">
+                        @if($product->thumb1)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb1) }}"></a></li>@endif
+                        @if($product->thumb2)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb2) }}"></a></li>@endif
+                        @if($product->thumb3)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb3) }}"></a></li>@endif
+                    </ul>
+                </div>
+
+                <div class="product-item-action">
+                    <button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"></button>
+                    <button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"></button>
+                    <form method="POST" action="{{ route('cart.add') }}">
+                        @csrf
+                        <input type="hidden" value="{{ $product->id }}" name="product_id" />
+                        <input type="hidden" value="1" name="quantity" />
+                        <button type="submit" title="Thêm vào giỏ" class="shop-addLoop-button">Thêm vào giỏ</button>
+                    </form>
+                </div>
+
+                <div class="product-item-detail">
+                    <h3 class="product-item-detail-name">
+                        <a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">{{ $product->name }}</a>
+                    </h3>
+                    <div class="product-item-detail-price">
+                        <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                        @if($product->original_price)
+                            <del>{{ number_format($product->original_price, 0, ',', '.') }}₫</del>
+                        @endif
+                    </div>
+                    <div class="product-item-detail-info">
+                        <div class="product-item-detail-info-data">
+                            @if($product->is_new)<span class="product-item-detail-info-tag">new</span>@endif
+                            @if($product->is_freeship)<span class="product-item-detail-info-tag">freeship</span>@endif
+                            @if($product->is_hot)<span class="product-item-detail-info-tag">hot</span>@endif
+                        </div>
+                        <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+
 
 		<!-- <div class="main-product-seen">
 			<div class="section-title-all">
@@ -1308,6 +1193,37 @@
             });
         }
     }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý sự kiện chọn sao
+    const stars = document.querySelectorAll('.star-item');
+    const ratingInput = document.getElementById('selected-rating');
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.getAttribute('data-rating');
+            ratingInput.value = rating;
+            
+            // Reset tất cả sao về không được chọn
+            stars.forEach(s => s.style.color = '#ddd');
+            
+            // Đánh dấu các sao được chọn
+            stars.forEach(s => {
+                if (s.getAttribute('data-rating') <= rating) {
+                    s.style.color = '#ffc107';
+                }
+            });
+        });
+    });
+    
+    // Khởi tạo hiển thị sao mặc định (5 sao)
+    stars.forEach(s => {
+        if (s.getAttribute('data-rating') <= 5) {
+            s.style.color = '#ffc107';
+        }
+    });
+});
 </script>
 
 </script>

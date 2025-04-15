@@ -20,7 +20,7 @@
                             </button>
                         </li>
                         <li class="active">
-                            <a href="/home" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
+                            <a href="/" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
                         </li>
                         <li class="hasChild">
                             <a href="/view" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
@@ -29,7 +29,7 @@
                                 <li><a href="converse-allc267.html?view=horizontal" title="Converse All Style 2" aria-label="Converse All Style 2">Converse All Style 2</a></li>
                             </ul> -->
                         </li>
-                        <li class="hasChild">
+                        <!-- <li class="hasChild">
                             <a href="collections/allfc2c.html?view=vertical" title="Classic" aria-label="Classic">Classic<span>›</span></a>
                             <ul class="menu1">
                                 <li class="hasChild">
@@ -97,7 +97,7 @@
                                 <li><a href="collections/all.html" title="Mũ nón" aria-label="Mũ nón">Mũ nón</a></li>
                                 <li><a href="collections/all.html" title="Phụ kiện khác" aria-label="Phụ kiện khác">Phụ kiện khác</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                         <li><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
                         <li><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         <li class="headers2-center-menu-mob-foot">

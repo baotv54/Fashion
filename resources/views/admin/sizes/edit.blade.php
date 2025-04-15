@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 @section('content')
 <div class="container">
     <h2 class="my-4">Chỉnh sửa kích thước</h2>

@@ -107,7 +107,7 @@
 
 
 
-      <script>
+    <script>
         window.F1GENZ_vars = {
             template: "customers/account",
             formatMoney: "amount_no_decimals_with_comma_separator₫",
@@ -3723,237 +3723,256 @@
 </head>
 
 <body class="">
-@include('Frontend.partials.header')
-<main class="main-layout">
-    <div class="acc">
-        <div class="container-fluid">
-            <div class="acc-wrap">
-                <!-- Sidebar -->
-                <div class="acc-sidebar">
-                    <span>
-                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&font-size=.5" alt="{{ Auth::user()->name }}" title="{{ Auth::user()->name }}" />
-                    </span>
-                    <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
-                    <ul>
+    @include('Frontend.partials.header')
+    <main class="main-layout">
+        <div class="acc">
+            <div class="container-fluid">
+                <div class="acc-wrap">
+                    <!-- Sidebar -->
+                    <div class="acc-sidebar">
+                        <span>
+                            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&font-size=.5" alt="{{ Auth::user()->name }}" title="{{ Auth::user()->name }}" />
+                        </span>
+                        <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
+                        <ul>
                             <li><a href="/account" aria-label="Thông tin tài khoản" title="Thông tin tài khoản">Thông tin tài khoản</a></li>
                             <li><a href="/order-history" aria-label="Đơn hàng của bạn" title="Đơn hàng của bạn">Đơn hàng của bạn</a></li>
                             <li><a href="/account/addresses" aria-label="Danh sách địa chỉ" title="Danh sách địa chỉ">Danh sách địa chỉ</a></li>
                             <li><a href="/account/changepassword" aria-label="Đổi mật khẩu" title="Đổi mật khẩu">Đổi mật khẩu</a></li>
                             <li><a href="/account/logout" aria-label="Đăng xuất" title="Đăng xuất">Đăng xuất</a></li>
                         </ul>
-                </div>
+                    </div>
 
-                <!-- Main Content -->
-                <div class="acc-data acc-data-order">
-                    <h1>Chi tiết đơn hàng #{{ $order->order_code }}</h1>
-                    <span class="note order_date">Ngày tạo: {{ $order->created_at->format('d/m/Y') }}</span>
+                    <!-- Main Content -->
+                    <div class="acc-data acc-data-order">
+                        <h1>Chi tiết đơn hàng #{{ $order->order_code }}</h1>
+                        <span class="note order_date">Ngày tạo: {{ $order->created_at->format('d/m/Y') }}</span>
 
-                    <!-- Trạng thái thanh toán -->
-                    <div class="payment_status">
-                        <span class="note">Trạng thái thanh toán:</span>
-                        <b class="status_pending">
-                            <b class="span_pending" style="color: #E49C06; font-weight: 600;">
-                                {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                        <!-- Trạng thái thanh toán -->
+                        <div class="payment_status">
+                            <span class="note">Trạng thái thanh toán:</span>
+                            <b class="status_pending">
+                                <b class="span_pending" style="color: #E49C06; font-weight: 600;">
+                                    {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                                </b>
                             </b>
-                        </b>
-                    </div>
+                        </div>
 
-                    <!-- Trạng thái vận chuyển -->
-                    <div class="shipping_status">
-                        <span class="note">Trạng thái vận chuyển:</span>
-                        <b style="color:#212B25" class="span_">
-                            {{ ucfirst($order->status) }}
-                        </b>
-                    </div>
+                        <!-- Trạng thái vận chuyển -->
+                        <div class="shipping_status">
+                            <span class="note">Trạng thái vận chuyển:</span>
+                            <b style="color:#212B25" class="span_">
+                                {{ ucfirst($order->status) }}
+                            </b>
+                        </div>
 
-                    <!-- Địa chỉ giao hàng -->
-                    <div class="main_order">
-                        <div class="body_order">
-                            <div class="box-address">
-                                <h2 class="title-head">Địa chỉ giao hàng</h2>
-                                @if ($order->status === 'processing')
-                                <form action="{{ route('user.orders.updateAddress', $order->id) }}" method="POST">
+                        <!-- Địa chỉ giao hàng -->
+                        <div class="main_order">
+                            <div class="body_order">
+                                <div class="box-address">
+                                    <h2 class="title-head">Địa chỉ giao hàng</h2>
+                                    @if ($order->status === 'processing')
+                                    <form action="{{ route('user.orders.updateAddress', $order->id) }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="billingProvince">Tỉnh/Thành</label>
+                                                    <select name="province" id="billingProvince" class="form-control" required>
+                                                        <option value="">Chọn tỉnh/thành</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="billingDistrict">Quận/Huyện</label>
+                                                    <select name="district" id="billingDistrict" class="form-control" required style="display: none;">
+                                                        <option value="">Chọn quận/huyện</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="billingWard">Phường/Xã</label>
+                                                    <select name="ward" id="billingWard" class="form-control" required style="display: none;">
+                                                        <option value="">Chọn phường/xã</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="address">Địa chỉ chi tiết:</label>
+                                            <input type="text" name="address" id="address" class="form-control" value="{{ $order->address }}" required>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Cập nhật địa chỉ</button>
+                                    </form>
+                                    @else
+                                    <div class="address box-des">
+                                        <p><strong>{{ $order->user->name }}</strong></p>
+                                        <p>Địa chỉ: {{ $order->address }}, {{ $order->ward }}, {{ $order->district }}, {{ $order->province }}</p>
+                                        <p>Số điện thoại: {{ $order->phone }}</p>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Phương thức thanh toán -->
+                            <div class="body_order">
+                                <div class="box-address">
+                                    <h2 class="title-head">Thanh toán</h2>
+                                    <div class="box-des">
+                                        <p>{{ $order->payment_method === 'cod' ? 'Thu hộ (COD)' : 'Thanh toán online' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ghi chú -->
+                            <div class="body_order">
+                                <div class="box-address">
+                                    <h2 class="title-head">Ghi chú</h2>
+                                    <div class="box-des">
+                                        <p>{{ $order->note ?? 'Không có ghi chú' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chi tiết sản phẩm -->
+                        <div class="table_order">
+                            <div class="table-responsive-block table_mobile">
+                                <table id="order_details" class="table table-cart">
+                                    <thead class="thead-default theborder">
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th>Đơn giá</th>
+                                            <th>Số lượng</th>
+                                            <th>Tổng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($order->orderDetails as $detail)
+                                        <tr>
+                                            <td class="link" data-title="Tên">
+                                                <div class="image_order">
+                                                    <a title="{{ $detail->product->name }}" href="{{ route('product.show', $detail->product->id) }}">
+                                                        <img src="{{ asset($detail->product->image) }}" alt="{{ $detail->product->name }}">
+                                                    </a>
+                                                </div>
+                                                <div class="content_right">
+                                                    <a class="title_order" href="{{ route('product.show', $detail->product->id) }}" title="{{ $detail->product->name }}">
+                                                        {{ $detail->product->name }}
+                                                    </a>
+                                                    <p style="color:#828282;font-size:12px;">{{ $detail->product->size ?? 'Không rõ kích thước' }}</p>
+                                                </div>
+                                            </td>
+                                            <td data-title="Giá" class="numeric">{{ number_format($detail->price, 0, ',', '.') }}₫</td>
+                                            <td data-title="Số lượng" class="numeric">{{ $detail->quantity }}</td>
+                                            <td data-title="Tổng" class="numeric">{{ number_format($detail->price * $detail->quantity, 0, ',', '.') }}₫</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Tổng tiền -->
+                            <p><strong>Khuyến mãi:</strong> {{ number_format($order->discount, 0, ',', '.') }}₫</p>
+                            <p><strong>Phí vận chuyển:</strong> {{ number_format($order->shipping_fee, 0, ',', '.') }}₫</p>
+                            <p><strong>Tổng tiền:</strong> {{ number_format($order->total, 0, ',', '.') }}₫</p>
+                            <!-- Hành động với đơn hàng -->
+                            <div class="mt-4 d-flex gap-2">
+                                @if (in_array($order->status, ['ordered', 'processing', 'confirmed']))
+                                <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này không?');">
                                     @csrf
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="billingProvince">Tỉnh/Thành</label>
-                                                <select name="province" id="billingProvince" class="form-control" required>
-                                                    <option value="">Chọn tỉnh/thành</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="billingDistrict">Quận/Huyện</label>
-                                                <select name="district" id="billingDistrict" class="form-control" required style="display: none;">
-                                                    <option value="">Chọn quận/huyện</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="billingWard">Phường/Xã</label>
-                                                <select name="ward" id="billingWard" class="form-control" required style="display: none;">
-                                                    <option value="">Chọn phường/xã</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="address">Địa chỉ chi tiết:</label>
-                                        <input type="text" name="address" id="address" class="form-control" value="{{ $order->address }}" required>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Cập nhật địa chỉ</button>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-times-circle"></i> Huỷ đơn hàng
+                                    </button>
                                 </form>
-                                @else
-                                <div class="address box-des">
-                                    <p><strong>{{ $order->user->name }}</strong></p>
-                                    <p>Địa chỉ: {{ $order->address }}, {{ $order->ward }}, {{ $order->district }}, {{ $order->province }}</p>
-                                    <p>Số điện thoại: {{ $order->phone }}</p>
-                                </div>
                                 @endif
+
+                                <form action="{{ route('orders.reorder', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="fas fa-redo-alt"></i> Mua lại đơn này
+                                    </button>
+                                </form>
                             </div>
-                        </div>
 
-                        <!-- Phương thức thanh toán -->
-                        <div class="body_order">
-                            <div class="box-address">
-                                <h2 class="title-head">Thanh toán</h2>
-                                <div class="box-des">
-                                    <p>{{ $order->payment_method === 'cod' ? 'Thu hộ (COD)' : 'Thanh toán online' }}</p>
-                                </div>
-                            </div>
                         </div>
-
-                        <!-- Ghi chú -->
-                        <div class="body_order">
-                            <div class="box-address">
-                                <h2 class="title-head">Ghi chú</h2>
-                                <div class="box-des">
-                                    <p>{{ $order->note ?? 'Không có ghi chú' }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chi tiết sản phẩm -->
-                    <div class="table_order">
-                        <div class="table-responsive-block table_mobile">
-                            <table id="order_details" class="table table-cart">
-                                <thead class="thead-default theborder">
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Đơn giá</th>
-                                        <th>Số lượng</th>
-                                        <th>Tổng</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($order->orderDetails as $detail)
-                                    <tr>
-                                        <td class="link" data-title="Tên">
-                                            <div class="image_order">
-                                                <a title="{{ $detail->product->name }}" href="{{ route('product.show', $detail->product->id) }}">
-                                                    <img src="{{ asset($detail->product->image) }}" alt="{{ $detail->product->name }}">
-                                                </a>
-                                            </div>
-                                            <div class="content_right">
-                                                <a class="title_order" href="{{ route('product.show', $detail->product->id) }}" title="{{ $detail->product->name }}">
-                                                    {{ $detail->product->name }}
-                                                </a>
-                                                <p style="color:#828282;font-size:12px;">{{ $detail->product->size ?? 'Không rõ kích thước' }}</p>
-                                            </div>
-                                        </td>
-                                        <td data-title="Giá" class="numeric">{{ number_format($detail->price, 0, ',', '.') }}₫</td>
-                                        <td data-title="Số lượng" class="numeric">{{ $detail->quantity }}</td>
-                                        <td data-title="Tổng" class="numeric">{{ number_format($detail->price * $detail->quantity, 0, ',', '.') }}₫</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Tổng tiền -->
-                        <p><strong>Khuyến mãi:</strong> {{ number_format($order->discount, 0, ',', '.') }}₫</p>
-                        <p><strong>Phí vận chuyển:</strong> {{ number_format($order->shipping_fee, 0, ',', '.') }}₫</p>
-                        <p><strong>Tổng tiền:</strong> {{ number_format($order->total, 0, ',', '.') }}₫</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
-   @include('Frontend.partials.footer')
+    </main>
+    @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
     <script>
-          document.addEventListener('DOMContentLoaded', function() {
-        const provinceSelect = document.getElementById('billingProvince');
-        const districtSelect = document.getElementById('billingDistrict');
-        const wardSelect = document.getElementById('billingWard');
+        document.addEventListener('DOMContentLoaded', function() {
+            const provinceSelect = document.getElementById('billingProvince');
+            const districtSelect = document.getElementById('billingDistrict');
+            const wardSelect = document.getElementById('billingWard');
 
-        // Load provinces
-        fetch('/address/province')
-            .then(response => response.json())
-            .then(data => {
-                provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
-                data.forEach(province => {
-                    provinceSelect.innerHTML += `<option value="${province.ProvinceID}" ${province.ProvinceID == "{{ $order->province }}" ? 'selected' : ''}>${province.ProvinceName}</option>`;
+            // Load provinces
+            fetch('/address/province')
+                .then(response => response.json())
+                .then(data => {
+                    provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
+                    data.forEach(province => {
+                        provinceSelect.innerHTML += `<option value="${province.ProvinceID}" ${province.ProvinceID == "{{ $order->province }}" ? 'selected' : ''}>${province.ProvinceName}</option>`;
+                    });
+
+                    // Trigger change event if province is pre-selected
+                    if ("{{ $order->province }}") {
+                        provinceSelect.dispatchEvent(new Event('change'));
+                    }
                 });
 
-                // Trigger change event if province is pre-selected
-                if ("{{ $order->province }}") {
-                    provinceSelect.dispatchEvent(new Event('change'));
+            // Load districts when a province is selected
+            provinceSelect.addEventListener('change', function() {
+                const provinceId = this.value;
+                districtSelect.style.display = 'none';
+                wardSelect.style.display = 'none';
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+
+                if (provinceId) {
+                    fetch(`/address/district/${provinceId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            districtSelect.style.display = 'block';
+                            data.forEach(district => {
+                                districtSelect.innerHTML += `<option value="${district.DistrictID}" ${district.DistrictID == "{{ $order->district }}" ? 'selected' : ''}>${district.DistrictName}</option>`;
+                            });
+
+                            // Trigger change event if district is pre-selected
+                            if ("{{ $order->district }}") {
+                                districtSelect.dispatchEvent(new Event('change'));
+                            }
+                        });
                 }
             });
 
-        // Load districts when a province is selected
-        provinceSelect.addEventListener('change', function() {
-            const provinceId = this.value;
-            districtSelect.style.display = 'none';
-            wardSelect.style.display = 'none';
-            districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            // Load wards when a district is selected
+            districtSelect.addEventListener('change', function() {
+                const districtId = this.value;
+                wardSelect.style.display = 'none';
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
 
-            if (provinceId) {
-                fetch(`/address/district/${provinceId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        districtSelect.style.display = 'block';
-                        data.forEach(district => {
-                            districtSelect.innerHTML += `<option value="${district.DistrictID}" ${district.DistrictID == "{{ $order->district }}" ? 'selected' : ''}>${district.DistrictName}</option>`;
+                if (districtId) {
+                    fetch(`/address/ward/${districtId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            wardSelect.style.display = 'block';
+                            data.forEach(ward => {
+                                wardSelect.innerHTML += `<option value="${ward.WardCode}" ${ward.WardCode == "{{ $order->ward }}" ? 'selected' : ''}>${ward.WardName}</option>`;
+                            });
                         });
-
-                        // Trigger change event if district is pre-selected
-                        if ("{{ $order->district }}") {
-                            districtSelect.dispatchEvent(new Event('change'));
-                        }
-                    });
-            }
+                }
+            });
         });
-
-        // Load wards when a district is selected
-        districtSelect.addEventListener('change', function() {
-            const districtId = this.value;
-            wardSelect.style.display = 'none';
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-
-            if (districtId) {
-                fetch(`/address/ward/${districtId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        wardSelect.style.display = 'block';
-                        data.forEach(ward => {
-                            wardSelect.innerHTML += `<option value="${ward.WardCode}" ${ward.WardCode == "{{ $order->ward }}" ? 'selected' : ''}>${ward.WardName}</option>`;
-                        });
-                    });
-            }
-        });
-    });
         $("body").removeClass("preload");
         document.addEventListener('lazybeforeunveil', function(e) {
             var bg = e.target.getAttribute('data-bg');
