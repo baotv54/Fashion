@@ -10,7 +10,7 @@
 
 <body class="">
     @include('Frontend.partials.header')
-    
+
     <main class="main-layout">
         <h1 class="d-none">F1GENZ Shoes</h1>
         <section id="home-slider">
@@ -129,7 +129,7 @@
                                                 src="{{ asset($product->image ?? 'images/default.jpg') }}"
                                                 alt="{{ $product->name }}" title="{{ $product->name }}">
                                             <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image2 ?? 'images/default.jpg') }}"
+                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
                                                 alt="{{ $product->name }}" title="{{ $product->name }}">
                                         </a>
                                         <ul class="product-item-thumbs">
@@ -172,6 +172,7 @@
                                             <input type="hidden" value="1" name="quantity" />
                                             <button type="submit" title="Thêm vào giỏ" class="shop-addLoop-button cart">Thêm vào giỏ</button>
                                         </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -187,13 +188,13 @@
                 <div class="home-coupon-wrap">
                     @foreach ($coupons as $coupon)
                     <div class="home-coupon-item">
-                    <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES">
-                    <div class="home-coupon-content">
+                        <img loading="lazy" decoding="async" src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png')}}" alt="Mã : F1SHOES">
+                        <div class="home-coupon-content">
                             <div class="home-coupon-content-head">
                                 <h3>Mã : {{ $coupon->code }}</h3>
                                 <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}" title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
                                 <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
-                                </div>
+                            </div>
                             <div class="home-coupon-content-foot">
                                 <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}" title="Điều kiện áp dụng">
                                     Điều kiện áp dụng
@@ -938,7 +939,7 @@
     </main>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
-    @include('Frontend.partials.scrip')
 </body>
+@include('Frontend.partials.scrip')
 
 </html>

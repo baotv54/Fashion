@@ -48,6 +48,12 @@
                     <span class="align-middle">Orders</span>
                 </a>
             </li>
+            <li class="sidebar-item {{ request()->routeIs('attributes.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('attributes.index') }}">
+                    <i class="align-middle" data-feather="layers"></i>
+                    <span class="align-middle">Attributes</span>
+                </a>
+            </li>
 
             <li class="sidebar-header">Tài khoản</li>
 

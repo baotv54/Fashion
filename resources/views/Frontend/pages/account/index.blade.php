@@ -21,9 +21,7 @@
     <meta property="og:image:secure_url" content="https://bizweb.dktcdn.net/100/493/370/themes/940719/assets/share_fb_home.png?1713464283843">
     <meta property="og:url" content="https://f1genz-shoes.mysapo.net/account">
     <meta property="og:site_name" content="">
-
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
     <script>
@@ -100,6 +98,109 @@
 
 
 
+	<style>
+		.chat-bubble.bot-bubble.typing {
+			font-style: italic;
+			opacity: 0.7;
+		}
+
+		.chat-toggle-btn {
+			position: fixed;
+			bottom: 20px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: #007bff;
+			color: white;
+			font-size: 24px;
+			border: none;
+			cursor: pointer;
+			z-index: 9999;
+		}
+
+		.chatbot-container {
+			position: fixed;
+			bottom: 80px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 360px;
+			max-height: 500px;
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.2);
+			display: none;
+			flex-direction: column;
+			overflow: hidden;
+			z-index: 9999;
+		}
+
+		.chatbot-header {
+			background: #007bff;
+			color: #fff;
+			padding: 12px;
+			font-weight: bold;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chatbot-body {
+			flex: 1;
+			padding: 15px;
+			overflow-y: auto;
+			background: #f7f7f7;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.chatbot-footer {
+			display: flex;
+			padding: 10px;
+			border-top: 1px solid #ddd;
+			background: #fff;
+		}
+
+		.chatbot-footer input {
+			flex: 1;
+			padding: 8px 10px;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+		}
+
+		.chatbot-footer button {
+			margin-left: 5px;
+			padding: 8px 12px;
+			background: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 6px;
+		}
+
+		.chat-bubble {
+			max-width: 80%;
+			padding: 10px 14px;
+			margin: 5px 0;
+			border-radius: 20px;
+			word-wrap: break-word;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+
+		.user-bubble {
+			align-self: flex-end;
+			background-color: #007bff;
+			color: #fff;
+			border-bottom-right-radius: 0;
+		}
+
+		.bot-bubble {
+			align-self: flex-start;
+			background-color: #e9ecef;
+			color: #000;
+			border-bottom-left-radius: 0;
+		}
+	</style>
 
 
 
@@ -3724,52 +3825,74 @@
 </head>
 
 <body class="">
-@include('Frontend.partials.header')
+    @include('Frontend.partials.header')
     <main class="main-layout">
-        <div class="acc">
-            <div class="container-fluid">
-                <div class="acc-wrap">
-                    <div class="acc-sidebar">
-                        <span><img width="64" height="64" src="https://ui-avatars.com/api/?name=Bảo_11A204.Trịnh&font-size=.5" alt="Bảo_11A2 04.Trịnh" title="Bảo_11A2 04.Trịnh" /></span>
-                        <h3>Xin chào, <b>Bảo_11A2 04.Trịnh</b></h3>
-                        <ul>
-                            <li><a href="/account" aria-label="Thông tin tài khoản" title="Thông tin tài khoản">Thông tin tài khoản</a></li>
-                            <li><a href="/order-history" aria-label="Đơn hàng của bạn" title="Đơn hàng của bạn">Đơn hàng của bạn</a></li>
-                            <li><a href="/account/addresses" aria-label="Danh sách địa chỉ" title="Danh sách địa chỉ">Danh sách địa chỉ</a></li>
-                            <li><a href="/account/changepassword" aria-label="Đổi mật khẩu" title="Đổi mật khẩu">Đổi mật khẩu</a></li>
-                            <li><a href="/account/logout" aria-label="Đăng xuất" title="Đăng xuất">Đăng xuất</a></li>
-                        </ul>
+    @php $user = Auth::user(); @endphp
+    <div class="acc">
+        <div class="container-fluid">
+            <div class="acc-wrap">
+                <!-- Sidebar -->
+                <div class="acc-sidebar">
+                    <span>
+                        <img width="64" height="64"
+                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
+                             alt="{{ $user->name }}" />
+                    </span>
+                    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
+                    <ul>
+                        <li><a href="/account">Thông tin tài khoản</a></li>
+                        <li><a href="/order-history">Đơn hàng của bạn</a></li>
+                        <li><a href="/account/addresses">Danh sách địa chỉ</a></li>
+                        <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Main content -->
+                <div class="acc-data acc-data-profile">
+                    <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
+
+                    <!-- Chi tiết cá nhân -->
+                    <div class="profile-info">
+                        <p><strong>Họ tên:</strong> {{ $user->name }}</p>
+                        <p><strong>Email:</strong> {{ $user->email }}</p>
+                        @if($user->phone)
+                            <p><strong>Điện thoại:</strong> {{ $user->phone }}</p>
+                        @endif
+                        @if($user->address)
+                            <p><strong>Địa chỉ:</strong> {{ $user->address }}</p>
+                        @endif
                     </div>
-                    <div class="acc-data">
-                        <h1>Thông tin tài khoản</h1>
-                        <!-- Name ================================================= -->
-                        <p>
-                            <strong>Họ tên:</strong>
-                            Bảo_11A2 04.Trịnh
-                        </p>
-                        <!-- Email ================================================= -->
-                        <p>
-                            <strong>Email:</strong>
-                            hungtrinhvan54@gmail.com
-                        </p>
-                        <!-- Phone ================================================= -->
-                        <p>
-                            <strong>Điện thoại:</strong>
-                            +84338766437
-                        </p>
-                        <!-- Company ================================================= -->
-                        <!-- Address ================================================= -->
-                        <p>
-                            <strong>Địa chỉ :</strong>
-                            Hà Huy Tập,Huyện Hàm Yên,Tuyên Quang,Vietnam
-                        </p>
+
+                    <!-- Cập nhật thông tin -->
+                    <div class="profile-update mt-4">
+                        <h2 class="title-head">Cập nhật thông tin</h2>
+                        @include('profile.partials.update-profile-information-form')
+                    </div>
+
+                    <!-- Xóa tài khoản -->
+                    <div class="profile-delete mt-5">
+                        <h2 class="title-head" style="color: #dc3545;">Xóa tài khoản</h2>
+                        @include('profile.partials.delete-user-form')
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-@include('Frontend.partials.footer')
-@include('Frontend.partials.modal')
+    </div>
+</main>
+
+
+
+
+    @include('Frontend.partials.footer')
+    @include('Frontend.partials.modal')
     <script>
         $("body").removeClass("preload");
         document.addEventListener('lazybeforeunveil', function(e) {
@@ -3816,6 +3939,7 @@
             };
         }
     </script> <button class="overplay-all" title="Đóng"></button>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

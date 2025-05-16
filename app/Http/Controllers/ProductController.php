@@ -13,6 +13,10 @@ use App\Models\Attribute;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
+use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -34,6 +38,77 @@ class ProductController extends Controller
         $products = $this->productService->getAllWithSearch($search, 5);
         return view('admin.products.index', compact('products', 'search'));
     }
+    public function allProducts(Request $request)
+    {
+        $query = Product::query()
+            ->with(['images', 'variants.attributeValues']); 
+    
+        if ($request->filled('brand')) {
+            $query->whereIn('brand_id', $request->input('brand'));
+        }
+    
+        if ($request->filled('category')) {
+            $query->whereIn('category_id', $request->input('category'));
+        }
+    
+        if ($request->filled('size')) {
+            $query->whereHas('variants.attributeValues', function ($q) use ($request) {
+                $q->whereIn('value', $request->input('size'));
+            });
+        }
+    
+        if ($request->filled('color')) {
+            $query->whereHas('variants.attributeValues', function ($q) use ($request) {
+                $q->whereIn('value', $request->input('color'));
+            });
+        }
+    
+        if ($request->filled('price')) {
+            $query->where(function ($q) use ($request) {
+                foreach ($request->input('price') as $price) {
+                    switch ($price) {
+                        case '<1000000':
+                            $q->orWhere('price', '<', 1000000);
+                            break;
+                        case '>=1000000<=3000000':
+                            $q->orWhereBetween('price', [1000000, 3000000]);
+                            break;
+                        case '>=3000000<=5000000':
+                            $q->orWhereBetween('price', [3000000, 5000000]);
+                            break;
+                        case '>=5000000<=10000000':
+                            $q->orWhereBetween('price', [5000000, 10000000]);
+                            break;
+                        case '>10000000':
+                            $q->orWhere('price', '>', 10000000);
+                            break;
+                    }
+                }
+            });
+        }
+    
+        if ($request->filled('sort')) {
+            [$field, $direction] = explode(':', $request->sort);
+            $query->orderBy($field, $direction);
+        } else {
+            $query->latest();
+        }
+    
+        $products = $query->paginate(12)->withQueryString();
+    
+        $brands = Brand::all();
+        $categories = Category::all();
+        $colorAttr = Attribute::where('name', 'Màu')->first();
+        $colors = $colorAttr?->values ?? [];
+        
+        $sizeAttr = Attribute::where('name', 'Kích Thước')->first();
+        $sizes = $sizeAttr?->values ?? [];
+        
+        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'sizes', 'colors'));
+    }
+    
+    
+
 
     public function homepage()
     {
@@ -44,11 +119,7 @@ class ProductController extends Controller
     }
     public function show($id)
     {
- 
-    
         $carts = Cart::content();
-    
-        // Load quan hệ: hình ảnh, biến thể, đánh giá đã duyệt và user đánh giá
         $product = Product::with([
             'images',
             'variants.attributeValues',
@@ -57,38 +128,38 @@ class ProductController extends Controller
             },
             'reviews.user'
         ])->findOrFail($id);
-    
+
         $images = $product->images;
-    
+
         // Lấy attribute "Màu"
         $colorAttr = Attribute::where('name', 'Màu')->first();
         $colors = $colorAttr
             ? $product->variants
-                ->flatMap(function ($variant) {
-                    return $variant->attributeValues;
-                })
-                ->where('attribute_id', $colorAttr->id)
-                ->unique('id')
+            ->flatMap(function ($variant) {
+                return $variant->attributeValues;
+            })
+            ->where('attribute_id', $colorAttr->id)
+            ->unique('id')
             : collect();
-    
+
         // Lấy attribute "Kích Thước"
         $sizeAttr = Attribute::where('name', 'Kích Thước')->first();
         $sizes = $sizeAttr
             ? $product->variants
-                ->flatMap(function ($variant) {
-                    return $variant->attributeValues;
-                })
-                ->where('attribute_id', $sizeAttr->id)
-                ->unique('id')
+            ->flatMap(function ($variant) {
+                return $variant->attributeValues;
+            })
+            ->where('attribute_id', $sizeAttr->id)
+            ->unique('id')
             : collect();
-    
+
         // Lấy sản phẩm liên quan: cùng danh mục, loại trừ sản phẩm hiện tại
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->latest()
             ->take(8)
             ->get();
-    
+
         // Kiểm tra user hiện tại đã mua sản phẩm chưa (để gửi đánh giá)
         $hasPurchased = false;
         if (Auth::check()) {
@@ -97,7 +168,7 @@ class ProductController extends Controller
                     $query->where('user_id', Auth::id());
                 })->exists();
         }
-    
+
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
@@ -108,44 +179,39 @@ class ProductController extends Controller
             'hasPurchased'
         ));
     }
-    
 
 
     public function getVariant(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|integer',
-            'color_id'   => 'required|integer',
-            'size_id'    => 'required|integer',
-        ]);
+        $productId = $request->input('product_id');
+        $colorId = $request->input('color_id');
+        $sizeId = $request->input('size_id');
 
-        // Tìm biến thể đúng với tổ hợp attribute values
-        $variant = ProductVariant::where('product_id', $request->product_id)
-            ->whereHas('attributeValues', function ($q) use ($request) {
-                $q->where('attribute_value_id', $request->color_id);
+        $variant = \App\Models\ProductVariant::where('product_id', $productId)
+            ->whereHas('attributeValues', function ($q) use ($colorId) {
+                $q->where('attribute_value_id', $colorId);
             })
-            ->whereHas('attributeValues', function ($q) use ($request) {
-                $q->where('attribute_value_id', $request->size_id);
+            ->whereHas('attributeValues', function ($q) use ($sizeId) {
+                $q->where('attribute_value_id', $sizeId);
             })
+            ->with('attributeValues', 'product')
             ->first();
 
-        if ($variant) {
-            return response()->json([
-                'success' => true,
-                'variant' => [
-                    'id'        => $variant->id,
-                    'price'     => number_format($variant->price) . ' VNĐ',
-                    'stock'     => $variant->stock,
-                    'image'     => asset($variant->image),
-                ]
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy biến thể phù hợp.',
-            ]);
+        if (!$variant) {
+            return response()->json(['success' => false]);
         }
+
+        return response()->json([
+            'success' => true,
+            'variant' => [
+                'id' => $variant->id,
+                'price' => number_format($variant->price) . '₫',
+                'stock' => $variant->stock,
+                'image' => asset($variant->image ?? $variant->product->image),
+            ]
+        ]);
     }
+
 
 
     public function create()
@@ -284,5 +350,17 @@ class ProductController extends Controller
         $query = $request->input('query');
         $products = $this->productService->search($query);
         return view('admin.products.index', compact('products'));
+    }
+
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv,xls'
+        ]);
+
+        Excel::import(new ProductsImport, $request->file('file'));
+
+        return back()->with('success', 'Import sản phẩm thành công!');
     }
 }

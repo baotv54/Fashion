@@ -101,253 +101,557 @@
 
 	<script src="{{ asset('js/stats.minbadf.js') }}"></script>
 
+	<!-- <style>
+		.sapo-product-reviews-summary,
+		#sapo-product-reviews-noitem {
+			background-color: rgba(128, 187, 53, 0.1)
+		}
+
+		.bpr-summary-average {
+			color: #80BB35
+		}
+
+		.sapo-product-reviews-star {
+			color: #ffbe00
+		}
+
+		.btn-new-review {
+			background-color: #80BB35;
+			border-color: #80BB35
+		}
+
+		#sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter input:checked~.checkmark {
+			color: #80BB35;
+			border-color: #80BB35
+		}
+
+		#sapo-product-reviews-frm #fileAttach svg path {
+			fill: #80BB35
+		}
+
+		#sapo-product-reviews-frm .bpr-button-submit {
+			background-color: #80BB35;
+			border-color: #80BB35
+		}
+
+		.sapo-review-verified,
+		.sapo-review-actions {
+			color: #80BB35
+		}
+
+		.icon-verified path {
+			fill: #80BB35
+		}
+
+		#sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .sapo-review-reply-item .sapo-review-reply-author .is-admin {
+			background-color: #80BB35;
+			border-color: #80BB35
+		}
+
+		.simple-pagination li span.current,
+		.simple-pagination li a.current {
+			color: #80BB35;
+			border-color: #80BB35;
+		}
+
+		#sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4,
+		#sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p {
+			background-color: #80BB35;
+			border-color: #80BB35;
+		}
+
+		#sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4.active,
+		#sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p.active {
+			color: #80BB35
+		}
+
+		#sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .btn-show-prev {
+			background-color: rgba(128, 187, 53, 0.1);
+			color: #80BB35
+		}
+
+		.bpr-success-popup .icon-checked svg path {
+			fill: #80BB35
+		}
+
+		.sapo-review-reply-form .bpr-form-actions .bpr-reply-button-submit {
+			border-color: #80BB35;
+			background: #80BB35;
+		}
+	</style> -->
+
+	<style>
+		/* Rating Star Styling */
+		.star-on-png { 
+			color: #ffc107; 
+		}
+		.star-off-png { 
+			color: #ddd; 
+		}
+
+		/* Button Styling */
+		.btn-new-review, 
+		.bpr-button-submit {
+			background-color: #80BB35;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			cursor: pointer;
+			border-radius: 4px;
+			font-weight: 500;
+			transition: background-color 0.2s;
+		}
+
+		.btn-new-review:hover, 
+		.bpr-button-submit:hover {
+			background-color: #6ca028;
+		}
+
+		/* Modal Base Styling */
+		.popup-bpr-form.jquerymodal {
+			display: none;
+			position: fixed !important;
+			z-index: 9999 !important;
+			top: 0 !important;
+			left: 0 !important;
+			right: 0 !important;
+			bottom: 0 !important;
+			width: 100% !important;
+			height: 100% !important;
+			background-color: rgba(0, 0, 0, 0.5) !important;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.3s ease;
+			overflow: hidden !important;
+			
+			/* Flexbox centering */
+			align-items: center !important;
+			justify-content: center !important;
+		}
+
+		/* Modal Active State */
+		.popup-bpr-form.jquerymodal.modal-active,
+		.popup-bpr-form.jquerymodal[style*="display: flex"],
+		.popup-bpr-form.jquerymodal[style*="display:flex"] {
+			opacity: 1 !important;
+			visibility: visible !important;
+			display: flex !important;
+		}
+
+		/* Ensure block display is overridden with flex */
+		.popup-bpr-form.jquerymodal[style*="display: block"],
+		.popup-bpr-form.jquerymodal[style*="display:block"] {
+			display: flex !important;
+		}
+
+		/* Modal Content Styling */
+		.jquerymodal-content {
+			background-color: #fff !important;
+			border-radius: 8px !important;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+			width: 90% !important;
+			max-width: 500px !important;
+			position: relative !important;
+			margin: auto !important;
+			animation: modalFadeIn 0.3s ease;
+		}
+
+		/* Modal Body Styling */
+		.jquerymodal-body {
+			padding: 24px;
+		}
+
+		/* Close Button Styling */
+		.close-modal {
+			position: absolute;
+			right: 15px;
+			top: 15px;
+			width: 24px;
+			height: 24px;
+			opacity: 0.6;
+			cursor: pointer;
+			transition: opacity 0.2s;
+			z-index: 1;
+		}
+
+		.close-modal:hover {
+			opacity: 1;
+		}
+
+		/* Form Elements Styling */
+		.sapo-product-reviews-form {
+			padding: 10px 0;
+		}
+
+		.title-form {
+			margin-top: 0;
+			margin-bottom: 15px;
+			font-size: 20px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.review-product-name {
+			margin-bottom: 20px;
+			font-size: 16px;
+			color: #666;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		/* Star Rating Container */
+		.sapo-product-reviews-star {
+			display: flex;
+			gap: 5px;
+			font-size: 20px;
+		}
+
+		.sapo-product-reviews-star i {
+			cursor: pointer;
+		}
+
+		/* Form Controls */
+		.form-control {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-family: inherit;
+			font-size: 14px;
+			transition: border-color 0.2s;
+		}
+
+		.form-control:focus {
+			border-color: #80BB35;
+			outline: none;
+		}
+
+		/* Animation */
+		@keyframes modalFadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Prevent conflicts with parent containers */
+		#popup-bpr-form {
+			text-align: left !important;
+		}
+
+		#popup-bpr-form * {
+			box-sizing: border-box !important;
+		}
+
+		/* Prevent parent containers from affecting modal positioning */
+		.main-layout #popup-bpr-form,
+		.main-product #popup-bpr-form,
+		.container #popup-bpr-form,
+		.main-product-wrap #popup-bpr-form,
+		#sapo-product-reviews #popup-bpr-form {
+			position: fixed !important;
+			top: 0 !important;
+			left: 0 !important;
+			right: 0 !important;
+			bottom: 0 !important;
+		}
+
+		/* Mobile Responsiveness */
+		@media (max-width: 576px) {
+			.jquerymodal-content {
+				width: 95% !important;
+			}
+			
+			.jquerymodal-body {
+				padding: 16px;
+			}
+			
+			.title-form {
+				font-size: 18px;
+			}
+		}
+	</style>
+
+	<style>
+		.chat-bubble.bot-bubble.typing {
+			font-style: italic;
+			opacity: 0.7;
+		}
+
+		.chat-toggle-btn {
+			position: fixed;
+			bottom: 20px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: #007bff;
+			color: white;
+			font-size: 24px;
+			border: none;
+			cursor: pointer;
+			z-index: 9999;
+		}
+
+		.chatbot-container {
+			position: fixed;
+			bottom: 80px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 360px;
+			max-height: 500px;
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.2);
+			display: none;
+			flex-direction: column;
+			overflow: hidden;
+			z-index: 9999;
+		}
+
+		.chatbot-header {
+			background: #007bff;
+			color: #fff;
+			padding: 12px;
+			font-weight: bold;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chatbot-body {
+			flex: 1;
+			padding: 15px;
+			overflow-y: auto;
+			background: #f7f7f7;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.chatbot-footer {
+			display: flex;
+			padding: 10px;
+			border-top: 1px solid #ddd;
+			background: #fff;
+		}
+
+		.chatbot-footer input {
+			flex: 1;
+			padding: 8px 10px;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+		}
+
+		.chatbot-footer button {
+			margin-left: 5px;
+			padding: 8px 12px;
+			background: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 6px;
+		}
+
+		.chat-bubble {
+			max-width: 80%;
+			padding: 10px 14px;
+			margin: 5px 0;
+			border-radius: 20px;
+			word-wrap: break-word;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+
+		.user-bubble {
+			align-self: flex-end;
+			background-color: #007bff;
+			color: #fff;
+			border-bottom-right-radius: 0;
+		}
+
+		.bot-bubble {
+			align-self: flex-start;
+			background-color: #e9ecef;
+			color: #000;
+			border-bottom-left-radius: 0;
+		}
+	</style>
 
 
+	<!-- <style>
+			.sapo-product-reviews {
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				max-width: 100%;
+				margin: 20px 0;
+			}
 
+			.sapo-product-reviews-summary {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 15px;
+				background-color: #f8f9fa;
+				border-radius: 8px;
+				margin-bottom: 20px;
+			}
 
+			.bpr-summary {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
 
+			.bpr-summary-average {
+				font-size: 32px;
+				font-weight: bold;
+				color: #333;
+			}
 
-		<!-- <style>
-            .sapo-product-reviews-summary,
-            #sapo-product-reviews-noitem {
-                background-color: rgba(128, 187, 53, 0.1)
-            }
+			.max-score {
+				font-size: 18px;
+				color: #777;
+			}
 
-            .bpr-summary-average {
-                color: #80BB35
-            }
+			.rating-stars {
+				margin: 10px 0;
+				color: #ffc107;
+				font-size: 20px;
+			}
 
-            .sapo-product-reviews-star {
-                color: #ffbe00
-            }
+			.rating-stars i {
+				margin: 0 2px;
+			}
 
-            .btn-new-review {
-                background-color: #80BB35;
-                border-color: #80BB35
-            }
+			.btn-new-review {
+				padding: 8px 16px;
+				border-radius: 4px;
+				background-color: #17a2b8;
+				color: white;
+				border: none;
+				font-weight: 500;
+				transition: all 0.3s;
+			}
 
-            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter input:checked~.checkmark {
-                color: #80BB35;
-                border-color: #80BB35
-            }
+			.btn-new-review:hover {
+				background-color: #138496;
+			}
 
-            #sapo-product-reviews-frm #fileAttach svg path {
-                fill: #80BB35
-            }
+			/* Styling cho danh sách đánh giá */
+			.sapo-product-reviews-list {
+				margin-top: 30px;
+			}
 
-            #sapo-product-reviews-frm .bpr-button-submit {
-                background-color: #80BB35;
-                border-color: #80BB35
-            }
+			.sapo-review {
+				padding: 15px;
+				border-bottom: 1px solid #eee;
+				margin-bottom: 15px;
+			}
 
-            .sapo-review-verified,
-            .sapo-review-actions {
-                color: #80BB35
-            }
+			.sapo-review-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 10px;
+			}
 
-            .icon-verified path {
-                fill: #80BB35
-            }
+			.sapo-review-author {
+				font-weight: bold;
+				font-size: 16px;
+			}
 
-            #sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .sapo-review-reply-item .sapo-review-reply-author .is-admin {
-                background-color: #80BB35;
-                border-color: #80BB35
-            }
+			.sapo-review-body {
+				margin: 15px 0;
+			}
 
-            .simple-pagination li span.current,
-            .simple-pagination li a.current {
-                color: #80BB35;
-                border-color: #80BB35;
-            }
+			.sapo-review-verified {
+				display: flex;
+				align-items: center;
+				color: #28a745;
+				font-size: 14px;
+				margin-bottom: 10px;
+			}
 
-            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4,
-            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p {
-                background-color: #80BB35;
-                border-color: #80BB35;
-            }
+			.icon-verified {
+				width: 16px;
+				height: 16px;
+				margin-right: 5px;
+			}
 
-            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter h4.active,
-            #sapo-product-reviews .sapo-product-reviews-summary .sapo-product-reviews-filter p.active {
-                color: #80BB35
-            }
+			.sapo-review-content-body {
+				display: block;
+				line-height: 1.6;
+			}
 
-            #sapo-product-reviews .sapo-product-reviews-list .sapo-review-reply-list .btn-show-prev {
-                background-color: rgba(128, 187, 53, 0.1);
-                color: #80BB35
-            }
+			.sapo-review-actions {
+				font-size: 13px;
+				color: #777;
+			}
 
-            .bpr-success-popup .icon-checked svg path {
-                fill: #80BB35
-            }
+			.sapo-review-actions ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
 
-            .sapo-review-reply-form .bpr-form-actions .bpr-reply-button-submit {
-                border-color: #80BB35;
-                background: #80BB35;
-            }
-        </style> -->
+			/* Styling cho form đánh giá */
+			#review-form {
+				background-color: #f8f9fa;
+				padding: 20px;
+				border-radius: 8px;
+			}
 
-		<style>
-							.sapo-product-reviews {
-					font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-					max-width: 100%;
-					margin: 20px 0;
-				}
+			.star-rating {
+				margin: 15px 0;
+			}
 
-				.sapo-product-reviews-summary {
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-					padding: 15px;
-					background-color: #f8f9fa;
-					border-radius: 8px;
-					margin-bottom: 20px;
-				}
+			.stars {
+				display: flex;
+				flex-direction: row-reverse;
+				justify-content: flex-end;
+			}
 
-				.bpr-summary {
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-				}
+			.star-item {
+				font-size: 30px;
+				color: #ffc107;
+				cursor: pointer;
+				margin-right: 5px;
+			}
 
-				.bpr-summary-average {
-					font-size: 32px;
-					font-weight: bold;
-					color: #333;
-				}
+			.star-item:hover,
+			.star-item:hover ~ .star-item {
+				color: #ffc107;
+			}
 
-				.max-score {
-					font-size: 18px;
-					color: #777;
-				}
+			textarea.form-control {
+				resize: vertical;
+				min-height: 100px;
+			}
 
-				.rating-stars {
-					margin: 10px 0;
-					color: #ffc107;
-					font-size: 20px;
-				}
+			.btn-success {
+				background-color: #28a745;
+				border: none;
+				padding: 10px 20px;
+				border-radius: 4px;
+				font-weight: 500;
+				transition: all 0.3s;
+			}
 
-				.rating-stars i {
-					margin: 0 2px;
-				}
-
-				.btn-new-review {
-					padding: 8px 16px;
-					border-radius: 4px;
-					background-color: #17a2b8;
-					color: white;
-					border: none;
-					font-weight: 500;
-					transition: all 0.3s;
-				}
-
-				.btn-new-review:hover {
-					background-color: #138496;
-				}
-
-				/* Styling cho danh sách đánh giá */
-				.sapo-product-reviews-list {
-					margin-top: 30px;
-				}
-
-				.sapo-review {
-					padding: 15px;
-					border-bottom: 1px solid #eee;
-					margin-bottom: 15px;
-				}
-
-				.sapo-review-header {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					margin-bottom: 10px;
-				}
-
-				.sapo-review-author {
-					font-weight: bold;
-					font-size: 16px;
-				}
-
-				.sapo-review-body {
-					margin: 15px 0;
-				}
-
-				.sapo-review-verified {
-					display: flex;
-					align-items: center;
-					color: #28a745;
-					font-size: 14px;
-					margin-bottom: 10px;
-				}
-
-				.icon-verified {
-					width: 16px;
-					height: 16px;
-					margin-right: 5px;
-				}
-
-				.sapo-review-content-body {
-					display: block;
-					line-height: 1.6;
-				}
-
-				.sapo-review-actions {
-					font-size: 13px;
-					color: #777;
-				}
-
-				.sapo-review-actions ul {
-					list-style: none;
-					padding: 0;
-					margin: 0;
-				}
-
-				/* Styling cho form đánh giá */
-				#review-form {
-					background-color: #f8f9fa;
-					padding: 20px;
-					border-radius: 8px;
-				}
-
-				.star-rating {
-					margin: 15px 0;
-				}
-
-				.stars {
-					display: flex;
-					flex-direction: row-reverse;
-					justify-content: flex-end;
-				}
-
-				.star-item {
-					font-size: 30px;
-					color: #ffc107;
-					cursor: pointer;
-					margin-right: 5px;
-				}
-
-				.star-item:hover,
-				.star-item:hover ~ .star-item {
-					color: #ffc107;
-				}
-
-				textarea.form-control {
-					resize: vertical;
-					min-height: 100px;
-				}
-
-				.btn-success {
-					background-color: #28a745;
-					border: none;
-					padding: 10px 20px;
-					border-radius: 4px;
-					font-weight: 500;
-					transition: all 0.3s;
-				}
-
-				.btn-success:hover {
-					background-color: #218838;
-				}
-		</style>
+			.btn-success:hover {
+				background-color: #218838;
+			}
+	</style> -->
 
 
 
@@ -435,7 +739,7 @@
 		.home-main-slider .home-main-slider-items:not(.slick-slider) .home-main-slider-item {
 			min-width: 100%;
 		}
-	</styl>
+	</style>
 
 	<link rel="dns-prefetch" href="index.html">
 	<link rel="dns-prefetch" href="http://hstatic.net/">
@@ -687,464 +991,320 @@
 	<script>var ProductReviewsAppUtil = ProductReviewsAppUtil || {}; ProductReviewsAppUtil.store = { name: 'F1GENZ Shoes' };</script>
 </head>
 
-<body class="">
+
+<body>
 @include('Frontend.partials.header')
 <main class="main-layout">
-
-
-<div class="main-product">
-	<div class="main-product-breadcrumb" title="Converse Pro Leather Gold Standard OG Color Blocking">
+	<div class="main-product">
+		<div class="main-product-breadcrumb" title="Converse Pro Leather Gold Standard OG Color Blocking">
+			<div class="container">
+				<div class="section-title-all">
+					<h1>{{$product->name}}</h1>
+				</div>
+				<div class="breadcrumb-wrap">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html" aria-label="Trang chủ"
+								title="Trang chủ">Trang chủ</a></li>
+						<li class="breadcrumb-item"><a href="/view" aria-label="CONVERSE ALL"
+								title="CONVERSE ALL">Tất cả sản phẩm</a></li>
+						<li class="breadcrumb-item active"><span>{{$product->name}}</span></li>
+					</ol>
+				</div>
+			</div>
+		</div>
 		<div class="container">
-			<div class="section-title-all">
-				<h1>{{$product->name}}</h1>
-			</div>
-			<div class="breadcrumb-wrap">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="index.html" aria-label="Trang chủ"
-							title="Trang chủ">Trang chủ</a></li>
-					<li class="breadcrumb-item"><a href="/view" aria-label="CONVERSE ALL"
-							title="CONVERSE ALL">Tất cả sản phẩm</a></li>
-					<li class="breadcrumb-item active"><span>{{$product->name}}</span></li>
-				</ol>
-			</div>
-		</div>
-	</div>
-	<div class="container">
-		<div class="main-product-wrap">
-			<div class="main-product-left main-product-feature" data-style="style1">
-				<!-- Style 1 -->
-				<div class="main-product-feature-featured">
-					@foreach ($images as $index => $image)
-					<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
-						title="{{ $product->name }}" data-index="{{ $index + 1 }}">
-						<picture>
-							<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
-							<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
-							<img class="w-auto" width="600" height="600" loading="lazy"
-								src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
-								alt="{{ $product->name }}">
-						</picture>
-					</a>
-					@endforeach
-				</div>
-				<div class="main-product-feature-thumbs">
-					@foreach ($images as $index => $image)
-					<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
-						title="{{ $product->name }}" data-index="{{ $index + 1 }}" data-id="">
-						<picture>
-							<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
-							<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
-							<img class="w-auto" width="600" height="600" loading="lazy"
-								src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
-								alt="{{ $product->name }}">
-						</picture>
-					</a>
-					@endforeach
-				</div>
-				<!-- End Style 1 -->
-			</div>
-			<div class="main-product-right">
-				<input type="hidden" id="product_id" value="{{ $product->id }}">
-
-				<h1 class="main-product-title ">{{ $product->name }}</h1>
-
-				<div class="main-product-price">
-					<div class="main-product-price-wrap">
-						<span class="main-product-price-this" id="variant-price">{{ number_format($product->price) }}₫</span>
+			<div class="main-product-wrap">
+				<div class="main-product-left main-product-feature" data-style="style1">
+					<!-- Style 1 -->
+					<div class="main-product-feature-featured">
+						@foreach ($images as $index => $image)
+						<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
+							title="{{ $product->name }}" data-index="{{ $index + 1 }}">
+							<picture>
+								<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
+								<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
+								<img class="w-auto" width="600" height="600" loading="lazy"
+									src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
+									alt="{{ $product->name }}">
+							</picture>
+						</a>
+						@endforeach
 					</div>
+					<div class="main-product-feature-thumbs">
+						@foreach ($images as $index => $image)
+						<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
+							title="{{ $product->name }}" data-index="{{ $index + 1 }}" data-id="">
+							<picture>
+								<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
+								<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
+								<img class="w-auto" width="600" height="600" loading="lazy"
+									src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
+									alt="{{ $product->name }}">
+							</picture>
+						</a>
+						@endforeach
+					</div>
+					<!-- End Style 1 -->
 				</div>
+				<div class="main-product-right">
+					<input type="hidden" id="product_id" value="{{ $product->id }}">
 
-				<!-- HIỂN THỊ CHỌN BIẾN THỂ -->
-				<div class="main-product-swatch">
+					<h1 class="main-product-title ">{{ $product->name }}</h1>
 
-					<div class="product-sw-line">
-						<div class="product-sw-select">
-							<div class="product-sw-title">Màu sắc</div>
-							@foreach ($colors as $color)
-								<span class="product-sw-select-item">
-									<input type="radio" name="product-color" id="product-color-{{ $color->id }}" class="trigger-option-sw d-none" value="{{ $color->id }}">
-									<label for="product-color-{{ $color->id }}" class="product-sw-select-item-span" data-color-id="{{ $color->id }}">
-										{{ $color->value }}
-									</label>
-								</span>
-							@endforeach
+					<div class="main-product-price">
+						<div class="main-product-price-wrap">
+							<span class="main-product-price-this" id="variant-price">{{ number_format($product->price) }}₫</span>
 						</div>
 					</div>
 
-					<div class="product-sw-line">
-						<div class="product-sw-select">
-							<div class="product-sw-title">Kích thước</div>
-							@foreach ($sizes as $size)
-								<span class="product-sw-select-item">
-									<input type="radio" name="product-size" id="product-size-{{ $size->id }}" class="trigger-option-sw d-none" value="{{ $size->id }}">
-									<label for="product-size-{{ $size->id }}" class="product-sw-select-item-span" data-size-id="{{ $size->id }}">
-										{{ $size->value }}
-									</label>
-								</span>
-							@endforeach
+					<!-- HIỂN THỊ CHỌN BIẾN THỂ -->
+					<div class="main-product-swatch">
+
+						<div class="product-sw-line">
+							<div class="product-sw-select">
+								<div class="product-sw-title">Màu sắc</div>
+								@foreach ($colors as $color)
+									<span class="product-sw-select-item">
+										<input type="radio" name="product-color" id="product-color-{{ $color->id }}" class="trigger-option-sw d-none" value="{{ $color->id }}">
+										<label for="product-color-{{ $color->id }}" class="product-sw-select-item-span" data-color-id="{{ $color->id }}">
+											{{ $color->value }}
+										</label>
+									</span>
+								@endforeach
+							</div>
+						</div>
+
+						<div class="product-sw-line">
+							<div class="product-sw-select">
+								<div class="product-sw-title">Kích thước</div>
+								@foreach ($sizes as $size)
+									<span class="product-sw-select-item">
+										<input type="radio" name="product-size" id="product-size-{{ $size->id }}" class="trigger-option-sw d-none" value="{{ $size->id }}">
+										<label for="product-size-{{ $size->id }}" class="product-sw-select-item-span" data-size-id="{{ $size->id }}">
+											{{ $size->value }}
+										</label>
+									</span>
+								@endforeach
+							</div>
+						</div>
+
+					</div>
+
+					<!-- Thông tin biến thể sau khi chọn -->
+					<div id="variant-info" style="margin-top: 15px;">
+						<p><strong>Tồn kho:</strong> <span id="variant-stock">—</span></p>
+						<img id="variant-image" src="" style="max-width: 150px; margin-top: 10px;">
+					</div>
+
+					<!-- Số lượng -->
+					<div class="main-product-quantity shop-quantity-wrap">
+						<label>Số lượng</label>
+						<div class="shop-quantity">
+							<button type="button" data-type="shop-quantity-minus" title="Giảm">-</button>
+							<input type="number" name="quantity" value="1" min="1" readonly>
+							<button type="button" data-type="shop-quantity-plus" title="Tăng">+</button>
 						</div>
 					</div>
 
+					<!-- CTA -->
+					<div class="main-product-cta">
+						<button type="button" data-type="main-product-add" title="Thêm vào giỏ">
+							<strong>Thêm vào giỏ</strong>
+							<span>Chọn ngay sản phẩm bạn yêu thích</span>
+						</button>
+					</div>
 				</div>
+			</div>
+			<!-- reviews -->
+			<div id="sapo-product-reviews" class="sapo-product-reviews" data-id="{{ $product->id }}">
+				<div id="sapo-product-reviews-sub">
+					<div class="sapo-product-reviews-summary">
+						<div class="summary-filter">
+							<div class="sapo-product-reviews-action">
+								@php
+									$reviews = $product->reviews ?? collect();
+									$totalReviews = $reviews->count();
+									$averageRating = $reviews->avg('rating') ?? 0;
+									$userReview = auth()->check() ? $reviews->firstWhere('user_id', auth()->id()) : null;
+								@endphp
 
-				<!-- Thông tin biến thể sau khi chọn -->
-				<div id="variant-info" style="margin-top: 15px;">
-					<p><strong>Tồn kho:</strong> <span id="variant-stock">—</span></p>
-					<img id="variant-image" src="" style="max-width: 150px; margin-top: 10px;">
-				</div>
+								<div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="bpr-summary">
+									<meta itemprop="bestRating" content="5">
+									<meta itemprop="worstRating" content="1">
+									<div class="bpr-summary-average">
+										<span itemprop="ratingValue">{{ number_format($averageRating, 1) }}</span>
+										<span class="max-score">/5</span>
+									</div>
+									<div class="sapo-product-reviews-star" data-number="5" data-score="{{ floor($averageRating) }}">
+										<!-- @for ($i = 1; $i <= 5; $i++)
+											<i data-alt="{{ $i }}" class="{{ $i <= $averageRating ? 'star-on-png' : 'star-off-png' }}"></i>
+										@endfor -->
+									</div>
+									<p>(<span itemprop="ratingCount">{{ $totalReviews }}</span> đánh giá)</p>
+								</div>
 
-				<!-- Số lượng -->
-				<div class="main-product-quantity shop-quantity-wrap">
-					<label>Số lượng</label>
-					<div class="shop-quantity">
-						<button type="button" data-type="shop-quantity-minus" title="Giảm">-</button>
-						<input type="number" name="quantity" value="1" min="1" readonly>
-						<button type="button" data-type="shop-quantity-plus" title="Tăng">+</button>
+								@auth
+									@if ($hasPurchased)
+										<button type="button" class="btn-new-review" onclick="openReviewModal({{ json_encode($userReview) }})">
+											{{ $userReview ? 'Chỉnh sửa đánh giá của bạn' : 'Gửi đánh giá của bạn' }}
+										</button>
+									@else
+										<div class="alert alert-warning mt-2">
+											⚠️ Bạn cần <strong>mua sản phẩm</strong> để có thể đánh giá.
+										</div>
+									@endif
+								@else
+									<p><a href="{{ route('login') }}" class="btn btn-outline-primary">Đăng nhập</a> để gửi đánh giá</p>
+								@endauth
+							</div>
+
+							<div class="sapo-product-reviews-filter">
+								<p><i class="fa fa-filter"></i><span>Bộ lọc</span></p>
+								<div class="list-filter">
+									@for ($i = 5; $i >= 1; $i--)
+									<label>
+										<input type="radio" name="filter" value="{{ $i }}" style="display:none;" onchange="filterReviews({{ $i }})">
+										<span class="checkmark"><span>{{ $i }} Điểm</span> ({{ $reviews->where('rating', $i)->count() }})</span>
+									</label>
+									@endfor
+									<label>
+										<input type="radio" name="filter" value="all" checked style="display:none;" onchange="filterReviews('all')">
+										<span class="checkmark"><span>Tất cả</span></span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="bpr-list" class="sapo-product-reviews-list mt-4">
+						@foreach ($reviews as $review)
+							<div class="sapo-review review-rating-{{ $review->rating }}">
+								<div class="sapo-review-header">
+									<span class="sapo-review-author">{{ $review->user->name ?? 'Ẩn danh' }}</span>
+									<div class="sapo-product-reviews-star" data-score="{{ $review->rating }}">
+										@for ($i = 1; $i <= 5; $i++)
+											<i data-alt="{{ $i }}" class="{{ $i <= $review->rating ? 'star-on-png' : 'star-off-png' }}"></i>
+										@endfor
+									</div>
+								</div>
+								<div class="sapo-review-body">
+									<div class="sapo-review-verified">
+										<i class="fa fa-check-circle text-success"></i> Đã mua hàng tại F1GENZ Shoes
+									</div>
+									<span class="sapo-review-content-body">{{ $review->comment }}</span>
+								</div>
+								<div class="sapo-review-actions">
+									<ul>
+										<li><span class="sapo-review-time">{{ $review->created_at->format('H:i d/m/Y') }}</span></li>
+									</ul>
+								</div>
+							</div>
+						@endforeach
 					</div>
 				</div>
 
-				<!-- CTA -->
-				<div class="main-product-cta">
-					<button type="button" data-type="main-product-add" title="Thêm vào giỏ">
-						<strong>Thêm vào giỏ</strong>
-						<span>Chọn ngay sản phẩm bạn yêu thích</span>
-					</button>
+				{{-- Popup Form --}}
+				<div id="popup-bpr-form" class="popup-bpr-form" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999;">
+					<div class="popup-inner" style="background: #fff; padding: 20px; margin: 10% auto; width: 400px; position: relative;">
+						<a href="javascript:;" class="close-modal" onclick="document.getElementById('popup-bpr-form').style.display='none'" style="position: absolute; top: 10px; right: 10px;">&times;</a>
+						<div class="sapo-product-reviews-form">
+							<form method="POST" id="review-form">
+								@csrf
+								<input type="hidden" name="_method" id="review-method" value="POST">
+								<input type="hidden" name="rating" id="review_rate" value="5">
+
+								<h4 class="title-form" id="review-modal-title">Đánh giá sản phẩm</h4>
+								<div class="review-product-name">{{ $product->name }}</div>
+
+								<div class="form-group">
+									<label>Đánh giá của bạn:</label>
+									<div id="dvRating" class="sapo-product-reviews-star">
+										@for ($i = 1; $i <= 5; $i++)
+											<i data-alt="{{ $i }}" class="star-on-png" onclick="selectRating({{ $i }})"></i>
+										@endfor
+									</div>
+								</div>
+
+								<div class="form-group">
+									<textarea name="comment" id="review_comment" rows="4" placeholder="Nội dung đánh giá..." required class="form-control"></textarea>
+								</div>
+
+								<div class="form-group">
+									<button type="submit" class="bpr-button-submit">Gửi đánh giá</button>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
+			<!-- sản phẩm liên quan -->
+			<div class="main-product-relate">
+				<div class="section-title-all">
+					<h2>Sản phẩm liên quan</h2>
+				</div>
+				<div class="main-product-relate-data">
+					@foreach($relatedProducts as $product)
+					<div class="product-item" data-id="{{ $product->id }}" data-handle="{{ Str::slug($product->name) }}">
+						<div class="product-item-wrap">
+							<div class="product-item-image hasThumbs hasThumbsIcon">
+								<div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+								@if($product->discount)
+									<span class="product-item-discount">-{{ $product->discount }}%</span>
+								@endif
+								<a class="product-item-link" href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
+									<img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
+									<img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image2 ?? $product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
+								</a>
+								<ul class="product-item-thumbs">
+									@if($product->thumb1)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb1) }}"></a></li>@endif
+									@if($product->thumb2)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb2) }}"></a></li>@endif
+									@if($product->thumb3)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb3) }}"></a></li>@endif
+								</ul>
+							</div>
 
+							<div class="product-item-action">
+								<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add">❤</button>
+								<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button">👁</button>
+								<form method="POST" action="{{ route('cart.add') }}">
+									@csrf
+									<input type="hidden" value="{{ $product->id }}" name="product_id" />
+									<input type="hidden" value="1" name="quantity" />
+									<button type="submit" title="Thêm vào giỏ" class="shop-addLoop-button">🛒</button>
+								</form>
+							</div>
+
+							<div class="product-item-detail">
+								<h3 class="product-item-detail-name">
+									<a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">{{ $product->name }}</a>
+								</h3>
+								<div class="product-item-detail-price">
+									<span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+									@if($product->original_price)
+										<del>{{ number_format($product->original_price, 0, ',', '.') }}₫</del>
+									@endif
+								</div>
+								<div class="product-item-detail-info">
+									<div class="product-item-detail-info-data">
+										@if($product->is_new)<span class="product-item-detail-info-tag">new</span>@endif
+										@if($product->is_freeship)<span class="product-item-detail-info-tag">freeship</span>@endif
+										@if($product->is_hot)<span class="product-item-detail-info-tag">hot</span>@endif
+									</div>
+									<div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					@endforeach
+				</div>
+			</div>			
 		</div>
-
-
-		<div id="sapo-product-reviews" class="sapo-product-reviews" data-id="{{ $product->id }}">
-    <div id="sapo-product-reviews-sub">
-        <div class="sapo-product-reviews-summary">
-            <div class="summary-filter">
-                <div class="sapo-product-reviews-action">
-                    <div itemscope itemtype="http://schema.org/Product">
-                        <span style="display:none" itemprop="name">{{ $product->name }}</span>
-
-                        @php
-                            $reviews = $product->reviews ?? collect();
-                            $totalReviews = $reviews->count();
-                            $averageRating = $reviews->avg('rating') ?? 0;
-                            $userReview = auth()->check() ? $reviews->firstWhere('user_id', auth()->id()) : null;
-                        @endphp
-
-                        <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="bpr-summary">
-                            <span style="display:none" itemprop="itemReviewed">{{ $product->name }}</span>
-                            <meta content="5" itemprop="bestRating">
-                            <meta content="1" itemprop="worstRating">
-                            <div class="bpr-summary-average">
-                                <span itemprop="ratingValue">{{ number_format($averageRating, 1) }}</span>
-                                <span class="max-score">/5</span>
-                            </div>
-                            <div class="rating-stars">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <i class="fa fa-star{{ $i <= floor($averageRating) ? '' : '-o' }}"></i>
-                                @endfor
-                            </div>
-                            <p>(<span itemprop="ratingCount">{{ $totalReviews }}</span> đánh giá)</p>
-                        </div>
-                    </div>
-
-                    @auth
-                        @if ($hasPurchased && $userReview === null)
-                            <button type="button" class="btn btn-primary btn-new-review"
-                                onclick="document.getElementById('review-form').scrollIntoView({ behavior: 'smooth' })">
-                                Gửi đánh giá của bạn
-                            </button>
-                        @elseif($userReview)
-                            <div class="alert alert-info mt-3">
-                                Bạn đã đánh giá sản phẩm này.
-                                <a href="{{ route('reviews.edit', $userReview->id) }}" class="btn btn-sm btn-outline-primary">Chỉnh sửa đánh giá</a>
-                            </div>
-                        @else
-                            <div class="alert alert-warning mt-3">
-                                ⚠️ Bạn cần <strong>mua sản phẩm</strong> để có thể đánh giá.
-                            </div>
-                        @endif
-                    @else
-                        <p><a href="{{ route('login') }}" class="btn btn-outline-primary">Đăng nhập</a> để gửi đánh giá</p>
-                    @endauth
-                </div>
-            </div>
-        </div>
-
-        {{-- Danh sách đánh giá --}}
-        <div id="bpr-list" class="sapo-product-reviews-list mt-4">
-            @forelse ($reviews as $review)
-                <div class="sapo-review mb-3 p-3 border rounded">
-                    <div class="sapo-review-header d-flex justify-content-between">
-                        <strong class="sapo-review-author">{{ $review->user->name ?? 'Ẩn danh' }}</strong>
-                        <div class="rating-stars text-warning">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <i class="fa fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
-                            @endfor
-                        </div>
-                    </div>
-                    <div class="sapo-review-body mt-2">
-                        <div class="sapo-review-verified text-success small mb-1">
-                            <i class="fa fa-check-circle"></i> Đã mua hàng tại F1GENZ Shoes
-                        </div>
-                        <div class="sapo-review-content-body" itemprop="description">{{ $review->comment }}</div>
-                    </div>
-                    <div class="sapo-review-actions text-muted small mt-2">
-                        <span itemprop="datePublished">{{ $review->created_at->format('H:i d/m/Y') }}</span>
-                    </div>
-                </div>
-            @empty
-                <p>Chưa có đánh giá nào cho sản phẩm này.</p>
-            @endforelse
-        </div>
-
-        {{-- Form gửi đánh giá --}}
-        @auth
-            @if ($hasPurchased && $userReview === null)
-                <div id="review-form" class="mt-5">
-                    <form method="POST" action="{{ route('reviews.store', $product->id) }}">
-                        @csrf
-                        <h4 class="mb-3">Đánh giá sản phẩm</h4>
-
-                        {{-- Chọn sao --}}
-                        <div class="form-group mb-3">
-                            <label for="rating">Số sao:</label>
-                            <input type="hidden" name="rating" id="selected-rating" value="5">
-                            <div class="stars">
-                                @for ($i = 5; $i >= 1; $i--)
-                                    <i class="fa fa-star star-item" data-rating="{{ $i }}"></i>
-                                @endfor
-                            </div>
-                        </div>
-
-                        {{-- Nội dung --}}
-                        <div class="form-group mb-3">
-                            <label for="comment">Nội dung:</label>
-                            <textarea name="comment" id="comment" rows="4" class="form-control" placeholder="Nhập nội dung đánh giá...">{{ old('comment') }}</textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Gửi đánh giá</button>
-                    </form>
-                </div>
-            @endif
-        @endauth
-    </div>
-</div>
-
-
-
-		<!-- <div class="sapo-buyxgety-module-detail-v2"></div>
-		<div class="main-product-description">
-			<div class="main-product-description-left ">
-				<ul class="main-product-description-left-head">
-					<li data-type="des" class="active"><span>Mô tả sản phẩm</span></li>
-					<li data-type="page1"><span>Chính sách bảo mật</span></li>
-					<li data-type="page2"><span>Chính sách đổi trả</span></li>
-					<li data-type="page3"><span>Điều khoản dịch vụ</span></li>
-				</ul>
-				<div class="main-product-description-left-item" data-type="des">
-					<div class="main-product-description-item-data">
-						</p>
-						<table cellpadding="0" cellspacing="0" border="1">
-							<tbody>
-								<tr>
-									<td>NHÃN HIỆU</td>
-									<td>Convers&nbsp;</td>
-								</tr>
-								<tr>
-									<td>TÊN</td>
-									<td>Converse Chuck Taylor All Star SP OX&nbsp;</td>
-								</tr>
-								<tr>
-									<td>DÒNG SẢN PHẨM</td>
-									<td>Chuck Taylor All Star</td>
-								</tr>
-								<tr>
-									<td>NƠI SẢN XUẤT</td>
-									<td>Việt Nam</td>
-								</tr>
-								<tr>
-									<td>CHẾ ĐỘ BẢO HÀNH</td>
-									<td>Converse Chuck Taylor All Star SP OX&nbsp;</td>
-								</tr>
-								<tr>
-									<td>PHỤ KIỆN THEO KÈM</td>
-									<td>Túi Converse, Phiếu bảo hành chính hãng, Hộp giày</td>
-								</tr>
-							</tbody>
-						</table><br>
-					</div>
-					<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Mô tả sản phẩm" title="Xem đầy đủ Mô tả sản phẩm">Xem thêm</a>
-				</div>
-				<div class="main-product-description-left-item" data-type="page1">
-					<div class="main-product-description-item-data">
-						<p>Chính sách bảo mật này nhằm giúp Quý khách hiểu về cách website thu thập và sử dụng thông tin cá nhân của mình thông qua việc sử dụng trang web, bao gồm mọi thông tin có thể cung cấp thông qua trang web khi Quý khách đăng ký tài khoản, đăng ký nhận thông tin liên lạc từ chúng tôi, hoặc khi Quý khách mua sản phẩm, dịch vụ, yêu cầu thêm thông tin dịch vụ từ chúng tôi.</p>
-						<p>Chúng tôi sử dụng thông tin cá nhân của Quý khách để liên lạc khi cần thiết liên quan đến việc Quý khách sử dụng website của chúng tôi, để trả lời các câu hỏi hoặc gửi tài liệu và thông tin Quý khách yêu cầu.</p>
-						<p><span class="wysiwyg-font-size-medium">Trang web của chúng tôi coi trọng việc bảo mật thông tin và sử dụng các biện pháp tốt nhất để bảo vệ thông tin cũng như việc thanh toán của khách hàng.&nbsp;</span></p>
-						<p><span class="wysiwyg-font-size-medium">Mọi thông tin giao dịch sẽ được bảo mật ngoại trừ trong trường hợp cơ quan pháp luật yêu cầu.</span></p>
-					</div>
-					<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách bảo mật" title="Xem đầy đủ Chính sách bảo mật">Xem thêm</a>
-				</div>
-				<div class="main-product-description-left-item" data-type="page2">
-					<div class="main-product-description-item-data">
-						<p><strong>1. Điều kiện đổi trả</strong></p>
-						<p>Quý Khách hàng cần kiểm tra tình trạng hàng hóa và có thể đổi hàng/ trả lại hàng&nbsp;ngay tại thời điểm giao/nhận hàng&nbsp;trong những trường hợp sau:</p>
-						<ul>
-							<li>Hàng không đúng chủng loại, mẫu mã trong đơn hàng đã đặt hoặc như trên website tại thời điểm đặt hàng.</li>
-							<li>Không đủ số lượng, không đủ bộ như trong đơn hàng.</li>
-							<li>Tình trạng bên ngoài bị ảnh hưởng như rách bao bì, bong tróc, bể vỡ…</li>
-						</ul>
-						<p>&nbsp;Khách hàng có trách nhiệm trình giấy tờ liên quan chứng minh sự thiếu sót trên để hoàn thành việc&nbsp;hoàn trả/đổi trả hàng hóa.&nbsp;</p>
-						<p><br></p>
-						<p><strong>2. Quy định về thời gian thông báo và gửi sản phẩm đổi trả</strong></p>
-						<ul>
-							<li><strong>Thời gian thông báo đổi trả</strong>:&nbsp;trong vòng 48h kể từ khi nhận sản phẩm đối với trường hợp sản phẩm thiếu phụ kiện, quà tặng hoặc bể vỡ.</li>
-							<li><strong>Thời gian gửi chuyển trả sản phẩm</strong>: trong vòng 14 ngày kể từ khi nhận sản phẩm.</li>
-							<li><strong>Địa điểm đổi trả sản phẩm</strong>: Khách hàng có thể mang hàng trực tiếp đến văn phòng/ cửa hàng của chúng tôi hoặc chuyển qua đường bưu điện.</li>
-						</ul>
-						<p>Trong trường hợp Quý Khách hàng có ý kiến đóng góp/khiếu nại liên quan đến chất lượng sản phẩm, Quý Khách hàng vui lòng liên hệ đường dây chăm sóc khách hàng&nbsp;của chúng tôi.</p>
-					</div>
-					<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
-				</div>
-				<div class="main-product-description-left-item" data-type="page3">
-					<div class="main-product-description-item-data">
-						<p><span class="wysiwyg-font-size-medium"><strong>1. Giới thiệu</strong></span></p>
-						<p><span class="wysiwyg-font-size-medium">Chào mừng quý khách hàng đến với website chúng tôi.</span></p>
-						<p><span class="wysiwyg-font-size-medium">Khi quý khách hàng truy cập vào trang website của chúng tôi có nghĩa là quý khách đồng ý với các điều khoản này. Trang web có quyền thay đổi, chỉnh sửa, thêm hoặc lược bỏ bất kỳ phần nào trong Điều khoản mua bán hàng hóa này, vào bất cứ lúc nào. Các thay đổi có hiệu lực ngay khi được đăng trên trang web mà không cần thông báo trước. Và khi quý khách tiếp tục sử dụng trang web, sau khi các thay đổi về Điều khoản này được đăng tải, có nghĩa là quý khách chấp nhận với những thay đổi đó.</span></p>
-						<p><span class="wysiwyg-font-size-medium">Quý khách hàng vui lòng kiểm tra thường xuyên để cập nhật những thay đổi của chúng tôi.</span></p>
-						<p><span class="wysiwyg-font-size-medium"><strong>2. Hướng dẫn sử dụng website</strong></span></p>
-						<p><span class="wysiwyg-font-size-medium">Khi vào web của chúng tôi, khách hàng phải đảm bảo đủ 18 tuổi, hoặc truy cập dưới sự giám sát của cha mẹ hay người giám hộ hợp pháp. Khách hàng đảm bảo có đầy đủ hành vi dân sự để thực hiện các giao dịch mua bán hàng hóa theo quy định hiện hành của pháp luật Việt Nam.</span></p>
-						<p><span class="wysiwyg-font-size-medium">Trong suốt quá trình đăng ký, quý khách đồng ý nhận email quảng cáo từ website. Nếu không muốn tiếp tục nhận mail, quý khách có thể từ chối bằng cách nhấp vào đường link ở dưới cùng trong mọi email quảng cáo.</span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span></p>
-						<p><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"></span><br></p>
-						<p><span class="wysiwyg-font-size-medium"><strong>3. Thanh toán an toàn và tiện lợi</strong></span></p>
-						<p><span class="wysiwyg-font-size-medium">Người mua có thể tham khảo các phương thức thanh toán sau đây và lựa chọn áp dụng phương thức phù hợp:</span></p>
-						<p><span class="wysiwyg-font-size-medium"><strong><u>Cách 1</u></strong>: Thanh toán trực tiếp (người mua nhận hàng tại địa chỉ người bán)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 2</u></strong><strong>:</strong>&nbsp;Thanh toán sau (COD – giao hàng và thu tiền tận nơi)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 3</u></strong><strong>:</strong>&nbsp;Thanh toán online qua thẻ tín dụng, chuyển khoản</span></p>
-					</div>
-					<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
-				</div>
-			</div>
-			<div class="main-product-description-right">
-				<label><span>Thông số kỹ thuật</span></label>
-				<div class="main-product-description-item-data">
-					<p><em><strong>Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới. Vậy đâu là lý do giúp dòng giày này trở nên phổ biến và được yêu thích nhiều như vậy trong nhiều thập kỷ qua?</strong></em></p>
-					<p>Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt vào 1917 dành riêng cho các vận động viên bóng rổ chuyên nghiệp.</p>
-					<p>Tuy nhiên thời điểm này giày Converse All Star chỉ thế hiện đúng chức năng của mình mà chưa đạt được độ tinh tế về thời trang. Vì vậy, sau khi Chuck Taylor tham gia vào đội ngũ Converse đã mang đến cho sản phẩm một sự thay đổi mới, đảm được tính thời trang cho sản phẩm. Sự thay đổi này đã khiến Converse có những bước chuyển mình và dần khẳng định được vị thế trong lĩnh vực giày thể thao.</p>
-					<p>Mẫu giày Converse CTAS SP OX với màu trắng sáng giúp làm bật tone và tôn thêm vẻ đẹp cho bộ outfit cực chất của bạn. Thiết kế đơn giản dễ dàng phối hợp với nhiều kiểu quần áo cho bạn tự do thay đổi trang phục. Thân giày được làm từ chất vải dệt dày dặn và bền bỉ, để bạn có cảm giác tự tin và an tâm trong mọi hoạt động.</p>
-					<p>
-				</div>
-			</div>
-
-		</div>
-
-		<div id="sapo-product-reviews" class="sapo-product-reviews" data-id="33445561">
-			<div id="sapo-product-reviews-noitem" style="display: none;">
-				<div class="content">
-					<p data-content-text="language.suggest_noitem"></p>
-					<div class="product-reviews-summary-actions">
-						<button type="button" class="btn-new-review" onclick="BPR.newReview(this); return false;" data-content-str="language.newreview"></button>
-					</div>
-					<div id="noitem-bpr-form_" data-id="formId" class="noitem-bpr-form" style="display:none;">
-						<div class="sapo-product-reviews-form"></div>
-					</div>
-				</div>
-			</div>
-
-		</div> -->
-
-		<div class="main-product-relate">
-    <div class="section-title-all">
-        <h2>Sản phẩm liên quan</h2>
-    </div>
-    <div class="main-product-relate-data">
-        @foreach($relatedProducts as $product)
-        <div class="product-item" data-id="{{ $product->id }}" data-handle="{{ Str::slug($product->name) }}">
-            <div class="product-item-wrap">
-                <div class="product-item-image hasThumbs hasThumbsIcon">
-                    <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
-                    @if($product->discount)
-                        <span class="product-item-discount">-{{ $product->discount }}%</span>
-                    @endif
-                    <a class="product-item-link" href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
-                        <img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
-                        <img class="w-auto" loading="lazy" width="480" height="480" src="{{ asset($product->image2 ?? $product->image ?? 'images/default.jpg') }}" alt="{{ $product->name }}">
-                    </a>
-                    <ul class="product-item-thumbs">
-                        @if($product->thumb1)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb1) }}"></a></li>@endif
-                        @if($product->thumb2)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb2) }}"></a></li>@endif
-                        @if($product->thumb3)<li><a href="#"><img loading="lazy" width="50" height="50" src="{{ asset($product->thumb3) }}"></a></li>@endif
-                    </ul>
-                </div>
-
-                <div class="product-item-action">
-                    <button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add"></button>
-                    <button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button"></button>
-                    <form method="POST" action="{{ route('cart.add') }}">
-                        @csrf
-                        <input type="hidden" value="{{ $product->id }}" name="product_id" />
-                        <input type="hidden" value="1" name="quantity" />
-                        <button type="submit" title="Thêm vào giỏ" class="shop-addLoop-button">Thêm vào giỏ</button>
-                    </form>
-                </div>
-
-                <div class="product-item-detail">
-                    <h3 class="product-item-detail-name">
-                        <a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">{{ $product->name }}</a>
-                    </h3>
-                    <div class="product-item-detail-price">
-                        <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                        @if($product->original_price)
-                            <del>{{ number_format($product->original_price, 0, ',', '.') }}₫</del>
-                        @endif
-                    </div>
-                    <div class="product-item-detail-info">
-                        <div class="product-item-detail-info-data">
-                            @if($product->is_new)<span class="product-item-detail-info-tag">new</span>@endif
-                            @if($product->is_freeship)<span class="product-item-detail-info-tag">freeship</span>@endif
-                            @if($product->is_hot)<span class="product-item-detail-info-tag">hot</span>@endif
-                        </div>
-                        <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
-</div>
-
-
-		<!-- <div class="main-product-seen">
-			<div class="section-title-all">
-				<h2>Sản phẩm đã xem</h2>
-			</div>
-			<div class="main-product-seen-data"></div>
-		</div> -->
-
 	</div>
-</div>
-
-<!-- <div class="modal fade" role="dialog" id="preOrder-modal">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-body">
-					<h5>Tư vấn sản phẩm</h5>
-					<div class="preOrder-modal-wrap">
-						<form method="post" action="https://f1genz-shoes.mysapo.net/postcontact" id="contact" accept-charset="UTF-8"><input name="FormType" type="hidden" value="contact" /><input name="utf8" type="hidden" value="true" /><input type="hidden" id="Token-8e054fd4ec0449edb71bfb33ddc1e42b" name="Token" /><noscript data-src="../www.google.com/recaptcha/apif78f.js?render=6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK"></noscript><noscript>grecaptcha.ready(function() {grecaptcha.execute("6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK", {action: "contact"}).then(function(token) {document.getElementById("Token-8e054fd4ec0449edb71bfb33ddc1e42b").value = token});});</noscript>
-							<input required type="text" name="contact[name]" value="" placeholder="Họ tên của bạn">
-							<input required type="email" name="contact[email]" value="" placeholder="Email của bạn">
-							<input required type="number" name="contact[phone]" value="" placeholder="Số điện thoại của bạn">
-							<input type="text" readonly value="" id="preOrder-hard">
-							<textarea name="contact[body]" placeholder="Nhập nội dung bạn cần tư vấn"></textarea>
-							<button type="submit" title="Đăng ký">Đăng ký</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> -->
 
 </main>
 @include('Frontend.partials.footer')
 @include('Frontend.partials.modal')
 @include('Frontend.partials.scrip')
+
 <script>
 
     let colorId = null;
@@ -1194,39 +1354,139 @@
         }
     }
 </script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý sự kiện chọn sao
-    const stars = document.querySelectorAll('.star-item');
-    const ratingInput = document.getElementById('selected-rating');
-    
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            const rating = this.getAttribute('data-rating');
-            ratingInput.value = rating;
-            
-            // Reset tất cả sao về không được chọn
-            stars.forEach(s => s.style.color = '#ddd');
-            
-            // Đánh dấu các sao được chọn
-            stars.forEach(s => {
-                if (s.getAttribute('data-rating') <= rating) {
-                    s.style.color = '#ffc107';
-                }
-            });
-        });
-    });
-    
-    // Khởi tạo hiển thị sao mặc định (5 sao)
-    stars.forEach(s => {
-        if (s.getAttribute('data-rating') <= 5) {
-            s.style.color = '#ffc107';
-        }
-    });
-});
+	document.addEventListener('DOMContentLoaded', function() {
+		// Xử lý sao trong form tĩnh (nếu có)
+		const staticStars = document.querySelectorAll('.star-item');
+		const staticRatingInput = document.getElementById('selected-rating');
+		if (staticStars.length && staticRatingInput) {
+			let selectedRating = staticRatingInput.value || 5;
+
+			function updateStaticStars(rating) {
+				staticStars.forEach(s => {
+					s.style.color = '#ddd';
+					if (parseInt(s.getAttribute('data-rating')) <= rating) {
+						s.style.color = '#ffc107';
+					}
+				});
+			}
+
+			staticStars.forEach(star => {
+				star.addEventListener('click', function () {
+					selectedRating = this.getAttribute('data-rating');
+					staticRatingInput.value = selectedRating;
+					updateStaticStars(selectedRating);
+				});
+			});
+
+			updateStaticStars(selectedRating);
+		}
+	});
 </script>
 
+<script>
+	function openReviewModal(review = null) {
+		const form = document.getElementById('review-form');
+		const methodInput = document.getElementById('review-method');
+		const commentInput = document.getElementById('review_comment');
+		const ratingInput = document.getElementById('review_rate');
+		const modalTitle = document.getElementById('review-modal-title');
+		const modal = document.getElementById('popup-bpr-form');
+
+		if (review) {
+			form.action = '/reviews/' + review.id;
+			methodInput.value = 'PUT';
+			commentInput.value = review.comment;
+			ratingInput.value = review.rating;
+			modalTitle.innerText = 'Chỉnh sửa đánh giá';
+			updateModalStars(review.rating);
+		} else {
+			form.action = '{{ route('reviews.store', $product->id) }}';
+			methodInput.value = 'POST';
+			commentInput.value = '';
+			ratingInput.value = 5;
+			modalTitle.innerText = 'Gửi đánh giá';
+			updateModalStars(5);
+		}
+		
+		// Chỉ sử dụng một cách để hiển thị modal
+		modal.style.display = 'flex';
+		modal.classList.add('modal-active');
+		document.body.style.overflow = 'hidden';
+	}
+
+	function closeReviewModal() {
+		const modal = document.getElementById('popup-bpr-form');
+		modal.style.display = 'none';
+		modal.classList.remove('modal-active');
+		document.body.style.overflow = '';
+	}
+
+	// Cập nhật event listener cho nút đóng
+	document.addEventListener('DOMContentLoaded', function() {
+		const closeButton = document.querySelector('.close-modal');
+		if (closeButton) {
+			closeButton.onclick = function(e) {
+				e.preventDefault();
+				closeReviewModal();
+				return false;
+			};
+		}
+	});
+		function selectRating(rating) {
+			document.getElementById('review_rate').value = rating;
+			updateModalStars(rating);
+		}
+
+		function updateModalStars(rating) {
+			document.querySelectorAll('#dvRating i').forEach((star, index) => {
+				star.className = (index < rating) ? 'star-on-png' : 'star-off-png';
+			});
+		}
+
+		function filterReviews(score) {
+			document.querySelectorAll('.sapo-review').forEach(el => {
+				if (score === 'all' || el.classList.contains('review-rating-' + score)) {
+					el.style.display = 'block';
+				} else {
+					el.style.display = 'none';
+				}
+			});
+		}
+
+		// Close modal when clicking outside of it
+		document.addEventListener('DOMContentLoaded', function() {
+		// Đảm bảo nút đóng hoạt động
+		const closeButtons = document.querySelectorAll('.close-modal');
+		closeButtons.forEach(button => {
+			button.addEventListener('click', function(e) {
+				e.preventDefault();
+				closeReviewModal();
+			});
+		});
+
+		// Đóng modal khi click bên ngoài
+		const modal = document.getElementById('popup-bpr-form');
+		if (modal) {
+			modal.addEventListener('click', function(e) {
+				if (e.target === this) {
+					closeReviewModal();
+				}
+			});
+		}
+
+		// Đóng modal khi nhấn ESC
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape' && modal && modal.classList.contains('modal-active')) {
+				closeReviewModal();
+			}
+		});
+	});
 </script>
+
+
+
 </body>
 
 

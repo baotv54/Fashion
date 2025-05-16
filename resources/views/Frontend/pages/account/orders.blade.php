@@ -23,6 +23,109 @@
     <meta property="og:site_name" content="">
 
 
+	<style>
+		.chat-bubble.bot-bubble.typing {
+			font-style: italic;
+			opacity: 0.7;
+		}
+
+		.chat-toggle-btn {
+			position: fixed;
+			bottom: 20px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: #007bff;
+			color: white;
+			font-size: 24px;
+			border: none;
+			cursor: pointer;
+			z-index: 9999;
+		}
+
+		.chatbot-container {
+			position: fixed;
+			bottom: 80px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 360px;
+			max-height: 500px;
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.2);
+			display: none;
+			flex-direction: column;
+			overflow: hidden;
+			z-index: 9999;
+		}
+
+		.chatbot-header {
+			background: #007bff;
+			color: #fff;
+			padding: 12px;
+			font-weight: bold;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chatbot-body {
+			flex: 1;
+			padding: 15px;
+			overflow-y: auto;
+			background: #f7f7f7;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.chatbot-footer {
+			display: flex;
+			padding: 10px;
+			border-top: 1px solid #ddd;
+			background: #fff;
+		}
+
+		.chatbot-footer input {
+			flex: 1;
+			padding: 8px 10px;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+		}
+
+		.chatbot-footer button {
+			margin-left: 5px;
+			padding: 8px 12px;
+			background: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 6px;
+		}
+
+		.chat-bubble {
+			max-width: 80%;
+			padding: 10px 14px;
+			margin: 5px 0;
+			border-radius: 20px;
+			word-wrap: break-word;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+
+		.user-bubble {
+			align-self: flex-end;
+			background-color: #007bff;
+			color: #fff;
+			border-bottom-right-radius: 0;
+		}
+
+		.bot-bubble {
+			align-self: flex-start;
+			background-color: #e9ecef;
+			color: #000;
+			border-bottom-left-radius: 0;
+		}
+	</style>
 
 
 
@@ -3724,21 +3827,34 @@
 
 <body class="">
   @include('Frontend.partials.header')
+  @php $user = Auth::user(); @endphp
+
     <main class="main-layout">
         <div class="acc">
             <div class="container-fluid">
                 <div class="acc-wrap">
-                    <div class="acc-sidebar">
-                        <span><img width="64" height="64" src="https://ui-avatars.com/api/?name=Bảo_11A204.Trịnh&font-size=.5" alt="Bảo_11A2 04.Trịnh" title="Bảo_11A2 04.Trịnh" /></span>
-                        <h3>Xin chào, <b>Bảo_11A2 04.Trịnh</b></h3>
-                        <ul>
-                            <li><a href="/account" aria-label="Thông tin tài khoản" title="Thông tin tài khoản">Thông tin tài khoản</a></li>
-                            <li><a href="/order-history" aria-label="Đơn hàng của bạn" title="Đơn hàng của bạn">Đơn hàng của bạn</a></li>
-                            <li><a href="/account/addresses" aria-label="Danh sách địa chỉ" title="Danh sách địa chỉ">Danh sách địa chỉ</a></li>
-                            <li><a href="/account/changepassword" aria-label="Đổi mật khẩu" title="Đổi mật khẩu">Đổi mật khẩu</a></li>
-                            <li><a href="/account/logout" aria-label="Đăng xuất" title="Đăng xuất">Đăng xuất</a></li>
-                        </ul>
-                    </div>
+                <div class="acc-sidebar">
+                    <span>
+                        <img width="64" height="64"
+                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
+                             alt="{{ $user->name }}" />
+                    </span>
+                    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
+                    <ul>
+                        <li><a href="/account">Thông tin tài khoản</a></li>
+                        <li><a href="/order-history">Đơn hàng của bạn</a></li>
+                        <li><a href="/account/addresses">Danh sách địa chỉ</a></li>
+                        <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
                  <div class="acc-data acc-data-orders">
                 <h1 class="title-head margin-top-0">Đơn hàng của bạn</h1>
                 <div class="table-responsive-block table_mobile">
@@ -3802,8 +3918,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="shop-pagination">
-                    {{ $orders->links() }}
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $orders->links('pagination::bootstrap-4') }}
                 </div>
             </div>
                 </div>

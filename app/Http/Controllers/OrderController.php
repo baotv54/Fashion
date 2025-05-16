@@ -14,11 +14,13 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('user')->orderBy('created_at', 'desc')->get();
-
-        // Trả về view lịch sử đơn hàng
+        $orders = Order::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); 
+    
         return view('admin.orders.index', compact('orders'));
     }
+    
     public function show($id)
     {
         $order = Order::with(['orderDetails', 'user'])->findOrFail($id);
@@ -31,7 +33,6 @@ class OrderController extends Controller
             'status' => 'required|in:ordered,processing,confirmed,shipping,delivered,cancelled,returned',
         ]);
 
-        // Tìm đơn hàng và cập nhật trạng thái
         $order = Order::findOrFail($id);
         $order->status = $request->status;
         $order->save();
@@ -40,7 +41,7 @@ class OrderController extends Controller
     }
     public function userOrderHistory()
     {
-        $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10); // Phân trang 10 đơn hàng mỗi trang
+        $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
         return view('Frontend.pages.account.orders', compact('orders')); // Truyền $orders sang view
     }
     public function userOrderDetails($id)

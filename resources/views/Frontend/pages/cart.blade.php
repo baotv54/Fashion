@@ -59,6 +59,16 @@
 									</div>
 									<div class="main-cart-data-full-item-info">
 										<h3 class="main-cart-data-full-item-info-title"><a href="#" title="{{ $cart->name }}">{{ $cart->name }}</a></h3>
+										@php
+										$variantInfo = $cart->options->get('variant_attributes');
+										@endphp
+
+										@if ($variantInfo)
+										<div style="font-size: 14px; color: #666;">
+											Biến thể: {{ $variantInfo }}
+										</div>
+										@endif
+
 										<div class="main-cart-data-full-item-info-price">
 											<label>Giá: </label>
 											{{ number_format($cart->price, 0, ',', '.') }}₫

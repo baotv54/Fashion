@@ -23,7 +23,7 @@
                             <a href="/" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
                         </li>
                         <li class="hasChild">
-                            <a href="/view" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
+                            <a href="/products" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
                             <!-- <ul class="menu1">
                                 <li><a href="converse-allfc2c.html?view=vertical" title="Converse All Style 1" aria-label="Converse All Style 1">Converse All Style 1</a></li>
                                 <li><a href="converse-allc267.html?view=horizontal" title="Converse All Style 2" aria-label="Converse All Style 2">Converse All Style 2</a></li>
@@ -153,15 +153,15 @@
                     <div class="tool-search-smart"></div>
                 </form>
                 @auth
-                    <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
-                        title="Tài khoản">
-                        <a href="/account"><i class="fal fa-user"></i></a>
-                    </button>
+                <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
+                    title="Tài khoản">
+                    <a href="/account"><i class="fal fa-user"></i></a>
+                </button>
                 @else
-                    <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
-                        title="Tài khoản">
-                        <a href="/Login"><i class="fal fa-user"></i></a>
-                    </button>
+                <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
+                    title="Tài khoản">
+                    <a href="/Login"><i class="fal fa-user"></i></a>
+                </button>
                 @endauth
                 <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
                     <i class="fal fa-bars"></i>
@@ -170,10 +170,13 @@
                     <i class="fal fa-heart"></i>
                     <span class="shop-wishlist-count">0</span>
                 </button>
-                <button class="shop-tool has-count" type="button" data-type="shop-cart-header" title="Giỏ hàng">
+                <button class="shop-tool has-count" type="button"
+                    data-type="shop-cart-header" title="Giỏ hàng"
+                    onclick="window.location.href='{{ route('cart.index') }}';">
                     <i class="fal fa-shopping-bag"></i>
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
+
             </div>
         </div>
     </div>

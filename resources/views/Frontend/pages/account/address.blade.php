@@ -23,6 +23,109 @@
     <meta property="og:site_name" content="">
 
 
+    <style>
+		.chat-bubble.bot-bubble.typing {
+			font-style: italic;
+			opacity: 0.7;
+		}
+
+		.chat-toggle-btn {
+			position: fixed;
+			bottom: 20px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: #007bff;
+			color: white;
+			font-size: 24px;
+			border: none;
+			cursor: pointer;
+			z-index: 9999;
+		}
+
+		.chatbot-container {
+			position: fixed;
+			bottom: 80px;
+			left: 20px; /* đổi từ right: 20px */
+			width: 360px;
+			max-height: 500px;
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.2);
+			display: none;
+			flex-direction: column;
+			overflow: hidden;
+			z-index: 9999;
+		}
+
+		.chatbot-header {
+			background: #007bff;
+			color: #fff;
+			padding: 12px;
+			font-weight: bold;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chatbot-body {
+			flex: 1;
+			padding: 15px;
+			overflow-y: auto;
+			background: #f7f7f7;
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.chatbot-footer {
+			display: flex;
+			padding: 10px;
+			border-top: 1px solid #ddd;
+			background: #fff;
+		}
+
+		.chatbot-footer input {
+			flex: 1;
+			padding: 8px 10px;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+		}
+
+		.chatbot-footer button {
+			margin-left: 5px;
+			padding: 8px 12px;
+			background: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 6px;
+		}
+
+		.chat-bubble {
+			max-width: 80%;
+			padding: 10px 14px;
+			margin: 5px 0;
+			border-radius: 20px;
+			word-wrap: break-word;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+
+		.user-bubble {
+			align-self: flex-end;
+			background-color: #007bff;
+			color: #fff;
+			border-bottom-right-radius: 0;
+		}
+
+		.bot-bubble {
+			align-self: flex-start;
+			background-color: #e9ecef;
+			color: #000;
+			border-bottom-left-radius: 0;
+		}
+	</style>
 
 
 
@@ -3724,110 +3827,113 @@
 
 <body class="">
     @include('Frontend.partials.header')
-    <main class="main-layout py-5">
-        <div class="container">
-            <div class="row">
+    <main class="main-layout">
+    <div class="acc">
+        <div class="container-fluid">
+            <div class="acc-wrap">
                 <!-- Sidebar -->
-                <div class="col-md-3">
-                    <div class="text-center mb-4">
-                        <img width="64" height="64" class="rounded-circle"
-                            src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}&font-size=.5"
-                            alt="{{ Auth::user()->name }}" />
-                        <h5 class="mt-2">Xin chào, <b>{{ Auth::user()->name }}</b></h5>
-                    </div>
-                    <ul class="list-group">
-                        <a href="/account" class="list-group-item">Thông tin tài khoản</a>
-                        <a href="/order-history" class="list-group-item">Đơn hàng của bạn</a>
-                        <a href="/account/addresses" class="list-group-item active">Danh sách địa chỉ</a>
-                        <a href="/account/changepassword" class="list-group-item">Đổi mật khẩu</a>
-                        <a href="/account/logout" class="list-group-item">Đăng xuất</a>
+                <div class="acc-sidebar">
+                    <span>
+                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&font-size=.5" alt="{{ Auth::user()->name }}" />
+                    </span>
+                    <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
+                    <ul>
+                        <li><a href="/account">Thông tin tài khoản</a></li>
+                        <li><a href="/order-history">Đơn hàng của bạn</a></li>
+                        <li><a href="/account/addresses" class="active">Danh sách địa chỉ</a></li>
+                        <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
 
-                <!-- Main content -->
-                <div class="col-md-9">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4>📍 Danh sách địa chỉ</h4>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addresses-new-modal">+ Thêm địa chỉ</button>
-                    </div>
+                <!-- Main Content -->
+                <div class="acc-data acc-data-addresses">
+                    <h1 class="title-head margin-top-0">📍 Danh sách địa chỉ</h1>
+
+                    <!-- Thêm địa chỉ mới -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addresses-new-modal">+ Thêm địa chỉ</button>
 
                     <!-- Danh sách địa chỉ -->
-                    <div class="row g-3">
+                    <div class="address-list">
                         @foreach ($addresses as $address)
-                        <div class="col-md-6">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-body">
-                                    <p><strong>Họ tên:</strong> {{ $address->name }}
-                                        @if ($address->is_default)
-                                        <span class="badge bg-success ms-2">Mặc định</span>
-                                        @endif
-                                    </p>
-                                    <p><strong>Địa chỉ:</strong> {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}</p>
-                                    <p><strong>SĐT:</strong> {{ $address->phone }}</p>
-                                </div>
-                                <div class="card-footer d-flex justify-content-between">
-                                    <form method="POST" action="{{ route('addresses.setDefault', $address->id) }}">
+                            <div class="address-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;">
+                                <p><strong>Họ tên:</strong> {{ $address->name }}
+                                    @if ($address->is_default)
+                                        <span style="color: green;">(Mặc định)</span>
+                                    @endif
+                                </p>
+                                <p><strong>Địa chỉ:</strong> {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}</p>
+                                <p><strong>SĐT:</strong> {{ $address->phone }}</p>
+                                <div class="address-actions" style="margin-top: 10px;">
+                                    <form method="POST" action="{{ route('addresses.setDefault', $address->id) }}" style="display:inline-block;">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-primary btn-sm" {{ $address->is_default ? 'disabled' : '' }}>Mặc định</button>
+                                        <button type="submit" {{ $address->is_default ? 'disabled' : '' }}>Mặc định</button>
                                     </form>
-                                    <div>
-                                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">Chỉnh sửa</button>
-                                        <form method="POST" action="{{ route('addresses.destroy', $address->id) }}" class="d-inline">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                    <button data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">Chỉnh sửa</button>
+                                    <form method="POST" action="{{ route('addresses.destroy', $address->id) }}" style="display:inline-block;">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" style="color:red;">Xóa</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Modal chỉnh sửa -->
+                            <div class="modal fade" id="edit_address_{{ $address->id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content p-4">
+                                        <h5 class="mb-3">✏️ Chỉnh sửa địa chỉ</h5>
+                                        <form method="POST" action="{{ route('addresses.update', $address->id) }}">
+                                            @csrf @method('PUT')
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label>Họ tên</label>
+                                                    <input type="text" name="name" value="{{ $address->name }}" class="form-control" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label>Số điện thoại</label>
+                                                    <input type="text" name="phone" value="{{ $address->phone }}" class="form-control" required>
+                                                </div>
+                                                <div class="col-12">
+                                                    <label>Địa chỉ</label>
+                                                    <input type="text" name="address" value="{{ $address->address }}" class="form-control" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Tỉnh/Thành</label>
+                                                    <select name="province" class="form-control province-select" data-id="{{ $address->id }}" required>
+                                                        <option value="{{ $address->province }}" selected>{{ $address->province }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Quận/Huyện</label>
+                                                    <select name="district" class="form-control district-select" data-id="{{ $address->id }}" required>
+                                                        <option value="{{ $address->district }}" selected>{{ $address->district }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label>Phường/Xã</label>
+                                                    <select name="ward" class="form-control ward-select" data-id="{{ $address->id }}" required>
+                                                        <option value="{{ $address->ward }}" selected>{{ $address->ward }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="text-end mt-4">
+                                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Modal chỉnh sửa -->
-                        <div class="modal fade" id="edit_address_{{ $address->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content p-4">
-                                    <h5 class="mb-3">✏️ Chỉnh sửa địa chỉ</h5>
-                                    <form method="POST" action="{{ route('addresses.update', $address->id) }}">
-                                        @csrf @method('PUT')
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label>Họ tên</label>
-                                                <input type="text" name="name" value="{{ $address->name }}" class="form-control" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label>Số điện thoại</label>
-                                                <input type="text" name="phone" value="{{ $address->phone }}" class="form-control" required>
-                                            </div>
-                                            <div class="col-12">
-                                                <label>Địa chỉ</label>
-                                                <input type="text" name="address" value="{{ $address->address }}" class="form-control" required>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>Tỉnh/Thành</label>
-                                                <select name="province" class="form-control province-select" data-id="{{ $address->id }}" required>
-                                                    <option value="{{ $address->province }}" selected>{{ $address->province }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>Quận/Huyện</label>
-                                                <select name="district" class="form-control district-select" data-id="{{ $address->id }}" required>
-                                                    <option value="{{ $address->district }}" selected>{{ $address->district }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>Phường/Xã</label>
-                                                <select name="ward" class="form-control ward-select" data-id="{{ $address->id }}" required>
-                                                    <option value="{{ $address->ward }}" selected>{{ $address->ward }}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="text-end mt-4">
-                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         @endforeach
+                    </div>
+                    <div class="pagination-wrapper" style="margin-top: 20px;">
+                        {{ $addresses->links('pagination::bootstrap-4') }}
                     </div>
                 </div>
             </div>
@@ -3885,7 +3991,9 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
+
 
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')

@@ -18,6 +18,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\ShippingController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -34,9 +36,9 @@ Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
 // Route::get('/cart', function () {
 //     return view('Frontend.pages.cart');
 // });
-Route::get('/view', function () {
-    return view('Frontend.pages.converse-all');
-});
+// Route::get('/view', function () {
+//     return view('Frontend.pages.converse-all');
+// });
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
 });
@@ -49,6 +51,8 @@ Route::get('/db', function () {
 });
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'store'])->name('cart.add');
@@ -74,6 +78,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
 
 Route::middleware('auth')->group(function () {
     // Profile routes
@@ -85,12 +90,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', function () {
         return view('Frontend.pages.account.index');
     });
+    Route::get('/account/changepassword', function () {
+        return view('Frontend.pages.account.changepassword');
+    });
+
     Route::get('/account/addresses', [AddressController::class, 'index'])->name('addresses.index');
     Route::post('/account/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::put('/account/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update');
     Route::post('/account/addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
     Route::delete('/account/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
-
+    
     // Order routes
     Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
     Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
@@ -120,6 +129,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
             Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
+            Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+
         });
 
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -236,6 +247,13 @@ Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name
 //     return view('Frontend.pages.account.order-detail');
 // });
 
-Route::post('/product/get-variant', [ProductController::class, 'getVariant'])->name('product.getVariant');
+Route::post('/chat', [ChatBotController::class, 'sendMessage']);
+Route::get('/chat/history', [ChatBotController::class, 'getHistory']);
+Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
+
+Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('product.getVariant');
+
+Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
+
 
 require __DIR__ . '/auth.php';

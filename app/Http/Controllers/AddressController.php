@@ -11,9 +11,10 @@ class AddressController extends Controller
 {
     public function index()
     {
-        $addresses = Address::where('user_id', Auth::id())->get();
+        $addresses = Address::where('user_id', Auth::id())->paginate(4); 
         return view('Frontend.pages.account.address', compact('addresses'));
     }
+    
 
     // Thêm địa chỉ mới
     public function store(Request $request)

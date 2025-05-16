@@ -63,7 +63,6 @@ class ReviewController extends Controller
         return view('reviews.edit', compact('review'));
     }
 
-    // Cập nhật đánh giá
     public function update(Request $request, $id)
     {
         $review = ProductReview::findOrFail($id);
@@ -80,7 +79,7 @@ class ReviewController extends Controller
         $review->update([
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'is_approved' => false, // Cập nhật lại thì cần duyệt lại
+            'is_approved' => true,
         ]);
 
         return redirect()->back()->with('success', 'Đánh giá của bạn đã được cập nhật. Vui lòng chờ admin duyệt lại.');

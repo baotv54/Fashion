@@ -9,36 +9,50 @@ use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
+use App\Services\GHNService;
+use Illuminate\Support\Facades\Log;
+use App\Helpers\GHNHelper;
 
 class CheckoutController extends Controller
 {
+
+
     public function store(Request $request)
     {
         if (Cart::count() == 0) {
             return redirect()->back()->with('error', 'Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
         }
+
         $request->validate([
             'email' => 'required|email',
             'billingName' => 'required|max:255',
             'billingPhone' => 'required|max:15',
             'billingAddress' => 'required|max:255',
-            'billingProvince' => 'required|max:255',
-            'billingDistrict' => 'required|max:255',
-            'billingWard' => 'required|max:255',
+            'billingProvince' => 'required',
+            'billingDistrict' => 'required',
+            'billingWard' => 'required',
             'paymentMethod' => 'required|in:cod,vnpay,bank_transfer,momo',
-
         ]);
+
         if ($request->paymentMethod === 'momo') {
             return $this->momo_payment($request);
         }
         if ($request->paymentMethod === 'vnpay') {
             return $this->vnpay_payment($request);
         }
+
+        // Lấy tên từ GHN Helper (dựa vào ID và Code)
+        $provinceName = GHNHelper::getProvinceName($request->billingProvince);
+        $districtName = GHNHelper::getDistrictName($request->billingDistrict);
+        $wardName     = GHNHelper::getWardName($request->billingWard, $request->billingDistrict);;
+
         $orderCode = 'ORDER-' . strtoupper(uniqid());
         $subtotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
         $discount = floatval(Session::get('coupon.discount', 0));
-        $total = $subtotal - $discount;
+        $shippingFee = floatval($request->shipping_fee ?? 0);
+        $total = $subtotal - $discount + $shippingFee;
 
+        // Tạo đơn hàng
         $order = Order::create([
             'user_id' => Auth::check() ? Auth::id() : null,
             'order_code' => $orderCode,
@@ -46,12 +60,13 @@ class CheckoutController extends Controller
             'name' => $request->billingName,
             'phone' => $request->billingPhone,
             'address' => $request->billingAddress,
-            'province' => $request->billingProvinceName,
-            'district' => $request->billingDistrictName,
-            'ward' => $request->billingWardName,
+            'province' => $provinceName,
+            'district' => $districtName,
+            'ward'     => $wardName,
             'note' => $request->note,
             'subtotal' => $subtotal,
             'discount' => $discount,
+            'shipping_fee' => $shippingFee,
             'total' => $total,
             'payment_method' => $request->paymentMethod,
             'status' => 'ordered',
@@ -66,23 +81,23 @@ class CheckoutController extends Controller
                 'price' => $cartItem->price,
             ]);
         }
+
+        // Cập nhật coupon nếu có
         if (Session::has('coupon')) {
             $code = Session::get('coupon.code');
-
             $coupon = Coupon::where('code', $code)->first();
             if ($coupon) {
-                $coupon->increment('used'); 
+                $coupon->increment('used');
             }
-
-            Session::forget('coupon'); 
+            Session::forget('coupon');
         }
-
 
         Cart::destroy();
         Session::forget('coupon');
 
         return redirect()->route('checkout.success', ['order_id' => $order->id]);
     }
+
     public function vnpay_payment(Request $request)
     {
         // Tạo mã đơn hàng
@@ -91,7 +106,12 @@ class CheckoutController extends Controller
         // Tính toán giá trị đơn hàng 
         $subtotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
         $discount = floatval(Session::get('coupon.discount', 0));
-        $total = $subtotal - $discount;
+        $shippingFee = floatval($request->shipping_fee ?? 0);
+        $total = $subtotal - $discount + $shippingFee;
+
+        $provinceName = GHNHelper::getProvinceName($request->billingProvince);
+        $districtName = GHNHelper::getDistrictName($request->billingDistrict);
+        $wardName     = GHNHelper::getWardName($request->billingWard, $request->billingDistrict);
 
         // Lưu thông tin đơn hàng vào session
         $orderData = [
@@ -100,12 +120,13 @@ class CheckoutController extends Controller
             'name' => $request->billingName,
             'phone' => $request->billingPhone,
             'address' => $request->billingAddress,
-            'province' => $request->billingProvinceName,
-            'district' => $request->billingDistrictName,
-            'ward' => $request->billingWardName,
+            'province' => $provinceName,
+            'district' => $districtName,
+            'ward' => $wardName,
             'note' => $request->note,
             'subtotal' => $subtotal,
             'discount' => $discount,
+            'shipping_fee' => $shippingFee,
             'total' => $total,
             'payment_method' => 'vnpay',
             'cart_items' => Cart::content()->toArray(),
@@ -240,6 +261,7 @@ class CheckoutController extends Controller
                         'total' => $orderData['total'],
                         'payment_method' => 'vnpay',
                         'status' => 'processing',
+                        'shipping_fee' => $orderData['shipping_fee'] ?? 0,
                         'payment_status' => 'paid'
                     ]);
 
@@ -289,7 +311,11 @@ class CheckoutController extends Controller
         // Tính toán giá trị đơn hàng 
         $subtotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
         $discount = floatval(Session::get('coupon.discount', 0));
-        $total = $subtotal - $discount;
+        $shippingFee = floatval($request->shipping_fee ?? 0);
+        $total = $subtotal - $discount + $shippingFee;
+        $provinceName = GHNHelper::getProvinceName($request->billingProvince);
+        $districtName = GHNHelper::getDistrictName($request->billingDistrict);
+        $wardName     = GHNHelper::getWardName($request->billingWard, $request->billingDistrict);
 
         // Lưu thông tin đơn hàng vào session
         $orderData = [
@@ -298,12 +324,13 @@ class CheckoutController extends Controller
             'name' => $request->billingName,
             'phone' => $request->billingPhone,
             'address' => $request->billingAddress,
-            'province' => $request->billingProvinceName, 
-            'district' => $request->billingDistrictName, 
-            'ward' => $request->billingWardName,
+            'province' => $provinceName,
+            'district' => $districtName,
+            'ward' => $wardName,
             'note' => $request->note,
             'subtotal' => $subtotal,
             'discount' => $discount,
+            'shipping_fee' => $shippingFee,
             'total' => $total,
             'payment_method' => 'momo',
             'cart_items' => Cart::content()->toArray(),
@@ -389,7 +416,8 @@ class CheckoutController extends Controller
                     'total' => $orderData['total'],
                     'payment_method' => 'momo',
                     'status' => 'processing',
-                    'payment_status' => 'paid'
+                    'shipping_fee' => $orderData['shipping_fee'] ?? 0,
+                    'payment_status' => 'paid',
                 ]);
 
                 // Lưu chi tiết đơn hàng

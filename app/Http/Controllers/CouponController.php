@@ -30,16 +30,18 @@ class CouponController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|unique:coupons',
+            'code' => 'required|string|unique:coupons,code',
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date',
+            'start_date' => 'nullable|date|after_or_equal:today',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
+            'status' => 'nullable|in:active,inactive',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate hình ảnh
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+        
 
         $data = $request->all();
 
@@ -59,30 +61,29 @@ class CouponController extends Controller
 
 
 
-    // Hiển thị form chỉnh sửa mã giảm giá
     public function edit($id)
     {
-        $coupon = Coupon::findOrFail($id); // Tìm mã giảm giá theo ID
+        $coupon = Coupon::findOrFail($id); 
         return view('admin.coupons.edit', compact('coupon'));
     }
 
-    // Cập nhật mã giảm giá
     public function update(Request $request, $id)
     {
         $coupon = Coupon::findOrFail($id);
 
         $request->validate([
-            'code' => 'required|unique:coupons,code,' . $coupon->id,
+            'code' => 'required|string|unique:coupons,code,' . $coupon->id,
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date',
+            'start_date' => 'nullable|date|after_or_equal:today', 
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
+            'status' => 'nullable|in:active,inactive',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-
+        
         $data = $request->all();
 
         if ($request->hasFile('image')) {
@@ -101,12 +102,10 @@ class CouponController extends Controller
         return redirect()->route('coupons.index')->with('success', 'Cập nhật mã giảm giá thành công!');
     }
 
-    // Xóa mã giảm giá
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id); // Tìm mã giảm giá theo ID
+        $coupon = Coupon::findOrFail($id); 
 
-        // Xóa hình ảnh nếu có
         if ($coupon->image) {
             Storage::disk('public')->delete($coupon->image);
         }

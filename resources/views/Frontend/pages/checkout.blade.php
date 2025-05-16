@@ -75,87 +75,110 @@
                                         <div class="layout-flex">
                                             <h2 class="section__title layout-flex__item layout-flex__item--stretch">
                                                 <i class="fa fa-id-card-o fa-lg section__title--icon hide-on-desktop"></i>
-
                                                 Thông tin nhận hàng
-
                                             </h2>
 
                                             @if (Auth::check())
-                                            <a href="{{route('logout')}}">
+                                            <a href="{{ route('logout') }}">
                                                 <i class="fa fa-user-circle-o fa-lg"></i>
                                                 <span>Đăng xuất</span>
                                             </a>
                                             @else
-                                            <a href="{{route('login')}}">
+                                            <a href="{{ route('login') }}">
                                                 <i class="fa fa-user-circle-o fa-lg"></i>
                                                 <span>Đăng nhập</span>
                                             </a>
                                             @endif
-
-
-
                                         </div>
                                     </div>
+
                                     <div class="section__content">
                                         <div class="fieldset">
+
+                                            {{-- Chọn địa chỉ đã lưu --}}
+                                            @if(isset($addresses) && $addresses->count() > 0)
+                                            <div class="field mb-3">
+                                                <label for="selectSavedAddress">Chọn địa chỉ đã lưu</label>
+                                                <div class="field__input-wrapper field__input-wrapper--select2">
+                                                    <select id="selectSavedAddress" class="field__input field__input--select">
+                                                        <option value="">-- Chọn địa chỉ --</option>
+                                                        @foreach($addresses as $address)
+                                                        <option
+                                                            value="{{ $address->id }}"
+                                                            data-name="{{ $address->name }}"
+                                                            data-phone="{{ $address->phone }}"
+                                                            data-address="{{ $address->address }}"
+                                                            data-province="{{ $address->province }}"
+                                                            data-district="{{ $address->district }}"
+                                                            data-ward="{{ $address->ward }}">
+                                                            {{ $address->name }} - {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @endif
+
+                                            {{-- Form nhập thông tin --}}
                                             <div class="field">
                                                 <div class="field__input-wrapper">
-                                                    <label for="email" class="">Email</label>
-                                                    <input name="email" id="email" type="email" class="field__input" value="" required>
+                                                    <label for="email">Email</label>
+                                                    <input name="email" id="email" type="email" class="field__input" value="{{ Auth::user()->email ?? '' }}" required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <div class="field__input-wrapper">
-                                                    <label for="billingName" class="">Họ và tên</label>
-                                                    <input name="billingName" id="billingName" type="text" class="field__input" value="" required>
+                                                    <label for="billingName">Họ và tên</label>
+                                                    <input name="billingName" id="billingName" type="text" class="field__input" value="{{ Auth::user()->name ?? '' }}" required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
-                                                <div class="field__input-wrapper ">
-                                                    <label for="billingPhone" class="">Số điện thoại</label>
+                                                <div class="field__input-wrapper">
+                                                    <label for="billingPhone">Số điện thoại</label>
                                                     <input name="billingPhone" id="billingPhone" type="tel" class="field__input" value="" required>
-
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <div class="field__input-wrapper">
-                                                    <label for="billingAddress" class="">Địa chỉ (tùy chọn)</label>
+                                                    <label for="billingAddress">Địa chỉ chi tiết</label>
                                                     <input name="billingAddress" id="billingAddress" type="text" class="field__input" value="" required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
+                                                <label for="billingProvince">Tỉnh / Thành phố</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <label for="billingProvince" class="">Tỉnh thành</label>
                                                     <select name="billingProvince" id="billingProvince" class="field__input field__input--select" required>
-                                                    <input type="hidden" name="billingProvinceName" id="billingProvinceName">
+                                                        <option value="">-- Chọn tỉnh / thành phố --</option>
                                                     </select>
                                                 </div>
                                             </div>
 
                                             <div class="field">
+                                                <label for="billingDistrict">Quận / Huyện</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <label for="billingDistrict" class="">Quận huyện (tùy chọn)</label>
                                                     <select name="billingDistrict" id="billingDistrict" class="field__input field__input--select" required>
-                                                    <input type="hidden" name="billingDistrictName" id="billingDistrictName">
+                                                        <option value="">-- Chọn quận / huyện --</option>
                                                     </select>
                                                 </div>
                                             </div>
 
                                             <div class="field">
+                                                <label for="billingWard">Phường / Xã</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <label for="billingWard" class="">Phường xã (tùy chọn)</label>
                                                     <select name="billingWard" id="billingWard" class="field__input field__input--select" required>
-                                                    <input type="hidden" name="billingWardName" id="billingWardName">
+                                                        <option value="">-- Chọn phường / xã --</option>
                                                     </select>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </section>
+
 
                                 <div class="fieldset">
                                     <h3 class="visually-hidden">Ghi chú</h3>
@@ -169,7 +192,7 @@
 
                             </div>
                             <div class="">
-                                <!-- <section class="section" data-define="{shippingMethod: ''}">
+                                <section class="section" id="shippingSection">
                                     <div class="section__header">
                                         <div class="layout-flex">
                                             <h2 class="section__title layout-flex__item layout-flex__item--stretch">
@@ -178,36 +201,30 @@
                                             </h2>
                                         </div>
                                     </div>
-                                    <div class="section__content" data-tg-refresh="refreshShipping" id="shippingMethodList"
-                                        data-define="{isAddressSelecting: true, shippingMethods: []}">
-                                        <div class="alert alert--loader spinner spinner--active" data-bind-show="isLoadingShippingMethod">
+                                    <div class="section__content" id="shippingMethodList">
+                                        <div class="alert alert--loader spinner spinner--active hide">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="spinner-loader">
                                                 <use href="#spinner"></use>
                                             </svg>
                                         </div>
 
-
-                                        <div class="alert alert--danger" data-bind-show="!isLoadingShippingMethod && !isAddressSelecting && !isLoadingShippingError">
+                                        <div class="alert alert--danger hide">
                                             Khu vực không hỗ trợ vận chuyển
                                         </div>
 
-                                        <div class="alert alert-retry alert--danger hide"
-                                            data-bind-event-click="handleShippingMethodErrorRetry()"
-                                            data-bind-show="!isLoadingShippingMethod && !isAddressSelecting && isLoadingShippingError">
-                                            <span data-bind="loadingShippingErrorMessage"></span> <i class="fa fa-refresh"></i>
+                                        <div class="alert alert-retry alert--danger hide">
+                                            <span id="loadingShippingErrorMessage">Lỗi khi tính phí vận chuyển</span>
+                                            <i class="fa fa-refresh"></i>
                                         </div>
 
+                                        <div class="content-box hide"></div>
 
-                                        <div class="content-box" data-bind-show="!isLoadingShippingMethod && !isAddressSelecting && !isLoadingShippingError">
-
-
-                                        </div>
-
-                                        <div class="alert alert--info hide" data-bind-show="!isLoadingShippingMethod && isAddressSelecting">
+                                        <div class="alert alert--info">
                                             Vui lòng nhập thông tin giao hàng
                                         </div>
                                     </div>
-                                </section> -->
+                                </section>
+
 
                                 <section class="section">
                                     <div class="section__header">
@@ -427,51 +444,49 @@
                                             </tr>
                                         </thead>
                                         <tbody class="total-line-table__tbody">
+                                            {{-- Tạm tính --}}
                                             <tr class="total-line total-line--subtotal">
-                                                <th class="total-line__name">
-                                                    Tạm tính
-                                                </th>
-                                                <td class="total-line__price">{{ Cart::subtotal() }}₫</td>
+                                                <th class="total-line__name">Tạm tính</th>
+                                                <td class="total-line__price" id="checkout_subtotal_price">{{ Cart::subtotal(0, 0, '') }}₫</td>
                                             </tr>
 
+                                            {{-- Giảm giá --}}
                                             @if(Session::has('coupon'))
-                                            <tr class="total-line total-line--discount">
+                                            <tr class="total-line total-line--discount" id="discountRow">
                                                 <th class="total-line__name">
                                                     Giảm giá ({{ Session::get('coupon.code') }})
                                                 </th>
-                                                <td class="total-line__price">
+                                                <td class="total-line__price" id="checkout_discount_price">
                                                     -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
                                                 </td>
                                             </tr>
                                             @endif
 
+                                            {{-- Phí vận chuyển --}}
                                             <tr class="total-line total-line--shipping-fee">
-                                                <th class="total-line__name">
-                                                    Phí vận chuyển
-                                                </th>
-                                                <td class="total-line__price">
-                                                    <span class="origin-price" data-bind="getTextShippingPriceOriginal()"></span>
-                                                    <span data-bind="getTextShippingPriceFinal()"></span>
-                                                </td>
+                                                <th class="total-line__name">Phí vận chuyển</th>
+                                                <td class="total-line__price" id="checkout_shipping_fee">Đang tính...</td>
                                             </tr>
                                         </tbody>
+
+                                        {{-- Tổng cộng --}}
                                         <tfoot class="total-line-table__footer">
                                             <tr class="total-line payment-due">
                                                 <th class="total-line__name">
-                                                    <span class="payment-due__label-total">
-                                                        Tổng cộng
-                                                    </span>
+                                                    <span class="payment-due__label-total">Tổng cộng</span>
                                                 </th>
                                                 <td class="total-line__price">
-                                                    <span class="payment-due__price">
-
-                                                        <span class="payment-due__price">
-                                                            {{ number_format($total, 0, ',', '.') }}₫
-                                                        </span> </span>
+                                                    <span class="payment-due__price" id="checkout_total_price">
+                                                        {{ number_format(Cart::subtotal(0, 0, '') - Session::get('coupon.discount', 0), 0, ',', '.') }}₫
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tfoot>
                                     </table>
+
+                                    {{-- Input ẩn để lưu phí vận chuyển --}}
+                                    <input type="hidden" name="shipping_fee" id="shipping_fee_hidden" value="0">
+
                                 </div>
                                 <div class="order-summary__nav field__input-btn-wrapper hide-on-mobile layout-flex--row-reverse">
                                     <button type="submit" class="btn btn-checkout spinner">
@@ -527,78 +542,159 @@
             const provinceSelect = document.getElementById('billingProvince');
             const districtSelect = document.getElementById('billingDistrict');
             const wardSelect = document.getElementById('billingWard');
+            const shippingMethodList = document.getElementById('shippingMethodList');
 
-            const provinceNameInput = document.getElementById('billingProvinceName');
-            const districtNameInput = document.getElementById('billingDistrictName');
-            const wardNameInput = document.getElementById('billingWardName');
+            let selectedDistrict = '';
+            let selectedWard = '';
 
-            // Load provinces
+            // Load province
             fetch('/address/province')
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
-                    provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
-                    data.forEach(province => {
-                        provinceSelect.innerHTML += `<option value="${province.ProvinceID}">${province.ProvinceName}</option>`;
+                    provinceSelect.innerHTML = '<option value="">-- Chọn tỉnh / thành phố --</option>';
+                    data.forEach(p => {
+                        provinceSelect.innerHTML += `<option value="${p.ProvinceID}">${p.ProvinceName}</option>`;
                     });
                 });
 
-            // Load districts when province changes
+            // Load district
             provinceSelect.addEventListener('change', function() {
                 const provinceId = this.value;
-                const selectedOption = this.options[this.selectedIndex];
-                provinceNameInput.value = selectedOption.text;
-
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-                districtNameInput.value = '';
-                wardNameInput.value = '';
+                resetShippingInfo();
+                districtSelect.innerHTML = '<option value="">-- Chọn quận / huyện --</option>';
+                wardSelect.innerHTML = '<option value="">-- Chọn phường / xã --</option>';
 
                 if (provinceId) {
                     fetch(`/address/district/${provinceId}`)
-                        .then(response => response.json())
+                        .then(res => res.json())
                         .then(data => {
-                            data.forEach(district => {
-                                districtSelect.innerHTML += `<option value="${district.DistrictID}">${district.DistrictName}</option>`;
+                            data.forEach(d => {
+                                districtSelect.innerHTML += `<option value="${d.DistrictID}">${d.DistrictName}</option>`;
                             });
                         });
                 }
             });
 
-            // Load wards when district changes
+            // Load ward
             districtSelect.addEventListener('change', function() {
-                const districtId = this.value;
-                const selectedOption = this.options[this.selectedIndex];
-                districtNameInput.value = selectedOption.text;
+                selectedDistrict = this.value;
+                resetShippingInfo();
+                wardSelect.innerHTML = '<option value="">-- Chọn phường / xã --</option>';
 
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-                wardNameInput.value = '';
-
-                if (districtId) {
-                    fetch(`/address/ward/${districtId}`)
-                        .then(response => response.json())
+                if (selectedDistrict) {
+                    fetch(`/address/ward/${selectedDistrict}`)
+                        .then(res => res.json())
                         .then(data => {
-                            data.forEach(ward => {
-                                wardSelect.innerHTML += `<option value="${ward.WardCode}">${ward.WardName}</option>`;
+                            data.forEach(w => {
+                                wardSelect.innerHTML += `<option value="${w.WardCode}">${w.WardName}</option>`;
                             });
                         });
                 }
             });
 
-            // Update ward name
+            // Trigger shipping fee calculation
             wardSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                wardNameInput.value = selectedOption.text;
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('applyCoupon').addEventListener('click', function() {
-                const couponCode = document.getElementById('reductionCode').value;
-
-                if (!couponCode) {
-                    alert('Vui lòng nhập mã giảm giá!');
-                    return;
+                selectedWard = this.value;
+                if (selectedDistrict && selectedWard) {
+                    calculateShippingFee(selectedDistrict, selectedWard);
+                } else {
+                    resetShippingInfo();
                 }
+            });
+
+            function calculateShippingFee(districtId, wardCode) {
+                showLoader();
+
+                fetch('/shipping/calculate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            district_id: districtId,
+                            ward_code: wardCode,
+                            weight: getCartWeight()
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        hideLoader();
+                        if (data.success) {
+                            updateShippingMethodUI(data.fee, data.formatted_fee);
+                            updateOrderTotalDynamic(data.fee, null);
+                        } else {
+                            showShippingError(data.message);
+                        }
+                    })
+                    .catch(() => {
+                        hideLoader();
+                        showShippingError('Lỗi kết nối. Vui lòng thử lại sau.');
+                    });
+            }
+
+            function getCartWeight() {
+                return 500; // Sửa lại nếu giỏ hàng có trọng lượng động
+            }
+
+            function showLoader() {
+                shippingMethodList.querySelector('.alert--loader').classList.remove('hide');
+                shippingMethodList.querySelectorAll('.alert:not(.alert--loader)').forEach(el => el.classList.add('hide'));
+            }
+
+            function hideLoader() {
+                shippingMethodList.querySelector('.alert--loader').classList.add('hide');
+            }
+
+            function showShippingError(msg) {
+                const el = shippingMethodList.querySelector('.alert--danger:not(.alert-retry)');
+                el.textContent = msg;
+                el.classList.remove('hide');
+            }
+
+            function resetShippingInfo() {
+                const contentBox = shippingMethodList.querySelector('.content-box');
+                contentBox.innerHTML = '';
+                contentBox.classList.add('hide');
+                shippingMethodList.querySelectorAll('.alert').forEach(el => el.classList.add('hide'));
+                shippingMethodList.querySelector('.alert--info').classList.remove('hide');
+                updateOrderTotalDynamic(0, null);
+            }
+
+            function updateShippingMethodUI(fee, formattedFee) {
+                const contentBox = shippingMethodList.querySelector('.content-box');
+                contentBox.classList.remove('hide');
+                contentBox.innerHTML = `
+                <div class="content-box__row">
+                    <div class="radio-wrapper">
+                        <div class="radio__input">
+                            <input type="radio" class="input-radio" name="shipping_method" id="shipping_method_ghn" value="ghn" checked>
+                        </div>
+                        <label for="shipping_method_ghn" class="radio__label">
+                            <span class="radio__label__primary">Giao hàng nhanh</span>
+                            <span class="radio__label__accessory">
+                                <span class="content-box__emphasis">${formattedFee}</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>`;
+
+                let feeInput = document.getElementById('shipping_fee_hidden');
+                if (!feeInput) {
+                    feeInput = document.createElement('input');
+                    feeInput.type = 'hidden';
+                    feeInput.name = 'shipping_fee';
+                    feeInput.id = 'shipping_fee_hidden';
+                    document.querySelector('form').appendChild(feeInput);
+                }
+                feeInput.value = fee;
+                document.getElementById('checkout_shipping_fee').textContent = formattedFee;
+            }
+
+            // ======================= MÃ GIẢM GIÁ ========================== //
+            document.getElementById('applyCoupon').addEventListener('click', function() {
+                const code = document.getElementById('reductionCode').value;
+                if (!code) return alert('Vui lòng nhập mã giảm giá!');
 
                 fetch('/apply-coupon', {
                         method: 'POST',
@@ -607,39 +703,22 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
                         body: JSON.stringify({
-                            coupon_code: couponCode
+                            coupon_code: code
                         })
                     })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Có lỗi xảy ra khi áp dụng mã giảm giá!');
-                        }
-                        return response.json();
-                    })
+                    .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            // Hiển thị thông báo thành công
                             alert('Áp dụng mã giảm giá thành công!');
-
-                            // Thêm phần hiển thị mã giảm giá mà không reload trang
                             updateCouponDisplay(data.code, data.discount);
-
-                            // Cập nhật tổng tiền
-                            updateOrderTotal(data.discount);
-
-                            // Xóa giá trị trong ô input
-                            document.getElementById('reductionCode').value = '';
+                            updateOrderTotalDynamic(null, data.discount);
                         } else {
                             alert(data.message || 'Mã giảm giá không hợp lệ!');
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Đã xảy ra lỗi khi áp dụng mã giảm giá!');
-                    });
+                    .catch(() => alert('Đã xảy ra lỗi khi áp dụng mã!'));
             });
 
-            // Xử lý xóa mã giảm giá
             document.addEventListener('click', function(e) {
                 if (e.target && e.target.id === 'removeCoupon') {
                     fetch('/remove-coupon', {
@@ -649,117 +728,132 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
                         })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Có lỗi xảy ra khi xóa mã giảm giá!');
-                            }
-                            return response.json();
-                        })
+                        .then(res => res.json())
                         .then(data => {
                             if (data.success) {
                                 alert(data.message);
-                                // Xóa phần hiển thị mã giảm giá
                                 removeCouponDisplay();
-                                // Cập nhật lại tổng tiền
-                                updateOrderTotal(0);
+                                updateOrderTotalDynamic(null, 0);
                             }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Đã xảy ra lỗi khi xóa mã giảm giá!');
                         });
                 }
             });
 
-            // Hàm cập nhật hiển thị mã giảm giá
             function updateCouponDisplay(code, discount) {
-                const discountContainer = document.getElementById('discountCode');
-
-                // Kiểm tra nếu đã có thông báo giảm giá thì xóa đi
-                const existingAlert = discountContainer.querySelector('.alert');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-
-                // Tạo và thêm thông báo giảm giá mới
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-success mt-3';
-                alertDiv.innerHTML = `
-            <strong>Mã giảm giá:</strong> ${code}<br>
-            <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
-            <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">Xóa mã</button>
-        `;
-
-                discountContainer.appendChild(alertDiv);
-
-                // Thêm dòng giảm giá vào bảng tổng tiền
+                const container = document.getElementById('discountCode');
+                container.innerHTML = `
+                <div class="alert alert-success mt-3">
+                    <strong>Mã giảm giá:</strong> ${code}<br>
+                    <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
+                    <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">Xóa mã</button>
+                </div>`;
                 addDiscountRow(code, discount);
             }
 
-            // Hàm xóa hiển thị mã giảm giá
-            function removeCouponDisplay() {
-                // Xóa thông báo mã giảm giá
-                const discountContainer = document.getElementById('discountCode');
-                const existingAlert = discountContainer.querySelector('.alert');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-
-                // Xóa dòng giảm giá trong bảng tổng tiền
-                removeDiscountRow();
-            }
-
-            // Hàm thêm dòng giảm giá vào bảng tổng tiền
             function addDiscountRow(code, discount) {
                 const tbody = document.querySelector('.total-line-table__tbody');
+                const existingRow = tbody.querySelector('.total-line--discount');
+                if (existingRow) existingRow.remove();
 
-                // Kiểm tra nếu đã có dòng giảm giá thì xóa đi
-                const existingDiscountRow = tbody.querySelector('.total-line--discount');
-                if (existingDiscountRow) {
-                    existingDiscountRow.remove();
-                }
-
-                // Tạo dòng giảm giá mới
-                const discountRow = document.createElement('tr');
-                discountRow.className = 'total-line total-line--discount';
-                discountRow.innerHTML = `
-            <th class="total-line__name">
-                Giảm giá (${code})
-            </th>
-            <td class="total-line__price">
-                -${new Intl.NumberFormat('vi-VN').format(discount)}₫
-            </td>
-        `;
-
-                // Chèn dòng giảm giá sau dòng tạm tính
-                const subtotalRow = tbody.querySelector('.total-line--subtotal');
-                subtotalRow.after(discountRow);
+                const row = document.createElement('tr');
+                row.className = 'total-line total-line--discount';
+                row.innerHTML = `
+                <th class="total-line__name">Giảm giá (${code})</th>
+                <td class="total-line__price" id="checkout_discount_price">-${new Intl.NumberFormat('vi-VN').format(discount)}₫</td>
+            `;
+                tbody.querySelector('.total-line--subtotal').after(row);
             }
 
-            // Hàm xóa dòng giảm giá khỏi bảng tổng tiền
-            function removeDiscountRow() {
-                const tbody = document.querySelector('.total-line-table__tbody');
-                const existingDiscountRow = tbody.querySelector('.total-line--discount');
-                if (existingDiscountRow) {
-                    existingDiscountRow.remove();
-                }
+            function removeCouponDisplay() {
+                const container = document.getElementById('discountCode');
+                container.innerHTML = '';
+                const row = document.querySelector('.total-line--discount');
+                if (row) row.remove();
             }
 
-            // Hàm cập nhật tổng tiền
-            function updateOrderTotal(discount) {
-                // Lấy tạm tính
-                const subtotalText = document.querySelector('.total-line--subtotal .total-line__price').textContent;
-                const subtotal = parseFloat(subtotalText.replace(/[^\d]/g, ''));
+            function updateOrderTotalDynamic(shippingFee = null, discount = null) {
+                const subtotalText = document.getElementById('checkout_subtotal_price').textContent.replace(/[^\d]/g, '');
+                const subtotal = parseInt(subtotalText, 10) || 0;
 
-                // Tính tổng tiền mới (giả sử phí vận chuyển là 0)
-                const newTotal = subtotal - discount;
+                let discountVal = discount !== null ? discount : 0;
+                const discountElement = document.getElementById('checkout_discount_price');
+                if (discountElement && discount === null) {
+                    discountVal = parseInt(discountElement.textContent.replace(/[^\d]/g, ''), 10) || 0;
+                }
 
-                // Cập nhật hiển thị tổng tiền
-                const totalPriceElement = document.querySelector('.payment-due__price');
-                totalPriceElement.textContent = new Intl.NumberFormat('vi-VN').format(newTotal) + '₫';
+                let shippingVal = shippingFee !== null ? shippingFee : 0;
+                const shippingElement = document.getElementById('shipping_fee_hidden');
+                if (shippingElement && shippingFee === null) {
+                    shippingVal = parseInt(shippingElement.value) || 0;
+                }
+
+                const total = subtotal - discountVal + shippingVal;
+                const totalElement = document.getElementById('checkout_total_price');
+                if (totalElement) {
+                    totalElement.textContent = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(total);
+                }
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedAddressSelect = document.getElementById('selectSavedAddress');
+            const provinceSelect = document.getElementById('billingProvince');
+            const districtSelect = document.getElementById('billingDistrict');
+            const wardSelect = document.getElementById('billingWard');
+
+            if (!savedAddressSelect) return;
+
+            savedAddressSelect.addEventListener('change', function() {
+                const selected = this.options[this.selectedIndex];
+                if (!selected || !selected.value) return;
+
+                // Điền các input cơ bản
+                document.getElementById('billingName').value = selected.dataset.name || '';
+                document.getElementById('billingPhone').value = selected.dataset.phone || '';
+                document.getElementById('billingAddress').value = selected.dataset.address || '';
+
+                const provinceText = selected.dataset.province.trim();
+                const districtText = selected.dataset.district.trim();
+                const wardText = selected.dataset.ward.trim();
+
+                // Chọn tỉnh
+                const provinceOption = Array.from(provinceSelect.options).find(opt => opt.text.trim().toLowerCase() === provinceText.toLowerCase());
+                if (provinceOption) {
+                    provinceOption.selected = true;
+                    provinceSelect.dispatchEvent(new Event('change'));
+
+                    // Đợi quận load xong rồi chọn quận
+                    const waitForDistrictLoad = () => {
+                        const districtOption = Array.from(districtSelect.options).find(opt => opt.text.trim().toLowerCase() === districtText.toLowerCase());
+                        if (districtOption) {
+                            districtOption.selected = true;
+                            districtSelect.dispatchEvent(new Event('change'));
+
+                            // Đợi phường load xong rồi chọn phường
+                            const waitForWardLoad = () => {
+                                const wardOption = Array.from(wardSelect.options).find(opt => opt.text.trim().toLowerCase() === wardText.toLowerCase());
+                                if (wardOption) {
+                                    wardOption.selected = true;
+                                } else {
+                                    // Thử lại nếu phường chưa load kịp
+                                    setTimeout(waitForWardLoad, 300);
+                                }
+                            };
+                            setTimeout(waitForWardLoad, 500); // delay chờ ward load
+                        } else {
+                            // Thử lại nếu quận chưa load kịp
+                            setTimeout(waitForDistrictLoad, 300);
+                        }
+                    };
+                    setTimeout(waitForDistrictLoad, 500); // delay chờ district load
+                }
+            });
+        });
     </script>
+
 </body>
 
 </html>

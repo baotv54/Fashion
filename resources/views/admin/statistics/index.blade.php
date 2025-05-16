@@ -175,18 +175,20 @@
                                 <td>{{ $order->user->name ?? 'Khách' }}</td>
                                 <td class="d-none d-xl-table-cell">{{ number_format($order->total, 0, ',', '.') }}₫</td>
                                 <td>
-                                    @php
-                                        $statusLabels = [
-                                            'processing' => ['text' => 'Đang xử lý', 'class' => 'info'],
-                                            'confirmed'  => ['text' => 'Đã xác nhận', 'class' => 'success'],
-                                            'shipping'   => ['text' => 'Đang giao', 'class' => 'warning'],
-                                            'delivered'  => ['text' => 'Đã giao', 'class' => 'success'],
-                                            'cancelled'  => ['text' => 'Đã hủy', 'class' => 'danger'],
-                                            'returned'   => ['text' => 'Trả hàng', 'class' => 'dark'],
-                                        ];
-                                        $status = $statusLabels[$order->status] ?? ['text' => 'Không xác định', 'class' => 'secondary'];
+                                @php
+                                    $statusMap = [
+                                    'ordered' => ['label' => 'Đặt hàng', 'class' => 'primary'],
+                                    'processing' => ['label' => 'Đang xử lý', 'class' => 'info'],
+                                    'confirmed' => ['label' => 'Đã xác nhận', 'class' => 'success'],
+                                    'shipping' => ['label' => 'Đang giao hàng', 'class' => 'warning'],
+                                    'delivered' => ['label' => 'Đã giao', 'class' => 'success'],
+                                    'cancelled' => ['label' => 'Đã hủy', 'class' => 'danger'],
+                                    'returned' => ['label' => 'Trả hàng', 'class' => 'dark'],
+                                    ];
+                                    $status = $statusMap[$order->status] ?? ['label' => 'Không xác định', 'class' => 'light'];
+                                    $textColor = in_array($status['class'], ['warning', 'light']) ? 'text-dark' : '';
                                     @endphp
-                                    <span class="badge bg-{{ $status['class'] }}">{{ $status['text'] }}</span>
+                                    <span class="badge bg-{{ $status['class'] }}">{{ $status['label'] }}</span>
                                 </td>
                                 <td class="d-none d-xl-table-cell">{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
