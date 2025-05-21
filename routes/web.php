@@ -5,8 +5,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GoogleController;
-use App\Http\Controllers\ColorController;
-use App\Http\Controllers\SizeController;
 use App\Http\Controllers\FaceBookController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\AttributeController;
@@ -132,7 +130,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
 
         });
-
+        // Routes quản lý sản phẩm biến thể
         Route::prefix('products/{productId}/variants')->group(function () {
             Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
             Route::get('/create', [ProductVariantController::class, 'create'])->name('product_variants.create');
@@ -180,25 +178,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::put('/{id}', [BrandController::class, 'update'])->name('brands.update');
             Route::delete('/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
         });
-        // Routes cho màu sắc (Colors)
-        Route::prefix('colors')->name('colors.')->group(function () {
-            Route::get('/', [ColorController::class, 'index'])->name('index');
-            Route::get('/create', [ColorController::class, 'create'])->name('create');
-            Route::post('/store', [ColorController::class, 'store'])->name('store');
-            Route::get('/{color}/edit', [ColorController::class, 'edit'])->name('edit');
-            Route::put('/{color}', [ColorController::class, 'update'])->name('update');
-            Route::delete('/{color}', [ColorController::class, 'destroy'])->name('destroy');
-        });
-
-        // Routes cho kích thước (Sizes)
-        Route::prefix('sizes')->name('sizes.')->group(function () {
-            Route::get('/', [SizeController::class, 'index'])->name('index');
-            Route::get('/create', [SizeController::class, 'create'])->name('create');
-            Route::post('/store', [SizeController::class, 'store'])->name('store');
-            Route::get('/{size}/edit', [SizeController::class, 'edit'])->name('edit');
-            Route::put('/{size}', [SizeController::class, 'update'])->name('update');
-            Route::delete('/{size}', [SizeController::class, 'destroy'])->name('destroy');
-        });
+        // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {
             Route::get('/', [CouponController::class, 'index'])->name('coupons.index');
             Route::get('/create', [CouponController::class, 'create'])->name('coupons.create');
@@ -207,11 +187,13 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::put('/{coupon}', [CouponController::class, 'update'])->name('coupons.update');
             Route::delete('/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
         });
+        // Routes quản lý đơn hàng
         Route::prefix('orders')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('orders.index');
             Route::get('/{id}', [OrderController::class, 'show'])->name('orders.details');
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         });
+
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
     });
