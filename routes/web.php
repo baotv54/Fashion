@@ -21,22 +21,9 @@ use App\Http\Controllers\ShippingController;
 
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('Frontend.index');
-// });
-// Route::get('/home', function () {
-//     return view('Frontend.index');
-// });
 
 Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
 
-
-// Route::get('/cart', function () {
-//     return view('Frontend.pages.cart');
-// });
-// Route::get('/view', function () {
-//     return view('Frontend.pages.converse-all');
-// });
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
 });
@@ -71,10 +58,32 @@ Route::get('/auth/facebook/callback', [FaceBookController::class, 'FaceBookCallb
 
 Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSuccess'])->name('checkout.success');
 
+Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
+Route::post('/remove-coupon', [CouponController::class, 'removeCoupon'])->name('remove.coupon');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.province');
+Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict'])->name('address.district');
+Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard'])->name('address.ward');
+
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::post('/checkout/vnpay', [CheckoutController::class, 'vnpay_payment'])->name('checkout.vnpay');
+Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpay_return'])->name('checkout.vnpay_return');
+
+
+Route::get('/checkout/momo-return', [CheckoutController::class, 'momo_return'])->name('checkout.momo-return');
+Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name('checkout.momo-ipn');
+
+
+Route::post('/chat', [ChatBotController::class, 'sendMessage']);
+Route::get('/chat/history', [ChatBotController::class, 'getHistory']);
+Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
+
+Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('product.getVariant');
+
+Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
+
+
+
 
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
 
@@ -199,20 +208,27 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     });
 });
 
-Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
-Route::post('/remove-coupon', [CouponController::class, 'removeCoupon'])->name('remove.coupon');
-
-Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.province');
-Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict'])->name('address.district');
-Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard'])->name('address.ward');
-
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::post('/checkout/vnpay', [CheckoutController::class, 'vnpay_payment'])->name('checkout.vnpay');
-Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpay_return'])->name('checkout.vnpay_return');
 
 
-Route::get('/checkout/momo-return', [CheckoutController::class, 'momo_return'])->name('checkout.momo-return');
-Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name('checkout.momo-ipn');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route::get('/cart', function () {
+//     return view('Frontend.pages.cart');
+// });
+// Route::get('/view', function () {
+//     return view('Frontend.pages.converse-all');
+// });
+
+// Route::get('/', function () {
+//     return view('Frontend.index');
+// });
+// Route::get('/home', function () {
+//     return view('Frontend.index');
+// });
+
 // Route::get('/checkout/success', function () {
 //     return view('Frontend.pages.checkout_success');
 // })->name('checkout.success');
@@ -228,14 +244,4 @@ Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name
 // Route::get('/order-detail', function () {
 //     return view('Frontend.pages.account.order-detail');
 // });
-
-Route::post('/chat', [ChatBotController::class, 'sendMessage']);
-Route::get('/chat/history', [ChatBotController::class, 'getHistory']);
-Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
-
-Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('product.getVariant');
-
-Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
-
-
 require __DIR__ . '/auth.php';
