@@ -83,8 +83,6 @@ Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('
 Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
 
 
-
-
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
 
 Route::middleware('auth')->group(function () {
@@ -211,9 +209,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::get('/cart', function () {
 //     return view('Frontend.pages.cart');
