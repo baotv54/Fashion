@@ -85,7 +85,9 @@ Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
 
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
 
-Route::middleware('auth')->group(function () {
+Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about');
+
+Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -120,7 +122,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth', 'is_admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 

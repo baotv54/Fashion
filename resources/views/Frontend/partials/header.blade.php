@@ -100,6 +100,7 @@
                         </li> -->
                         <li><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
                         <li><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
+                        <li><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>
