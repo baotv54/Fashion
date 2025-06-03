@@ -145,7 +145,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-4">
                         <h2 class="section-title text-md-left">SẢN PHẨM MỚI<br>VUI LÒNG CHỌN SẢN PHẨM</h2>
-                        <button class="btn btn-secondary">XEM THÊM</button>
+                        <a href="{{ route('products.all') }}" class="btn btn-secondary">XEM THÊM</a>
                     </div>
                     <div class="col-md-8">
                         <div class="row">
