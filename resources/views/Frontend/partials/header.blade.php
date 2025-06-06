@@ -19,10 +19,10 @@
                                 </svg>
                             </button>
                         </li>
-                        <li class="active">
+                        <li class="{{ Request::is('/') ? 'active' : '' }}">
                             <a href="/" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
                         </li>
-                        <li class="hasChild">
+                        <li class="hasChild {{ Request::is('products') || Request::is('product/*') ? 'active' : '' }}">
                             <a href="/products" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
                             <!-- <ul class="menu1">
                                 <li><a href="converse-allfc2c.html?view=vertical" title="Converse All Style 1" aria-label="Converse All Style 1">Converse All Style 1</a></li>
@@ -98,6 +98,7 @@
                                 <li><a href="collections/all.html" title="Phụ kiện khác" aria-label="Phụ kiện khác">Phụ kiện khác</a></li>
                             </ul>
                         </li> -->
+<<<<<<< HEAD
                         <li><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
                         <li><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         @auth
@@ -107,6 +108,12 @@
                         @endif
                         @endauth
 
+=======
+                        <li class="{{ Request::is('posts') ? 'active' : '' }}">
+                            <a href="{{ url('/posts') }}" title="Tin tức" aria-label="Tin tức">Tin tức</a>
+                        </li>                        <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
+                        <li class="{{ Request::is('gioi-thieu') ? 'active' : '' }}"><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
+>>>>>>> b83b5973fb0432eb4366fd8742dfd36b8ec1f931
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>
