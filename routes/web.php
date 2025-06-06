@@ -18,6 +18,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\PostController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,9 @@ Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->na
 
 Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about');
 
+Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
+Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+
 Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -106,7 +110,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/account/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update');
     Route::post('/account/addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
     Route::delete('/account/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
-    
+
     // Order routes
     Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
     Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
@@ -137,7 +141,6 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
-
         });
         // Routes quản lý sản phẩm biến thể
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -203,17 +206,27 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         });
 
+        Route::prefix('posts')->group(function () {
+            Route::get('/', [PostController::class, 'index'])->name('posts.index');
+            Route::get('/create', [PostController::class, 'create'])->name('posts.create');
+            Route::post('/', [PostController::class, 'store'])->name('posts.store');
+            Route::get('/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+            Route::put('/{id}', [PostController::class, 'update'])->name('posts.update');
+            Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+        });
+
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
     });
 });
-Route::get('/posts', function () {
-    return view('Frontend.pages.blogs.posts');
-});
 
-Route::get('/post_detail', function () {
-    return view('Frontend.pages.post_detail');
-});
+// Route::get('/posts', function () {
+//     return view('Frontend.pages.blogs.posts');
+// });
+
+// Route::get('/post_detail', function () {
+//     return view('Frontend.pages.post_detail');
+// });
 
 
 // Route::get('/dashboard', function () {

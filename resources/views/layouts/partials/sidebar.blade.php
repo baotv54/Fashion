@@ -55,6 +55,13 @@
                 </a>
             </li>
 
+            <li class="sidebar-item {{ request()->routeIs('posts.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('posts.index') }}">
+                    <i class="align-middle" data-feather="layers"></i>
+                    <span class="align-middle">Posts</span>
+                </a>
+            </li>
+
             <li class="sidebar-header">Tài khoản</li>
 
             <li class="sidebar-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
