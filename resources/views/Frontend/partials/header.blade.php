@@ -100,6 +100,13 @@
                         </li> -->
                         <li><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
                         <li><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
+                        @auth
+                        {{-- Nút Trang Quản Trị nếu là admin --}}
+                        @if(Auth::user()->role === 'admin')
+                        <li><a href="admin/statistics">Quản Trị</a></li>
+                        @endif
+                        @endauth
+
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>
