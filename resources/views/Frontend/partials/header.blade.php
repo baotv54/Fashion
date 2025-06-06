@@ -98,8 +98,9 @@
                                 <li><a href="collections/all.html" title="Phụ kiện khác" aria-label="Phụ kiện khác">Phụ kiện khác</a></li>
                             </ul>
                         </li> -->
-                        <li class="{{ Request::is('news') ? 'active' : '' }}"><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
-                        <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
+                        <li class="{{ Request::is('posts') ? 'active' : '' }}">
+                            <a href="{{ url('/posts') }}" title="Tin tức" aria-label="Tin tức">Tin tức</a>
+                        </li>                        <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         <li class="{{ Request::is('gioi-thieu') ? 'active' : '' }}"><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">

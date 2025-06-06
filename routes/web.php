@@ -207,8 +207,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
     });
 });
+Route::get('/posts', function () {
+    return view('Frontend.pages.blogs.posts');
+});
 
-
+Route::get('/post_detail', function () {
+    return view('Frontend.pages.post_detail');
+});
 
 
 // Route::get('/dashboard', function () {

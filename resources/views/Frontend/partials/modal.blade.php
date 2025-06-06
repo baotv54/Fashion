@@ -452,10 +452,8 @@
 </div> -->
 
 
-<!-- Nút bật chat -->
-<button class="chat-toggle-btn" onclick="toggleChat()">💬</button>
+<!-- <button class="chat-toggle-btn" onclick="toggleChat()">💬</button>
 
-<!-- Khung chatbot -->
 <div class="chatbot-container" id="chatbot">
     <div class="chatbot-header">
         Trợ lý AI
@@ -468,7 +466,7 @@
         <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." />
         <button onclick="sendChat()">Gửi</button>
     </div>
-</div>
+</div> -->
 
 
 
