@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class UserController extends Controller
+{
+    //
+
+    public function index()
+    {
+        $users = User::latest()->select(
+            'id',
+            'name',
+            'password',
+            'email'
+        )->paginate(5);
+
+        return view('admin.users.index', compact('users'));
+    }
+    public function detail($id)
+    {
+        $users = DB::table('users')->where('id', $id)->first();
+        return view('admin.users.detail', compact('users'));
+    }
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validatedDate = $request->validate(
+            [
+                'name' => 'required|max:15|unique:users',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:8',
+            ]
+        );
+        $validatedDate['password'] = Hash::make($validatedDate['password']);
+        User::create($validatedDate);
+        return redirect()->route('users.index')->with('success', 'Tạo mới thành công');
+    }
+    public function edit($id)
+    {
+        $users = User::find($id);
+        return view('admin.users.create', compact('users'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:users,name,' . $id,
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'password' => 'nullable|min:8',
+        ]);
+        $users = User::findOrFail($id);
+
+       $users->update([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'password' => $validatedData['password'] ?? $users-> password,
+        
+       ]);
+        return redirect()->route('users.index')->with('success', 'User đã được cập nhật!');
+    }
+    public function destroy($id)
+    {
+        $users = User::find($id);
+        if (!$users) {
+            return redirect()->route('users.index')->with('error', 'Thương hiệu không tồn tại.');
+        }
+
+        $users->delete();
+
+        return redirect()->route('users.index')->with('success', 'Thương hiệu đã bị xóa thành công.');
+    }
+
+
+
+   
+}

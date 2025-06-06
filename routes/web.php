@@ -18,6 +18,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\UserController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -184,6 +185,16 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}/edit', [BrandController::class, 'edit'])->name('brands.edit');
             Route::put('/{id}', [BrandController::class, 'update'])->name('brands.update');
             Route::delete('/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
+        });
+
+        // Routes quản lý user
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/create', [UserController::class, 'create'])->name('users.create');
+            Route::post('/', [UserController::class, 'store'])->name('users.store');
+            Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
         });
         // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {
