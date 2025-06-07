@@ -58,6 +58,18 @@
                         <label class="form-check-label">Ẩn</label>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="post_category_id" class="form-label">Danh mục bài viết</label>
+                    <select name="post_category_id" id="post_category_id" class="form-select" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('post_category_id', $post->post_category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <div class="col-md-6">

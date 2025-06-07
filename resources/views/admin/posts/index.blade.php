@@ -35,7 +35,7 @@
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light text-center">
                     <tr>
-                        <th style="width: 5%;">ID</th>
+                        <th style="width: 15%;">Danh Mục</th>
                         <th style="width: 20%;">Tiêu Đề</th>
                         <th style="width: 15%;">Tác Giả</th>
                         <th style="width: 20%;">Hình Ảnh</th>
@@ -46,7 +46,7 @@
                 <tbody>
                     @forelse($posts as $post)
                     <tr>
-                        <td class="text-center">{{ $post->id }}</td>
+                        <td class="text-center">{{ $post->postCategory ? $post->postCategory->name : '-' }}</td>
                         <td><strong>{{ $post->title }}</strong></td>
                         <td class="text-center">{{ $post->author }}</td>
                         <td class="text-center">
@@ -83,25 +83,25 @@
                 <ul class="pagination justify-content-center">
                     {{-- Previous Page Link --}}
                     @if ($posts->onFirstPage())
-                        <li class="page-item disabled"><span class="page-link">‹</span></li>
+                    <li class="page-item disabled"><span class="page-link">‹</span></li>
                     @else
-                        <li class="page-item"><a class="page-link" href="{{ $posts->previousPageUrl() }}" rel="prev">‹</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ $posts->previousPageUrl() }}" rel="prev">‹</a></li>
                     @endif
 
                     {{-- Pagination Elements --}}
                     @foreach ($posts->getUrlRange(1, $posts->lastPage()) as $page => $url)
-                        @if ($page == $posts->currentPage())
-                            <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
-                        @else
-                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                        @endif
+                    @if ($page == $posts->currentPage())
+                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                    @else
+                    <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                    @endif
                     @endforeach
 
                     {{-- Next Page Link --}}
                     @if ($posts->hasMorePages())
-                        <li class="page-item"><a class="page-link" href="{{ $posts->nextPageUrl() }}" rel="next">›</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ $posts->nextPageUrl() }}" rel="next">›</a></li>
                     @else
-                        <li class="page-item disabled"><span class="page-link">›</span></li>
+                    <li class="page-item disabled"><span class="page-link">›</span></li>
                     @endif
                 </ul>
             </nav>

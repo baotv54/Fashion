@@ -18,6 +18,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
 
 use Illuminate\Support\Facades\Route;
@@ -179,6 +180,16 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
             Route::put('/{id}', [CategoryController::class, 'update'])->name('categories.update');
             Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        });
+
+        // Routes quản lý danh mục sản phẩm
+        Route::prefix('post-categories')->group(function () {
+            Route::get('/', [PostCategoryController::class, 'index'])->name('post-categories.index');
+            Route::get('/create', [PostCategoryController::class, 'create'])->name('post-categories.create');
+            Route::post('/', [PostCategoryController::class, 'store'])->name('post-categories.store');
+            Route::get('/{id}/edit', [PostCategoryController::class, 'edit'])->name('post-categories.edit');
+            Route::put('/{id}', [PostCategoryController::class, 'update'])->name('post-categories.update');
+            Route::delete('/{id}', [PostCategoryController::class, 'destroy'])->name('post-categories.destroy');
         });
 
         // Routes quản lý thương hiệu
