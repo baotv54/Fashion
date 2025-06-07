@@ -8,15 +8,6 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
 
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -26,17 +17,26 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="name" class="form-label">Tên sản phẩm</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name') }}" required>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name') }}">
+                    @error('name')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="slug" class="form-label">Slug</label>
-                    <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}" required>
+                    <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}">
+                    @error('slug')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="price" class="form-label">Giá sản phẩm</label>
-                    <input type="number" name="price" class="form-control" id="price" placeholder="Nhập giá" value="{{ old('price') }}" required>
+                    <input type="number" name="price" class="form-control" id="price" placeholder="Nhập giá" value="{{ old('price') }}">
+                     @error('price')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
                 </div>
 
                 <div class="mb-3">
@@ -49,7 +49,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="brand_id" class="form-label">Thương hiệu</label>
-                    <select name="brand_id" class="form-select" id="brand_id" required>
+                    <select name="brand_id" class="form-select" id="brand_id" >
                         <option value="" selected disabled>Chọn thương hiệu</option>
                         @foreach($brands as $brand)
                         <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
@@ -61,7 +61,7 @@
 
                 <div class="mb-3">
                     <label for="category_id" class="form-label">Danh mục</label>
-                    <select name="category_id" class="form-select" id="category_id" required>
+                    <select name="category_id" class="form-select" id="category_id">
                         <option value="" selected disabled>Chọn danh mục</option>
                         @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -92,6 +92,9 @@
             <div id="primaryImagePreview" class="mt-2">
                 <!-- Preview hình ảnh chính -->
             </div>
+            @error('image')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
         </div>
 
         <!-- Upload nhiều ảnh phụ -->
@@ -99,6 +102,9 @@
             <label for="images" class="form-label">Ảnh sản phẩm phụ</label>
             <input type="file" name="images[]" class="form-control" id="images" accept="image/*" multiple onchange="previewImages(event)">
             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
+            @error('images')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
         </div>
 
         <button type="submit" class="btn btn-primary">Thêm Sản Phẩm</button>

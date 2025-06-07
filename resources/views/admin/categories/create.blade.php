@@ -8,7 +8,10 @@
         @csrf
         <div class="mb-3">
             <label for="name" class="form-label">Tên danh mục</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text" name="name" class="form-control">
+             @error('name')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
         </div>
 
         <div class="mb-3">

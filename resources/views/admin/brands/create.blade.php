@@ -12,7 +12,10 @@
 
         <div class="mb-3">
             <label for="name" class="form-label">Tên thương hiệu:</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $brand->name ?? '') }}" required>
+            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $brand->name ?? '') }}">
+             @error('name')
+                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                @enderror
         </div>
 
         <div class="mb-3">
