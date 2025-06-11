@@ -3717,7 +3717,7 @@
 </head>
 
 <body class="">
-@include('Frontend.partials.header')
+	@include('Frontend.partials.header')
 	<main class="main-layout">
 		<div class="main-blog" data-blog-id="">
 			<div class="main-blog-breadcrumb" title="Tất cả bài viết">
@@ -3739,108 +3739,51 @@
 				<div class="main-blog-wrap">
 					<div class="main-blog-left">
 						<div class="main-blog-left-data">
-
-							<article class="article-item " data-index="1">
+							@foreach($posts as $post)
+							<article class="article-item" data-index="{{ $loop->index + 1 }}">
 								<div class="article-item-top">
-									<a href="{{ url('/post_detail') }}" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/fila-ray-white-pink-fs1sia3063x-401996e480134a9b82dd56e0012283e8295e.jpg?')}} alt="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG">
+									<a href="{{ route('posts.show', $post->id) }}" title="{{ $post->title }}" rel="nofollow">
+										<img
+											loading="lazy"
+											decoding="async"
+											width="600"
+											height="400"
+											src="{{ asset($post->image) }}"
+											alt="{{ $post->title }}"
+											title="{{ $post->title }}">
 										<i class="fal fa-search fa-fw"></i>
 									</a>
 								</div>
 								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG">CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG</a></h3>
+									<h3 class="article-item-bottom-name">
+										<a href="{{ route('posts.show', $post->id) }}" title="{{ $post->title }}">
+											{{ $post->title }}
+										</a>
+									</h3>
 									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
+										<i class="far fa-calendar-alt fa-fw"></i> {{ \Carbon\Carbon::parse($post->created_at)->format('d.m.Y') }}
 									</span>
 									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
+										<i class="fal fa-newspaper fa-fw"></i> {{ $post->author }}
 									</span>
 									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
+										{{ Str::limit(html_entity_decode(strip_tags($post->content)), 200, '...') }}
 									</p>
 								</div>
 							</article>
-							<article class="article-item " data-index="2">
-								<div class="article-item-top">
-									<a href="../converse-x-kim-jones.html" title="CONVERSE X KIM JONES" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/chuck-70-beat-the-world-ig-2-7df-abea22e0824c4c09a6fd5ed757bd85f7d5a0.jpg')}}" alt="CONVERSE X KIM JONES" title="CONVERSE X KIM JONES">
-										<i class="fal fa-search fa-fw"></i>
-									</a>
-								</div>
-								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../converse-x-kim-jones.html" title="CONVERSE X KIM JONES">CONVERSE X KIM JONES</a></h3>
-									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
-									</span>
-									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
-									</span>
-									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
-									</p>
-								</div>
-							</article>
-							<article class="article-item " data-index="3">
-								<div class="article-item-top">
-									<a href="../bat-tay-cung-hai-nhan-streetwear-lon-tho-miffy-xuat-hien-trong-hanh-trinh-doi-moi-cho-van-hoa-truot-van.html" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/nike-adapt-bb-2-0-nike-mag-bq539-59c1bcee8e5f4e9bada9d6143473f0ecb498.jpg')}}" alt="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN">
-										<i class="fal fa-search fa-fw"></i>
-									</a>
-								</div>
-								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../bat-tay-cung-hai-nhan-streetwear-lon-tho-miffy-xuat-hien-trong-hanh-trinh-doi-moi-cho-van-hoa-truot-van.html" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN">BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN</a></h3>
-									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
-									</span>
-									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
-									</span>
-									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
-									</p>
-								</div>
-							</article>
-							<article class="article-item " data-index="4">
-								<div class="article-item-top">
-									<a href="../trai-nghiem-con-duong-mau-sac-day-hoa-dai-vo-tan-cua-converse-pride.html" title="TRẢI NGHIỆM CON ĐƯỜNG MÀU SẮC ĐẦY HOA DÀI VÔ TẬN CỦA CONVERSE PRIDE" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/01-thumb-6a26040630f8411eafc114dfa2c1bfc23be6.jpg?v=1697785028303" alt="T')}}ƯỜNG MÀU SẮC ĐẦY HOA DÀI VÔ TẬN CỦA CONVERSE PRIDE" title="TRẢI NGHIỆM CON ĐƯỜNG MÀU SẮC ĐẦY HOA DÀI VÔ TẬN CỦA CONVERSE PRIDE">
-										<i class="fal fa-search fa-fw"></i>
-									</a>
-								</div>
-								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../trai-nghiem-con-duong-mau-sac-day-hoa-dai-vo-tan-cua-converse-pride.html" title="TRẢI NGHIỆM CON ĐƯỜNG MÀU SẮC ĐẦY HOA DÀI VÔ TẬN CỦA CONVERSE PRIDE">TRẢI NGHIỆM CON ĐƯỜNG MÀU SẮC ĐẦY HOA DÀI VÔ TẬN CỦA CONVERSE PRIDE</a></h3>
-									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
-									</span>
-									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
-									</span>
-									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
-									</p>
-								</div>
-							</article>
+							@endforeach
 						</div>
+
 						<div class="shop-pagination">
-
-							<span class="current">1</span>
-
-							<a href="all4658.html?page=2" title="Trang 2" aria-label="Trang 2" data-page="2">2</a>
-
-							<a href="all4658.html?page=2" title="Trang sau" aria-label="Trang sau" data-page="2">
-								<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" x="0" y="0" viewBox="0 0 240.823 240.823" style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
-									<path id="Chevron_Right_1_" d="M183.189,111.816L74.892,3.555c-4.752-4.74-12.451-4.74-17.215,0c-4.752,4.74-4.752,12.439,0,17.179l99.707,99.671l-99.695,99.671c-4.752,4.74-4.752,12.439,0,17.191c4.752,4.74,12.463,4.74,17.215,0l108.297-108.261C187.881,124.315,187.881,116.495,183.189,111.816z" fill="#000000" data-original="#000000"></path>
-								</svg>
-							</a>
-
+							{{-- Các số trang (ví dụ chỉ hiện 1 và 2 vì paginate(1) ví dụ) --}}
+							@foreach ($posts->getUrlRange(1, $posts->lastPage()) as $page => $url)
+							@if ($page == $posts->currentPage())
+							{{-- Trang hiện tại --}}
+							<span class="current">{{ $page }}</span>
+							@else
+							<a href="{{ $url }}" title="Trang {{ $page }}" aria-label="Trang {{ $page }}" data-page="{{ $page }}">{{ $page }}</a>
+							@endif
+							@endforeach
 						</div>
 					</div>
 					<div class="main-blog-right">
@@ -3849,239 +3792,52 @@
 								<span>Đừng bỏ lỡ.</span>
 							</div>
 
-							<article class="article-item layout-small" data-index="1">
+							@foreach ($newestPosts as $newPost)
+							<article class="article-item layout-small" data-index="{{ $loop->iteration }}">
 								<div class="article-item-top">
-									<a href="../converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG" rel="nofollow">
+									<a href="{{ route('posts.show', $newPost->id) }}" title="{{ $newPost->title }}" rel="nofollow">
 										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/fila-ray-white-pink-fs1sia3063x-401996e480134a9b82dd56e0012283e8295e.jpg')}}" alt="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG">
+											src="{{ asset($newPost->image) }}"
+											alt="{{ $newPost->title }}"
+											title="{{ $newPost->title }}">
 										<i class="fal fa-search fa-fw"></i>
 									</a>
 								</div>
 								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html" title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG">CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG</a></h3>
+									<h3 class="article-item-bottom-name">
+										<a href="{{ route('posts.show', $newPost->id) }}" title="{{ $newPost->title }}">
+											{{ $newPost->title }}
+										</a>
+									</h3>
 									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
+										<i class="far fa-calendar-alt fa-fw"></i> {{ \Carbon\Carbon::parse($newPost->created_at)->format('d.m.Y') }}
 									</span>
 									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
+										<i class="fal fa-newspaper fa-fw"></i> {{ $newPost->author }}
 									</span>
 									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
+										{{ Str::limit(html_entity_decode(strip_tags($newPost->content)), 150, '...') }}
 									</p>
 								</div>
 							</article>
-							<article class="article-item layout-small" data-index="2">
-								<div class="article-item-top">
-									<a href="../converse-x-kim-jones.html" title="CONVERSE X KIM JONES" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/chuck-70-beat-the-world-ig-2-7df-abea22e0824c4c09a6fd5ed757bd85f7d5a0.jpg')}}" alt="CONVERSE X KIM JONES" title="CONVERSE X KIM JONES">
-										<i class="fal fa-search fa-fw"></i>
-									</a>
-								</div>
-								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../converse-x-kim-jones.html" title="CONVERSE X KIM JONES">CONVERSE X KIM JONES</a></h3>
-									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
-									</span>
-									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
-									</span>
-									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
-									</p>
-								</div>
-							</article>
-							<article class="article-item layout-small" data-index="3">
-								<div class="article-item-top">
-									<a href="../bat-tay-cung-hai-nhan-streetwear-lon-tho-miffy-xuat-hien-trong-hanh-trinh-doi-moi-cho-van-hoa-truot-van.html" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN" rel="nofollow">
-										<img loading="lazy" decoding="async" width="600" height="400"
-											src="{{asset('images/nike-adapt-bb-2-0-nike-mag-bq539-59c1bcee8e5f4e9bada9d6143473f0ecb498.jpg')}}" alt="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN">
-										<i class="fal fa-search fa-fw"></i>
-									</a>
-								</div>
-								<div class="article-item-bottom">
-									<h3 class="article-item-bottom-name"><a href="../bat-tay-cung-hai-nhan-streetwear-lon-tho-miffy-xuat-hien-trong-hanh-trinh-doi-moi-cho-van-hoa-truot-van.html" title="BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN">BẮT TAY CÙNG HAI NHÃN STREETWEAR LỚN, THỎ MIFFY XUẤT HIỆN TRONG HÀNH TRÌNH ĐỔI MỚI CHO VĂN HÓA TRƯỢT VÁN</a></h3>
-									<span class="article-item-bottom-date">
-										<i class="far fa-calendar-alt fa-fw"></i> 04.11.2021
-									</span>
-									<span class="article-item-bottom-author">
-										<i class="fal fa-newspaper fa-fw"></i> Công Ty TNHH KTCN F1GENZ
-									</span>
-									<p class="article-item-bottom-des">
-										Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới.
-										Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt...
-									</p>
-								</div>
-							</article>
+							@endforeach
 						</div>
 						<div class="main-blog-right-menu">
 							<div class="section-title-all">
 								<span>Danh mục Blog</span>
 							</div>
 							<ul class="main-blog-right-menu-data">
-								<li class="">
-									<a href="../index.html" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
+								<li class="{{ empty($categoryId) ? 'active' : '' }}">
+									<a href="{{ route('posts.postpage') }}" title="Tất cả" aria-label="Tất cả">Tất cả</a>
 								</li>
-								<li class="hasChild">
-									<a href="../converse-allfc2c.html?view=vertical" title="Converse All" aria-label="Converse All">Converse All<span>›</span></a>
-									<ul class="menu1">
-										<li class="">
-											<a href="../converse-allfc2c.html?view=vertical" title="Converse All Style 1" aria-label="Converse All Style 1">Converse All Style 1</a>
-										</li>
-										<li class="">
-											<a href="../converse-allc267.html?view=horizontal" title="Converse All Style 2" aria-label="Converse All Style 2">Converse All Style 2</a>
-										</li>
-									</ul>
+								@foreach ($categories as $category)
+								<li class="{{ (isset($categoryId) && $categoryId == $category->id) ? 'active' : '' }}">
+									<a href="{{ route('posts.postpage', ['category_id' => $category->id]) }}" title="{{ $category->name }}" aria-label="{{ $category->name }}">
+										{{ $category->name }}
+									</a>
 								</li>
-								<li class="hasChild">
-									<a href="../collections/allfc2c.html?view=vertical" title="Classic" aria-label="Classic">Classic<span>›</span></a>
-									<ul class="menu1">
-										<li class="hasChild">
-											<a href="../collections/all.html" title="Chuck Taylor" aria-label="Chuck Taylor">Chuck Taylor<span>›</span></a>
-											<ul class="menu2">
-												<li class="">
-													<a href="../collections/all.html" title="Jimmy Choo" aria-label="Jimmy Choo">Jimmy Choo</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Manolo Blahnik" aria-label="Manolo Blahnik">Manolo Blahnik</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="GAFA" aria-label="GAFA">GAFA</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Sergio Rossi" aria-label="Sergio Rossi">Sergio Rossi</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Valentino" aria-label="Valentino">Valentino</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Roger Vivier" aria-label="Roger Vivier">Roger Vivier</a>
-												</li>
-												<li class="hasChild ">
-													<a href="../collections/all.html" title="Miu Miu" aria-label="Miu Miu">Miu Miu<span>›</span></a>
-													<ul class="menu3">
-														<li class="">
-															<a href="../index.html" title="ABV" aria-label="ABV">ABV</a>
-														</li>
-													</ul>
-												</li>
-												<li class="">
-													<a href="../index.html" title="Kate Spade" aria-label="Kate Spade">Kate Spade</a>
-												</li>
-											</ul>
-										</li>
-										<li class="hasChild">
-											<a href="../collections/all.html" title="Giày" aria-label="Giày">Giày<span>›</span></a>
-											<ul class="menu2">
-												<li class="">
-													<a href="../collections/all.html" title="Giày Cao Gót" aria-label="Giày Cao Gót">Giày Cao Gót</a>
-												</li>
-												<li class="">
-													<a href="../index.html" title="Giày Bít" aria-label="Giày Bít">Giày Bít</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Giày Sandals" aria-label="Giày Sandals">Giày Sandals</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Giày Búp Bê" aria-label="Giày Búp Bê">Giày Búp Bê</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Giày Sneaker" aria-label="Giày Sneaker">Giày Sneaker</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Giày Boots" aria-label="Giày Boots">Giày Boots</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Giày Da Thật" aria-label="Giày Da Thật">Giày Da Thật</a>
-												</li>
-											</ul>
-										</li>
-										<li class="hasChild">
-											<a href="../collections/all.html" title="Túi xách" aria-label="Túi xách">Túi xách<span>›</span></a>
-											<ul class="menu2">
-												<li class="">
-													<a href="../collections/all.html" title="Túi Xách Tay" aria-label="Túi Xách Tay">Túi Xách Tay</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Túi Đeo Chéo" aria-label="Túi Đeo Chéo">Túi Đeo Chéo</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Túi Xách Da Thật" aria-label="Túi Xách Da Thật">Túi Xách Da Thật</a>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-								<li class="hasChild">
-									<a href="../collections/all.html" title="Accessories - Phụ trang" aria-label="Accessories - Phụ trang">Accessories - Phụ trang<span>›</span></a>
-									<ul class="menu1">
-										<li class="hasChild">
-											<a href="../collections/all.html" title="Thắt lưng" aria-label="Thắt lưng">Thắt lưng<span>›</span></a>
-											<ul class="menu2">
-												<li class="">
-													<a href="../index.html" title="Thắt lưng cao cấp" aria-label="Thắt lưng cao cấp">Thắt lưng cao cấp</a>
-												</li>
-												<li class="">
-													<a href="../index.html" title="Thắt lưng cho nam" aria-label="Thắt lưng cho nam">Thắt lưng cho nam</a>
-												</li>
-												<li class="">
-													<a href="../index.html" title="Thắt lưng cho nữ" aria-label="Thắt lưng cho nữ">Thắt lưng cho nữ</a>
-												</li>
-											</ul>
-										</li>
-										<li class="hasChild">
-											<a href="../collections/all.html" title="Mắt kính" aria-label="Mắt kính">Mắt kính<span>›</span></a>
-											<ul class="menu2">
-												<li class="">
-													<a href="../collections/all.html" title="Kính thời trang" aria-label="Kính thời trang">Kính thời trang</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Kính mát" aria-label="Kính mát">Kính mát</a>
-												</li>
-												<li class="">
-													<a href="../collections/all.html" title="Kính cho nam" aria-label="Kính cho nam">Kính cho nam</a>
-												</li>
-												<li class="">
-													<a href="../index.html" title="Kính cho nữ" aria-label="Kính cho nữ">Kính cho nữ</a>
-												</li>
-											</ul>
-										</li>
-										<li class="">
-											<a href="../collections/all.html" title="Trang sức" aria-label="Trang sức">Trang sức</a>
-										</li>
-										<li class="">
-											<a href="../collections/all.html" title="Khăn choàng" aria-label="Khăn choàng">Khăn choàng</a>
-										</li>
-										<li class="">
-											<a href="../collections/all.html" title="Mũ nón" aria-label="Mũ nón">Mũ nón</a>
-										</li>
-										<li class="">
-											<a href="../collections/all.html" title="Phụ kiện khác" aria-label="Phụ kiện khác">Phụ kiện khác</a>
-										</li>
-									</ul>
-								</li>
-								<li class="">
-									<a href="../news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a>
-								</li>
-								<li class="">
-									<a href="../lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a>
-								</li>
+								@endforeach
 							</ul>
-						</div>
-						<div class="main-blog-right-banner">
-							<a href="../index.html" aria-label="Bạn cần tư vấn?" title="Bạn cần tư vấn?">
-								<div class="section-title-all">
-									<span>Bạn cần tư vấn?</span>
-								</div>
-								<picture>
-									<source media="(max-width: 480px)" width="480" height="480" srcset="{{asset('images/main_blog_banner_image_mobe889.jpg')}}">
-									<source media="(min-width: 481px)" width="600" height="600" srcset="{{asset('images/main_blog_banner_imagee889.jpg')}}">
-									<img width="600" height="600" loading="lazy" title="Bạn cần tư vấn?"
-										src="{{asset('images/main_blog_banner_imagee889.jpg')}}" alt="Bạn cần tư vấn?">
-								</picture>
-							</a>
 						</div>
 					</div>
 				</div>
