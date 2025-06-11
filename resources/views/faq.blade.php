@@ -127,6 +127,8 @@
       return false; // giữ lại để không gửi form thực sự (trong demo)
     }
   </script>
-  
+      @include('Frontend.partials.footer')
+    @include('Frontend.partials.modal')
 </body>
+@include('Frontend.partials.scrip')
 
