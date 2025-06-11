@@ -25,7 +25,7 @@ class PostController extends Controller
             $query->where('post_category_id', $categoryId);
         }
 
-        $posts = $query->paginate(10);
+        $posts = Post::where('is_visible', 1)->orderBy('created_at', 'desc')->paginate(6);
         $newestPosts = Post::latest()->limit(3)->get();
         $categories = PostCategory::where('status', 1)->get();
 
