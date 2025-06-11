@@ -38,7 +38,7 @@ Route::get('/db', function () {
 });
 
 Route::get('/faq', function () {
-    return view('faq');
+    return view('Frontend.pages.pages.faq');
 });
 
 Route::get('/lien-he', function () {
