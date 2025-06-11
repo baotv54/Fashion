@@ -19,14 +19,20 @@ class PostController extends Controller
     {
         $categoryId = $request->query('category_id');
 
-        $query = Post::query();
+        $query = Post::query()
+            ->where('is_visible', 1)
+            ->orderBy('created_at', 'desc');
 
         if ($categoryId) {
             $query->where('post_category_id', $categoryId);
         }
 
-        $posts = Post::where('is_visible', 1)->orderBy('created_at', 'desc')->paginate(6);
-        $newestPosts = Post::latest()->limit(3)->get();
+        $posts = $query->paginate(10);
+        $newestPosts = Post::where('is_visible', 1)
+            ->latest()
+            ->limit(3)
+            ->get();
+
         $categories = PostCategory::where('status', 1)->get();
 
         return view('Frontend.pages.blogs.posts', compact('posts', 'newestPosts', 'categories', 'categoryId'));
@@ -35,7 +41,10 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        $newestPosts = Post::latest()->limit(3)->get();
+        $newestPosts = Post::where('is_visible', 1)
+            ->latest()
+            ->limit(3)
+            ->get();
         $categories = PostCategory::where('status', 1)->get();
 
         return view('Frontend.pages.post_detail', compact('post', 'newestPosts', 'categories'));
