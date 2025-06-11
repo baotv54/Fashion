@@ -101,6 +101,8 @@
                         <li class="{{ Request::is('news') ? 'active' : '' }}"><a href="news.html" title="Tin tức" aria-label="Tin tức">Tin tức</a></li>
                         <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he.html" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         <li class="{{ Request::is('gioi-thieu') ? 'active' : '' }}"><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
+                        <li class="{{ Request::is('tro-giup') ? 'active' : '' }}"><a href="{{ route('help') }}" title="Trợ giúp" aria-label="Trợ giúp">Trợ giúp</a></li>
+                        <li class="{{ Request::is('dieu-khoan') ? 'active' : '' }}"><a href="{{ route('terms') }}" title="Điều khoản" aria-label="Điều khoản">Điều khoản</a></li>
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>

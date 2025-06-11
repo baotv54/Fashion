@@ -1,4 +1,4 @@
-<footer class="footers2" style="background-image: url({{ asset('images/footers2_backgrounde889.jpg') }})">
+<footer class="footers2">
     <div class="container">
         <div class="footers2-wrap">
             <div class="footers2-top">
@@ -25,7 +25,8 @@
                             <li><a href="gioi-thieu.html" aria-label="Giới thiệu" title="Giới thiệu">Giới thiệu</a></li>
                             <li><a href="chinh-sach-doi-tra.html" aria-label="Chính sách đổi trả" title="Chính sách đổi trả">Chính sách đổi trả</a></li>
                             <li><a href="chinh-sach-bao-mat.html" aria-label="Chính sách bảo mật" title="Chính sách bảo mật">Chính sách bảo mật</a></li>
-                            <li><a href="dieu-khoan-dich-vu.html" aria-label="Điều khoản dịch vụ" title="Điều khoản dịch vụ">Điều khoản dịch vụ</a></li>
+                            <li><a href="{{ route('help') }}" aria-label="Trợ giúp" title="Trợ giúp">Trợ giúp</a></li>
+                            <li><a href="{{ route('terms') }}" aria-label="Điều khoản" title="Điều khoản">Điều khoản</a></li>
                         </ul>
                     </div>
                 </div>

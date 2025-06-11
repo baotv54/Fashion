@@ -87,6 +87,14 @@ Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->na
 
 Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about');
 
+Route::get('/tro-giup', function () {
+    return view('Frontend.pages.tro-giup');
+})->name('help');
+
+Route::get('/dieu-khoan', function () {
+    return view('Frontend.pages.dieu-khoan');
+})->name('terms');
+
 Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
