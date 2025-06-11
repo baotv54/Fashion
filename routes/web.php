@@ -37,6 +37,16 @@ Route::get('/db', function () {
     return view('layouts.Dashboard');
 });
 
+Route::get('/faq', function () {
+    return view('Frontend.pages.pages.faq');
+});
+
+Route::get('/lien-he', function () {
+    return view('Frontend.pages.pages.lien-he');
+});
+
+
+
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
 

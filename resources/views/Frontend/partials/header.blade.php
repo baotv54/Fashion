@@ -103,6 +103,7 @@
                         </li>
                         <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         <li class="{{ Request::is('gioi-thieu') ? 'active' : '' }}"><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
+                        <li class="{{ Request::is('faq') ? 'active' : '' }}"><a href="faq" title="Câu hỏi thường gặp" aria-label="Câu hỏi thường gặp">Câu hỏi thường gặp</a></li>
                         @auth
                         {{-- Nút Trang Quản Trị nếu là admin --}}
                         @if(Auth::user()->role === 'admin')
