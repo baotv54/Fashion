@@ -19,7 +19,7 @@
                     <label for="name" class="form-label">Tên sản phẩm</label>
                     <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name') }}">
                     @error('name')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
                 </div>
 
@@ -27,7 +27,7 @@
                     <label for="slug" class="form-label">Slug</label>
                     <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}">
                     @error('slug')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
                 </div>
 
@@ -35,7 +35,7 @@
                     <label for="price" class="form-label">Giá sản phẩm</label>
                     <input type="number" name="price" class="form-control" id="price" placeholder="Nhập giá" value="{{ old('price') }}">
                      @error('price')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
                 </div>
 
@@ -93,7 +93,7 @@
                 <!-- Preview hình ảnh chính -->
             </div>
             @error('image')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
@@ -103,7 +103,7 @@
             <input type="file" name="images[]" class="form-control" id="images" accept="image/*" multiple onchange="previewImages(event)">
             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
             @error('images')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 

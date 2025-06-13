@@ -36,7 +36,7 @@ class UserController extends Controller
     {
         $validatedDate = $request->validate(
             [
-                'name' => 'required|max:15|unique:users',
+                'name' => 'required|max:15',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
             ]
@@ -54,7 +54,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:users,name,' . $id,
+            'name' => 'required|max:15' . $id,
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|min:8',
         ]);

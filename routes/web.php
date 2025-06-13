@@ -19,6 +19,7 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BannerController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -105,7 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/account/addresses/{id}', [AddressController::class, 'update'])->name('addresses.update');
     Route::post('/account/addresses/{id}/default', [AddressController::class, 'setDefault'])->name('addresses.setDefault');
     Route::delete('/account/addresses/{id}', [AddressController::class, 'destroy'])->name('addresses.destroy');
-    
+
     // Order routes
     Route::get('/order-history', [OrderController::class, 'userOrderHistory'])->name('user.orders.history');
     Route::get('/order-history/{id}', [OrderController::class, 'userOrderDetails'])->name('user.orders.details');
@@ -136,7 +137,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
-
         });
         // Routes quản lý sản phẩm biến thể
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -214,6 +214,16 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
+
+        //Routes Quản lý Banne
+        Route::prefix('banners')->group(function () {
+            Route::get('/', [BannerController::class, 'index'])->name('banners.index');
+            Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
+            Route::post('/', [BannerController::class, 'store'])->name('banners.store');
+             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+            Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
+            Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+        });
     });
 });
 

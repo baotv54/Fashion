@@ -16,7 +16,7 @@
                 <input type="text" name="name" id="name" class="form-control"
                     value="{{ old('name', $users->name ?? '') }}">
                 @error('name')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
 
@@ -25,7 +25,7 @@
                 <input type="#" name="email" id="email" class="form-control"
                     value="{{ old('email', $users->email ?? '') }}">
                 @error('email')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
 
@@ -34,7 +34,7 @@
                 <input type="password" name="password" id="password" class="form-control"
                     value="{{ old('password', $users->password ?? '') }}">
                 @error('password')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
 

@@ -10,6 +10,7 @@ use App\Models\Coupon;
 use App\Models\Attribute;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -32,7 +33,8 @@ class ProductController extends Controller
         $products = Product::latest()->take(8)->get();
         $carts = Cart::content();
         $coupons = Coupon::latest()->take(4)->get();
-        return view('Frontend.index', compact('products', 'carts', 'coupons'));
+        $banners = Banner::latest()->take(4)->get();
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'banners'));
     }
 
     public function allProducts(Request $request)

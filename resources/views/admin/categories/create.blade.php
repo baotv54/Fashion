@@ -10,7 +10,7 @@
             <label for="name" class="form-label">Tên danh mục</label>
             <input type="text" name="name" class="form-control">
              @error('name')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                   <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 

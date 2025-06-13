@@ -6,7 +6,7 @@
             <label>Mã giảm giá <span class="text-danger">*</span></label>
             <input type="text" name="code" class="form-control" value="{{ old('code', $coupon->code ?? '') }}">
             @error('code')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
@@ -17,7 +17,7 @@
                 <option value="fixed" {{ old('type', $coupon->type ?? '') == 'fixed' ? 'selected' : '' }}>Số tiền cố định (₫)</option>
             </select>
             @error('type')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
@@ -25,7 +25,7 @@
             <label>Giá trị <span class="text-danger">*</span></label>
             <input type="number" name="value" class="form-control" value="{{ old('value', $coupon->value ?? '') }}" min="0">
              @error('value')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
@@ -33,7 +33,7 @@
             <label>Giá trị đơn hàng tối thiểu <span class="text-danger">*</span></label>
             <input type="number" name="min_cart_value" class="form-control" value="{{ old('min_cart_value', $coupon->min_cart_value ?? '') }}" min="0">
              @error('min_cart_value')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
@@ -41,7 +41,7 @@
             <label>Giới hạn số lượt sử dụng</label>
             <input type="number" name="usage_limit" class="form-control" value="{{ old('usage_limit', $coupon->usage_limit ?? '') }}" min="1">
              @error('usage_limit')
-                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    <small class="text-danger">{{ $message }}</small>
                 @enderror
         </div>
 
