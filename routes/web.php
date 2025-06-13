@@ -19,7 +19,10 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostCategoryController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\BannerController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -87,7 +90,12 @@ Route::post('/calculate-shipping', [ShippingController::class, 'calculate']);
 
 Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->name('shipping.calculate');
 
-Route::middleware('auth')->group(function () {
+Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about');
+
+Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
+Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+
+Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -122,7 +130,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth', 'is_admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 
@@ -177,6 +185,16 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
         });
 
+        // Routes quản lý danh mục sản phẩm
+        Route::prefix('post-categories')->group(function () {
+            Route::get('/', [PostCategoryController::class, 'index'])->name('post-categories.index');
+            Route::get('/create', [PostCategoryController::class, 'create'])->name('post-categories.create');
+            Route::post('/', [PostCategoryController::class, 'store'])->name('post-categories.store');
+            Route::get('/{id}/edit', [PostCategoryController::class, 'edit'])->name('post-categories.edit');
+            Route::put('/{id}', [PostCategoryController::class, 'update'])->name('post-categories.update');
+            Route::delete('/{id}', [PostCategoryController::class, 'destroy'])->name('post-categories.destroy');
+        });
+
         // Routes quản lý thương hiệu
         Route::prefix('brands')->group(function () {
             Route::get('/', [BrandController::class, 'index'])->name('brands.index');
@@ -212,6 +230,15 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         });
 
+        Route::prefix('posts')->group(function () {
+            Route::get('/', [PostController::class, 'index'])->name('posts.index');
+            Route::get('/create', [PostController::class, 'create'])->name('posts.create');
+            Route::post('/', [PostController::class, 'store'])->name('posts.store');
+            Route::get('/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+            Route::put('/{id}', [PostController::class, 'update'])->name('posts.update');
+            Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+        });
+
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
@@ -227,7 +254,13 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     });
 });
 
+// Route::get('/posts', function () {
+//     return view('Frontend.pages.blogs.posts');
+// });
 
+// Route::get('/post_detail', function () {
+//     return view('Frontend.pages.post_detail');
+// });
 
 
 // Route::get('/dashboard', function () {

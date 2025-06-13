@@ -28,6 +28,20 @@
                 </a>
             </li>
 
+            <li class="sidebar-item {{ request()->routeIs('post-categories.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('post-categories.index') }}">
+                    <i class="align-middle" data-feather="tag"></i>
+                    <span class="align-middle">Post Categories</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item {{ request()->routeIs('posts.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('posts.index') }}">
+                    <i class="align-middle" data-feather="layers"></i>
+                    <span class="align-middle">Posts</span>
+                </a>
+            </li>
+
             <li class="sidebar-item {{ request()->routeIs('brands.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('brands.index') }}">
                     <i class="align-middle" data-feather="briefcase"></i>

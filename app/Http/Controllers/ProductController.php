@@ -37,6 +37,12 @@ class ProductController extends Controller
         return view('Frontend.index', compact('products', 'carts', 'coupons', 'banners'));
     }
 
+    public function aboutPage()
+    {
+        $products = Product::latest()->take(8)->get();
+        return view('Frontend.pages.gioi-thieu', compact('products'));
+    }
+
     public function allProducts(Request $request)
     {
         $query = Product::with(['images', 'variants.attributeValues']);
