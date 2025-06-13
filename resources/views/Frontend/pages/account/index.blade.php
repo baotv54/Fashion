@@ -3873,13 +3873,13 @@
 
                     <!-- Cập nhật thông tin -->
                     <div class="profile-update mt-4">
-                        <h2 class="title-head">Cập nhật thông tin</h2>
+                        <h1 class="title-head">Cập nhật thông tin</h1>
                         @include('profile.partials.update-profile-information-form')
                     </div>
 
                     <!-- Xóa tài khoản -->
                     <div class="profile-delete mt-5">
-                        <h2 class="title-head" style="color: #dc3545;">Xóa tài khoản</h2>
+                        <h1 class="title-head" style="color: #dc3545;">Xóa tài khoản</h1>
                         @include('profile.partials.delete-user-form')
                     </div>
                 </div>
