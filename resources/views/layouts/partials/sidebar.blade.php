@@ -56,6 +56,18 @@
                 </a>
             </li>
 
+            <li class="sidebar-item {{ request()->routeIs('banners.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('banners.index') }}">
+                    <i class="align-middle" data-feather="file-text"></i>
+                    <span class="align-middle">Banner</span>
+                </a>
+            </li>
+            <li class="sidebar-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('users.index') }}">
+                    <i class="align-middle" data-feather="file-text"></i>
+                    <span class="align-middle">User</span>
+                </a>
+            </li>
             <li class="sidebar-item {{ request()->routeIs('orders.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('orders.index') }}">
                     <i class="align-middle" data-feather="file-text"></i>
@@ -81,7 +93,8 @@
             <li class="sidebar-item">
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
-                    <a href="#" class="sidebar-link" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <a href="#" class="sidebar-link"
+                        onclick="event.preventDefault(); this.closest('form').submit();">
                         <i class="align-middle" data-feather="log-out"></i>
                         <span class="align-middle">Log Out</span>
                     </a>
