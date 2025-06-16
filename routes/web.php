@@ -20,6 +20,7 @@ use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\FavoriteController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,15 @@ Route::post('/cart/add', [CartController::class, 'store'])->name('cart.add');
 Route::get('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+// Thêm sản phẩm vào favorites
+Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+
+// Xoá sản phẩm khỏi favorites
+Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+
+// Hiển thị danh sách favorites (nếu có)
+// Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 
 Route::get('/address/province', [AddressController::class, 'getProvince']);
 Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict']);

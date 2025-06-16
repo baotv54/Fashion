@@ -221,54 +221,62 @@
 </div>
 <div class="shop-wishlist-modal" data-name="Yêu thích">
     <div class="shop-wishlist-modal-head">
-        <div class="container">
-            <label>Danh mục sản phẩm yêu thích</label>
-            <button type="button" data-type="shop-wishlist-modal-close" title="Đóng"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" x="0" y="0" viewBox="0 0 64 64" style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
-                    <g>
-                        <script></script>
-                        <path xmlns="http://www.w3.org/2000/svg" d="m4.59 59.41a2 2 0 0 0 2.83 0l24.58-24.58 24.59 24.58a2 2 0 0 0 2.83-2.83l-24.59-24.58 24.58-24.59a2 2 0 0 0 -2.83-2.83l-24.58 24.59-24.59-24.58a2 2 0 0 0 -2.82 2.82l24.58 24.59-24.58 24.59a2 2 0 0 0 0 2.82z" fill="#000000" data-original="#000000" class=""></path>
-                    </g>
-                </svg></button>
+        <div class="container flex justify-between items-center py-4">
+            <label class="text-lg font-semibold">Danh mục sản phẩm yêu thích</label>
+            <button type="button" data-type="shop-wishlist-modal-close" title="Đóng" class="p-2">
+                <svg width="20" height="20" viewBox="0 0 64 64">
+                    <path d="m4.59 59.41a2 2 0 0 0 2.83 0l24.58-24.58 24.59 24.58a2 2 0 0 0 2.83-2.83l-24.59-24.58 24.58-24.59a2 2 0 0 0 -2.83-2.83l-24.58 24.59-24.59-24.58a2 2 0 0 0 -2.82 2.82l24.58 24.59-24.58 24.59a2 2 0 0 0 0 2.82z" fill="#000000" />
+                </svg>
+            </button>
         </div>
     </div>
     <div class="container">
-        <div class="shop-wishlist-modal-body">
-            <p class="shop-wishlist-modal-null wcs-null w-100 text-center">Chưa có sản phẩm trong danh sách yêu thích</p>
-        </div>
-    </div>
-    <div class="container">
-        <div class="shop-wishlist-modal-body slick-initialized slick-slider slick-dotted">
+        <div class="slick-initialized slick-slider slick-dotted">
             <div class="slick-list draggable">
-                <div class="slick-track" style="opacity: 1; width: 454px; transform: translate3d(0px, 0px, 0px);">
-                    <div class="product-item product-item-small slick-slide slick-current slick-active" data-id="102679979" data-handle="chuck-taylor-all-star-classic-121184" data-slick-index="0" aria-hidden="false" style="width: 454px;" tabindex="0" role="tabpanel" id="slick-slide50" aria-describedby="slick-slide-control50">
+                <div class="slick-track" style="opacity: 1;">
+                    @forelse ($favorites as $favorite)
+                    @php $product = $favorite->product; @endphp
+                    <div class="product-item product-item-small slick-slide slick-current slick-active" style="width: 454px;">
                         <div class="product-item-small-wrap">
                             <div class="product-item-small-image">
-                                <a href="/chuck-taylor-all-star-classic-121184" aria-label="Chuck Taylor All Star Classic - 121184" class="product-item-small-image-link" title="Chuck Taylor All Star Classic - 121184" tabindex="0">
-                                    <img width="240" height="240" loading="lazy" class="w-auto" src="https://bizweb.dktcdn.net/100/493/370/products/121184-drake-650x650-3be016cc519b40a09093df5718bdbaf9-jpeg.jpg?v=1699864031380" alt="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184">
+                                <a href="{{ route('product.show', $product->slug ?? '#') }}" class="product-item-small-image-link" title="{{ $product->name }}">
+                                    <img width="240" height="240" loading="lazy" class="w-auto"
+                                        src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                        alt="{{ $product->name }}"
+                                        title="{{ $product->name }}">
                                 </a>
                             </div>
                             <div class="product-item-small-info">
                                 <h3 class="product-item-small-info-title">
-                                    <a href="/chuck-taylor-all-star-classic-121184" aria-label="Chuck Taylor All Star Classic - 121184" title="Chuck Taylor All Star Classic - 121184" tabindex="0">Chuck Taylor All Star Classic - 121184</a>
+                                    <a href="{{ route('product.show', $product->slug ?? '#') }}"
+                                        title="{{ $product->name }}">{{ $product->name }}</a>
                                 </h3>
                                 <p class="product-item-small-info-price">
-                                    <strong>4.399.000₫</strong>
+                                    <strong>{{ number_format($product->price, 0, ',', '.') }}₫</strong>
                                 </p>
-                                <div class="sapo-product-reviews-badge" data-id="33445636"></div>
+
                                 <div class="product-item-small-info-action">
-                                    <button type="button" title="Thêm vào giỏ hàng" class="shop-addLoop-button" data-type="shop-addLoop-button" tabindex="0">Thêm vào giỏ</button>
-                                    <button type="button" title="Xoá yêu thích" class="shop-wishlist-button-remove" data-type="shop-wishlist-button-remove" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 448 448.00446" style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
-                                            <g>
-                                                <path d="m283.429688 45.714844h-73.140626v-18.285156c0-15.125-12.304687-27.429688-27.429687-27.429688h-54.855469c-15.125 0-27.429687 12.304688-27.429687 27.429688v18.285156h-73.144531c-15.125 0-27.42578175 12.304687-27.42578175 27.429687v45.710938h18.28515575v301.71875c0 15.125 12.300782 27.429687 27.425782 27.429687h219.429687c15.125 0 27.429688-12.304687 27.429688-27.429687v-301.71875h18.285156v-45.710938c0-15.125-12.304687-27.429687-27.429687-27.429687zm-164.570313-18.285156c0-5.042969 4.097656-9.144532 9.144531-9.144532h54.855469c5.046875 0 9.144531 4.101563 9.144531 9.144532v18.285156h-73.144531zm155.429687 393.144531c0 5.046875-4.097656 9.144531-9.144531 9.144531h-219.429687c-5.042969 0-9.140625-4.097656-9.140625-9.144531v-301.71875h237.714843zm18.285157-320.003907h-274.285157v-27.425781c0-5.042969 4.097657-9.144531 9.140626-9.144531h256c5.046874 0 9.144531 4.101562 9.144531 9.144531zm0 0" fill="#000000" data-original="#000000" class=""></path>
-                                                <path d="m210.289062 384.003906c5.054688 0 9.140626-4.089844 9.140626-9.140625v-201.148437c0-5.050782-4.085938-9.144532-9.140626-9.144532-5.054687 0-9.144531 4.09375-9.144531 9.144532v201.148437c0 5.050781 4.089844 9.140625 9.144531 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
-                                                <path d="m155.429688 384.003906c5.054687 0 9.144531-4.089844 9.144531-9.140625v-201.148437c0-5.050782-4.089844-9.144532-9.144531-9.144532-5.050782 0-9.140626 4.09375-9.140626 9.144532v201.148437c0 5.050781 4.089844 9.140625 9.140626 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
-                                                <path d="m100.574219 384.003906c5.054687 0 9.140625-4.089844 9.140625-9.140625v-201.148437c0-5.050782-4.085938-9.144532-9.140625-9.144532-5.054688 0-9.144531 4.09375-9.144531 9.144532v201.148437c0 5.050781 4.089843 9.140625 9.144531 9.140625zm0 0" fill="#000000" data-original="#000000" class=""></path>
-                                            </g>
-                                        </svg></button>
+                                    <form method="POST" action="{{ route('cart.add') }}">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="shop-addLoop-button cart">Thêm vào giỏ</button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('favorites.destroy', $favorite->product_id) }}" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này khỏi yêu thích?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="shop-addLoop-button cart text-red-600 hover:underline">Xóa</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <div class="shop-wishlist-modal-body empty-state text-center py-10">
+                        <p class="text-gray-500 text-base">Chưa có sản phẩm trong danh sách yêu thích</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
             <ul class="slick-dots" role="tablist"></ul>

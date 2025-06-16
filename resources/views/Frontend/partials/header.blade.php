@@ -173,12 +173,14 @@
                     <a href="/Login"><i class="fal fa-user"></i></a>
                 </button>
                 @endauth
-                <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
+                <!-- <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
                     <i class="fal fa-bars"></i>
-                </button>
+                </button> -->
                 <button class="shop-tool has-count" type="button" data-type="shop-wishlist-header" title="Yêu thích">
                     <i class="fal fa-heart"></i>
-                    <span class="shop-wishlist-count">0</span>
+                    <span class="">
+                        {{ isset($favorites) ? $favorites->count() : 0 }}
+                    </span>
                 </button>
                 <button class="shop-tool has-count" type="button"
                     data-type="shop-cart-header" title="Giỏ hàng"
