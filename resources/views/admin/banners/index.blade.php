@@ -73,7 +73,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-muted">Không có thương hiệu nào.</td>
+                                <td colspan="6" class="text-muted">Không có thương hiệu nào.</td>
                             </tr>
                         @endforelse
                     </tbody>

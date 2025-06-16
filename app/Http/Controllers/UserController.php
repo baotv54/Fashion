@@ -72,12 +72,12 @@ class UserController extends Controller
     {
         $users = User::find($id);
         if (!$users) {
-            return redirect()->route('users.index')->with('error', 'Thương hiệu không tồn tại.');
+            return redirect()->route('users.index')->with('error', 'User không tồn tại.');
         }
 
         $users->delete();
 
-        return redirect()->route('users.index')->with('success', 'Thương hiệu đã bị xóa thành công.');
+        return redirect()->route('users.index')->with('success', 'User đã bị xóa thành công.');
     }
 
 

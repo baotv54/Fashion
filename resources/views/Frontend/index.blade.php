@@ -37,7 +37,8 @@
 
                             <div class="home-slider-item-content">
                                 <div class="container">
-                                    <h2>{!! $banner->title !!} <br />{!! $banner->subtitle !!}</h2>
+                                    <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
+
                                     <p>{{ $banner->subtitle }}</p>
                                     <span>Xem ngay</span>
                                 </div>
