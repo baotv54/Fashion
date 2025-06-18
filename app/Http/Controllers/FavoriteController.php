@@ -32,6 +32,37 @@ class FavoriteController extends Controller
         return redirect()->back()->with('success', 'Đã thêm vào danh sách yêu thích');
     }
 
+    public function toggle(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+        ]);
+
+        $userId = Auth::id();
+        $productId = $request->product_id;
+
+        $favorite = Favorite::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($favorite) {
+            $favorite->delete();
+            if ($request->ajax()) {
+                return response()->json(['status' => 'removed']);
+            }
+            return redirect()->back()->with('success', 'Đã xóa khỏi danh sách yêu thích');
+        } else {
+            Favorite::create([
+                'user_id' => $userId,
+                'product_id' => $productId,
+            ]);
+            if ($request->ajax()) {
+                return response()->json(['status' => 'added']);
+            }
+            return redirect()->back()->with('success', 'Đã thêm vào danh sách yêu thích');
+        }
+    }
+
     public function destroy($product_id)
     {
         Favorite::where('user_id', Auth::id())

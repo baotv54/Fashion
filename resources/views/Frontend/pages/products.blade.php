@@ -244,10 +244,13 @@
 									</div>
 
 									<div class="product-item-action">
-										<form method="POST" action="{{ route('favorites.store') }}">
+										<form class="favorite-form" method="POST" action="{{ route('favorites.toggle') }}">
 											@csrf
 											<input type="hidden" name="product_id" value="{{ $product->id }}">
-											<button type="submit" title="Yêu thích">❤</button>
+											<button type="submit" class="favorite-btn" data-product-id="{{ $product->id }}"
+												style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+												❤
+											</button>
 										</form>
 										<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button">👁</button>
 										<form method="POST" action="{{ route('cart.add') }}">
@@ -330,6 +333,7 @@
 	@include('Frontend.partials.footer')
 
 	@include('Frontend.partials.modal')
+	@include('Frontend.partials.scrip')
 	<script>
 		$("body").removeClass("preload");
 		document.addEventListener('lazybeforeunveil', function(e) {

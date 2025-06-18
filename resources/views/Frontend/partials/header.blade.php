@@ -167,11 +167,10 @@
                     title="Tài khoản">
                     <a href="/account"><i class="fal fa-user"></i></a>
                 </button>
-                <button class="has-count" type="button" data-type="shop-wishlist-header" title="Yêu thích" onclick="window.location.href='{{ route('favorites.index') }}';">
+                <!-- Nút này KHÔNG nằm trong form -->
+                <button class="has-count" type="button" title="Yêu thích" onclick="window.location.href='{{ route('favorites.index') }}'">
                     <i class="fal fa-heart"></i>
-                    <span class="">
-                        {{ isset($favorites) ? $favorites->count() : 0 }}
-                    </span>
+                    <span id="wishlist-count">{{ isset($favorites) ? $favorites->count() : 0 }}</span>
                 </button>
                 @else
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"

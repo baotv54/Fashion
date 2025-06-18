@@ -5,184 +5,124 @@
 
 <head>
 	@include('Frontend.partials.head')
-	<style>
-		:root {
-			--main-color: #FF3B00;
-			--hover-color: #FFD600;
-			--text-color: #333;
-			--gray-color: #666;
-			--bg-light: #fefefe;
-			--border-radius: 10px;
-			--shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-			--transition: 0.3s ease;
-		}
+<style>
+	:root {
+		--main-color: #FF3B00;
+		--hover-color: #FFD600;
+		--text-color: #222;
+		--gray: #999;
+		--radius: 10px;
+		--shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		--transition: 0.3s ease;
+	}
 
-		.main-cart-breadcrumb {
-			background-image: url("{{asset('images/main_cart_breadcrumb_bge889.jpg')}}");
-			background-size: cover;
-			padding: 20px 0;
-			text-align: center;
-		}
+	.favorites-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 20px;
+		margin-top: 30px;
+	}
 
-		.main-cart-breadcrumb h1 {
-			color: var(--main-color);
-			font-size: 2rem;
-			margin: 0;
-		}
+	.favorite-card {
+		background: #fff;
+		border-radius: var(--radius);
+		box-shadow: var(--shadow);
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		transition: transform var(--transition);
+	}
 
-		.favorites-list {
-			display: flex;
-			flex-direction: column;
-			gap: 20px;
-		}
+	.favorite-card:hover {
+		transform: translateY(-4px);
+	}
 
-		.favorite-item {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 25px;
-			border-radius: 12px;
-			background-color: var(--bg-light);
-			font-size: 1rem;
-			/* tăng cỡ chữ */
-			box-shadow: var(--shadow);
-			transition: box-shadow var(--transition);
-			flex-wrap: nowrap;
-		}
+	.favorite-card img {
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+	}
 
-		.favorite-item:hover {
-			box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
-		}
+	.favorite-card-body {
+		padding: 15px;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 
-		.favorite-item img {
-			width: 120px;
-			height: 120px;
-			border-radius: var(--border-radius);
-			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-			object-fit: cover;
-			flex-shrink: 0;
-		}
+	.favorite-card-body h3 {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--text-color);
+		margin: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 
-		.favorite-item .info {
-			flex-grow: 1;
-			margin-left: 20px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-		}
+	.favorite-card-body p.price {
+		color: var(--main-color);
+		font-weight: 700;
+		margin: 0;
+	}
 
-		.favorite-item .info a {
-			font-size: 1.3rem;
-			font-weight: 600;
-			color: var(--text-color);
-			margin-bottom: 6px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	.favorite-card-body .options {
+		font-size: 0.9rem;
+		color: var(--gray);
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 12px;
+	}
 
-		.favorite-item .info p {
-			font-size: 1.1rem;
-			color: var(--main-color);
-			font-weight: 700;
-			margin: 0;
-		}
+	.favorite-card-body .actions {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 10px;
+	}
 
-		/* phần actions, nút thêm giỏ hàng và chọn size, số lượng */
-		.favorite-item .actions {
-			display: flex;
-			align-items: center;
-			gap: 12px 30px;
-			font-size: 1rem;
-			flex-wrap: wrap;
-		}
+	.favorite-card-body .actions form {
+		display: inline-block;
+	}
 
-		.favorite-item .actions select,
-		.favorite-item .actions input[type="text"] {
-			padding: 6px 10px;
-			border: 1px solid #ccc;
-			border-radius: 6px;
-			font-size: 1rem;
-			min-width: 60px;
-			text-align: center;
-		}
+	.favorite-card-body button {
+		padding: 8px 14px;
+		font-size: 0.9rem;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-weight: 600;
+		transition: background var(--transition);
+	}
 
-		.favorite-item .actions button.qty-btn,
-		.favorite-item .actions button.shop-addLoop-button {
-			padding: 8px 14px;
-			border: 1px solid #ccc;
-			background: #eee;
-			font-weight: bold;
-			cursor: pointer;
-			transition: background var(--transition);
-			font-size: 1rem;
-			border-radius: 6px;
-		}
+	.favorite-card-body .add-to-cart {
+		background: var(--main-color);
+		color: white;
+	}
 
-		.favorite-item .actions button.qty-btn:hover,
-		.favorite-item .actions button.shop-addLoop-button:hover {
-			background: #ddd;
-		}
+	.favorite-card-body .add-to-cart:hover {
+		background: var(--hover-color);
+		color: black;
+	}
 
-		/* Nút thêm vào giỏ hàng lớn màu chính */
-		.shop-addLoop-button {
-			width: 150px;
-			padding: 10px 0;
-			font-size: 1rem;
-			border-radius: 6px;
-			background-color: var(--main-color);
-			color: white;
-			border: none;
-			cursor: pointer;
-			font-weight: 600;
-			transition: background-color var(--transition), color var(--transition);
-		}
+	.favorite-card-body .delete-btn {
+		background: #f5f5f5;
+		color: var(--gray);
+		font-size: 1rem;
+		padding: 8px;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		transition: background var(--transition);
+	}
 
-		.shop-addLoop-button:hover {
-			background-color: var(--hover-color);
-			color: black;
-		}
+	.favorite-card-body .delete-btn:hover {
+		background: #eee;
+		color: #d00;
+	}
+</style>
 
-		/* Nút xóa yêu thích */
-		.favorite-item .actions form button[title="Xoá yêu thích"] {
-			background: none;
-			border: none;
-			color: var(--gray-color);
-			cursor: pointer;
-			font-size: 20px;
-			padding: 0;
-		}
-
-		.empty-favorites {
-			text-align: center;
-			padding: 50px;
-		}
-
-		.empty-favorites h2 {
-			color: var(--main-color);
-			font-weight: 700;
-		}
-
-		.empty-favorites p {
-			color: var(--gray-color);
-		}
-
-		.empty-favorites form button {
-			padding: 10px 20px;
-			background-color: var(--main-color);
-			color: white;
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-			font-weight: 600;
-			transition: background-color var(--transition);
-		}
-
-		.empty-favorites form button:hover {
-			background-color: var(--hover-color);
-			color: black;
-		}
-	</style>
 
 
 	<link rel="preload stylesheet" as="style"
@@ -209,90 +149,47 @@
 				</div>
 			</div>
 			@if ($favorites->count() > 0)
-			<div class="container">
-				<h2 style="margin-bottom: 20px;">Danh sách sản phẩm yêu thích</h2>
-				<div class="favorites-list">
-					@foreach ($favorites as $favorite)
-					@php $product = $favorite->product; @endphp
-					@if ($product)
-					<div class="favorite-item">
-						{{-- Ảnh sản phẩm --}}
-						<a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
-							<img src="{{ $product->image }}" alt="{{ $product->name }}">
-						</a>
-
-						{{-- Thông tin sản phẩm --}}
-						<div class="info">
-							{{-- Tên sản phẩm --}}
-							<a href="{{ route('product.show', $product->id) }}"
-								style="color: #333; font-weight: 600; font-size: 1.1rem; text-decoration: none;">
-								{{ $product->name }}
-							</a>
-
-							{{-- Giá --}}
-							<p style="color: #d00; font-weight: 700; margin-top: 5px;">
-								{{ number_format($product->price, 0, ',', '.') }}₫
-							</p>
-						</div>
-
-						{{-- Hành động: Thêm giỏ + Xóa --}}
-						<div style="display: flex; flex-wrap: wrap; column-gap: 40px; row-gap: 8px; font-size: 0.9rem; color: #555; margin-top: 8px;">
-							{{-- Size chọn --}}
-							<div>
-								Size:
-								<select style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px;">
-									<option>38</option>
-									<option>39</option>
-									<option selected>42</option>
-									<option>43</option>
-								</select>
-							</div>
-
-							{{-- Màu chọn --}}
-							<div>
-								Màu:
-								<select style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px;">
-									<option>Trắng</option>
-									<option selected>Đen Tím</option>
-									<option>Đỏ</option>
-								</select>
-							</div>
-
-							{{-- Phân loại cố định --}}
-							<div>Phân loại: Giày thể thao</div>
-
-							{{-- Số lượng --}}
-							<div style="display: flex; align-items: center;">
-								Số lượng:
-								<button type="button" style="margin-left: 8px; padding: 2px 8px; border: 1px solid #ccc; background: #eee; font-weight: bold;">-</button>
-								<input type="text" value="1" style="width: 40px; text-align: center; margin: 0 4px; border: 1px solid #ccc; border-radius: 4px;">
-								<button type="button" style="padding: 2px 8px; border: 1px solid #ccc; background: #eee; font-weight: bold;">+</button>
-							</div>
-							{{-- Thêm vào giỏ --}}
-							<form action="{{ route('cart.add') }}" method="POST">
-								@csrf
-								<input type="hidden" name="product_id" value="{{ $product->id }}">
-								<input type="hidden" name="quantity" value="1">
-								<button type="submit" class="shop-addLoop-button" title="Thêm vào giỏ hàng">Thêm vào giỏ</button>
-							</form>
-
-							{{-- Xóa yêu thích --}}
-							<form action="{{ route('favorites.destroy', ['product_id' => $product->id]) }}" method="POST"
-								onsubmit="return confirm('Xoá sản phẩm này khỏi danh sách yêu thích?')"
-								style="text-align: center;">
-								@csrf
-								@method('DELETE')
-								<button type="submit" title="Xoá yêu thích"
-									style="background: none; border: none; color: #888; cursor: pointer; font-size: 18px;">
-									<i class="fas fa-trash-alt"></i>
-								</button>
-							</form>
-						</div>
-					</div>
-					@endif
-					@endforeach
+<div class="container">
+	<h2 style="margin-top: 20px;">Danh sách sản phẩm yêu thích</h2>
+	<div class="favorites-grid">
+		@foreach ($favorites as $favorite)
+		@php $product = $favorite->product; @endphp
+		@if ($product)
+		<div class="favorite-card">
+			<a href="{{ route('product.show', $product->id) }}">
+				<img src="{{ $product->image }}" alt="{{ $product->name }}">
+			</a>
+			<div class="favorite-card-body">
+				<h3>{{ $product->name }}</h3>
+				<p class="price">{{ number_format($product->price, 0, ',', '.') }}₫</p>
+				<div class="options">
+					Size: 42 |
+					Màu: Đen Tím |
+					Phân loại: Giày thể thao
+				</div>
+				<div class="actions">
+					<form action="{{ route('cart.add') }}" method="POST">
+						@csrf
+						<input type="hidden" name="product_id" value="{{ $product->id }}">
+						<input type="hidden" name="quantity" value="1">
+						<button type="submit" class="add-to-cart">Thêm vào giỏ</button>
+					</form>
+					<form action="{{ route('favorites.destroy', ['product_id' => $product->id]) }}" method="POST"
+						onsubmit="return confirm('Xoá sản phẩm này khỏi danh sách yêu thích?')">
+						@csrf
+						@method('DELETE')
+						<button type="submit" class="delete-btn" title="Xóa yêu thích">
+							<i class="fas fa-heart-broken"></i>
+						</button>
+					</form>
 				</div>
 			</div>
+		</div>
+		@endif
+		@endforeach
+	</div>
+</div>
+
 			@else
 			<div class="main-cart-wrap">
 				<div class="container">
