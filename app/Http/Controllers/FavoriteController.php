@@ -15,7 +15,7 @@ class FavoriteController extends Controller
             ->where('user_id', Auth::id())
             ->get();
 
-        return view('Frontend.partials.modal', compact('favorites'));
+        return view('Frontend.pages.favorites', compact('favorites'));
     }
 
     public function store(Request $request)
@@ -29,7 +29,7 @@ class FavoriteController extends Controller
             'product_id' => $request->product_id,
         ]);
 
-        return redirect()->route('Frontend.index')->with('success', 'Đã thêm vào danh sách yêu thích');
+        return redirect()->back()->with('success', 'Đã thêm vào danh sách yêu thích');
     }
 
     public function destroy($product_id)

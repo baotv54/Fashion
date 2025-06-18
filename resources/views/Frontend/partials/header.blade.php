@@ -167,6 +167,12 @@
                     title="Tài khoản">
                     <a href="/account"><i class="fal fa-user"></i></a>
                 </button>
+                <button class="has-count" type="button" data-type="shop-wishlist-header" title="Yêu thích" onclick="window.location.href='{{ route('favorites.index') }}';">
+                    <i class="fal fa-heart"></i>
+                    <span class="">
+                        {{ isset($favorites) ? $favorites->count() : 0 }}
+                    </span>
+                </button>
                 @else
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
                     title="Tài khoản">
@@ -176,19 +182,12 @@
                 <!-- <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
                     <i class="fal fa-bars"></i>
                 </button> -->
-                <button class="shop-tool has-count" type="button" data-type="shop-wishlist-header" title="Yêu thích">
-                    <i class="fal fa-heart"></i>
-                    <span class="">
-                        {{ isset($favorites) ? $favorites->count() : 0 }}
-                    </span>
-                </button>
                 <button class="shop-tool has-count" type="button"
                     data-type="shop-cart-header" title="Giỏ hàng"
                     onclick="window.location.href='{{ route('cart.index') }}';">
                     <i class="fal fa-shopping-bag"></i>
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
-
             </div>
         </div>
     </div>

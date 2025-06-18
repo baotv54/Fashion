@@ -219,7 +219,7 @@
         Lên đầu trang
     </button>
 </div>
-<div class="shop-wishlist-modal" data-name="Yêu thích">
+<!-- <div class="shop-wishlist-modal" data-name="Yêu thích">
     <div class="shop-wishlist-modal-head">
         <div class="container flex justify-between items-center py-4">
             <label class="text-lg font-semibold">Danh mục sản phẩm yêu thích</label>
@@ -271,6 +271,7 @@
                                 </div>
                             </div>
                         </div>
+                        <br>
                     </div>
                     @empty
                     <div class="shop-wishlist-modal-body empty-state text-center py-10">
@@ -282,7 +283,7 @@
             <ul class="slick-dots" role="tablist"></ul>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- <div class="shop-compare-modal" data-name="So sánh">
     <div class="shop-compare-modal-head">

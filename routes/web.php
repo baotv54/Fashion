@@ -58,15 +58,6 @@ Route::get('/cart/remove', [CartController::class, 'remove'])->name('cart.remove
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
-// Thêm sản phẩm vào favorites
-Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
-
-// Xoá sản phẩm khỏi favorites
-Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
-
-// Hiển thị danh sách favorites (nếu có)
-// Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-
 Route::get('/address/province', [AddressController::class, 'getProvince']);
 Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict']);
 Route::get('/address/ward/{districtId}', [AddressController::class, 'getWard']);
@@ -144,6 +135,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    //Yêu thích
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
 
