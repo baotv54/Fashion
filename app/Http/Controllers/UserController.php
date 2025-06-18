@@ -19,6 +19,7 @@ class UserController extends Controller
             'password',
             'email',
             'role'
+           
         )->paginate(5);
 
         return view('admin.users.index', compact('users'));
@@ -61,7 +62,6 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|min:8',
             'role' => 'required|max:255',
-
         ]);
         $users = User::findOrFail($id);
 
@@ -70,7 +70,6 @@ class UserController extends Controller
         'email' => $validatedData['email'],
         'password' => $validatedData['password'] ?? $users-> password,
         'role' => $validatedData['role'],
-
        ]);
         return redirect()->route('users.index')->with('success', 'User đã được cập nhật!');
     }

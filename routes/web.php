@@ -18,8 +18,11 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\BannerController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -211,6 +214,16 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [BrandController::class, 'update'])->name('brands.update');
             Route::delete('/{id}', [BrandController::class, 'destroy'])->name('brands.destroy');
         });
+
+        // Routes quản lý user
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/create', [UserController::class, 'create'])->name('users.create');
+            Route::post('/', [UserController::class, 'store'])->name('users.store');
+            Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        });
         // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {
             Route::get('/', [CouponController::class, 'index'])->name('coupons.index');
@@ -238,6 +251,16 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
+
+        //Routes Quản lý Banne
+        Route::prefix('banners')->group(function () {
+            Route::get('/', [BannerController::class, 'index'])->name('banners.index');
+            Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
+            Route::post('/', [BannerController::class, 'store'])->name('banners.store');
+             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+            Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
+            Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+        });
     });
 });
 
