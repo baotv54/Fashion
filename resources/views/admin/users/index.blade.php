@@ -35,7 +35,7 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
-                        <th>Password</th>
+                        <th>Vai trò</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -45,7 +45,7 @@
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->password}}</td>
+                            <td>{{ $user->role}}</td>
                             
                             <td>
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning me-1" title="Chỉnh sửa">

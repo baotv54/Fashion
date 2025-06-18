@@ -44,6 +44,7 @@
                         <option value="#" selected disabled>{{ old('role', $users->role ?? '') }}</option>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
+                        <option value="manage">manage</option>
                      @error('role')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
