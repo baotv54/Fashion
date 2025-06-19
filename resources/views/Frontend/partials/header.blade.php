@@ -155,9 +155,9 @@
                 </div>
             </div>
             <div class="headers2-right">
-                <form class="tool-search" action="https://f1genz-shoes.mysapo.net/search">
+                <form class="tool-search" action="{{ route('products.all') }}" method="GET">
                     <input type="hidden" name="type" value="product">
-                    <input required name="q" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm...">
+                    <input required name="search" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm..." value="{{ request('search') }}">
                     <button type="submit" title="Tìm kiếm"><i class="fal fa-search"></i></button>
                     <button class="tool-search-overplay" title="Đóng"></button>
                     <div class="tool-search-smart"></div>

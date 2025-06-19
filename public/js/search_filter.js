@@ -122,9 +122,9 @@ Bizweb.SearchFilter = function () {
 	}
 
 	SearchFilter.prototype._buildSearchUrl = function () {
-	    var url = "/search?q=";
+	    var url = "/products?";
 
-	    var params = "";
+	    var params = "search=";
 	    for (group in this.fields) {
 	        var param = this.fields[group].buildParam();
 	        if (param)
