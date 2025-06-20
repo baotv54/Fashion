@@ -160,7 +160,7 @@
 			<div class="container favorites-container">
 				<h2 style="margin-top: 20px;">Danh sách sản phẩm yêu thích</h2>
 				<div class="favorites-grid">
-					<div style="grid-column: 1 / -1; margin-bottom: 10px;">
+					<!-- <div style="grid-column: 1 / -1; margin-bottom: 10px;">
 						<label>
 							<input type="checkbox" id="select-all-favorites" />
 							Chọn tất cả
@@ -168,14 +168,14 @@
 						<button id="delete-all-favorites" style="background:#d00; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">
 							Xóa tất cả yêu thích
 						</button>
-					</div>
+					</div> -->
 					@foreach ($favorites as $favorite)
 					@php $product = $favorite->product; @endphp
 					@if ($product)
 					<div class="favorite-card">
-						<label style="position:absolute; top:10px; left:10px; z-index:10;">
+						<!-- <label style="position:absolute; top:10px; left:10px; z-index:10;">
 							<input type="checkbox" class="favorite-checkbox" value="{{ $product->id }}">
-						</label>
+						</label> -->
 						<a href="{{ route('product.show', $product->id) }}">
 							<img src="{{ $product->image }}" alt="{{ $product->name }}">
 						</a>
