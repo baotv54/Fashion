@@ -52,23 +52,23 @@ class UserController extends Controller
     public function edit($id)
     {
         $users = User::find($id);
-        return view('admin.users.create', compact('users'));
+        return view('admin.users.edit', compact('users'));
     }
 
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:15' . $id,
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|min:8',
+            // 'name' => 'nullable|max:155' . $id,
+            // 'email' => 'nullable|email|max:255|unique:users,email,' . $id,
+            // 'password' => 'nullable|min:8',
             'role' => 'required|max:255',
         ]);
         $users = User::findOrFail($id);
 
        $users->update([
-        'name' => $validatedData['name'],
-        'email' => $validatedData['email'],
-        'password' => $validatedData['password'] ?? $users-> password,
+        // 'name' => $validatedData['name'],
+        // 'email' => $validatedData['email'],
+        // 'password' => $validatedData['password'] ?? $users-> password,
         'role' => $validatedData['role'],
        ]);
         return redirect()->route('users.index')->with('success', 'User đã được cập nhật!');
