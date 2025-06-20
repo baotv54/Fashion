@@ -1,7 +1,7 @@
 <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-success text-white">
+    <!-- <div class="card-header bg-success text-white">
         <h5>Cập nhật thông tin</h5>
-    </div>
+    </div> -->
     <div class="card-body">
         <form method="POST" action="{{ route('profile.update') }}">
             @csrf

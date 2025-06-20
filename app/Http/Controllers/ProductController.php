@@ -11,6 +11,7 @@ use App\Models\Attribute;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
 use App\Models\Favorite;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -33,7 +34,7 @@ class ProductController extends Controller
         $products = Product::latest()->take(8)->get();
         $carts = Cart::content();
         $coupons = Coupon::latest()->take(4)->get();
-
+        $banners = Banner::latest()->take(4)->get();
         $favorites = collect(); // luôn khởi tạo rỗng
 
         if (Auth::check()) {
@@ -41,7 +42,7 @@ class ProductController extends Controller
                 ->where('user_id', Auth::id())
                 ->get();
         }
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites'));
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
     }
 
     public function aboutPage()

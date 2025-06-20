@@ -1,7 +1,7 @@
 <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-danger text-white">
+    <!-- <div class="card-header bg-danger text-white">
         <h5>Xóa tài khoản</h5>
-    </div>
+    </div> -->
     <div class="card-body">
         <p class="text-muted">
             Khi tài khoản của bạn bị xóa, toàn bộ dữ liệu sẽ bị xóa vĩnh viễn. Vui lòng chắc chắn rằng bạn đã sao lưu các thông tin quan trọng trước khi thực hiện thao tác này.

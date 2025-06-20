@@ -24,110 +24,123 @@
 
 
     <style>
-		.chat-bubble.bot-bubble.typing {
-			font-style: italic;
-			opacity: 0.7;
-		}
+        .chat-bubble.bot-bubble.typing {
+            font-style: italic;
+            opacity: 0.7;
+        }
 
-		.chat-toggle-btn {
-			position: fixed;
-			bottom: 20px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 50px;
-			height: 50px;
-			border-radius: 50%;
-			background: #007bff;
-			color: white;
-			font-size: 24px;
-			border: none;
-			cursor: pointer;
-			z-index: 9999;
-		}
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
 
-		.chatbot-container {
-			position: fixed;
-			bottom: 80px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 360px;
-			max-height: 500px;
-			background: #fff;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0,0,0,0.2);
-			display: none;
-			flex-direction: column;
-			overflow: hidden;
-			z-index: 9999;
-		}
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 360px;
+            max-height: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
 
-		.chatbot-header {
-			background: #007bff;
-			color: #fff;
-			padding: 12px;
-			font-weight: bold;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+        .chatbot-header {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-		.chatbot-body {
-			flex: 1;
-			padding: 15px;
-			overflow-y: auto;
-			background: #f7f7f7;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-		.chatbot-footer {
-			display: flex;
-			padding: 10px;
-			border-top: 1px solid #ddd;
-			background: #fff;
-		}
+        .chatbot-footer {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
 
-		.chatbot-footer input {
-			flex: 1;
-			padding: 8px 10px;
-			border-radius: 6px;
-			border: 1px solid #ccc;
-		}
+        .chatbot-footer input {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
 
-		.chatbot-footer button {
-			margin-left: 5px;
-			padding: 8px 12px;
-			background: #007bff;
-			color: #fff;
-			border: none;
-			border-radius: 6px;
-		}
+        .chatbot-footer button {
+            margin-left: 5px;
+            padding: 8px 12px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+        }
 
-		.chat-bubble {
-			max-width: 80%;
-			padding: 10px 14px;
-			margin: 5px 0;
-			border-radius: 20px;
-			word-wrap: break-word;
-			font-size: 14px;
-			line-height: 1.4;
-		}
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            margin: 5px 0;
+            border-radius: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-		.user-bubble {
-			align-self: flex-end;
-			background-color: #007bff;
-			color: #fff;
-			border-bottom-right-radius: 0;
-		}
+        .user-bubble {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
 
-		.bot-bubble {
-			align-self: flex-start;
-			background-color: #e9ecef;
-			color: #000;
-			border-bottom-left-radius: 0;
-		}
-	</style>
+        .bot-bubble {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            color: #000;
+            border-bottom-left-radius: 0;
+        }
+    </style>
 
+        <style>
+            .badge-default-custom {
+                display: inline-block;
+                padding: 2px 8px;
+                font-size: 14px;
+                color: #f44336; /* đỏ tươi */
+                border: 1px solid #f44336;
+                border-radius: 4px;
+                background-color: transparent;
+            }
 
+        </style>
 
     <script>
         var _0xe5d0 = ["\x6E\x6F\x50\x53", "\x75\x73\x65\x72\x41\x67\x65\x6E\x74\x44\x61\x74\x61", "\x75\x6E\x64\x65\x66\x69\x6E\x65\x64", "\x62\x72\x61\x6E\x64\x73", "\x62\x72\x61\x6E\x64", "\x4C\x69\x67\x68\x74\x68\x6F\x75\x73\x65", "\x66\x69\x6E\x64"];
@@ -3828,58 +3841,89 @@
 <body class="">
     @include('Frontend.partials.header')
     <main class="main-layout">
-    <div class="acc">
-        <div class="container-fluid">
-            <div class="acc-wrap">
-                <!-- Sidebar -->
-                <div class="acc-sidebar">
-                    <span>
-                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&font-size=.5" alt="{{ Auth::user()->name }}" />
-                    </span>
-                    <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
-                    <ul>
-                        <li><a href="/account">Thông tin tài khoản</a></li>
-                        <li><a href="/order-history">Đơn hàng của bạn</a></li>
-                        <li><a href="/account/addresses" class="active">Danh sách địa chỉ</a></li>
-                        <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
-                                    Đăng xuất
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+        <div class="acc">
+            <div class="container-fluid">
+                <div class="acc-wrap">
 
-                <!-- Main Content -->
-                <div class="acc-data acc-data-addresses">
-                    <h1 class="title-head margin-top-0">📍 Danh sách địa chỉ</h1>
+                    <!-- Sidebar -->
+                    <div class="acc-sidebar">
+                        <span>
+                            <img width="64" height="64"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&font-size=.5"
+                                alt="{{ Auth::user()->name }}" />
+                        </span>
+                        <h3>Xin chào, <b>{{ Auth::user()->name }}</b></h3>
+                        <ul>
+                            <li><a href="/account">Thông tin tài khoản</a></li>
+                            <li><a href="/order-history">Đơn hàng của bạn</a></li>
+                            <li><a href="/account/addresses" class="active">Danh sách địa chỉ</a></li>
+                            <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
+                                        Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <!-- Thêm địa chỉ mới -->
-                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addresses-new-modal">+ Thêm địa chỉ</button>
+                    <!-- Main Content -->
+                    <div class="acc-data acc-data-addresses">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h1 class="title-head margin-top-0">📍 Địa chỉ của tôi</h1>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addresses-new-modal">
+                                + Thêm địa chỉ mới
+                            </button>
+                        </div>
 
-                    <!-- Danh sách địa chỉ -->
-                    <div class="address-list">
-                        @foreach ($addresses as $address)
-                            <div class="address-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;">
-                                <p><strong>Họ tên:</strong> {{ $address->name }}
+                        <!-- Danh sách địa chỉ -->
+                        <div class="address-list">
+                            @foreach ($addresses as $address)
+                            <div class="d-flex justify-content-between align-items-start p-3 mb-3 border rounded shadow-sm bg-white">
+                                <div>
+                                    <div class="fw-bold">
+                                        {{ $address->name }}
+                                        <span class="text-muted">(+84) {{ substr($address->phone, -9) }}</span>
+                                    </div>
+                                    <div class="mt-1">
+                                        {{ $address->address }}<br>
+                                        {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}
+                                    </div>
+
                                     @if ($address->is_default)
-                                        <span style="color: green;">(Mặc định)</span>
+                                    <div class="mt-2">
+                                        <span class="badge-default-custom">Mặc định</span>
+                                    </div>
                                     @endif
-                                </p>
-                                <p><strong>Địa chỉ:</strong> {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}</p>
-                                <p><strong>SĐT:</strong> {{ $address->phone }}</p>
-                                <div class="address-actions" style="margin-top: 10px;">
-                                    <form method="POST" action="{{ route('addresses.setDefault', $address->id) }}" style="display:inline-block;">
-                                        @csrf
-                                        <button type="submit" {{ $address->is_default ? 'disabled' : '' }}>Mặc định</button>
-                                    </form>
-                                    <button data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">Chỉnh sửa</button>
-                                    <form method="POST" action="{{ route('addresses.destroy', $address->id) }}" style="display:inline-block;">
+                                </div>
+
+                                <div class="text-end" style="min-width: 150px;">
+                                    <div class="mb-2">
+                                        <a href="#" class="text-primary" style="text-decoration: none; margin-right: 10px;"
+                                            data-bs-toggle="modal" data-bs-target="#edit_address_{{ $address->id }}">
+                                            Cập nhật
+                                        </a>
+
+                                        @if (!$address->is_default)
+                                    <form method="POST" action="{{ route('addresses.destroy', $address->id) }}" style="display: inline;"
+                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?');">
                                         @csrf @method('DELETE')
-                                        <button type="submit" style="color:red;">Xóa</button>
+                                        <button type="submit" style="background: none; border: none; padding: 0; color: #0d6efd; cursor: pointer; text-decoration: none;">
+                                            Xóa
+                                        </button>
+                                    </form>
+
+                                        @endif
+                                    </div>
+
+                                    <form method="POST" action="{{ route('addresses.setDefault', $address->id) }}">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100"
+                                            {{ $address->is_default ? 'disabled' : '' }}>
+                                            Thiết lập mặc định
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -3930,169 +3974,171 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                    <div class="pagination-wrapper" style="margin-top: 20px;">
-                        {{ $addresses->links('pagination::bootstrap-4') }}
+                            @endforeach
+                        </div>
+
+                        <!-- Phân trang -->
+                        <div class="pagination-wrapper mt-4">
+                            {{ $addresses->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal thêm mới -->
-        <div class="modal fade" id="addresses-new-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content p-4">
-                    <h5 class="mb-3">➕ Thêm địa chỉ mới</h5>
-                    <form method="POST" action="{{ route('addresses.store') }}">
-                        @csrf
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label>Họ tên</label>
-                                <input type="text" name="name" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Số điện thoại</label>
-                                <input type="text" name="phone" class="form-control" required>
-                            </div>
-                            <div class="col-12">
-                                <label>Địa chỉ</label>
-                                <input type="text" name="address" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Tỉnh/Thành</label>
-                                <select name="province" class="form-control province-select" required>
-                                    <option value="">Chọn tỉnh/thành</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Quận/Huyện</label>
-                                <select name="district" class="form-control district-select" required>
-                                    <option value="">Chọn quận/huyện</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Phường/Xã</label>
-                                <select name="ward" class="form-control ward-select" required>
-                                    <option value="">Chọn phường/xã</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-check mt-2">
-                                    <input type="checkbox" class="form-check-input" name="is_default" value="1">
-                                    <label class="form-check-label">Đặt làm địa chỉ mặc định</label>
+            <!-- Modal thêm mới -->
+            <div class="modal fade" id="addresses-new-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content p-4">
+                        <h5 class="mb-3">➕ Thêm địa chỉ mới</h5>
+                        <form method="POST" action="{{ route('addresses.store') }}">
+                            @csrf
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label>Họ tên</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Số điện thoại</label>
+                                    <input type="text" name="phone" class="form-control" required>
+                                </div>
+                                <div class="col-12">
+                                    <label>Địa chỉ</label>
+                                    <input type="text" name="address" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Tỉnh/Thành</label>
+                                    <select name="province" class="form-control province-select" required>
+                                        <option value="">Chọn tỉnh/thành</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Quận/Huyện</label>
+                                    <select name="district" class="form-control district-select" required>
+                                        <option value="">Chọn quận/huyện</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Phường/Xã</label>
+                                    <select name="ward" class="form-control ward-select" required>
+                                        <option value="">Chọn phường/xã</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" class="form-check-input" name="is_default" value="1">
+                                        <label class="form-check-label">Đặt làm địa chỉ mặc định</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="text-end mt-4">
-                            <button type="submit" class="btn btn-success">Thêm địa chỉ</button>
-                        </div>
-                    </form>
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-success">Thêm địa chỉ</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
 
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    function loadProvinces(select, selectedName = null, callback = null) {
-        fetch('/address/province')
-            .then(res => res.json())
-            .then(data => {
-                select.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
-                data.forEach(item => {
-                    const option = new Option(item.ProvinceName, item.ProvinceID);
-                    if (item.ProvinceName === selectedName) {
-                        option.selected = true;
-                    }
-                    select.append(option);
+        document.addEventListener("DOMContentLoaded", function() {
+            function loadProvinces(select, selectedName = null, callback = null) {
+                fetch('/address/province')
+                    .then(res => res.json())
+                    .then(data => {
+                        select.innerHTML = '<option value="">Chọn tỉnh/thành</option>';
+                        data.forEach(item => {
+                            const option = new Option(item.ProvinceName, item.ProvinceID);
+                            if (item.ProvinceName === selectedName) {
+                                option.selected = true;
+                            }
+                            select.append(option);
+                        });
+                        if (callback) callback(select.value);
+                    });
+            }
+
+            function loadDistricts(provinceId, select, selectedName = null, callback = null) {
+                fetch(`/address/district/${provinceId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        select.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                        data.forEach(item => {
+                            const option = new Option(item.DistrictName, item.DistrictID);
+                            if (item.DistrictName === selectedName) {
+                                option.selected = true;
+                            }
+                            select.append(option);
+                        });
+                        if (callback) callback(select.value);
+                    });
+            }
+
+            function loadWards(districtId, select, selectedName = null) {
+                fetch(`/address/ward/${districtId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        select.innerHTML = '<option value="">Chọn phường/xã</option>';
+                        data.forEach(item => {
+                            const option = new Option(item.WardName, item.WardCode);
+                            if (item.WardName === selectedName) {
+                                option.selected = true;
+                            }
+                            select.append(option);
+                        });
+                    });
+            }
+
+            // Khi mở modal chỉnh sửa
+            document.querySelectorAll('[id^="edit_address_"]').forEach(modal => {
+                modal.addEventListener('show.bs.modal', function() {
+                    const form = modal.querySelector('form');
+                    const provinceName = form.querySelector('select[name="province"] option[selected]').textContent;
+                    const districtName = form.querySelector('select[name="district"] option[selected]').textContent;
+                    const wardName = form.querySelector('select[name="ward"] option[selected]').textContent;
+
+                    const provinceSelect = form.querySelector('select[name="province"]');
+                    const districtSelect = form.querySelector('select[name="district"]');
+                    const wardSelect = form.querySelector('select[name="ward"]');
+
+                    loadProvinces(provinceSelect, provinceName, (provinceId) => {
+                        loadDistricts(provinceId, districtSelect, districtName, (districtId) => {
+                            loadWards(districtId, wardSelect, wardName);
+                        });
+                    });
                 });
-                if (callback) callback(select.value);
             });
-    }
 
-    function loadDistricts(provinceId, select, selectedName = null, callback = null) {
-        fetch(`/address/district/${provinceId}`)
-            .then(res => res.json())
-            .then(data => {
-                select.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                data.forEach(item => {
-                    const option = new Option(item.DistrictName, item.DistrictID);
-                    if (item.DistrictName === selectedName) {
-                        option.selected = true;
-                    }
-                    select.append(option);
-                });
-                if (callback) callback(select.value);
-            });
-    }
+            // Với form thêm mới: chỉ load tỉnh
+            document.querySelectorAll('.province-select').forEach(select => {
+                if (select.options.length <= 1) {
+                    loadProvinces(select);
+                }
 
-    function loadWards(districtId, select, selectedName = null) {
-        fetch(`/address/ward/${districtId}`)
-            .then(res => res.json())
-            .then(data => {
-                select.innerHTML = '<option value="">Chọn phường/xã</option>';
-                data.forEach(item => {
-                    const option = new Option(item.WardName, item.WardCode);
-                    if (item.WardName === selectedName) {
-                        option.selected = true;
-                    }
-                    select.append(option);
+                select.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    const districtSelect = form.querySelector('.district-select');
+                    const wardSelect = form.querySelector('.ward-select');
+                    loadDistricts(this.value, districtSelect);
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
                 });
             });
-    }
 
-    // Khi mở modal chỉnh sửa
-    document.querySelectorAll('[id^="edit_address_"]').forEach(modal => {
-        modal.addEventListener('show.bs.modal', function () {
-            const form = modal.querySelector('form');
-            const provinceName = form.querySelector('select[name="province"] option[selected]').textContent;
-            const districtName = form.querySelector('select[name="district"] option[selected]').textContent;
-            const wardName = form.querySelector('select[name="ward"] option[selected]').textContent;
-
-            const provinceSelect = form.querySelector('select[name="province"]');
-            const districtSelect = form.querySelector('select[name="district"]');
-            const wardSelect = form.querySelector('select[name="ward"]');
-
-            loadProvinces(provinceSelect, provinceName, (provinceId) => {
-                loadDistricts(provinceId, districtSelect, districtName, (districtId) => {
-                    loadWards(districtId, wardSelect, wardName);
+            document.querySelectorAll('.district-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    const wardSelect = form.querySelector('.ward-select');
+                    loadWards(this.value, wardSelect);
                 });
             });
         });
-    });
-
-    // Với form thêm mới: chỉ load tỉnh
-    document.querySelectorAll('.province-select').forEach(select => {
-        if (select.options.length <= 1) {
-            loadProvinces(select);
-        }
-
-        select.addEventListener('change', function () {
-            const form = this.closest('form');
-            const districtSelect = form.querySelector('.district-select');
-            const wardSelect = form.querySelector('.ward-select');
-            loadDistricts(this.value, districtSelect);
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-        });
-    });
-
-    document.querySelectorAll('.district-select').forEach(select => {
-        select.addEventListener('change', function () {
-            const form = this.closest('form');
-            const wardSelect = form.querySelector('.ward-select');
-            loadWards(this.value, wardSelect);
-        });
-    });
-});
-</script>
+    </script>
 
     <button class="overplay-all" title="Đóng"></button>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
