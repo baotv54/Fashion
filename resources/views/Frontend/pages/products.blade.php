@@ -244,7 +244,14 @@
 									</div>
 
 									<div class="product-item-action">
-										<button type="button" title="Yêu thích" class="shop-wishlist-button-add" data-type="shop-wishlist-button-add">❤</button>
+										<form class="favorite-form" method="POST" action="{{ route('favorites.toggle') }}">
+											@csrf
+											<input type="hidden" name="product_id" value="{{ $product->id }}">
+											<button type="submit" class="favorite-btn" data-product-id="{{ $product->id }}"
+												style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+												❤
+											</button>
+										</form>
 										<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button">👁</button>
 										<form method="POST" action="{{ route('cart.add') }}">
 											@csrf
@@ -281,38 +288,38 @@
 
 
 							@if ($products->hasPages())
-								<div class="shop-pagination">
-									{{-- Nút Previous --}}
-									@if ($products->onFirstPage())
-										<span class="disabled" aria-disabled="true" aria-label="Trang trước">
-											&laquo;
-										</span>
-									@else
-										<a href="{{ $products->previousPageUrl() }}" rel="prev" aria-label="Trang trước">
-											&laquo;
-										</a>
-									@endif
+							<div class="shop-pagination">
+								{{-- Nút Previous --}}
+								@if ($products->onFirstPage())
+								<span class="disabled" aria-disabled="true" aria-label="Trang trước">
+									&laquo;
+								</span>
+								@else
+								<a href="{{ $products->previousPageUrl() }}" rel="prev" aria-label="Trang trước">
+									&laquo;
+								</a>
+								@endif
 
-									{{-- Các trang --}}
-									@foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-										@if ($page == $products->currentPage())
-											<span class="current">{{ $page }}</span>
-										@else
-											<a href="{{ $url }}" aria-label="Trang {{ $page }}">{{ $page }}</a>
-										@endif
-									@endforeach
+								{{-- Các trang --}}
+								@foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+								@if ($page == $products->currentPage())
+								<span class="current">{{ $page }}</span>
+								@else
+								<a href="{{ $url }}" aria-label="Trang {{ $page }}">{{ $page }}</a>
+								@endif
+								@endforeach
 
-									{{-- Nút Next --}}
-									@if ($products->hasMorePages())
-										<a href="{{ $products->nextPageUrl() }}" rel="next" aria-label="Trang sau">
-											&raquo;
-										</a>
-									@else
-										<span class="disabled" aria-disabled="true" aria-label="Trang sau">
-											&raquo;
-										</span>
-									@endif
-								</div>
+								{{-- Nút Next --}}
+								@if ($products->hasMorePages())
+								<a href="{{ $products->nextPageUrl() }}" rel="next" aria-label="Trang sau">
+									&raquo;
+								</a>
+								@else
+								<span class="disabled" aria-disabled="true" aria-label="Trang sau">
+									&raquo;
+								</span>
+								@endif
+							</div>
 							@endif
 
 						</div>
@@ -326,6 +333,7 @@
 	@include('Frontend.partials.footer')
 
 	@include('Frontend.partials.modal')
+	@include('Frontend.partials.scrip')
 	<script>
 		$("body").removeClass("preload");
 		document.addEventListener('lazybeforeunveil', function(e) {

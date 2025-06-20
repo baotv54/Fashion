@@ -10,6 +10,7 @@ use App\Models\Coupon;
 use App\Models\Attribute;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
+use App\Models\Favorite;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,14 @@ class ProductController extends Controller
         $carts = Cart::content();
         $coupons = Coupon::latest()->take(4)->get();
         $banners = Banner::latest()->take(4)->get();
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'banners'));
+        $favorites = collect(); // luôn khởi tạo rỗng
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
     }
 
     public function aboutPage()

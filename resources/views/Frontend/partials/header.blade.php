@@ -167,26 +167,26 @@
                     title="Tài khoản">
                     <a href="/account"><i class="fal fa-user"></i></a>
                 </button>
+                <!-- Nút này KHÔNG nằm trong form -->
+                <button class="has-count" type="button" title="Yêu thích" onclick="window.location.href='{{ route('favorites.index') }}'">
+                    <i class="fal fa-heart"></i>
+                    <span id="wishlist-count">{{ isset($favorites) ? $favorites->count() : 0 }}</span>
+                </button>
                 @else
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
                     title="Tài khoản">
                     <a href="/Login"><i class="fal fa-user"></i></a>
                 </button>
                 @endauth
-                <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
+                <!-- <button class="shop-tool" type="button" data-type="shop-menu-mobile-header" title="Menu">
                     <i class="fal fa-bars"></i>
-                </button>
-                <button class="shop-tool has-count" type="button" data-type="shop-wishlist-header" title="Yêu thích">
-                    <i class="fal fa-heart"></i>
-                    <span class="shop-wishlist-count">0</span>
-                </button>
+                </button> -->
                 <button class="shop-tool has-count" type="button"
                     data-type="shop-cart-header" title="Giỏ hàng"
                     onclick="window.location.href='{{ route('cart.index') }}';">
                     <i class="fal fa-shopping-bag"></i>
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
-
             </div>
         </div>
     </div>

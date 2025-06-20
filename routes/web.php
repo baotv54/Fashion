@@ -21,9 +21,8 @@ use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
-
-
 use Illuminate\Support\Facades\Route;
 
 
@@ -31,7 +30,8 @@ Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
 
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
-});
+})->name('account.login');
+
 Route::get('/Register', function () {
     return view('Frontend.pages.account.register');
 });
@@ -137,6 +137,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    //Yêu thích
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');;
+    Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
 
