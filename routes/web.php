@@ -29,7 +29,8 @@ Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
 
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
-});
+})->name('account.login');
+
 Route::get('/Register', function () {
     return view('Frontend.pages.account.register');
 });

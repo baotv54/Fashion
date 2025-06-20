@@ -29,7 +29,7 @@
                     }
                 },
                 error: function() {
-                    alert('Có lỗi xảy ra, vui lòng thử lại!');
+                    window.location.href = '{{ route("account.login") }}';
                 }
             });
         });
