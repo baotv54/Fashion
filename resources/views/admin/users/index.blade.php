@@ -61,7 +61,6 @@
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete({{ $user->id }})" title="Xoá">
                                     <i data-feather="trash-2"></i>
                                 </button>
-
                                 <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-none">
                                     @csrf
                                     @method('DELETE')
@@ -113,7 +112,6 @@
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
-
         const roleModal = document.getElementById('roleModal');
         roleModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;

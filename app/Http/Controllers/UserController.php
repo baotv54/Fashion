@@ -19,7 +19,6 @@ class UserController extends Controller
             'password',
             'email',
             'role'
-           
         )->paginate(5);
 
         return view('admin.users.index', compact('users'));
@@ -42,22 +41,26 @@ class UserController extends Controller
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
                 'role' => 'required|max:15',
-
             ]
         );
         $validatedDate['password'] = Hash::make($validatedDate['password']);
         User::create($validatedDate);
         return redirect()->route('users.index')->with('success', 'Tạo mới thành công');
     }
-    public function edit($id)
-    {
-        $users = User::find($id);
-        return view('admin.users.edit', compact('users'));
-    }
+//     public function edit($id)
+//     {
+//         $users = User::find($id);
+// <<<<<<< Hung
+//         return view('admin.users.edit', compact('users'));
+// =======
+//         return view('admin.users.create', compact('users'));
+// >>>>>>> main
+//     }
 
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
+
             // 'name' => 'nullable|max:155' . $id,
             // 'email' => 'nullable|email|max:255|unique:users,email,' . $id,
             // 'password' => 'nullable|min:8',
@@ -70,6 +73,7 @@ class UserController extends Controller
         // 'email' => $validatedData['email'],
         // 'password' => $validatedData['password'] ?? $users-> password,
         'role' => $validatedData['role'],
+
        ]);
         return redirect()->route('users.index')->with('success', 'User đã được cập nhật!');
     }
