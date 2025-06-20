@@ -65,10 +65,19 @@ class FavoriteController extends Controller
 
     public function destroy($product_id)
     {
-        Favorite::where('user_id', Auth::id())
+        $deleted = Favorite::where('user_id', Auth::id())
             ->where('product_id', $product_id)
             ->delete();
 
+        if (request()->ajax()) {
+            if ($deleted) {
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false]);
+            }
+        }
+
+        // Nếu không phải AJAX thì redirect bình thường
         return back()->with('success', 'Đã xóa khỏi danh sách yêu thích');
     }
 }
