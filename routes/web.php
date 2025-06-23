@@ -269,6 +269,8 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+Route::get('/search-suggestion', [App\Http\Controllers\ProductController::class, 'searchSuggestion']);
+
 // Route::get('/posts', function () {
 //     return view('Frontend.pages.blogs.posts');
 // });

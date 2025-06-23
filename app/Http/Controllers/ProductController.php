@@ -304,4 +304,22 @@ class ProductController extends Controller
         Excel::import(new ProductsImport, $request->file('file'));
         return back()->with('success', 'Import sản phẩm thành công!');
     }
+
+    public function searchSuggestion(Request $request)
+    {
+        $q = $request->input('q');
+        if (strlen($q) < 2) return response()->json([]);
+
+        $products = Product::where('name', 'like', '%' . $q . '%')
+            ->select('name', 'slug', 'image')
+            ->limit(5)
+            ->get();
+
+        $products->transform(function($item) {
+            $item->image = asset($item->image ?? 'images/default.jpg');
+            return $item;
+        });
+
+        return response()->json($products);
+    }
 }

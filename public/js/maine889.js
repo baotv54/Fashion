@@ -762,6 +762,33 @@ F1GENZ.General = {
 				e.preventDefault();
 				$('.tool-search').toggleClass('show');
 			})
+
+			// Real-time suggestion
+			$('body').on('keyup', '.tool-search input[name="q"]', function () {
+				var s = $(this).val().trim();
+				var $suggestion = $(this).siblings('.search-suggestion');
+				$suggestion.empty().hide();
+
+				// Validate: chỉ tìm khi nhập >= 2 ký tự
+				if (s.length < 2) {
+					return;
+				}
+
+				// Gửi AJAX lấy sản phẩm
+				$.get('/search-suggestion?q=' + encodeURIComponent(s), function (data) {
+					if (data.length > 0) {
+						var html = '<ul class="suggest-list">';
+						data.forEach(function (item) {
+							html += '<li class="suggest-item">';
+							html += '<a href="/san-pham/' + item.slug + '">';
+							html += '<img src="' + item.image + '" width="40" height="40" style="object-fit:cover;margin-right:8px">';
+							html += item.name + '</a></li>';
+						});
+						html += '</ul>';
+						$suggestion.html(html).show();
+					}
+				});
+			});
 		} catch (e) {
 			console.log(e);
 		}
@@ -1000,7 +1027,7 @@ F1GENZ.Quickview = {
 					$('#product-quickview .product-quickview-quantity').hide();
 					$('#product-quickview .product-quickview-cta button[data-type="product-quickview-add"]').attr('disabled', true);
 					$('#product-quickview .product-quickview-cta button[data-type="product-quickview-add"] span').html("Liên hệ để được tư vấn thêm")
-					$('#product-quickview .product-quickview-cta button[data-type="product-quickview-add"] strong').html("Tạm hết hàng");
+					$('#product-quickview .product-quickview-cta button[data-type="product-quickview-add"] strong').html("Liên hệ ngay");
 					//$('#product-quickview .product-quickview-cta button[data-type="product-quickview-add"]').show();
 				} else {
 					$('#product-quickview .product-quickview-quantity').hide();
