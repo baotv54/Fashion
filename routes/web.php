@@ -23,10 +23,30 @@ use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 
+
 Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
+
+// Routes cho Contact Form - CHÍNH THỨC
+Route::get('/lien-he', function () {
+    return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ Laravel clean với giao diện cũ
+})->name('contact.show');
+Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
+
+// ======================= COMMENTED - BACKUP ROUTES =======================
+// Backup route cho trang liên hệ cũ (có lỗi form) - KHÔNG SỬ DỤNG
+// Route::get('/lien-he-old', function () {
+//     return view('Frontend.pages.pages.lien-he');
+// })->name('contact.old');
+
+// Test contact route - CHỈ DÙNG ĐỂ DEBUG
+// Route::get('/test-contact', function () {
+//     return view('test-contact');
+// })->name('test.contact');
+// =====================================================================
 
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
@@ -43,12 +63,6 @@ Route::get('/db', function () {
 Route::get('/faq', function () {
     return view('Frontend.pages.pages.faq');
 });
-
-Route::get('/lien-he', function () {
-    return view('Frontend.pages.pages.lien-he');
-});
-
-
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
@@ -257,7 +271,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-        //Routes Quản lý Banne
+        //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
@@ -265,6 +279,15 @@ Route::middleware(['auth'])->group(function () {
              Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
             Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+        });
+
+        // Routes quản lý liên hệ
+        Route::prefix('contacts')->group(function () {
+            Route::get('/', [ContactController::class, 'index'])->name('contacts.index');
+            Route::get('/{id}', [ContactController::class, 'showDetail'])->name('contacts.show');
+            Route::post('/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+            Route::post('/{id}/reply', [ContactController::class, 'reply'])->name('contacts.reply');
+            Route::delete('/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
         });
     });
 });
@@ -278,9 +301,9 @@ Route::middleware(['auth'])->group(function () {
 // });
 
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::get('/cart', function () {
 //     return view('Frontend.pages.cart');
@@ -311,4 +334,12 @@ Route::middleware(['auth'])->group(function () {
 // Route::get('/order-detail', function () {
 //     return view('Frontend.pages.account.order-detail');
 // });
+
+// ======================= COMMENTED - TEST ROUTES =======================
+// Test contact form - trang riêng không phụ thuộc template cũ - CHỈ DÙNG ĐỂ DEBUG
+// Route::get('/test-contact-simple', function () {
+//     return view('test-contact-simple');
+// })->name('contact.test');
+// =====================================================================
+
 require __DIR__ . '/auth.php';
