@@ -7,7 +7,6 @@
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -18,8 +17,6 @@
                     <label for="name" class="form-label">Tên sản phẩm</label>
                     <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name') }}">
                     @error('name')<small class="text-danger">{{ $message }}</small>@enderror
-                </div>
-
                 <div class="mb-3">
                     <label for="slug" class="form-label">Slug</label>
                     <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}">

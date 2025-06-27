@@ -89,18 +89,103 @@
                 </div>
             </div>
         </section>
+        <section class="home-fSale">
+            <div class="container">
+                <div class="home-fSale-wrap">
+                    <div class="home-fSale-head">
+                        <h2>
+                            <img loading="lazy" decoding="async" title="F1GENZ Shoes - Flash Sale"
+                                src="{{ asset('images/home_fsale_imagee889.png') }}" alt="F1GENZ Shoes - Flash Sale">
+                        </h2>
+                        <div class="home-fSale-head-countdown">
+                            <label>Kết thúc sau</label>
+                            <div data-time="1/4/2025 24:00:00" class="countdownLoop"></div>
+                        </div>
+                    </div>
+                    <div class="home-fSale-body">
+                        <div class="home-fSale-body-data">
+                            @foreach ($products as $product)
+                                <div class="product-item special" data-id="{{ $product->id }}"
+                                    data-handle="{{ Str::slug($product->name) }}">
+                                    <div class="product-item-wrap">
+                                        <div class="product-item-image hasThumbs hasThumbsIcon">
+                                            <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+                                            <span
+                                                class="product-item-discount">-{{ $product->discount ?? '11' }}%</span>
+                                            <a class="product-item-link"
+                                                href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            </a>
+                                            <ul class="product-item-thumbs">
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb1 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb2 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb3 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="product-item-action">
+                                            <button type="button" title="Yêu thích" class="shop-wishlist-button-add"
+                                                data-type="shop-wishlist-button-add">
+                                                <!-- SVG Icon -->
+                                            </button>
+                                            <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                                data-type="shop-quickview-button">
+                                                <!-- SVG Icon -->
+                                            </button>
+                                        </div>
+                                        <div class="product-item-detail">
+                                            <div class="product-item-sold">
+                                                <label class="fSale_chayhang">
+                                                    <img loading="lazy" decoding="async"
+                                                        src="{{ asset('images/imager_8176_d244203aa9cf4dfbb410e1377abdac72_compact.gif') }}"
+                                                        alt="pro-loop-sold" />
+                                                    <span></span>
+                                                </label>
+                                                <div class="product-item-sold-wrap">
+                                                    <span style="--percent: 50%"></span>
+                                                </div>
+                                            </div>
+                                            <h3 class="product-item-detail-name">
+                                                <a href="{{ route('product.show', $product->id) }}"
+                                                    title="{{ $product->name }}">{{ $product->name }}</a>
+                                            </h3>
+                                            <div class="product-item-detail-price">
+                                                <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            </div>
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data"></div>
+                                                <div class="sapo-product-reviews-badge"
+                                                    data-id="{{ $product->id }}"></div>
+                                            </div>
+                                            <form method="POST" action="{{ route('cart.add') }}">
+                                                @csrf
+                                                <input type="hidden" value="{{ $product->id }}"
+                                                    name="product_id" />
+                                                <input type="hidden" value="1" name="quantity" />
+                                                <button type="submit" title="Thêm vào giỏ"
+                                                    class="shop-addLoop-button cart">Thêm vào giỏ</button>
+                                            </form>
 
-      <section class="home-fSale">
-    <div class="container">
-        <div class="home-fSale-wrap">
-            <div class="home-fSale-head">
-                <h2>
-                    <img loading="lazy" decoding="async" title="F1GENZ Shoes - Flash Sale"
-                        src="{{ asset('images/home_fsale_imagee889.png') }}" alt="F1GENZ Shoes - Flash Sale">
-                </h2>
-                <div class="home-fSale-head-countdown">
-                    <label>Kết thúc sau</label>
-                    <div data-time="1/4/2025 24:00:00" class="countdownLoop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="home-fSale-body">

@@ -45,6 +45,7 @@ class ProductController extends Controller
                 ->get();
         }
         return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
+
     }
 
     public function aboutPage()
@@ -56,6 +57,11 @@ class ProductController extends Controller
     public function allProducts(Request $request)
     {
         $query = Product::with(['images', 'variants.attributeValues']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', '%' . $search . '%');
+        }
 
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
@@ -99,6 +105,11 @@ class ProductController extends Controller
         $categories = Category::all();
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
+
+        // Xử lý yêu cầu tìm kiếm thông minh (smart search)
+        if ($request->get('view') == 'smart') {
+            return view('Frontend.partials.product_search_smart_results', compact('products'));
+        }
 
         return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
     }

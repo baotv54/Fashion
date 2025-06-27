@@ -318,7 +318,7 @@ F1GENZ.Helper = {
 	// 	var nextPrice = freePrice - curPrice;
 	// 	// Set current percent
 	// 	$('.shop-freeship .shop-freeship-bar .shop-freeship-bar-main span').css('width', `${perBar}%`);
-	// 	// Set next price 
+	// 	// Set next price
 	// 	$('.shop-freeship .shop-freeship-note span').html('Mua thêm ' + Bizweb.formatMoney(nextPrice, window.F1GENZ_vars.formatMoney));
 	// 	if (perBar >= 100) {
 	// 		$('.shop-freeship .shop-freeship-note').addClass('active');
@@ -569,7 +569,7 @@ F1GENZ.General = {
 			}
 
 			$('.tool-search-smart').parent().removeClass('active show');
-			$('.tool-search input[name="q"]').val("");
+			$('.tool-search input[name="search"]').val("");
 		});
 	},
 	backToTop: function () {
@@ -717,17 +717,17 @@ F1GENZ.General = {
 	toolSearch: function () {
 		try {
 			// Placeholder
-			$('.tool-search input[name="q"]').placeholderTypewriter({
+			$('.tool-search input[name="search"]').placeholderTypewriter({
 				text: ["Tìm kiếm sản phẩm ...", "Bạn cần tìm gì ...?", "Nhập tên sản phẩm cần tìm ..."]
 			});
 
 			// Search smart
-			$('body').on('keyup', '.tool-search input[name="q"]', function (e) {
+			$('body').on('keyup', '.tool-search input[name="search"]', function(e){
 				e.preventDefault();
 				if (e.which !== 40 && e.which !== 38) {
 					var s = $(this).val();
-					if (typeof s === 'string' && s.length > 0) {
-						$.get('/search?type=product&q=' + encodeURIComponent(s) + '&view=smart', function (res) {
+					if(	typeof s === 'string' && s.length>0 ){
+						$.get('/products?search=' + encodeURIComponent(s) + '&view=smart', function(res){
 							$('.tool-search-smart').html(res).parent().addClass('active');
 						});
 					} else {
@@ -741,20 +741,20 @@ F1GENZ.General = {
 				var container = $('.tool-search, button[data-type="shop-search-mobile"]');
 				if (!container.is(e.target) && container.has(e.target).length === 0) {
 					$('.tool-search').removeClass('active show');
-					$('.tool-search input[name="q"]').val("");
+					$('.tool-search input[name="search"]').val("");
 				}
 			});
 			$('body').on('click', '.tool-search .tool-search-overplay', function (e) {
 				e.preventDefault();
 				$('.tool-search-smart').parent().removeClass('active show');
-				$('.tool-search input[name="q"]').val("");
+				$('.tool-search input[name="search"]').val("");
 			})
 
 			// Submit
 			$('body').on('submit', '.tool-search', function (e) {
 				e.preventDefault();
-				var s = $(this).find('input[name="q"]').val();
-				window.location.href = '/search?type=product&q=' + encodeURIComponent(s);
+				var s = $(this).find('input[name="search"]').val();
+				window.location.href = '/products?search=' + encodeURIComponent(s);
 			})
 
 			// Mobile

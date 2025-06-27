@@ -35,7 +35,11 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
+<<<<<<< HEAD
                         <th>Vai trò</th>
+=======
+                        <th>Password</th>
+>>>>>>> feature/search-product
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -45,6 +49,7 @@
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
+<<<<<<< HEAD
                             <td>{{ $user->role }}</td>
                             <td>
                                 <button
@@ -58,6 +63,14 @@
                                     <i data-feather="edit"></i>
                                 </button>
 
+=======
+                            <td>{{ $user->password}}</td>
+                            
+                            <td>
+                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning me-1" title="Chỉnh sửa">
+                                    <i data-feather="edit"></i>
+                                </a>
+>>>>>>> feature/search-product
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete({{ $user->id }})" title="Xoá">
                                     <i data-feather="trash-2"></i>
                                 </button>
@@ -69,7 +82,11 @@
                         </tr>
                     @empty
                         <tr>
+<<<<<<< HEAD
                             <td colspan="5" class="text-muted">Không có người dùng nào.</td>
+=======
+                            <td colspan="5" class="text-muted">Không có thương hiệu nào.</td>
+>>>>>>> feature/search-product
                         </tr>
                     @endforelse
                 </tbody>
@@ -78,6 +95,7 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 {{-- Modal Phân Quyền --}}
 <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -107,11 +125,15 @@
 </div>
 
 {{-- Script --}}
+=======
+{{-- Nhúng script trực tiếp --}}
+>>>>>>> feature/search-product
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
+<<<<<<< HEAD
         const roleModal = document.getElementById('roleModal');
         roleModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
@@ -128,6 +150,12 @@
 
     function confirmDelete(id) {
         if (confirm("Bạn có chắc chắn muốn xóa Người dùng này không?")) {
+=======
+    });
+
+    function confirmDelete(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa thương hiệu này không?")) {
+>>>>>>> feature/search-product
             document.getElementById('delete-form-' + id).submit();
         }
     }
