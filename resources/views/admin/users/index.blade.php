@@ -35,7 +35,7 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
-                        <th>Password</th>
+                        <th>Vai trò</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -45,12 +45,19 @@
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->password}}</td>
-                            
+                            <td>{{ $user->role }}</td>
                             <td>
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning me-1" title="Chỉnh sửa">
+                                <button
+                                    class="btn btn-sm btn-outline-warning me-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#roleModal"
+                                    data-id="{{ $user->id }}"
+                                    data-role="{{ $user->role }}"
+                                    title="Phân quyền"
+                                >
                                     <i data-feather="edit"></i>
-                                </a>
+                                </button>
+
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete({{ $user->id }})" title="Xoá">
                                     <i data-feather="trash-2"></i>
                                 </button>
@@ -62,7 +69,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-muted">Không có thương hiệu nào.</td>
+                            <td colspan="5" class="text-muted">Không có người dùng nào.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -71,16 +78,56 @@
     </div>
 </div>
 
-{{-- Nhúng script trực tiếp --}}
+{{-- Modal Phân Quyền --}}
+<div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" id="roleForm" class="modal-content">
+            @csrf
+            @method('PUT')
+            <div class="modal-header">
+                <h5 class="modal-title" id="roleModalLabel">Phân Quyền Người Dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="role" class="form-label">Vai Trò</label>
+                    <select name="role" id="role" class="form-select" required>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                        <option value="manage">Manage</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="submit" class="btn btn-primary">✔️ Cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Script --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
+        const roleModal = document.getElementById('roleModal');
+        roleModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-id');
+            const userRole = button.getAttribute('data-role');
+
+            const form = document.getElementById('roleForm');
+            form.action = `/admin/users/${userId}`; // Cập nhật action đúng user
+
+            const roleSelect = form.querySelector('#role');
+            roleSelect.value = userRole;
+        });
     });
 
     function confirmDelete(id) {
-        if (confirm("Bạn có chắc chắn muốn xóa thương hiệu này không?")) {
+        if (confirm("Bạn có chắc chắn muốn xóa Người dùng này không?")) {
             document.getElementById('delete-form-' + id).submit();
         }
     }

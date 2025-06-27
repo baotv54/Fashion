@@ -8,9 +8,12 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Coupon;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
+use App\Models\Favorite;
 use App\Models\Banner;
+use App\Models\VariantAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -34,7 +37,14 @@ class ProductController extends Controller
         $carts = Cart::content();
         $coupons = Coupon::latest()->take(4)->get();
         $banners = Banner::latest()->take(4)->get();
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'banners'));
+        $favorites = collect(); // luôn khởi tạo rỗng
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
     }
 
     public function aboutPage()
@@ -169,41 +179,119 @@ class ProductController extends Controller
         return view('admin.products.create', [
             'brands' => Brand::all(),
             'categories' => Category::all(),
+            'attributes' => Attribute::all(),
+            'attribute_values' => AttributeValue::all(),
+
+
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|max:255',
-            'slug' => 'required|unique:products,slug',
-            'price' => 'required|numeric|min:0',
-            'brand_id' => 'required|exists:brands,id',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|boolean',
-            'description' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|max:255',
+    //         'slug' => 'required|unique:products,slug',
+    //         'price' => 'required|numeric|min:0',
+    //         'brand_id' => 'required|exists:brands,id',
+    //         'category_id' => 'required|exists:categories,id',
+    //         'status' => 'required|boolean',
+    //         'description' => 'nullable',
+    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+    //         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+    //     ]);
 
-        $product = Product::create($request->except(['image', 'images']));
+    //     $product = Product::create($request->except(['image', 'images']));
 
-        if ($request->hasFile('image')) {
-            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->move(public_path('uploads/products'), $filename);
-            $product->update(['image' => 'uploads/products/' . $filename]);
+    //     if ($request->hasFile('image')) {
+    //         $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+    //         $request->file('image')->move(public_path('uploads/products'), $filename);
+    //         $product->update(['image' => 'uploads/products/' . $filename]);
+    //     }
+
+    //     if ($request->hasFile('images')) {
+    //         foreach ($request->file('images') as $img) {
+    //             $fileName = time() . '_' . $img->getClientOriginalName();
+    //             $img->move(public_path('uploads/products'), $fileName);
+    //             $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
+    //         }
+    //     }
+
+    //     return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
+    // }
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|max:255',
+        'slug' => 'required|unique:products,slug',
+        'price' => 'required|numeric|min:0',
+        'brand_id' => 'required|exists:brands,id',
+        'category_id' => 'required|exists:categories,id',
+        'status' => 'required|boolean',
+        'description' => 'nullable',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        'variants' => 'nullable|array'
+    ]);
+
+    // Tạo sản phẩm
+    $product = Product::create($request->except(['image', 'images', 'variants']));
+
+    // Ảnh đại diện
+    if ($request->hasFile('image')) {
+        $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+        $request->file('image')->move(public_path('uploads/products'), $filename);
+        $product->update(['image' => 'uploads/products/' . $filename]);
+    }
+
+    // Nhiều ảnh phụ
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $img) {
+            $fileName = time() . '_' . $img->getClientOriginalName();
+            $img->move(public_path('uploads/products'), $fileName);
+            $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
         }
+    }
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $img) {
-                $fileName = time() . '_' . $img->getClientOriginalName();
-                $img->move(public_path('uploads/products'), $fileName);
-                $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
+    // Thêm biến thể nếu có
+    $variants = $request->input('variants', []);
+    if (!empty($variants)) {
+        foreach ($variants as $index => $variantData) {
+            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
+                continue;
+            }
+
+            // Xử lý ảnh biến thể
+            $imagePath = null;
+            $imageInputName = "variants.$index.image";
+
+            if ($request->hasFile($imageInputName)) {
+                $file = $request->file($imageInputName);
+                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $imagePath = 'variants/' . $imageName;
+                $file->move(public_path('variants'), $imageName);
+            }
+
+            // Tạo biến thể
+            $variant = ProductVariant::create([
+                'product_id' => $product->id,
+                'price' => $variantData['price'],
+                'stock' => $variantData['stock'],
+                'image' => $imagePath,
+            ]);
+
+            // Gán các giá trị thuộc tính
+            $valueIds = explode('-', $variantData['value_ids']);
+            foreach ($valueIds as $valueId) {
+                VariantAttributeValue::create([
+                    'variant_id' => $variant->id,
+                    'attribute_value_id' => $valueId,
+                ]);
             }
         }
-
-        return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
     }
+
+    return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
+}
 
     public function edit($id)
     {

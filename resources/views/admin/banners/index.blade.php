@@ -33,10 +33,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
-                            <th>title</th>
-                            <th>subtitle</th>
-                            <th> link </th>
-                            <th>Ảnh </th>
+                            <th>Title</th>
+                            <th>Subtitle</th>
+                            <th>Link</th>
+                            <th>Ảnh</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -73,7 +73,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-muted">Không có thương hiệu nào.</td>
+                                <td colspan="6" class="text-muted">Không có banner nào.</td>
                             </tr>
                         @endforelse
                     </tbody>

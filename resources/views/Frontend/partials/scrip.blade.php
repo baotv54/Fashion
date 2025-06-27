@@ -1,4 +1,41 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function() {
+        $('.favorite-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var btn = form.find('button.favorite-btn');
+            var countEl = $('#wishlist-count'); // 💥 sửa ở đây
+            var countText = countEl.text().trim();
+            var count = parseInt(countText, 10);
+            if (isNaN(count)) count = 0;
+
+            $.ajax({
+                url: form.attr('action'),
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.status === 'added') {
+                        btn.css('color', 'red');
+                        countEl.text(count + 1);
+                    } else if (response.status === 'removed') {
+                        btn.css('color', 'gray');
+                        countEl.text(Math.max(count - 1, 0));
+
+                        if (window.location.pathname === '{{ route("favorites.index") }}') {
+                            form.closest('.product-item').remove();
+                        }
+                    }
+                },
+                error: function() {
+                    window.location.href = '{{ route("account.login") }}';
+                }
+            });
+        });
+    });
+
+
     let chatOpened = false;
 
     function toggleChat() {

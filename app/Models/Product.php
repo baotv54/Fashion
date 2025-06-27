@@ -59,8 +59,12 @@ class Product extends Model
         );
     }
     public function reviews()
-{
-    return $this->hasMany(\App\Models\ProductReview::class);
-}
+    {
+        return $this->hasMany(\App\Models\ProductReview::class);
+    }
 
+    public function favoritedByUsers()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
