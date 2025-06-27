@@ -129,8 +129,8 @@
                             <input type="text" name="name" placeholder="Họ và tên *" 
                                    value="{{ old('name') }}" required>
                             
-                            <input type="tel" name="phone" placeholder="Số điện thoại *" 
-                                   value="{{ old('phone') }}" required>
+                            <input type="tel" name="phone" placeholder="Số điện thoại (tùy chọn)" 
+                                   value="{{ old('phone') }}">
                             
                             <input type="email" name="email" placeholder="Email *" 
                                    value="{{ old('email') }}" required>
@@ -186,16 +186,16 @@
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline';
             
-            // Basic validation
+            // Basic validation - phone is optional now
             const name = form.querySelector('input[name="name"]').value.trim();
             const phone = form.querySelector('input[name="phone"]').value.trim();
             const email = form.querySelector('input[name="email"]').value.trim();
             const subject = form.querySelector('input[name="subject"]').value.trim();
             const message = form.querySelector('textarea[name="message"]').value.trim();
             
-            if (!name || !phone || !email || !subject || !message) {
+            if (!name || !email || !subject || !message) {
                 e.preventDefault();
-                alert('❌ Vui lòng điền đầy đủ thông tin!');
+                alert('❌ Vui lòng điền đầy đủ thông tin bắt buộc!');
                 
                 // Reset button state
                 submitBtn.disabled = false;
@@ -217,18 +217,18 @@
                 return;
             }
             
-            // Phone validation (basic)
-            const phoneRegex = /^[0-9+\-\s()]{10,15}$/;
-            if (!phoneRegex.test(phone)) {
-                e.preventDefault();
-                alert('❌ Số điện thoại không hợp lệ!');
-                
-                // Reset button state
-                submitBtn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoading.style.display = 'none';
-                return;
-            }
+            // Phone validation (basic) - REMOVED TO USE LARAVEL VALIDATION
+            // const phoneRegex = /^[0-9+\-\s()]{10,15}$/;
+            // if (!phoneRegex.test(phone)) {
+            //     e.preventDefault();
+            //     alert('❌ Số điện thoại không hợp lệ!');
+            //     
+            //     // Reset button state
+            //     submitBtn.disabled = false;
+            //     btnText.style.display = 'inline';
+            //     btnLoading.style.display = 'none';
+            //     return;
+            // }
             
             console.log('✅ Form validation passed, submitting...');
         });

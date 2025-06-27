@@ -24,7 +24,8 @@ class ContactRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:2',
             'email' => 'required|email|max:255',
-            'phone' => 'required|string|min:10|max:15',
+            'phone' => 'nullable|string|min:10|max:11|regex:/^[0-9]{10,11}$/',
+            'subject' => 'required|string|max:255|min:3',
             'message' => 'required|string|min:10|max:1000',
         ];
     }
@@ -35,22 +36,25 @@ class ContactRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Vui lòng nhập họ tên.',
-            'name.min' => 'Họ tên phải có ít nhất 2 ký tự.',
-            'name.max' => 'Họ tên không được vượt quá 255 ký tự.',
+            'name.required' => 'Vui lòng nhập họ và tên.',
+            'name.min' => 'Họ và tên phải có ít nhất 2 ký tự.',
+            'name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
             
             'email.required' => 'Vui lòng nhập địa chỉ email.',
             'email.email' => 'Địa chỉ email không hợp lệ.',
-            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'email.max' => 'Địa chỉ email không được vượt quá 255 ký tự.',
             
-            'phone.required' => 'Vui lòng nhập số điện thoại.',
-            'phone.regex' => 'Số điện thoại không hợp lệ.',
             'phone.min' => 'Số điện thoại phải có ít nhất 10 số.',
-            'phone.max' => 'Số điện thoại không được vượt quá 15 số.',
+            'phone.max' => 'Số điện thoại không được vượt quá 11 số.',
+            'phone.regex' => 'Số điện thoại chỉ được chứa các chữ số (0-9).',
+            
+            'subject.required' => 'Vui lòng nhập chủ đề.',
+            'subject.min' => 'Chủ đề phải có ít nhất 3 ký tự.',
+            'subject.max' => 'Chủ đề không được vượt quá 255 ký tự.',
             
             'message.required' => 'Vui lòng nhập nội dung tin nhắn.',
-            'message.min' => 'Tin nhắn phải có ít nhất 10 ký tự.',
-            'message.max' => 'Tin nhắn không được vượt quá 1000 ký tự.',
+            'message.min' => 'Nội dung tin nhắn phải có ít nhất 10 ký tự.',
+            'message.max' => 'Nội dung tin nhắn không được vượt quá 1000 ký tự.',
         ];
     }
 
@@ -63,6 +67,7 @@ class ContactRequest extends FormRequest
             'name' => 'họ tên',
             'email' => 'email',
             'phone' => 'số điện thoại',
+            'subject' => 'chủ đề',
             'message' => 'tin nhắn',
         ];
     }

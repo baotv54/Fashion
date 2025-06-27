@@ -11,6 +11,7 @@ class Contact extends Model
         'name',
         'email', 
         'phone',
+        'subject',
         'message',
         'status',
         'admin_reply',

@@ -45,13 +45,16 @@
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <label for="phone" class="form-label">Số điện thoại <small class="text-muted"></small></label>
                                 <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="VD: 0901234567"
                                        value="{{ old('phone') }}">
+                                <small class="form-text text-muted">Để chúng tôi liên hệ nhanh hơn</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="subject" class="form-label">Chủ đề <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="subject" name="subject" 
+                                       placeholder="VD: Hỏi về sản phẩm, Khiếu nại, Góp ý..."
                                        value="{{ old('subject') }}" required>
                             </div>
                         </div>

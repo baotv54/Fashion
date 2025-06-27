@@ -32,7 +32,7 @@ Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
 
 // Routes cho Contact Form - CHÍNH THỨC
 Route::get('/lien-he', function () {
-    return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ Laravel clean với giao diện cũ
+    return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ với giao diện cũ đã sửa validation
 })->name('contact.show');
 Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
 
