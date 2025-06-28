@@ -2,12 +2,7 @@
 
 @section('content')
     <div class="container">
-<<<<<<< HEAD
         <h1 class="my-4 text-center">{{ isset($users) ? '✏️ Chỉnh Sửa Người Dùng' : '➕ Thêm Mới Tài Khoản' }}</h1>
-
-=======
-        <h1 class="my-4 text-center">{{ isset($users) ? '✏️ Chỉnh sửa thương hiệu' : '➕ Thêm mới thương hiệu' }}</h1>
->>>>>>> feature/search-product
 
         <form action="{{ isset($users) ? route('users.update', $users->id) : route('users.store') }}" method="POST"
             class="card p-4 shadow">
@@ -42,7 +37,6 @@
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
-<<<<<<< HEAD
             <br>
             <div class="md-3">
                     <label for="role" class="form-label">Vai Trò</label>
@@ -57,9 +51,6 @@
                     </select>
                 </div>
                  <br>
-=======
->>>>>>> feature/search-product
-
             <div class="d-flex justify-content-between">
                 <a href="{{ route('users.index') }}" class="btn btn-secondary">⬅️ Quay lại</a>
                 <button type="submit" class="btn btn-success">{{ isset($users) ? '✔️ Cập nhật' : '➕ Thêm mới' }}</button>

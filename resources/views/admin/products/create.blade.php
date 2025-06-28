@@ -34,7 +34,7 @@
                     <textarea name="description" class="form-control" id="description" rows="3" placeholder="Nhập mô tả sản phẩm">{{ old('description') }}</textarea>
                 </div>
             </div>
-
+        </div>
             <!-- Cột phải -->
             <div class="col-md-6">
                 <div class="mb-3">
@@ -130,52 +130,93 @@ let attributeSelectorIndex = 0;
 
 function addAttributeSelector() {
     const wrapper = document.getElementById('attribute-select-area');
+
+    const selectedAttributeIds = Array.from(document.querySelectorAll('.attribute-name'))
+        .map(select => select.value)
+        .filter(v => v !== '');
+
+    const availableAttributes = allAttributes.filter(attr => !selectedAttributeIds.includes(attr.id.toString()));
+
+    if (availableAttributes.length === 0) {
+        alert('Tất cả thuộc tính đã được chọn.');
+        return;
+    }
+
     const container = document.createElement('div');
     container.className = 'attribute-group mb-3';
+
+    const selectId = `attribute-values-${attributeSelectorIndex}`;
+    const nameAttr = `attributes[${attributeSelectorIndex}][]`;
+
     container.innerHTML = `
         <div class="row align-items-start">
             <div class="col-md-4">
                 <label class="form-label">Thuộc tính</label>
-                <select class="form-select attribute-name" onchange="updateValues(this)" required>
+                <select class="form-select attribute-name" required>
                     <option value="" disabled selected>Chọn thuộc tính</option>
-                    ${allAttributes.map(attr => `<option value="${attr.id}">${attr.name}</option>`).join('')}
+                    ${availableAttributes.map(attr => `<option value="${attr.id}">${attr.name}</option>`).join('')}
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Giá trị</label>
-                <select name="attributes[${attributeSelectorIndex}][]" class="form-select attribute-values" multiple required>
-                    <option disabled>Chọn giá trị</option>
-                </select>
+                <select id="${selectId}" name="${nameAttr}" class="form-select attribute-values" multiple required></select>
             </div>
             <div class="col-md-2 d-grid">
                 <label class="form-label">&nbsp;</label>
-                <button type="button" class="btn btn-danger" onclick="this.closest('.attribute-group').remove()">Xóa</button>
+                <button type="button" class="btn btn-danger" onclick="removeAttributeGroup(this)">Xóa</button>
             </div>
         </div>
     `;
+
     wrapper.appendChild(container);
+
+    const attrSelect = container.querySelector('.attribute-name');
+    const valueSelect = container.querySelector('.attribute-values');
+
+    attrSelect.addEventListener('change', function () {
+        updateValues(this).then(() => {
+            new Choices(`#${selectId}`, {
+                removeItemButton: true,
+                placeholder: true,
+                placeholderValue: 'Chọn giá trị',
+                searchEnabled: true
+            });
+        });
+    });
+
     attributeSelectorIndex++;
 }
 
 function updateValues(select) {
-    const attrId = select.value;
-    const values = allValues.filter(v => v.attribute_id == attrId);
-    const valueSelect = select.closest('.attribute-group').querySelector('.attribute-values');
-    valueSelect.innerHTML = '';
-    values.forEach(v => {
-        const option = document.createElement('option');
-        option.value = v.id;
-        option.textContent = v.value;
-        valueSelect.appendChild(option);
+    return new Promise(resolve => {
+        const attrId = select.value;
+        const values = allValues.filter(v => v.attribute_id == attrId);
+        const valueSelect = select.closest('.attribute-group').querySelector('.attribute-values');
+
+        // Xóa Choices instance cũ nếu có
+        if (valueSelect._choices) {
+            valueSelect._choices.destroy();
+        }
+
+        valueSelect.innerHTML = '';
+        values.forEach(v => {
+            const option = document.createElement('option');
+            option.value = v.id;
+            option.textContent = v.value;
+            valueSelect.appendChild(option);
+        });
+
+        resolve();
     });
 }
+
 
 function generateCombinations() {
     const selected = {};
     document.querySelectorAll('.attribute-group').forEach((group, i) => {
         const attrSelect = group.querySelector('.attribute-name');
         const attrId = attrSelect.value;
-        const attrName = attrSelect.options[attrSelect.selectedIndex].text;
+        const attrName = attrSelect.options[attrSelect.selectedIndex]?.text || '';
         const values = Array.from(group.querySelectorAll('.attribute-values option:checked')).map(opt => ({
             id: opt.value,
             name: opt.text
@@ -185,8 +226,8 @@ function generateCombinations() {
         selected[`${attrId}_${attrName}`] = values;
     });
 
-    if (Object.keys(selected).length === 0 || Object.values(selected).some(v => v.length === 0)) {
-        alert('Vui lòng chọn ít nhất một giá trị cho mỗi thuộc tính.');
+    if (Object.keys(selected).length === 0) {
+        alert('Vui lòng chọn ít nhất một giá trị cho thuộc tính.');
         return;
     }
 
@@ -211,6 +252,7 @@ function generateCombinations() {
     document.getElementById('variants-container').style.display = 'block';
     updateVariantCount();
 }
+
 
 function cartesianProduct(arr) {
     return arr.reduce((a, b) => a.flatMap(d => b.map(e => [].concat(d, e))));
@@ -262,5 +304,39 @@ function previewImages(event) {
         reader.readAsDataURL(files[i]);
     }
 }
+function removeAttributeGroup(button) {
+    button.closest('.attribute-group').remove();
+    setTimeout(() => {
+        // Cập nhật lại danh sách thuộc tính khi xóa
+        document.querySelectorAll('.attribute-group').forEach(group => {
+            const select = group.querySelector('.attribute-name');
+            const currentValue = select.value;
+
+            const selectedAttributeIds = Array.from(document.querySelectorAll('.attribute-name'))
+                .map(s => s.value)
+                .filter(v => v !== '');
+
+            const availableAttributes = allAttributes.filter(attr =>
+                !selectedAttributeIds.includes(attr.id.toString()) || attr.id.toString() === currentValue
+            );
+
+            select.innerHTML = `<option value="" disabled ${currentValue === "" ? 'selected' : ''}>Chọn thuộc tính</option>`;
+            availableAttributes.forEach(attr => {
+                const option = document.createElement('option');
+                option.value = attr.id;
+                option.textContent = attr.name;
+                if (attr.id.toString() === currentValue) option.selected = true;
+                select.appendChild(option);
+            });
+        });
+    }, 100);
+}
+
 </script>
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 @endsection
