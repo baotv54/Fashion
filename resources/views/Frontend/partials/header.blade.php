@@ -101,6 +101,9 @@
                         <li class="{{ Request::is('posts') ? 'active' : '' }}">
                             <a href="{{ url('/posts') }}" title="Tin tức" aria-label="Tin tức">Tin tức</a>
                         </li>
+                        <li class="{{ Request::is('couponList') ? 'active' : '' }}">
+                            <a href="{{ url('/couponList') }}" title="coupon" aria-label="coupon">Mã Giảm Giá</a>
+                        </li>
                         <li class="{{ Request::is('lien-he') ? 'active' : '' }}"><a href="lien-he" title="Liên hệ" aria-label="Liên hệ">Liên hệ</a></li>
                         <li class="{{ Request::is('gioi-thieu') ? 'active' : '' }}"><a href="{{ route('about') }}" title="Giới thiệu" aria-label="Giới thiệu">Giới thiệu</a></li>
                         @auth

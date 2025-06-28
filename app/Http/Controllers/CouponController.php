@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Cart as ShoppingcartCart;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -16,6 +17,7 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::latest()->paginate(10);
+
         return view('admin.coupons.index', compact('coupons'));
     }
 
@@ -41,7 +43,7 @@ class CouponController extends Controller
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        
+
 
         $data = $request->all();
 
@@ -63,7 +65,7 @@ class CouponController extends Controller
 
     public function edit($id)
     {
-        $coupon = Coupon::findOrFail($id); 
+        $coupon = Coupon::findOrFail($id);
         return view('admin.coupons.edit', compact('coupon'));
     }
 
@@ -76,14 +78,14 @@ class CouponController extends Controller
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date|after_or_equal:today', 
+            'start_date' => 'nullable|date|after_or_equal:today',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'status' => 'nullable|in:active,inactive',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        
+
         $data = $request->all();
 
         if ($request->hasFile('image')) {
@@ -104,7 +106,7 @@ class CouponController extends Controller
 
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id); 
+        $coupon = Coupon::findOrFail($id);
 
         if ($coupon->image) {
             Storage::disk('public')->delete($coupon->image);
@@ -184,5 +186,11 @@ class CouponController extends Controller
             'message' => 'Mã giảm giá đã được xóa!',
             'discount' => 0
         ]);
+    }
+    public function list()
+    {
+        $coupons = Coupon::latest()->paginate(10);
+        $products = Product::latest()->take(8)->get();
+        return view('admin.coupons.list', compact('coupons', 'products'));
     }
 }

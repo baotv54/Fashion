@@ -65,6 +65,7 @@ Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSucces
 
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
 Route::post('/remove-coupon', [CouponController::class, 'removeCoupon'])->name('remove.coupon');
+Route::get('/couponList', [CouponController::class, 'list'])->name('list.coupon');
 
 Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.province');
 Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict'])->name('address.district');

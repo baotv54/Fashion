@@ -92,6 +92,7 @@
 
         <section class="home-fSale">
             <div class="container">
+           
                 <div class="home-fSale-wrap">
                     <div class="home-fSale-head">
                         <h2>
@@ -191,8 +192,18 @@
             </div>
         </section>
 
+
         <section class="home-coupon">
+               
             <div class="container">
+                  <div class="home-gallery-wrap-header">
+                    <div class="section-title-all">
+                        <div>
+                            <h2>Mã giảm giá săn giá hời</h2>
+                        </div>
+                        <a href="\couponList" title="Xem thêm">Xem thêm <i class="fal fa-arrow-right"></i></a>
+                    </div>
+                </div>
                 <div class="home-coupon-wrap">
                     @foreach ($coupons as $coupon)
                         <div class="home-coupon-item">
