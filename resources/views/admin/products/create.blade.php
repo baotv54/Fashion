@@ -255,7 +255,11 @@ function generateCombinations() {
 
 
 function cartesianProduct(arr) {
-    return arr.reduce((a, b) => a.flatMap(d => b.map(e => [].concat(d, e))));
+    if (arr.length === 0) return [];
+    if (arr.length === 1) return arr[0].map(item => [item]); // ✅ wrap lại object
+    return arr.reduce((a, b) =>
+        a.flatMap(d => b.map(e => [].concat(d, e)))
+    );
 }
 
 function updateVariantCount() {

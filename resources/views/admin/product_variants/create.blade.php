@@ -1,4 +1,3 @@
-
 @extends('layouts.admin')
 
 @section('content')
@@ -10,39 +9,39 @@
     <form action="{{ route('product_variants.store', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-         <!-- Vùng chọn thuộc tính ñể sinh biến thể -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Chọn thuộc tính</h5>
-                <div id="attribute-select-area" class="mb-3"></div>
-                <button type="button" class="btn btn-sm btn-secondary mb-3" onclick="addAttributeSelector()">+ Thêm thuộc tính</button><br>
-                <button type="button" class="btn btn-primary mt-2" onclick="generateCombinations()">+ Sinh tổ hợp phiên bản</button>
-            </div>
-        </div>
-
-        <!-- Bảng tổ hợp biến thể -->
-        <div id="variants-container" class="card" style="display:none;">
-            <div class="card-body">
-                <h5 class="card-title"><span id="variant-count">0</span> phiên bản</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle">
-                        <thead>
-                            <tr>
-                                <th>Phiên bản</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th>Ảnh</th>
-                                <th>Xoá</th>
-                            </tr>
-                        </thead>
-                        <tbody id="variant-list"></tbody>
-                    </table>
+            <!-- Vùng chọn thuộc tính để sinh biến thể -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Chọn thuộc tính</h5>
+                    <div id="attribute-select-area" class="mb-3"></div>
+                    <button type="button" class="btn btn-sm btn-secondary mb-3" onclick="addAttributeSelector()">+ Thêm thuộc tính</button><br>
+                    <button type="button" class="btn btn-primary mt-2" onclick="generateCombinations()">+ Sinh tổ hợp phiên bản</button>
                 </div>
             </div>
-        </div>
 
-        <button type="submit" class="btn btn-success mt-3">Thêm Sản Phẩm</button>
-        <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
+            <!-- Bảng tổ hợp biến thể -->
+            <div id="variants-container" class="card" style="display:none;">
+                <div class="card-body">
+                    <h5 class="card-title"><span id="variant-count">0</span> phiên bản</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Phiên bản</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Ảnh</th>
+                                    <th>Xoá</th>
+                                </tr>
+                            </thead>
+                            <tbody id="variant-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Thêm Sản Phẩm</button>
+            <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>
 
@@ -66,9 +65,7 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Giá trị</label>
-                <select name="attributes[${attributeSelectorIndex}][]" class="form-select attribute-values" multiple required>
-                    <option disabled>Chọn giá trị</option>
-                </select>
+                <select name="attributes[${attributeSelectorIndex}][]" class="form-select attribute-values" multiple required></select>
             </div>
             <div class="col-md-2 d-grid">
                 <label class="form-label">&nbsp;</label>
@@ -93,41 +90,57 @@
         });
     }
 
+    function cartesianProduct(arr) {
+    if (arr.length === 0) return [];
+    if (arr.length === 1) return arr[0].map(item => [item]); // ✅ wrap lại object
+    return arr.reduce((a, b) =>
+        a.flatMap(d => b.map(e => [].concat(d, e)))
+    );
+}
+
+
     function generateCombinations() {
         const selected = {};
         document.querySelectorAll('.attribute-group').forEach((group, i) => {
             const attrSelect = group.querySelector('.attribute-name');
             const attrId = attrSelect.value;
-            const attrName = attrSelect.options[attrSelect.selectedIndex].text;
             const values = Array.from(group.querySelectorAll('.attribute-values option:checked')).map(opt => ({
                 id: opt.value,
                 name: opt.text
             }));
 
             if (!attrId || values.length === 0) return;
+
+            const attrObj = allAttributes.find(a => a.id == attrId);
+            const attrName = attrObj ? attrObj.name : `Thuộc tính ${attrId}`;
             selected[`${attrId}_${attrName}`] = values;
         });
 
-        if (Object.keys(selected).length === 0 || Object.values(selected).some(v => v.length === 0)) {
+        const selectedValues = Object.values(selected);
+
+        if (selectedValues.length === 0 || selectedValues.some(v => v.length === 0)) {
             alert('Vui lòng chọn ít nhất một giá trị cho mỗi thuộc tính.');
             return;
         }
 
-        const combinations = cartesianProduct(Object.values(selected));
+        const combinations = cartesianProduct(selectedValues);
+
+
         const tbody = document.getElementById('variant-list');
         tbody.innerHTML = '';
 
         combinations.forEach((combo, index) => {
             const name = combo.map(v => v.name).join(' / ');
+            console.log('Combo:', combo);
             const valueIds = combo.map(v => v.id).join('-');
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td><input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">${name}</td>
-            <td><input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá" required></td>
-            <td><input type="number" name="variants[${index}][stock]" class="form-control" placeholder="Số lượng" required></td>
-            <td><input type="file" name="variants[${index}][image]" class="form-control"></td>
-            <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); updateVariantCount()">X</button></td>
-        `;
+                <td><input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">${name}</td>
+                <td><input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá" required></td>
+                <td><input type="number" name="variants[${index}][stock]" class="form-control" placeholder="Số lượng" required></td>
+                <td><input type="file" name="variants[${index}][image]" class="form-control"></td>
+                <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); updateVariantCount()">X</button></td>
+            `;
             tbody.appendChild(row);
         });
 
@@ -135,55 +148,11 @@
         updateVariantCount();
     }
 
-    function cartesianProduct(arr) {
-        return arr.reduce((a, b) => a.flatMap(d => b.map(e => [].concat(d, e))));
-    }
+
 
     function updateVariantCount() {
         const count = document.querySelectorAll('#variant-list tr').length;
         document.getElementById('variant-count').innerText = count;
-    }
-
-    function previewPrimaryImage(event) {
-        let preview = document.getElementById("primaryImagePreview");
-        preview.innerHTML = "";
-        let file = event.target.files[0];
-        if (file) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let img = document.createElement("img");
-                img.src = e.target.result;
-                img.className = "me-2 mb-2";
-                img.style.width = "150px";
-                img.style.height = "150px";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "5px";
-                img.style.boxShadow = "0 0 5px rgba(0,0,0,0.2)";
-                preview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function previewImages(event) {
-        let preview = document.getElementById("imagePreview");
-        preview.innerHTML = "";
-        let files = event.target.files;
-        for (let i = 0; i < files.length; i++) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let img = document.createElement("img");
-                img.src = e.target.result;
-                img.className = "me-2 mb-2";
-                img.style.width = "100px";
-                img.style.height = "100px";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "5px";
-                img.style.boxShadow = "0 0 5px rgba(0,0,0,0.2)";
-                preview.appendChild(img);
-            };
-            reader.readAsDataURL(files[i]);
-        }
     }
 </script>
 @endsection
