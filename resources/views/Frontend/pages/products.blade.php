@@ -13,6 +13,31 @@
 		.main-collection-breadcrumb *:before {
 			color: #333333 !important;
 		}
+		
+		/* Styles cho search result info */
+		.search-result-info {
+			margin: 20px 0 30px 0;
+			padding: 0;
+		}
+		
+		.search-result-count {
+			font-size: 16px;
+			color: #ff6b35;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+		}
+		
+		.search-result-count .fa {
+			color: #ff6b35;
+			margin-right: 8px;
+			font-size: 18px;
+		}
+		
+		.search-result-count strong {
+			color: #ff6b35;
+			font-weight: 600;
+		}
 	</style>
 	<link rel="preload stylesheet" as="style"
 		href="{{asset('css/collection.scsse889.css')}}">
@@ -205,6 +230,16 @@
 								</select>
 							</form>
 						</div>
+
+						<!-- Hiển thị kết quả tìm kiếm -->
+						@if(isset($searchTerm) && !empty($searchTerm))
+						<div class="search-result-info">
+							<div class="search-result-count">
+								<span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+								Có {{ $products->total() }} kết quả tìm kiếm cho '<strong>{{ $searchTerm }}</strong>'.
+							</div>
+						</div>
+						@endif
 
 						<!-- Hiển thị sản phẩm -->
 						<div class="main-collection-data four">

@@ -52,6 +52,7 @@ Route::get('/lien-he', function () {
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+Route::get('/search', [ProductController::class, 'search'])->name('search');
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

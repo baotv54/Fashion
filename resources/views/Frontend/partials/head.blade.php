@@ -158,6 +158,224 @@
 	<script fetchpriority="low" defer src="{{ asset('js/fancybox.umd.js') }}"></script>
 	<script fetchpriority="low" defer src="{{ asset('js/option_selection.js') }}"></script>
 	<script fetchpriority="low" defer src="{{ asset('js/api.jquery.js') }}"></script>
+	<script>
+		// 🎯 Kích hoạt search suggestion functionality
+		window.noPS = true;
+		
+		// 🚀 Simple search functionality backup
+		document.addEventListener('DOMContentLoaded', function() {
+			console.log('🎯 Search functionality loading...');
+			
+			// Kiểm tra jQuery
+			if (typeof $ === 'undefined') {
+				console.error('❌ jQuery không được load!');
+				return;
+			}
+			
+			// Simple search functionality
+			$(document).ready(function() {
+				console.log('✅ jQuery ready, setting up search...');
+				
+				let searchTimeout;
+				
+				$('body').on('keyup', '.tool-search input[name="q"]', function(e) {
+					console.log('🔍 Search keyup triggered:', $(this).val());
+					
+					clearTimeout(searchTimeout);
+					let query = $(this).val().trim();
+					
+					if (query.length > 0) {
+						searchTimeout = setTimeout(function() {
+							console.log('🌐 Making AJAX request for:', query);
+							
+							$.ajax({
+								url: '/search',
+								method: 'GET',
+								data: {
+									q: query,
+									type: 'product',
+									view: 'smart'
+								},
+								success: function(response) {
+									console.log('✅ AJAX success:', response);
+									$('.tool-search-smart').html(response).parent().addClass('active');
+								},
+								error: function(xhr, status, error) {
+									console.error('❌ AJAX error:', status, error);
+								}
+							});
+						}, 300);
+					} else {
+						$('.tool-search-smart').parent().removeClass('active');
+					}
+				});
+				
+				// Close search dropdown
+				$(document).on('click', function(e) {
+					if (!$(e.target).closest('.tool-search').length) {
+						$('.tool-search').removeClass('active');
+					}
+				});
+			});
+		});
+	</script>
+	
+	<!-- 🎯 Search Suggestion Styles -->
+	<style>
+		.tool-search.active .tool-search-smart {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+		
+		/* Container chính */
+		.search-suggestions {
+			background: #fff;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+			overflow: hidden;
+		}
+		
+		/* Header */
+		.search-header {
+			background: #fff;
+			padding: 10px 15px;
+			border-bottom: 1px solid #eee;
+		}
+		
+		.search-header h4 {
+			margin: 0;
+			font-size: 13px;
+			font-weight: 600;
+			color: #333;
+		}
+		
+		/* Danh sách kết quả */
+		.search-results {
+			max-height: 350px;
+			overflow-y: auto;
+			background: #fff;
+		}
+		
+		.search-item {
+			/* Không có border giữa các items */
+		}
+		
+		.search-item-link {
+			display: flex;
+			align-items: flex-start;
+			padding: 10px 15px;
+			text-decoration: none;
+			color: inherit;
+			transition: background-color 0.2s ease;
+		}
+		
+		.search-item-link:hover {
+			background-color: #f5f5f5;
+			color: inherit;
+			text-decoration: none;
+		}
+		
+		/* Hình ảnh sản phẩm */
+		.search-item-image {
+			width: 40px;
+			height: 40px;
+			margin-right: 10px;
+			flex-shrink: 0;
+		}
+		
+		.search-item-image img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			border-radius: 3px;
+		}
+		
+		/* Thông tin sản phẩm */
+		.search-item-info {
+			flex: 1;
+			min-width: 0;
+		}
+		
+		.search-item-name {
+			font-size: 13px;
+			font-weight: 500;
+			color: #333;
+			line-height: 1.3;
+			margin-bottom: 3px;
+			/* Cho phép xuống dòng */
+			white-space: normal;
+			word-wrap: break-word;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		
+		.search-item-brand {
+			font-size: 11px;
+			color: #666;
+			margin-bottom: 3px;
+			text-transform: uppercase;
+		}
+		
+		.search-item-price {
+			font-size: 13px;
+			font-weight: 600;
+			color: #007bff;
+		}
+		
+		/* Footer */
+		.search-footer {
+			padding: 10px 15px;
+			background: #fff;
+			border-top: 1px solid #eee;
+			text-align: center;
+		}
+		
+		.search-view-all {
+			color: #007bff;
+			text-decoration: none;
+			font-size: 13px;
+			font-weight: 500;
+		}
+		
+		.search-view-all:hover {
+			color: #0056b3;
+			text-decoration: underline;
+		}
+		
+		/* No results */
+		.search-no-results {
+			padding: 20px 16px;
+			text-align: center;
+			color: #666;
+		}
+		
+		.search-no-results p {
+			margin: 0;
+			font-size: 14px;
+		}
+		
+		/* Scrollbar cho search results */
+		.search-results::-webkit-scrollbar {
+			width: 6px;
+		}
+		
+		.search-results::-webkit-scrollbar-track {
+			background: #f1f1f1;
+		}
+		
+		.search-results::-webkit-scrollbar-thumb {
+			background: #c1c1c1;
+			border-radius: 3px;
+		}
+		
+		.search-results::-webkit-scrollbar-thumb:hover {
+			background: #a8a8a8;
+		}
+	</style>
 	<script fetchpriority="low" defer src="{{ asset('js/maine889.js') }}"></script>
 	<script fetchpriority="low" defer src="{{ asset('js/indexe889.js') }}"></script>
 

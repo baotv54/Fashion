@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div class="headers2-right">
-                <form class="tool-search" action="{{ route('products.all') }}" method="GET">
+                <form class="tool-search" action="{{ route('search') }}">
                     <input type="hidden" name="type" value="product">
                     <input required name="search" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm..." value="{{ request('search') }}">
                     <button type="submit" title="Tìm kiếm"><i class="fal fa-search"></i></button>

@@ -47,9 +47,25 @@ class ProductController extends Controller
     {
         $query = Product::with(['images', 'variants.attributeValues']);
 
+<<<<<<< Updated upstream
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', '%' . $search . '%');
+=======
+        // Handle search parameter
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
+                  ->orWhereHas('brand', function($brandQuery) use ($searchTerm) {
+                      $brandQuery->where('name', 'LIKE', "%{$searchTerm}%");
+                  })
+                  ->orWhereHas('category', function($categoryQuery) use ($searchTerm) {
+                      $categoryQuery->where('name', 'LIKE', "%{$searchTerm}%");
+                  });
+            });
+>>>>>>> Stashed changes
         }
 
         if ($request->filled('brand')) {
@@ -95,12 +111,17 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
+<<<<<<< Updated upstream
         // Xử lý yêu cầu tìm kiếm thông minh (smart search)
         if ($request->get('view') == 'smart') {
             return view('Frontend.partials.product_search_smart_results', compact('products'));
         }
 
         return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
+=======
+        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'))
+            ->with('searchTerm', $request->search ?? '');
+>>>>>>> Stashed changes
     }
 
     public function show($id)
@@ -291,11 +312,97 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
     }
 
+    /**
+     * Handle search requests from frontend
+     * Supports both regular search and AJAX smart search
+     */
     public function search(Request $request)
     {
-        $query = $request->input('query');
-        $products = Product::with('images')->where('name', 'like', "%$query%")->get();
-        return view('admin.products.index', compact('products'));
+        $query = $request->input('q');
+        $view = $request->input('view');
+        
+        if (!$query) {
+            if ($view === 'smart') {
+                return response('<p>Nhập từ khóa để tìm kiếm...</p>', 200)
+                    ->header('Content-Type', 'text/html; charset=utf-8');
+            }
+            return redirect()->route('products.all');
+        }
+
+        // Search products
+        $products = Product::with(['brand', 'category'])
+            ->where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
+            ->orWhereHas('brand', function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%");
+            })
+            ->orWhereHas('category', function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%");
+            })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        // If it's AJAX smart search request
+        if ($view === 'smart') {
+            $html = '<div class="search-suggestions">';
+            
+            if ($products->count() > 0) {
+                // Header với số lượng sản phẩm
+                $html .= '<div class="search-header">';
+                $html .= '<h4>Sản phẩm (' . $products->count() . ')</h4>';
+                $html .= '</div>';
+                
+                // Danh sách sản phẩm
+                $html .= '<div class="search-results">';
+                
+                foreach ($products as $product) {
+                    $url = route('product.show', $product->id);
+                    $image = $product->image ? asset($product->image) : asset('images/default.jpg');
+                    $price = number_format($product->price, 0, ',', '.');
+                    
+                    $html .= '<div class="search-item">';
+                    $html .= '<a href="' . $url . '" class="search-item-link">';
+                    
+                    // Hình ảnh sản phẩm
+                    $html .= '<div class="search-item-image">';
+                    $html .= '<img src="' . $image . '" alt="' . htmlspecialchars($product->name) . '">';
+                    $html .= '</div>';
+                    
+                    // Thông tin sản phẩm
+                    $html .= '<div class="search-item-info">';
+                    $html .= '<div class="search-item-name">' . htmlspecialchars($product->name) . '</div>';
+                    if ($product->brand) {
+                        $html .= '<div class="search-item-brand">' . htmlspecialchars($product->brand->name) . '</div>';
+                    }
+                    $html .= '<div class="search-item-price">' . $price . '₫</div>';
+                    $html .= '</div>';
+                    
+                    $html .= '</a>';
+                    $html .= '</div>';
+                }
+                
+                $html .= '</div>';
+                
+                // Footer với link xem tất cả
+                $searchUrl = route('search', ['q' => $query]);
+                $html .= '<div class="search-footer">';
+                $html .= '<a href="' . $searchUrl . '" class="search-view-all">Xem tất cả kết quả cho "' . htmlspecialchars($query) . '"</a>';
+                $html .= '</div>';
+            } else {
+                $html .= '<div class="search-no-results">';
+                $html .= '<p>Không tìm thấy sản phẩm nào với từ khóa "' . htmlspecialchars($query) . '"</p>';
+                $html .= '</div>';
+            }
+            
+            $html .= '</div>';
+            
+            return response($html, 200)
+                ->header('Content-Type', 'text/html; charset=utf-8');
+        }
+
+        // Regular search - redirect to products page with search parameter
+        return redirect()->route('products.all', ['search' => $query]);
     }
 
     public function import(Request $request)
