@@ -45,10 +45,6 @@ class ProductController extends Controller
                 ->get();
         }
         return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/fix-contact-form-validation
     }
 
     public function aboutPage()
