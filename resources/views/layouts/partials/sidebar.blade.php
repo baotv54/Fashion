@@ -62,6 +62,13 @@
                     <span class="align-middle">Banner</span>
                 </a>
             </li>
+
+            <li class="sidebar-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('contacts.index') }}">
+                    <i class="align-middle" data-feather="message-circle"></i>
+                    <span class="align-middle">Quản lý liên hệ</span>
+                </a>
+            </li>
             <li class="sidebar-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('users.index') }}">
                     <i class="align-middle" data-feather="file-text"></i>

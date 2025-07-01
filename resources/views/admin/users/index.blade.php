@@ -69,6 +69,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="text-muted">Không có người dùng nào.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>

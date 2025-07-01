@@ -319,6 +319,7 @@ F1GENZ.Helper = {
 	// 	// Set current percent
 	// 	$('.shop-freeship .shop-freeship-bar .shop-freeship-bar-main span').css('width', `${perBar}%`);
 	// 	// Set next price
+
 	// 	$('.shop-freeship .shop-freeship-note span').html('Mua thêm ' + Bizweb.formatMoney(nextPrice, window.F1GENZ_vars.formatMoney));
 	// 	if (perBar >= 100) {
 	// 		$('.shop-freeship .shop-freeship-note').addClass('active');
@@ -728,6 +729,7 @@ F1GENZ.General = {
 					var s = $(this).val();
 					if(	typeof s === 'string' && s.length>0 ){
 						$.get('/products?search=' + encodeURIComponent(s) + '&view=smart', function(res){
+
 							$('.tool-search-smart').html(res).parent().addClass('active');
 						});
 					} else {

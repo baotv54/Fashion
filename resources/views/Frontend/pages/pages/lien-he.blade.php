@@ -410,37 +410,181 @@
                         </div>
                     </div>
                     <div class="page-about-new-contact">
-                        <form method="post" action="https://f1genz-shoes.mysapo.net/postcontact" id="contact"
-                            accept-charset="UTF-8"><input name="FormType" type="hidden" value="contact" /><input
-                                name="utf8" type="hidden" value="true" /><input type="hidden"
-                                id="Token-4e696093f6124bfcbe7782ef135b85bf" name="Token" />
-                            <script src="../www.google.com/recaptcha/apif78f.js?render=6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK"></script>
-                            <script>
-                                grecaptcha.ready(function() {
-                                    grecaptcha.execute("6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK", {
-                                        action: "contact"
-                                    }).then(function(token) {
-                                        document.getElementById("Token-4e696093f6124bfcbe7782ef135b85bf").value = token
-                                    });
-                                });
-                            </script>
+                        
                             <div class="section-title-all">
                                 <span>Kết nối ngay với chúng tôi</span>
                                 <h1 hidden>Liên hệ</h1>
                             </div>
-                            <input required type="text" id="contactFormName" class="form-control input-lg"
-                                name="contact[name]" placeholder="Tên của bạn" autocapitalize="words"
-                                value="">
-                            <input required type="number" id="contactFormPhone" class="form-control input-lg"
-                                name="contact[phone]" placeholder="Số điện thoại của bạn" autocapitalize="words"
-                                value="">
-                            <input required type="email" name="contact[email]" placeholder="Email của bạn"
-                                id="contactFormEmail" class="form-control input-lg" autocapitalize="off"
-                                value="">
-                            <textarea required rows="6" name="contact[body]" class="form-control" placeholder="Viết bình luận"
-                                id="contactFormMessage"></textarea>
-                            <button type="submit" class="btn btn-outline insButton" title="Gửi thông tin">Gửi thông
-                                tin</button>
+                        
+                        <!-- Form liên hệ hoạt động -->
+                        <div style="background: white; padding: 30px; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                            <!-- Thông báo -->
+                            @if(session('success'))
+                                <div style="background: #d4edda; color: #155724; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #c3e6cb;">
+                                    <strong>✅ Thành công!</strong> {{ session('success') }}
+                                </div>
+                            @endif
+
+                            @if(session('error'))
+                                <div style="background: #f8d7da; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #f5c6cb;">
+                                    <strong>❌ Có lỗi!</strong> {{ session('error') }}
+                                </div>
+                            @endif
+
+                            @if($errors->any())
+                                <div style="background: #f8d7da; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #f5c6cb;">
+                                    <strong>❌ Lỗi validation:</strong>
+                                    <ul style="margin: 10px 0 0 20px;">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            
+                            <form method="POST" action="{{ route('contact.store') }}" id="main-contact-form">
+                                @csrf
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label for="main-name" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">
+                                        Tên của bạn <span style="color: red;">*</span>
+                                    </label>
+                                    <input type="text" id="main-name" name="name" 
+                                           placeholder="Nhập họ và tên đầy đủ"
+                                           value="{{ old('name') }}" required
+                                           style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label for="main-phone" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">
+                                        Số điện thoại <span style="color: red;">*</span>
+                                    </label>
+                                    <input type="tel" id="main-phone" name="phone" 
+                                           placeholder="VD: 0901234567"
+                                           value="{{ old('phone') }}" required
+                                           style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label for="main-email" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">
+                                        Email <span style="color: red;">*</span>
+                                    </label>
+                                    <input type="email" id="main-email" name="email" 
+                                           placeholder="example@email.com"
+                                           value="{{ old('email') }}" required
+                                           style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label for="main-message" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">
+                                        Nội dung tin nhắn <span style="color: red;">*</span>
+                                    </label>
+                                    <textarea id="main-message" name="message" rows="6"
+                                              placeholder="Nhập nội dung bạn muốn liên hệ..."
+                                              required
+                                              style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; resize: vertical; min-height: 120px; box-sizing: border-box;">{{ old('message') }}</textarea>
+                                </div>
+                                
+                                <button type="submit" id="main-submit-btn" 
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                               color: white; 
+                                               padding: 15px 30px; 
+                                               border: none; 
+                                               border-radius: 8px; 
+                                               cursor: pointer; 
+                                               font-size: 16px; 
+                                               font-weight: 600; 
+                                               min-width: 150px;
+                                               transition: all 0.3s ease;">
+                                    <span id="main-btn-text">🚀 Gửi thông tin</span>
+                                    <span id="main-btn-loading" style="display: none;">⏳ Đang gửi...</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <script>
+                        // Form liên hệ chính - JavaScript đơn giản, không phụ thuộc external libraries
+                        document.addEventListener('DOMContentLoaded', function() {
+                            console.log('🚀 Main contact form loaded');
+                            
+                            const form = document.getElementById('main-contact-form');
+                            const submitBtn = document.getElementById('main-submit-btn');
+                            const btnText = document.getElementById('main-btn-text');
+                            const btnLoading = document.getElementById('main-btn-loading');
+
+                            if (!form || !submitBtn) {
+                                console.error('❌ Main form elements not found');
+                                return;
+                            }
+
+                            form.addEventListener('submit', function(e) {
+                                console.log('📤 Main form submitting...');
+                                
+                                // Show loading
+                                submitBtn.disabled = true;
+                                btnText.style.display = 'none';
+                                btnLoading.style.display = 'inline';
+                                
+                                // Basic validation
+                                const name = document.getElementById('main-name').value.trim();
+                                const phone = document.getElementById('main-phone').value.trim();
+                                const email = document.getElementById('main-email').value.trim();
+                                const message = document.getElementById('main-message').value.trim();
+                                
+                                if (!name || !phone || !email || !message) {
+                                    e.preventDefault();
+                                    alert('❌ Vui lòng điền đầy đủ thông tin!');
+                                    resetMainButton();
+                                    return false;
+                                }
+                                
+                                if (phone.length < 10) {
+                                    e.preventDefault();
+                                    alert('❌ Số điện thoại phải có ít nhất 10 ký tự!');
+                                    resetMainButton();
+                                    return false;
+                                }
+                                
+                                console.log('✅ Main form validation passed');
+                                // Form sẽ submit bình thường đến Laravel
+                            });
+                            
+                            function resetMainButton() {
+                                submitBtn.disabled = false;
+                                btnText.style.display = 'inline';
+                                btnLoading.style.display = 'none';
+                            }
+                            
+                            // Reset on errors
+                            if (document.querySelector('[style*="background: #f8d7da"]')) {
+                                resetMainButton();
+                                console.log('🔄 Reset button state due to errors');
+                            }
+                        });
+                        </script>
+
+                        <style>
+                        /* CSS cho form chính - inline để tránh conflict */
+                        #main-contact-form input:focus,
+                        #main-contact-form textarea:focus {
+                            border-color: #667eea !important;
+                            outline: none;
+                            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                        }
+
+                        #main-contact-form #main-submit-btn:hover:not(:disabled) {
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                        }
+
+                        #main-contact-form #main-submit-btn:disabled {
+                            opacity: 0.7;
+                            cursor: not-allowed;
+                            transform: none;
+                        }
+                        </style>
+                            
+
                             <ul class="shop-social">
                                 <li>
                                     <a href="collections/all.html" target="_blank"

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('otp_codes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('code');
-            $table->timestamp('expires_at');
-            $table->timestamps();
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->string('subject')->after('phone')->comment('Chủ đề liên hệ');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('otp_codes');
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->dropColumn('subject');
+        });
     }
-};
+}; 
