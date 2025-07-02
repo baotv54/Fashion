@@ -52,8 +52,7 @@
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light text-center">
                     <tr>
-                        <th style="width: 5%;">ID</th>
-                        <th style="width: 15%;">Tên</th>
+                        <th style="width: 20%;">Tên</th>
                         <th style="width: 10%;">Giá</th>
                         <th style="width: 15%;">Danh Mục</th>
                         <th style="width: 15%;">Thương Hiệu</th>
@@ -64,21 +63,32 @@
                 <tbody>
                     @forelse($products as $product)
                     <tr>
-                        <td class="text-center">{{ $product->id }}</td>
                         <td><strong>{{ $product->name }}</strong></td>
                         <td class="text-end text-nowrap">{{ number_format($product->price) }} VND</td>
                         <td class="text-center">{{ $product->category->name }}</td>
                         <td class="text-center">{{ $product->brand->name ?? 'N/A' }}</td>
                         <td>
-                            <div class="d-flex flex-wrap gap-2">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <!-- Ảnh chính -->
                                 <img src="{{ asset($product->image) }}" alt="Ảnh chính" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
-                                @forelse($product->images as $image)
+
+                                <!-- Hiển thị tối đa 3 ảnh phụ -->
+                                @php
+                                $extraCount = $product->images->count() - 2;
+                                @endphp
+
+                                @foreach($product->images->take(2) as $image)
                                 <img src="{{ asset($image->image_path) }}" alt="Ảnh phụ" class="rounded border" style="width: 60px; height: 60px; object-fit: cover;">
-                                @empty
-                                <span class="text-muted small">Không có ảnh phụ</span>
-                                @endforelse
+                                @endforeach
+
+                                @if($extraCount > 0)
+                                <div class="d-flex align-items-center justify-content-center rounded border bg-light" style="width: 60px; height: 60px;">
+                                    <span class="text-muted small">+{{ $extraCount }}</span>
+                                </div>
+                                @endif
                             </div>
                         </td>
+
                         <td class="text-center">
                             <div class="btn-group" role="group">
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-warning" title="Sửa">
@@ -113,25 +123,25 @@
                 <ul class="pagination justify-content-center">
                     {{-- Previous Page Link --}}
                     @if ($products->onFirstPage())
-                        <li class="page-item disabled"><span class="page-link">‹</span></li>
+                    <li class="page-item disabled"><span class="page-link">‹</span></li>
                     @else
-                        <li class="page-item"><a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev">‹</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev">‹</a></li>
                     @endif
 
                     {{-- Pagination Elements --}}
                     @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-                        @if ($page == $products->currentPage())
-                            <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
-                        @else
-                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                        @endif
+                    @if ($page == $products->currentPage())
+                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                    @else
+                    <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                    @endif
                     @endforeach
 
                     {{-- Next Page Link --}}
                     @if ($products->hasMorePages())
-                        <li class="page-item"><a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next">›</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next">›</a></li>
                     @else
-                        <li class="page-item disabled"><span class="page-link">›</span></li>
+                    <li class="page-item disabled"><span class="page-link">›</span></li>
                     @endif
                 </ul>
             </nav>

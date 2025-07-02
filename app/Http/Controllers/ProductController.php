@@ -44,7 +44,7 @@ class ProductController extends Controller
                 ->where('user_id', Auth::id())
                 ->get();
         }
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites','banners'));
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites', 'banners'));
     }
 
     public function aboutPage()
@@ -228,80 +228,83 @@ class ProductController extends Controller
 
     //     return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
     // }
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|max:255',
-        'slug' => 'required|unique:products,slug',
-        'price' => 'required|numeric|min:0',
-        'brand_id' => 'required|exists:brands,id',
-        'category_id' => 'required|exists:categories,id',
-        'status' => 'required|boolean',
-        'description' => 'nullable',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        'variants' => 'nullable|array'
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|unique:products,slug',
+            'quantity' => 'required|integer|min:0|max:255',
+            'import_price'=> 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+            'discount_price'=> 'nullable|numeric|min:0',
+            'brand_id' => 'required|exists:brands,id',
+            'category_id' => 'required|exists:categories,id',
+            'status' => 'required|boolean',
+            'description' => 'nullable',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'variants' => 'nullable|array'
+        ]);
 
-    // Tạo sản phẩm
-    $product = Product::create($request->except(['image', 'images', 'variants']));
+        // Tạo sản phẩm
+        $product = Product::create($request->except(['image', 'images', 'variants']));
 
-    // Ảnh đại diện
-    if ($request->hasFile('image')) {
-        $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-        $request->file('image')->move(public_path('uploads/products'), $filename);
-        $product->update(['image' => 'uploads/products/' . $filename]);
-    }
-
-    // Nhiều ảnh phụ
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $img) {
-            $fileName = time() . '_' . $img->getClientOriginalName();
-            $img->move(public_path('uploads/products'), $fileName);
-            $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
+        // Ảnh đại diện
+        if ($request->hasFile('image')) {
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('uploads/products'), $filename);
+            $product->update(['image' => 'uploads/products/' . $filename]);
         }
-    }
 
-    // Thêm biến thể nếu có
-    $variants = $request->input('variants', []);
-    if (!empty($variants)) {
-        foreach ($variants as $index => $variantData) {
-            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
-                continue;
+        // Nhiều ảnh phụ
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $fileName = time() . '_' . $img->getClientOriginalName();
+                $img->move(public_path('uploads/products'), $fileName);
+                $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
             }
+        }
 
-            // Xử lý ảnh biến thể
-            $imagePath = null;
-            $imageInputName = "variants.$index.image";
+        // Thêm biến thể nếu có
+        $variants = $request->input('variants', []);
+        if (!empty($variants)) {
+            foreach ($variants as $index => $variantData) {
+                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
+                    continue;
+                }
 
-            if ($request->hasFile($imageInputName)) {
-                $file = $request->file($imageInputName);
-                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $imagePath = 'variants/' . $imageName;
-                $file->move(public_path('variants'), $imageName);
-            }
+                // Xử lý ảnh biến thể
+                $imagePath = null;
+                $imageInputName = "variants.$index.image";
 
-            // Tạo biến thể
-            $variant = ProductVariant::create([
-                'product_id' => $product->id,
-                'price' => $variantData['price'],
-                'stock' => $variantData['stock'],
-                'image' => $imagePath,
-            ]);
+                if ($request->hasFile($imageInputName)) {
+                    $file = $request->file($imageInputName);
+                    $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $imagePath = 'variants/' . $imageName;
+                    $file->move(public_path('variants'), $imageName);
+                }
 
-            // Gán các giá trị thuộc tính
-            $valueIds = explode('-', $variantData['value_ids']);
-            foreach ($valueIds as $valueId) {
-                VariantAttributeValue::create([
-                    'variant_id' => $variant->id,
-                    'attribute_value_id' => $valueId,
+                // Tạo biến thể
+                $variant = ProductVariant::create([
+                    'product_id' => $product->id,
+                    'price' => $variantData['price'],
+                    'stock' => $variantData['stock'],
+                    'image' => $imagePath,
                 ]);
+
+                // Gán các giá trị thuộc tính
+                $valueIds = explode('-', $variantData['value_ids']);
+                foreach ($valueIds as $valueId) {
+                    VariantAttributeValue::create([
+                        'variant_id' => $variant->id,
+                        'attribute_value_id' => $valueId,
+                    ]);
+                }
             }
         }
-    }
 
-    return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
-}
+        return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
+    }
 
     public function edit($id)
     {
