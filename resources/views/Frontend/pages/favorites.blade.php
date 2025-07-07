@@ -291,7 +291,7 @@
 												<div class="section-title-all">
 													<h2>Bạn chưa lựa chọn được sản phẩm yêu thích nào.?</h2>
 													<p>Tìm kiếm ngay sản phẩm mà bạn mong muốn với bộ sưu tập rộng lớn của chúng tôi!</p>
-													<form action="/search">
+													                <form action="{{ route('products.search') }}">
 														<input type="hidden" name="type" value="product">
 														<input type="text" name="q" placeholder="Tìm kiếm sản phẩm" value="">
 														<button type="submit" title="Tìm kiếm">

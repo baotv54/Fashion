@@ -81,6 +81,13 @@
                 </a>
             </li>
 
+            <li class="sidebar-item {{ request()->routeIs('sizes.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('sizes.index') }}">
+                    <i class="align-middle" data-feather="maximize-2"></i>
+                    <span class="align-middle">Size</span>
+                </a>
+            </li>
+
             <li class="sidebar-header">Tài khoản</li>
 
             <li class="sidebar-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">

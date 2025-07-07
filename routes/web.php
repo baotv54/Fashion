@@ -23,6 +23,7 @@ use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -52,6 +53,7 @@ Route::get('/lien-he', function () {
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -266,6 +268,9 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
             Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
         });
+
+        // CRUD Size
+        Route::resource('sizes', SizeController::class);
     });
 });
 

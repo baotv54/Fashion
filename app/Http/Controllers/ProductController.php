@@ -55,6 +55,21 @@ class ProductController extends Controller
     {
         $query = Product::with(['images', 'variants.attributeValues']);
 
+        // Tìm kiếm theo từ khóa
+        if ($request->filled('search')) {
+            $searchQuery = $request->search;
+            $query->where(function($q) use ($searchQuery) {
+                $q->where('name', 'like', "%$searchQuery%")
+                  ->orWhere('description', 'like', "%$searchQuery%")
+                  ->orWhereHas('category', function($q) use ($searchQuery) {
+                      $q->where('name', 'like', "%$searchQuery%");
+                  })
+                  ->orWhereHas('brand', function($q) use ($searchQuery) {
+                      $q->where('name', 'like', "%$searchQuery%");
+                  });
+            });
+        }
+
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
         }
@@ -291,9 +306,34 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
-        $products = Product::with('images')->where('name', 'like', "%$query%")->get();
-        return view('admin.products.index', compact('products'));
+        $query = $request->input('q');
+        $view = $request->input('view');
+        
+        if (empty($query)) {
+            return redirect()->route('products.all');
+        }
+
+        $products = Product::with(['images', 'brand', 'category'])
+            ->where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%$query%")
+                  ->orWhere('description', 'like', "%$query%")
+                  ->orWhereHas('category', function($q) use ($query) {
+                      $q->where('name', 'like', "%$query%");
+                  })
+                  ->orWhereHas('brand', function($q) use ($query) {
+                      $q->where('name', 'like', "%$query%");
+                  });
+            });
+
+        // Nếu là gọi từ JavaScript để lấy gợi ý
+        if ($view === 'smart') {
+            $suggestions = $products->limit(5)->get();
+            return view('Frontend.partials.smart-search-results', compact('suggestions', 'query'));
+        }
+
+        // Nếu là tìm kiếm thường thì redirect đến trang products với query
+        return redirect()->route('products.all', ['search' => $query]);
     }
 
     public function import(Request $request)

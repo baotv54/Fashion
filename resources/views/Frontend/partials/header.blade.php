@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div class="headers2-right">
-                <form class="tool-search" action="https://f1genz-shoes.mysapo.net/search">
+                <form class="tool-search" action="{{ route('product.search') }}">
                     <input type="hidden" name="type" value="product">
                     <input required name="q" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm...">
                     <button type="submit" title="Tìm kiếm"><i class="fal fa-search"></i></button>
@@ -191,3 +191,4 @@
         </div>
     </div>
 </header>
+
