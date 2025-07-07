@@ -30,12 +30,13 @@ class SizeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'height' => 'nullable|numeric',
-            'width' => 'nullable|numeric',
-            'weight' => 'nullable|numeric',
             'size' => 'required|string|max:50',
+            'height_range' => 'nullable|string|max:50',
+            'weight_range' => 'nullable|string|max:50',
+            'chest_range' => 'nullable|string|max:50',
+            'hip_range' => 'nullable|string|max:50',
         ]);
-        Size::create($request->only(['height', 'width', 'weight', 'size']));
+        Size::create($request->only(['size', 'height_range', 'weight_range', 'chest_range', 'hip_range']));
         return redirect()->route('sizes.index')->with('success', 'Thêm size thành công!');
     }
 
@@ -61,12 +62,13 @@ class SizeController extends Controller
     public function update(Request $request, Size $size)
     {
         $request->validate([
-            'height' => 'nullable|numeric',
-            'width' => 'nullable|numeric',
-            'weight' => 'nullable|numeric',
             'size' => 'required|string|max:50',
+            'height_range' => 'nullable|string|max:50',
+            'weight_range' => 'nullable|string|max:50',
+            'chest_range' => 'nullable|string|max:50',
+            'hip_range' => 'nullable|string|max:50',
         ]);
-        $size->update($request->only(['height', 'width', 'weight', 'size']));
+        $size->update($request->only(['size', 'height_range', 'weight_range', 'chest_range', 'hip_range']));
         return redirect()->route('sizes.index')->with('success', 'Cập nhật size thành công!');
     }
 

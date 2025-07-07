@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
-            $table->float('height')->nullable(); // chiều cao
-            $table->float('width')->nullable();  // chiều rộng
-            $table->float('weight')->nullable(); // cân nặng (kg)
-            $table->string('size', 50);         // tên size
+            $table->string('size', 50); // SIZE (ví dụ: S (29))
+            $table->string('height_range', 50)->nullable(); // Chiều cao (cm)
+            $table->string('weight_range', 50)->nullable(); // Cân nặng (kg)
+            $table->string('chest_range', 50)->nullable(); // Rộng ngực (cm)
+            $table->string('hip_range', 50)->nullable(); // Rộng mông (cm)
             $table->timestamps();
         });
     }

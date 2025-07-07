@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Size extends Model
 {
     protected $fillable = [
-        'height', 'width', 'weight', 'size',
+        'size', 'height_range', 'weight_range', 'chest_range', 'hip_range',
     ];
 }
