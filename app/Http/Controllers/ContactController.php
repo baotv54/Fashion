@@ -97,21 +97,6 @@ class ContactController extends Controller
     }
 
     /**
-     * Hiển thị chi tiết liên hệ - CHỨC NĂNG ADMIN
-     */
-    public function showDetail($id)
-    {
-        $contact = Contact::with('repliedBy')->findOrFail($id);
-        
-        // Cập nhật status thành processing nếu đang pending
-        if ($contact->status === 'pending') {
-            $contact->update(['status' => 'processing']);
-        }
-
-        return view('admin.contacts.show', compact('contact'));
-    }
-
-    /**
      * Cập nhật status liên hệ - CHỨC NĂNG ADMIN
      */
     public function updateStatus(Request $request, $id)

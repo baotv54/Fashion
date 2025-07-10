@@ -20,13 +20,6 @@ class OrderController extends Controller
     
         return view('admin.orders.index', compact('orders'));
     }
-    
-    public function show($id)
-    {
-        $order = Order::with(['orderDetails', 'user'])->findOrFail($id);
-
-        return view('admin.orders.show', compact('order'));
-    }
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -37,7 +30,7 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
-        return redirect()->route('orders.index')->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
     }
     public function userOrderHistory()
     {

@@ -16,35 +16,38 @@
         <section id="home-slider">
             <div class="home-slider-main">
                 @foreach ($banners as $banner)
-                    <div class="home-slider-main-item">
-                        <a href="{{ $banner->link ?? '#' }}"
-                            aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
-                            <picture>
-                                {{-- Ảnh cho màn hình nhỏ --}}
-                                <source width="600" height="800" media="(max-width: 600px)"
-                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                <div class="home-slider-main-item">
+                    <a href="{{ $banner->link ?? '#' }} "
+                        aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!} "
+                        target="_blank" rel="noopener noreferrer">
+                        <picture>
+                            {{-- Ảnh cho màn hình nhỏ --}}
+                            <source width="600" height="800" media="(max-width: 600px)"
+                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                                {{-- Ảnh cho màn hình lớn --}}
-                                <source width="1920" height="700" media="(min-width: 601px)"
-                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                            {{-- Ảnh cho màn hình lớn --}}
+                            <source width="1920" height="700" media="(min-width: 601px)"
+                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                                {{-- Ảnh chính hiển thị --}}
-                                <img width="1920" height="700" loading="lazy" decoding="async"
-                                    src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
-                                    title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
-                                    alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
-                            </picture>
+                            {{-- Ảnh chính hiển thị --}}
+                            <img width="1920" height="700" loading="lazy" decoding="async"
+                                src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
+                                title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
+                                alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
+                        </picture>
 
-                            <div class="home-slider-item-content">
-                                <div class="container">
-                                    <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
+                        <div class="home-slider-item-content">
+                            <div class="container">
+                                <h2>{!! $banner->title !!} <br /></h2>
 
-                                    <p>{{ $banner->subtitle }}</p>
+                                <p>{{ $banner->subtitle }}</p>
+                                <a href="{{ $banner->link ?? '#' }}" target="_blank" rel="noopener noreferrer">
                                     <span>Xem ngay</span>
-                                </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
+                </div>
                 @endforeach
             </div>
         </section>
@@ -90,149 +93,149 @@
             </div>
         </section>
 
-      <section class="home-fSale">
-    <div class="container">
-        <div class="home-fSale-wrap">
-            <div class="home-fSale-head">
-                <h2>
-                    <img loading="lazy" decoding="async" title="F1GENZ Shoes - Flash Sale"
-                        src="{{ asset('images/home_fsale_imagee889.png') }}" alt="F1GENZ Shoes - Flash Sale">
-                </h2>
-                <div class="home-fSale-head-countdown">
-                    <label>Kết thúc sau</label>
-                    <div data-time="1/4/2025 24:00:00" class="countdownLoop"></div>
-                </div>
-            </div>
-            <div class="home-fSale-body">
-                <div class="home-fSale-body-data">
-                    @foreach ($products as $product)
-                        <div class="product-item special" data-id="{{ $product->id }}"
-                            data-handle="{{ Str::slug($product->name) }}">
-                            <div class="product-item-wrap">
-                                <div class="product-item-image hasThumbs hasThumbsIcon">
-                                    <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
-                                    <span class="product-item-discount">-{{ $product->discount ?? '11' }}%</span>
-                                    <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
-                                        title="{{ $product->name }}">
-                                        <img class="w-auto" loading="lazy" width="480" height="480"
-                                            src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                            alt="{{ $product->name }}" title="{{ $product->name }}">
-                                        <img class="w-auto" loading="lazy" width="480" height="480"
-                                            src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                            alt="{{ $product->name }}" title="{{ $product->name }}">
-                                    </a>
-                                    <ul class="product-item-thumbs">
-                                        <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                    src="{{ asset($product->thumb1 ?? 'images/default.jpg') }}"
-                                                    alt=""></a></li>
-                                        <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                    src="{{ asset($product->thumb2 ?? 'images/default.jpg') }}"
-                                                    alt=""></a></li>
-                                        <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                    src="{{ asset($product->thumb3 ?? 'images/default.jpg') }}"
-                                                    alt=""></a></li>
-                                    </ul>
-                                </div>
+        <section class="home-fSale">
+            <div class="container">
+                <div class="home-fSale-wrap">
+                    <div class="home-fSale-head">
+                        <h2>
+                            <img loading="lazy" decoding="async" title="F1GENZ Shoes - Flash Sale"
+                                src="{{ asset('images/home_fsale_imagee889.png') }}" alt="F1GENZ Shoes - Flash Sale">
+                        </h2>
+                        <div class="home-fSale-head-countdown">
+                            <label>Kết thúc sau</label>
+                            <div data-time="1/4/2025 24:00:00" class="countdownLoop"></div>
+                        </div>
+                    </div>
+                    <div class="home-fSale-body">
+                        <div class="home-fSale-body-data">
+                            @foreach ($products as $product)
+                            <div class="product-item special" data-id="{{ $product->id }}"
+                                data-handle="{{ Str::slug($product->name) }}">
+                                <div class="product-item-wrap">
+                                    <div class="product-item-image hasThumbs hasThumbsIcon">
+                                        <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+                                        <span class="product-item-discount">-{{ $product->discount ?? '11' }}%</span>
+                                        <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
+                                            title="{{ $product->name }}">
+                                            <img class="w-auto" loading="lazy" width="480" height="480"
+                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            <img class="w-auto" loading="lazy" width="480" height="480"
+                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                alt="{{ $product->name }}" title="{{ $product->name }}">
+                                        </a>
+                                        <ul class="product-item-thumbs">
+                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
+                                                        src="{{ asset($product->thumb1 ?? 'images/default.jpg') }}"
+                                                        alt=""></a></li>
+                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
+                                                        src="{{ asset($product->thumb2 ?? 'images/default.jpg') }}"
+                                                        alt=""></a></li>
+                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
+                                                        src="{{ asset($product->thumb3 ?? 'images/default.jpg') }}"
+                                                        alt=""></a></li>
+                                        </ul>
+                                    </div>
 
-                                <div class="product-item-action">
-                                    <form class="favorite-form" method="POST"
-                                        action="{{ route('favorites.toggle') }}">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <button type="submit" class="favorite-btn"
-                                            data-product-id="{{ $product->id }}"
-                                            style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
-                                            ❤
+                                    <div class="product-item-action">
+                                        <form class="favorite-form" method="POST"
+                                            action="{{ route('favorites.toggle') }}">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <button type="submit" class="favorite-btn"
+                                                data-product-id="{{ $product->id }}"
+                                                style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+                                                ❤
+                                            </button>
+                                        </form>
+                                        <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                            data-type="shop-quickview-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
+                                                width="20" height="20">
+                                                <path
+                                                    d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
+                                                    fill="#000000" />
+                                            </svg>
                                         </button>
-                                    </form>
-                                    <button type="button" title="Xem nhanh" class="shop-quickview-button"
-                                        data-type="shop-quickview-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
-                                            width="20" height="20">
-                                            <path
-                                                d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
-                                                fill="#000000" />
-                                        </svg>
-                                    </button>
-                                </div>
+                                    </div>
 
-                                <div class="product-item-detail">
-                                    <div class="product-item-sold">
-                                        <label class="fSale_chayhang">
-                                            <img loading="lazy" decoding="async"
-                                                src="{{ asset('images/imager_8176_d244203aa9cf4dfbb410e1377abdac72_compact.gif') }}"
-                                                alt="pro-loop-sold" />
-                                            <span></span>
-                                        </label>
-                                        <div class="product-item-sold-wrap">
-                                            <span style="--percent: 50%"></span>
+                                    <div class="product-item-detail">
+                                        <div class="product-item-sold">
+                                            <label class="fSale_chayhang">
+                                                <img loading="lazy" decoding="async"
+                                                    src="{{ asset('images/imager_8176_d244203aa9cf4dfbb410e1377abdac72_compact.gif') }}"
+                                                    alt="pro-loop-sold" />
+                                                <span></span>
+                                            </label>
+                                            <div class="product-item-sold-wrap">
+                                                <span style="--percent: 50%"></span>
+                                            </div>
                                         </div>
+                                        <h3 class="product-item-detail-name">
+                                            <a href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">{{ $product->name }}</a>
+                                        </h3>
+                                        <div class="product-item-detail-price">
+                                            <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                        </div>
+                                        <div class="product-item-detail-info">
+                                            <div class="product-item-detail-info-data"></div>
+                                            <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
+                                        </div>
+                                        <form method="POST" action="{{ route('cart.add') }}">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" title="Thêm vào giỏ"
+                                                class="shop-addLoop-button cart">Thêm vào giỏ</button>
+                                        </form>
                                     </div>
-                                    <h3 class="product-item-detail-name">
-                                        <a href="{{ route('product.show', $product->id) }}"
-                                            title="{{ $product->name }}">{{ $product->name }}</a>
-                                    </h3>
-                                    <div class="product-item-detail-price">
-                                        <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                    </div>
-                                    <div class="product-item-detail-info">
-                                        <div class="product-item-detail-info-data"></div>
-                                        <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
-                                    </div>
-                                    <form method="POST" action="{{ route('cart.add') }}">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" title="Thêm vào giỏ"
-                                            class="shop-addLoop-button cart">Thêm vào giỏ</button>
-                                    </form>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
 
         <section class="home-coupon">
             <div class="container">
                 <div class="home-coupon-wrap">
                     @foreach ($coupons as $coupon)
-                        <div class="home-coupon-item">
-                            <img loading="lazy" decoding="async"
-                                src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
-                                alt="Mã : F1SHOES">
-                            <div class="home-coupon-content">
-                                <div class="home-coupon-content-head">
-                                    <h3>Mã : {{ $coupon->code }}</h3>
-                                    <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
-                                        title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
-                                    <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
-                                </div>
-                                <div class="home-coupon-content-foot">
-                                    <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}"
-                                        title="Điều kiện áp dụng">
-                                        Điều kiện áp dụng
-                                        <span class="home-coupon-content-info">
-                                            - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
-                                            - Giá trị giảm:
-                                            {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }}
-                                            <br>
-                                            - Áp dụng cho đơn hàng tối thiểu:
-                                            {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }}
-                                            <br>
-                                            - Hạn sử dụng:
-                                            {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
-                                        </span>
-                                    </button>
-                                    <button data-type="coupon-copy" data-coupon="{{ $coupon->code }}">Sao chép
-                                        mã</button>
-                                </div>
+                    <div class="home-coupon-item">
+                        <img loading="lazy" decoding="async"
+                            src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
+                            alt="Mã : F1SHOES">
+                        <div class="home-coupon-content">
+                            <div class="home-coupon-content-head">
+                                <h3>Mã : {{ $coupon->code }}</h3>
+                                <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
+                                    title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
+                                <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
+                            </div>
+                            <div class="home-coupon-content-foot">
+                                <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}"
+                                    title="Điều kiện áp dụng">
+                                    Điều kiện áp dụng
+                                    <span class="home-coupon-content-info">
+                                        - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
+                                        - Giá trị giảm:
+                                        {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }}
+                                        <br>
+                                        - Áp dụng cho đơn hàng tối thiểu:
+                                        {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }}
+                                        <br>
+                                        - Hạn sử dụng:
+                                        {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
+                                    </span>
+                                </button>
+                                <button data-type="coupon-copy" data-coupon="{{ $coupon->code }}">Sao chép
+                                    mã</button>
                             </div>
                         </div>
+                    </div>
                     @endforeach
                 </div>
             </div>

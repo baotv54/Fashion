@@ -15,7 +15,7 @@ class ProductVariantController extends Controller
     public function index($productId)
     {
         $product = Product::findOrFail($productId);
-        $variants = $product->variants()->with('attributeValues')->get();
+        $variants = $product->variants()->with('attributeValues')->paginate(5);
         return view('admin.product_variants.index', compact('product', 'variants'));
     }
 

@@ -39,16 +39,4 @@ class Contact extends Model
     {
         return $query->where('status', 'replied');
     }
-
-    // Accessor để format trạng thái
-    public function getStatusLabelAttribute()
-    {
-        return match($this->status) {
-            'pending' => 'Chờ xử lý',
-            'processing' => 'Đang xử lý',
-            'replied' => 'Đã phản hồi',
-            'closed' => 'Đã đóng',
-            default => 'Không xác định'
-        };
-    }
 }

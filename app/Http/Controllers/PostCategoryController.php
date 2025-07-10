@@ -13,7 +13,7 @@ class PostCategoryController extends Controller
      */
     public function index()
     {
-        $postCategories = PostCategory::all();
+        $postCategories = PostCategory::paginate(10);
         return view('admin.postcategories.index', compact('postCategories'));
     }
 
