@@ -70,7 +70,6 @@ class SupplierController extends Controller
         'address_detail' => 'required|string|max:255',
         'user_id'        => 'required|integer|exists:users,id',
         'website'        => 'required|url|max:255',
-        'tags'           => 'required|string|max:255',
     ], [
         'supplier_code.required' => 'Vui lòng nhập mã nhà cung cấp',
         'supplier_code.unique'   => 'Mã nhà cung cấp đã tồn tại',
@@ -83,7 +82,6 @@ class SupplierController extends Controller
         'user_id.exists'         => 'Nhân viên phụ trách không hợp lệ',
         'website.url'            => 'Website không đúng định dạng (phải bắt đầu bằng http:// hoặc https://)',
         'website.max'            => 'Website không được vượt quá 255 ký tự',
-        'tags.max'               => 'Từ khóa tag không được vượt quá 255 ký tự',
     ]);
 
     Supplier::create($request->all());

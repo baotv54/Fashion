@@ -166,18 +166,6 @@
                             @enderror
                         </div>
                     </div>
-
-
-                    <div class="card mb-3">
-                        <div class="card-header fw-semibold d-flex justify-content-between">
-                            <span>Tag</span>
-                            <a href="#">Danh sách tag</a>
-                        </div>
-                        <div class="card-body">
-                            <input type="text" name="tags" class="form-control"
-                                placeholder="Tìm kiếm hoặc thêm mới tag">
-                        </div>
-                    </div>
                 </div>
             </div>
 
