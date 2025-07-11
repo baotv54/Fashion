@@ -24,6 +24,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SupplierController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -189,6 +191,16 @@ Route::middleware(['auth'])->group(function () {
             Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
             Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
             Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+        });
+
+        // Routers quản lý nhà cung cấp
+        Route::prefix('suppliers')->group(function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('suppliers.index');
+            Route::get('/create', [SupplierController::class, 'create'])->name('suppliers.create');
+            Route::post('/', [SupplierController::class, 'store'])->name('suppliers.store');
+            Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+            Route::put('/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
+            Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
         });
 
         // Routes cho Attribute

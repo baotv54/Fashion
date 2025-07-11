@@ -17,6 +17,9 @@
     <meta property="og:description" content="Vuexy is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
     <meta property="og:site_name" content="Pixinvent" />
     <link rel="canonical" href="https://themeforest.net/item/vuexy-vuejs-html-laravel-admin-dashboard-template/23328599" />
+    <!-- Font Awesome 6 Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-...HASH..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 
 
 
