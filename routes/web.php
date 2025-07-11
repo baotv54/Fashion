@@ -179,7 +179,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/warehouse', [ProductController::class, 'warehouse'])->name('warehouse.index');
             Route::get('/import_creater', [ProductController::class, 'import_creater'])->name('warehouse.import_creater');
             Route::get('/history', [ProductController::class, 'history'])->name('warehouse.history');
-            Route::get('/supplier', [ProductController::class, 'supplier'])->name('warehouse.supplier');
             Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
             Route::get('/products/info', [ProductController::class, 'info'])->name('products.info');
         });

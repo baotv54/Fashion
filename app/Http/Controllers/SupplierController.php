@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -11,15 +12,20 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.supplier.index', [
+            'users' => User::all(),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+         return view('admin.supplier.create', [
+            'users' => User::all(),
+        ]);
     }
 
     /**
