@@ -200,6 +200,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
             Route::put('/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
             Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+            Route::get('/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
         });
 
         // Routes cho Attribute

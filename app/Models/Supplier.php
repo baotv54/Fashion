@@ -18,6 +18,12 @@ class Supplier extends Model
         'district',
         'ward',
         'address_detail',
+        'website', 
     ];
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }
 
