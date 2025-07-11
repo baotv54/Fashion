@@ -234,9 +234,9 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'slug' => 'required|unique:products,slug',
             'quantity' => 'required|integer|min:0|max:255',
-            'import_price'=> 'required|numeric|min:0',
+            'import_price' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
-            'discount_price'=> 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
             'brand_id' => 'required|exists:brands,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|boolean',
@@ -309,10 +309,19 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::with('images')->findOrFail($id);
+        $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
+
         return view('admin.products.edit', [
             'product' => $product,
             'brands' => Brand::all(),
-            'categories' => Category::all()
+            'categories' => Category::all(),
+            'attributeValues' => AttributeValue::all(),
+            'attribute' => Attribute::all(),
+            'variantAttributeValue' => VariantAttributeValue::all(),
+            'product_variants' => ProductVariant::where('product_id', $id)->get(),
+            'variantAttributeValue' => VariantAttributeValue::whereIn('variant_id', $variantIds)->get(),
+
+
         ]);
     }
 
@@ -322,17 +331,17 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required|max:255',
-            'slug' => 'required|unique:products,slug,' . $id,
-            'price' => 'required|numeric|min:0',
             'brand_id' => 'required|exists:brands,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|boolean',
             'description' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'variants' => 'nullable|array',
+
         ]);
 
-        $product->update($request->except(['image', 'images']));
+        $product->update($request->except(['image', 'images', 'variants']));
 
         if ($request->hasFile('image')) {
             if ($product->image && file_exists(public_path($product->image))) {
@@ -348,6 +357,70 @@ class ProductController extends Controller
                 $fileName = time() . '_' . $img->getClientOriginalName();
                 $img->move(public_path('uploads/products'), $fileName);
                 $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
+            }
+        }
+
+        // ✅ Cập nhật biến thể
+        $variants = $request->input('variants', []);
+        if (!empty($variants)) {
+            foreach ($variants as $index => $variantData) {
+                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
+                    continue;
+                }
+
+                $variant = null;
+
+                // Nếu có ID → cập nhật, không có → tạo mới
+                if (!empty($variantData['id'])) {
+                    $variant = ProductVariant::where('product_id', $product->id)
+                        ->where('id', $variantData['id'])
+                        ->first();
+                }
+
+                // Xử lý ảnh biến thể
+                $imagePath = $variant->image ?? null;
+                $imageInputName = "variants.$index.image";
+
+                if ($request->hasFile($imageInputName)) {
+                    // Xoá ảnh cũ nếu có
+                    if ($imagePath && file_exists(public_path($imagePath))) {
+                        unlink(public_path($imagePath));
+                    }
+
+                    $file = $request->file($imageInputName);
+                    $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $imagePath = 'variants/' . $imageName;
+                    $file->move(public_path('variants'), $imageName);
+                }
+
+                if ($variant) {
+                    // Cập nhật biến thể
+                    $variant->update([
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'image' => $imagePath,
+                    ]);
+
+                    // Xóa và gán lại attribute_value
+                    VariantAttributeValue::where('variant_id', $variant->id)->delete();
+                } else {
+                    // Tạo biến thể mới
+                    $variant = ProductVariant::create([
+                        'product_id' => $product->id,
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'image' => $imagePath,
+                    ]);
+                }
+
+                // Gán các attribute_value mới
+                $valueIds = explode('-', $variantData['value_ids']);
+                foreach ($valueIds as $valueId) {
+                    VariantAttributeValue::create([
+                        'variant_id' => $variant->id,
+                        'attribute_value_id' => $valueId,
+                    ]);
+                }
             }
         }
 
@@ -382,12 +455,32 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'message' => 'Hình ảnh đã được xóa.']);
     }
 
-    public function search(Request $request)
-    {
-        $query = $request->input('query');
-        $products = Product::with('images')->where('name', 'like', "%$query%")->get();
-        return view('admin.products.index', compact('products'));
-    }
+    // public function search(Request $request)
+    // {
+    //     $query = $request->input('query');
+    //     $products = Product::with('images')->where('name', 'like', "%$query%")->get();
+    //     return view('admin.products.index', compact('products'));
+    // }
+public function search(Request $request)
+{
+    $query = $request->get('q');
+    $products = Product::where('name', 'like', "%{$query}%")
+        ->orWhere('slug', 'like', "%{$query}%")
+        ->limit(20)
+        ->get();
+
+    return response()->json($products);
+}
+
+public function info(Request $request)
+{
+    $product = Product::findOrFail($request->id);
+    return response()->json([
+        'id' => $product->id,
+        'name' => $product->name,
+        'slug' => $product->slug,
+    ]);
+}
 
     public function import(Request $request)
     {
@@ -397,4 +490,58 @@ class ProductController extends Controller
         Excel::import(new ProductsImport, $request->file('file'));
         return back()->with('success', 'Import sản phẩm thành công!');
     }
+
+    public function warehouse(Request $request)
+{
+    $search = $request->input('search');
+    $stockFilter = $request->input('stock_filter');
+    $categoryId = $request->input('category_id');
+
+    $products = Product::with('category', 'brand', 'images')
+        ->when($search, fn($query) => $query->where('name', 'like', "%$search%"))
+        ->when($stockFilter === 'in_stock', fn($query) => $query->where('quantity', '>', 0))
+        ->when($stockFilter === 'out_stock', fn($query) => $query->where('quantity', '=', 0))
+        ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
+        ->paginate(10);
+
+    $categories = Category::all(); // Load tất cả danh mục để đổ ra select
+
+    return view('admin.warehouse.index', compact('products', 'search', 'stockFilter', 'categoryId', 'categories'));
+}
+
+ public function import_creater()
+    {
+        return view('admin.warehouse.import_creater', [
+            'brands' => Brand::all(),
+            'categories' => Category::all(),
+            'attributes' => Attribute::all(),
+            'attribute_values' => AttributeValue::all(),
+
+
+        ]);
+    }
+public function history()
+    {
+        return view('admin.warehouse.history', [
+            'brands' => Brand::all(),
+            'categories' => Category::all(),
+            'attributes' => Attribute::all(),
+            'attribute_values' => AttributeValue::all(),
+
+
+        ]);
+    }
+
+    public function supplier()
+    {
+        return view('admin.warehouse.supplier', [
+            'brands' => Brand::all(),
+            'categories' => Category::all(),
+            'attributes' => Attribute::all(),
+            'attribute_values' => AttributeValue::all(),
+
+
+        ]);
+    }
+
 }

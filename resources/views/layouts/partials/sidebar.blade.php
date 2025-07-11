@@ -20,6 +20,27 @@
                     <span class="align-middle">Products</span>
                 </a>
             </li>
+            <li class="sidebar-item has-sub {{ request()->routeIs('warehouse.*') || request()->routeIs('purchase-orders.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="#!" data-bs-toggle="collapse" data-bs-target="#submenu-warehouse" aria-expanded="{{ request()->routeIs('warehouse.*') || request()->routeIs('purchase-orders.*') ? 'true' : 'false' }}">
+                    <i class="fa-solid fa-warehouse"></i>
+                    <span class="align-middle">Quản Lý Kho</span>
+                </a>
+                <ul id="submenu-warehouse" class="collapse sidebar-dropdown list-unstyled {{ request()->routeIs('warehouse.*') || request()->routeIs('purchase-orders.*') ? 'show' : '' }}">
+                    <li class="sidebar-item {{ request()->routeIs('warehouse.index') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('warehouse.index') }}">Tồn kho</a>
+                    </li>
+                    <li class="sidebar-item {{ request()->routeIs('warehouse.import_creater') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('warehouse.import_creater') }}">Tạo đơn nhập hàng</a>
+                    </li>
+                    <li class="sidebar-item {{ request()->routeIs('warehouse.history') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('warehouse.history') }}">Nhập Hàng</a>
+                    </li>
+                    <li class="sidebar-item {{ request()->routeIs('warehouse.supplier') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('warehouse.supplier') }}">Nhà Cung Cấp</a>
+                    </li>
+
+                </ul>
+            </li>
 
             <li class="sidebar-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                 <a class="sidebar-link" href="{{ route('categories.index') }}">

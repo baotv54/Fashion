@@ -174,6 +174,12 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+            Route::get('/warehouse', [ProductController::class, 'warehouse'])->name('warehouse.index');
+            Route::get('/import_creater', [ProductController::class, 'import_creater'])->name('warehouse.import_creater');
+            Route::get('/history', [ProductController::class, 'history'])->name('warehouse.history');
+            Route::get('/supplier', [ProductController::class, 'supplier'])->name('warehouse.supplier');
+            Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
+            Route::get('/products/info', [ProductController::class, 'info'])->name('products.info');
         });
         // Routes quản lý sản phẩm biến thể
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -276,7 +282,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
             Route::post('/', [BannerController::class, 'store'])->name('banners.store');
-             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+            Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
             Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
         });
