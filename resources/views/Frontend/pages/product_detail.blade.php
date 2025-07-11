@@ -182,15 +182,15 @@
 
 	<style>
 		/* Rating Star Styling */
-		.star-on-png { 
-			color: #ffc107; 
+		.star-on-png {
+			color: #ffc107;
 		}
-		.star-off-png { 
-			color: #ddd; 
+		.star-off-png {
+			color: #ddd;
 		}
 
 		/* Button Styling */
-		.btn-new-review, 
+		.btn-new-review,
 		.bpr-button-submit {
 			background-color: #80BB35;
 			border: none;
@@ -202,7 +202,7 @@
 			transition: background-color 0.2s;
 		}
 
-		.btn-new-review:hover, 
+		.btn-new-review:hover,
 		.bpr-button-submit:hover {
 			background-color: #6ca028;
 		}
@@ -223,7 +223,7 @@
 			visibility: hidden;
 			transition: opacity 0.3s ease;
 			overflow: hidden !important;
-			
+
 			/* Flexbox centering */
 			align-items: center !important;
 			justify-content: center !important;
@@ -374,11 +374,11 @@
 			.jquerymodal-content {
 				width: 95% !important;
 			}
-			
+
 			.jquerymodal-body {
 				padding: 16px;
 			}
-			
+
 			.title-form {
 				font-size: 18px;
 			}
@@ -1296,7 +1296,7 @@
 					</div>
 					@endforeach
 				</div>
-			</div>			
+			</div>
 		</div>
 	</div>
 
@@ -1409,7 +1409,7 @@
 			modalTitle.innerText = 'Gửi đánh giá';
 			updateModalStars(5);
 		}
-		
+
 		// Chỉ sử dụng một cách để hiển thị modal
 		modal.style.display = 'flex';
 		modal.classList.add('modal-active');
