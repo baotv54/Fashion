@@ -4,6 +4,7 @@
 	<meta name="revisit-after" content="1 day">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta name="HandheldFriendly" content="true">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<link rel="shortcut icon" href="{{ asset('images/favicone889.png') }}" type="image/png">
 	<title>F1GENZ Shoes</title>
 	<link rel="canonical" href="index.html">

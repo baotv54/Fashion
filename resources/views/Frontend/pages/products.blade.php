@@ -252,7 +252,11 @@
 												❤
 											</button>
 										</form>
-										<button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button">👁</button>
+										<button type="button" title="So sánh" class="shop-compare-button-add" 
+												data-type="shop-compare-button-add" data-product-id="{{ $product->id }}">
+											<i class="fas fa-balance-scale"></i>
+										</button>
+										<!-- <button type="button" title="Xem nhanh" class="shop-quickview-button" data-type="shop-quickview-button">👁</button> -->
 										<form method="POST" action="{{ route('cart.add') }}">
 											@csrf
 											<input type="hidden" value="{{ $product->id }}" name="product_id" />

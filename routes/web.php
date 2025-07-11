@@ -24,6 +24,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\ComparisonController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -144,6 +145,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');;
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+});
+
+// Routes cho so sánh sản phẩm (không cần đăng nhập)
+Route::prefix('comparison')->group(function () {
+    Route::get('/', [ComparisonController::class, 'index'])->name('comparison.index');
+    Route::post('/add', [ComparisonController::class, 'add'])->name('comparison.add');
+    Route::post('/remove', [ComparisonController::class, 'remove'])->name('comparison.remove');
+    Route::post('/clear', [ComparisonController::class, 'clear'])->name('comparison.clear');
+    Route::get('/count', [ComparisonController::class, 'count'])->name('comparison.count');
+    Route::get('/products', [ComparisonController::class, 'getProducts'])->name('comparison.products');
 });
 
 

@@ -227,7 +227,7 @@
     </div>
 </div>
 
-<style>
+	<style>
 /* Product Detail Styles */
 .main-product {
     padding: 40px 0;
@@ -235,8 +235,8 @@
 
 .product-title {
     font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 20px;
+			font-weight: 600;
+			margin-bottom: 20px;
 }
 
 .product-price .current-price {
@@ -250,24 +250,24 @@
 }
 
 .color-options, .size-options {
-    display: flex;
+			display: flex;
     gap: 10px;
     margin-top: 10px;
 }
 
 .color-option, .size-option {
     padding: 8px 15px;
-    border: 1px solid #ddd;
+			border: 1px solid #ddd;
     background: white;
     cursor: pointer;
-    border-radius: 4px;
+			border-radius: 4px;
 }
 
 .color-option:hover, .size-option:hover,
 .color-option.active, .size-option.active {
     border-color: #007bff;
     background-color: #007bff;
-    color: white;
+			color: white;
 }
 
 .quantity-controls {
@@ -275,9 +275,9 @@
 }
 
 .quantity-input {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
     margin-top: 10px;
 }
 
@@ -315,12 +315,12 @@
 
 /* Reviews */
 .reviews-summary {
-    display: flex;
-    justify-content: space-between;
+				display: flex;
+				justify-content: space-between;
     align-items: center;
     padding: 20px;
     background: #f8f9fa;
-    border-radius: 8px;
+				border-radius: 8px;
     margin-bottom: 30px;
 }
 
@@ -329,14 +329,14 @@
 }
 
 .rating-score {
-    font-size: 32px;
-    font-weight: bold;
-    color: #333;
-}
+				font-size: 32px;
+				font-weight: bold;
+				color: #333;
+			}
 
 .stars {
-    color: #ffc107;
-    font-size: 20px;
+				color: #ffc107;
+				font-size: 20px;
     margin: 10px 0;
 }
 
@@ -349,19 +349,19 @@
 }
 
 .review-item {
-    border-bottom: 1px solid #eee;
+				border-bottom: 1px solid #eee;
     padding: 20px 0;
-}
+			}
 
 .review-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 10px;
+			}
 
 .reviewer-name {
-    font-weight: bold;
+				font-weight: bold;
 }
 
 .review-rating {
@@ -377,15 +377,15 @@
     height: 100%;
     background: rgba(0,0,0,0.5);
     z-index: 9999;
-    display: flex;
-    align-items: center;
+				display: flex;
+				align-items: center;
     justify-content: center;
 }
 
 .modal-content {
     background: white;
     padding: 30px;
-    border-radius: 8px;
+				border-radius: 8px;
     width: 90%;
     max-width: 500px;
     position: relative;
@@ -400,21 +400,21 @@
 }
 
 .star-rating {
-    display: flex;
+				display: flex;
     gap: 5px;
     font-size: 24px;
     margin: 10px 0;
-}
+			}
 
 .star-rating .star {
-    cursor: pointer;
+				cursor: pointer;
     color: #ddd;
-}
+			}
 
 .star-rating .star:hover,
 .star-rating .star.active {
-    color: #ffc107;
-}
+				color: #ffc107;
+			}
 
 /* Related Products */
 .product-card {
@@ -445,8 +445,8 @@
     font-size: 18px;
     font-weight: 600;
     color: #e74c3c;
-}
-</style>
+		}
+	</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -496,12 +496,12 @@ function displayRecentlyViewedInProductPage() {
                         <h5>${product.name}</h5>
                         <p class="price">${formatPrice(product.price)}</p>
                     </a>
-                </div>
-            </div>
+					</div>
+					</div>
         `).join('');
         
         section.style.display = 'block';
-    } else {
+                } else {
         section.style.display = 'none';
     }
 }
@@ -546,8 +546,8 @@ document.querySelectorAll('.size-option').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.size-option').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-    });
-});
+			});
+		});
 
 // Review modal
 function openReviewModal() {
@@ -567,12 +567,12 @@ document.querySelectorAll('.star-rating .star').forEach(star => {
         document.querySelectorAll('.star-rating .star').forEach((s, index) => {
             s.classList.toggle('active', index < rating);
         });
-    });
-});
+		});
+	});
 </script>
 
 @include('Frontend.partials.footer')
 @include('Frontend.partials.scrip')
 
 </body>
-</html> 
+</html>

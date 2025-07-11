@@ -1,5 +1,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('js/recently-viewed.js') }}"></script>
+<script src="{{ asset('js/product-comparison.js') }}"></script>
 <script>
     $(document).ready(function() {
         $('.favorite-form').on('submit', function(e) {
