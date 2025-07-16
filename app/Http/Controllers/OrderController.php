@@ -129,14 +129,25 @@ class OrderController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
-    public function cancelOrder($id)
+    public function cancelOrder(Request $request, $id)
     {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+            'cancel_reason_other' => 'nullable|string|max:255',
+        ]);
+
         $order = Order::where('id', $id)
             ->where('user_id', Auth::id())
             ->whereIn('status', ['ordered', 'processing', 'confirmed'])
             ->firstOrFail();
 
+        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
+        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp' 
+            ? $request->cancel_reason_other 
+            : $request->cancel_reason;
+
         $order->status = 'cancelled';
+        $order->cancel_reason = $cancelReason;
         $order->save();
 
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
