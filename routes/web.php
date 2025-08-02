@@ -118,7 +118,11 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
 
+// Thêm vào routes/web.php hoặc routes/api.php
+Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
+Route::post('/cart/update-variant', [CartController::class, 'updateVariant'])->name('cart.update-variant');
 Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -276,7 +280,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
             Route::post('/', [BannerController::class, 'store'])->name('banners.store');
-             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+            Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
             Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
         });
