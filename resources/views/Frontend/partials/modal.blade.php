@@ -285,7 +285,7 @@
     </div>
 </div> -->
 
-<!-- <div class="shop-compare-modal" data-name="So sánh">
+<div class="shop-compare-modal" data-name="So sánh">
     <div class="shop-compare-modal-head">
         <div class="container">
             <label>Danh mục sản phẩm so sánh</label>
@@ -300,6 +300,11 @@
     <div class="container">
         <div class="shop-compare-modal-body">
             <p class="shop-compare-modal-null wcs-null w-100 text-center">Chưa có sản phẩm trong danh sách so sánh</p>
+            <div class="shop-compare-products-list"></div>
+            <div class="shop-compare-actions text-center mt-3" style="display: none;">
+                <a href="{{ route('comparison.index') }}" class="btn btn-primary">Xem so sánh chi tiết</a>
+                <button type="button" class="btn btn-secondary ml-2" onclick="clearComparison()">Xóa tất cả</button>
+            </div>
         </div>
     </div>
-</div> -->
+</div>

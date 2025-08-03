@@ -173,6 +173,11 @@
                     <i class="fal fa-heart"></i>
                     <span id="wishlist-count">{{ isset($favorites) ? $favorites->count() : 0 }}</span>
                 </button>
+                <!-- Nút So sánh sản phẩm -->
+                <button class="shop-tool has-count" type="button" title="So sánh sản phẩm" data-type="shop-compare-header">
+                    <i class="fas fa-balance-scale"></i>
+                    <span class="shop-compare-count">0</span>
+                </button>
                 @else
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
                     title="Tài khoản">

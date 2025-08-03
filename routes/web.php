@@ -27,8 +27,8 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ImportWarehouseController;
-
-
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\ComparisonController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -77,6 +77,7 @@ Route::get('/lien-he', function () {
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -185,6 +186,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');;
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
+
+// Routes cho so sánh sản phẩm (không cần đăng nhập)
+Route::prefix('comparison')->group(function () {
+    Route::get('/', [ComparisonController::class, 'index'])->name('comparison.index');
+    Route::post('/add', [ComparisonController::class, 'add'])->name('comparison.add');
+    Route::post('/remove', [ComparisonController::class, 'remove'])->name('comparison.remove');
+    Route::post('/clear', [ComparisonController::class, 'clear'])->name('comparison.clear');
+    Route::get('/count', [ComparisonController::class, 'count'])->name('comparison.count');
+    Route::get('/products', [ComparisonController::class, 'getProducts'])->name('comparison.products');
+});
+
 
 Route::middleware(['auth'])->group(function () {
     //group routes
@@ -360,6 +372,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/reply', [ContactController::class, 'reply'])->name('contacts.reply');
             Route::delete('/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
         });
+        // CRUD Size
+        Route::resource('sizes', SizeController::class);
     });
 });
 
