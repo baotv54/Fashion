@@ -25,6 +25,8 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ImportWarehouseController;
+
 
 use Illuminate\Support\Facades\Route;
 
@@ -160,7 +162,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
-
 Route::middleware(['auth'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
@@ -177,12 +178,40 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
             Route::get('/warehouse', [ProductController::class, 'warehouse'])->name('warehouse.index');
-            Route::get('/import_creater', [ProductController::class, 'import_creater'])->name('warehouse.import_creater');
+            // Route::get('/import_creater', [ProductController::class, 'import_creater'])->name('warehouse.import_creater');
             Route::get('/history', [ProductController::class, 'history'])->name('warehouse.history');
             Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
             Route::get('/products/info', [ProductController::class, 'info'])->name('products.info');
+            // routes/web.php hoặc api.php
+            Route::get('/api/products/search', [ProductController::class, 'ajaxSearch'])->name('products.ajaxSearch');
+            Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
         });
         // Routes quản lý sản phẩm biến thể
+        Route::get('/product/search', [ProductController::class, 'search2'])->name('product.search');
+
+
+
+        Route::prefix('warehouse')->group(function () {
+            Route::get('/index', [ImportWarehouseController::class, 'index'])->name('warehouse.list');
+            Route::get('/import_creater', [ImportWarehouseController::class, 'create'])->name('warehouse.import_creater');
+            Route::post('/store', [ImportWarehouseController::class, 'store'])->name('warehouse.store');
+            Route::get('/products', [ImportWarehouseController::class, 'product'])->name('warehouse.product');
+            Route::post('/store_warehouse', [ImportWarehouseController::class, 'store_warehouse'])->name('warehouse.store_warehouse');
+            // Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::post('/update-quantity/{id}', [ImportWarehouseController::class, 'updateQuantity'])->name('warehouse.update_quantity');
+            Route::get('/ImportWarehouseController', [ImportWarehouseController::class, 'calculateTotal'])->name('warehouse.calculate_total');
+            Route::get('/import/{id}', [ImportWarehouseController::class, 'show'])->name('warehouse.show');
+            Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
+            Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
+
+
+
+
+        });
+
+
+
         Route::prefix('products/{productId}/variants')->group(function () {
             Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
             Route::get('/create', [ProductVariantController::class, 'create'])->name('product_variants.create');

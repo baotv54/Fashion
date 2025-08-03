@@ -241,11 +241,21 @@
                         <div data-i18n="Tồn Kho">Tồn Kho</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('warehouse.import_creater') ? 'active' : '' }}">
+                <!-- <li class="menu-item {{ Request::routeIs('warehouse.import_creater') ? 'active' : '' }}">
                     <a href="{{ route('warehouse.import_creater', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhập Hàng">Nhập Hàng</div>
                     </a>
+                </li> -->
+                <li class="menu-item {{ Request::routeIs('warehouse.list') ? 'active' : '' }}">
+                    <a href="{{ route('warehouse.list', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Nhập Hàng">Nhập Hàng</div>
+                    </a>
                 </li>
+                <!-- <li class="menu-item {{ Request::routeIs('warehouse.list') ? 'active' : '' }}">
+                    <a href="{{ route('warehouse.list', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Sách Nhập Hàng">Danh Sách Nhập Hàng</div>
+                    </a>
+                </li> -->
                 <li class="menu-item {{ Request::routeIs('suppliers.index') ? 'active' : '' }}">
                     <a href="{{ route('suppliers.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhà Cung Cấp">Nhà Cung Cấp</div>

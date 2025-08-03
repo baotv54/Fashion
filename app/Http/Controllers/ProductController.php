@@ -509,17 +509,59 @@ public function info(Request $request)
     return view('admin.warehouse.index', compact('products', 'search', 'stockFilter', 'categoryId', 'categories'));
 }
 
- public function import_creater()
-    {
-        return view('admin.warehouse.import_creater', [
-            'brands' => Brand::all(),
-            'categories' => Category::all(),
-            'attributes' => Attribute::all(),
-            'attribute_values' => AttributeValue::all(),
+    // public function import_creater ()
+    // {
+    //     $product = Product::with('images')->findOrFail($id);
+    //     $variantIds = ProductVariant::where('product_id', $id)->pluck('id');
+
+    //     return view('admin.warehouse.import_creater', [
+    //         'product' => $product,
+    //         'attributeValues' => AttributeValue::all(),
+    //         'attribute' => Attribute::all(),
+    //         'variantAttributeValue' => VariantAttributeValue::all(),
+    //         'product_variants' => ProductVariant::where('product_id', $id)->get(),
+    //         'variantAttributeValue' => VariantAttributeValue::whereIn('variant_id', $variantIds)->get(),
 
 
-        ]);
-    }
+    //     ]);
+    // }
+// public function import_creater()
+// {
+//     // Lấy tất cả sản phẩm có biến thể kèm các thông tin cần thiết
+//     return view('admin.warehouse.import_creater', [
+//             'products' => Product::all(),
+//             // 'suppliers' => Supplier::all(),
+//         ]);
+// }
+
+public function search3(Request $request)
+{
+    $term = $request->get('term');
+    $products = Product::where('name', 'like', '%' . $term . '%')->limit(10)->get();
+
+    return response()->json($products->map(function ($p) {
+        return [
+            'id' => $p->id,
+            'label' => $p->name,
+            'value' => $p->name,
+        ];
+    }));
+}
+
+
+public function search2(Request $request)
+{
+    $query = $request->get('query');
+    $products = Product::where('name', 'like', "%{$query}%")
+                ->select('id', 'name', 'image as image_url')
+ // chọn các cột cần thiết
+                ->limit(10)
+                ->get();
+
+    return response()->json($products);
+}
+
+
 public function history()
     {
         return view('admin.warehouse.history', [

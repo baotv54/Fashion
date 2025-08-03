@@ -2,145 +2,200 @@
 
 @section('content')
 <div class="container-fluid p-0">
-    <h3 class="mb-4">Tạo đơn nhập hàng</h3>
-    <form action="{{ route('warehouse.import_creater') }}" method="POST">
-        @csrf
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">Tạo đơn nhập hàng</h3>
+        <a href="{{ route('warehouse.product') }}" class="btn btn-success">
+            <i class="fas fa-boxes me-2"></i> Chọn sản phẩm
+        </a>
+    </div>
 
+    <form action="{{ route('warehouse.store_warehouse') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Đã xảy ra lỗi:</strong>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <div class="row g-4">
-            <!-- Cột trái: Danh sách sản phẩm -->
+            <!-- Danh sách sản phẩm -->
             <div class="col-lg-8">
                 <div class="card shadow-sm">
-                    <div class="card-header fw-semibold">Sản phẩm</div>
+                    <div class="card-header fw-semibold">
+                        Sản phẩm đã chọn
+                    </div>
                     <div class="card-body">
-                        <div class="mb-6 d-flex justify-content-between align-items-center">
-                            <div class="mb-3">
-                                <label for="products">Chọn sản phẩm</label>
-                                <select id="products" name="products[]" multiple class="form-control" style="width: 100%"></select>
-                            </div>
-                            <div id="selected-products-list"></div>
-                        </div>
-
-                        <!-- Danh sách sản phẩm đã chọn -->
-                        <table class="table align-middle table-bordered">
-                            <thead class="table-light text-center">
+                        <table class="table align-middle table-bordered mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Sản phẩm</th>
-                                    <th>Số lượng</th>
-                                    <th>Đơn giá</th>
-                                    <th>Thành tiền</th>
+                                    <th>Số Lượng</th>
+                                    <th>Đơn Giá</th>
+                                    <th>Thành Tiền</th>
+                                    <th class="text-center">Xóa</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($items as $index => $item)
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <img src="/images/shirt.jpg" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+                                        <div class="d-flex gap-2">
+                                            <img src="{{ asset($item['product']->image) }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded border">
                                             <div>
-                                                <div><strong>Áo Đẹp</strong> - Size S</div>
-                                                <small class="text-muted">SKU: aodep-1 | Đơn vị: Kg</small>
+                                                <strong>{{ $item['product']->name }}</strong>
+                                                @if($item['is_variant'] && $item['variant'])
+                                                - {{ $item['variant']->name }}
+                                                @endif
+                                                <br>
+                                                @if($item['attributes']->count())
+                                                <small>
+                                                    @foreach($item['attributes'] as $attrVal)
+                                                    <span class="badge bg-success">
+                                                        {{ $attrVal->attributeValue->value ?? '' }}
+                                                    </span>
+                                                    @endforeach
+                                                </small>
+                                                @endif
                                             </div>
                                         </div>
+                                        <!-- Hidden inputs -->
+                                        <input type="hidden" name="product_id[]" value="{{ $item['product']->id }}">
+                                        <input type="hidden" name="variant_id[]" value="{{ $item['variant']->id ?? '' }}">
                                     </td>
-                                    <td><input type="number" class="form-control text-center" name="quantities[]" value="100"></td>
-                                    <td class="text-end text-primary">11,000đ</td>
-                                    <td class="text-end fw-semibold">1,100,000đ</td>
+                                    <td style="width: 120px;">
+                                        <input
+                                            type="number"
+                                            name="quantity[]"
+                                            value="{{ $item['quantity'] ?? 0 }}"
+                                            class="form-control form-control-sm quantity-input"
+                                            data-id="{{ $item['import_id'] }}"
+                                            data-index="{{ $index }}"
+                                            min="1"
+                                            style="width: 80px;">
+
+                                    </td>
+
+
+                                    <td class="text-end">
+                                        {{ number_format($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) }} đ
+                                    </td>
+
+                                    <td class="text-end fw-semibold">
+                                        {{ number_format(($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) * ($item['quantity'] ?? 0)) }}
+                                    </td>
+
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $item['import_id'] }}">
+                                            &times;
+                                        </button>
+                                    </td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <img src="/images/shirt.jpg" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
-                                            <div>
-                                                <div><strong>Áo Đẹp</strong> - Size X</div>
-                                                <small class="text-muted">SKU: aodep-2 | Đơn vị: Kg</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><input type="number" class="form-control text-center" name="quantities[]" value="10"></td>
-                                    <td class="text-end text-primary">11,000đ</td>
-                                    <td class="text-end fw-semibold">110,000đ</td>
+                                    <td colspan="5" class="text-center text-muted">Không có sản phẩm nào</td>
                                 </tr>
+                                @endforelse
                             </tbody>
                         </table>
-
-                        <div class="form-check mt-2">
-                            <input class="form-check-input" type="checkbox" name="auto_stock_in" id="auto_stock_in">
-                            <label class="form-check-label" for="auto_stock_in">
-                                Nhập kho khi tạo đơn
-                            </label>
-                        </div>
                     </div>
                 </div>
 
                 <!-- Thanh toán -->
                 <div class="card shadow-sm mt-4">
-                    <div class="card-header fw-semibold">Thanh toán</div>
+                    <div class="card-header fw-semibold">Thông tin thanh toán</div>
                     <div class="card-body">
                         <ul class="list-unstyled mb-3">
+
                             <li class="d-flex justify-content-between">
-                                <span>Tổng tiền (110 sản phẩm):</span>
-                                <span class="fw-bold">1,210,000đ</span>
+                                <span>Giảm giá:</span>
+                                <input type="number" name="discount" id="discount" class="form-control form-control-sm w-25 text-end" value="0" min="0">
                             </li>
                             <li class="d-flex justify-content-between">
-                                <span><a href="#">Thêm giảm giá (F6)</a></span>
-                                <span>0đ</span>
-                            </li>
-                            <li class="d-flex justify-content-between">
-                                <span><a href="#">Chi phí nhập hàng (F7)</a></span>
-                                <span>0đ</span>
+                                <span>Chi phí nhập hàng:</span>
+                                <input type="number" name="additional_cost" id="additional_cost" class="form-control form-control-sm w-25 text-end" value="0" min="0">
                             </li>
                             <hr>
                             <li class="d-flex justify-content-between fw-bold">
-                                <span>Tiền cần trả NCC:</span>
-                                <span>1,210,000đ</span>
+                                <span>Tiền cần trả NCC:<strong id="grand-total"></strong></span>
+                                <span id="total-payable-display" class="text-danger fw-bold">0 đ</span>
+                                <input type="hidden" name="total_price" id="total-payable" class="text-danger fw-bold" value="0" min="1">
                             </li>
                         </ul>
 
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="payment_status" value="paid" id="paid">
-                            <label class="form-check-label" for="paid">
-                                Đã thanh toán
-                            </label>
+                            <input class="form-check-input" type="radio" name="payment_status" value="Đã thanh toán" id="paid">
+                            <label class="form-check-label" for="paid">Đã thanh toán</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="payment_status" value="unpaid" id="unpaid" checked>
-                            <label class="form-check-label" for="unpaid">
-                                Thanh toán sau
-                            </label>
+                        <!-- Form chi tiết thanh toán -->
+                        <div id="payment-detail" class="border p-3 rounded d-none">
+                            <div class="mb-2">
+                                <label class="form-label">Hình thức thanh toán</label>
+                                <select name="payment_method" class="form-select">
+                                    <option value="">Chọn hình thức thanh toán</option>
+                                    <option value="Tiền mặt">Tiền mặt</option>
+                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Thẻ">Thẻ</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Số tiền thanh toán</label>
+                                <input type="text" name="payment_amount" id="payment_amount" class="form-control" readonly>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Ngày ghi nhận</label>
+                                <input type="date" name="payment_date" id="payment_date" class="form-control" value="{{ date('Y-m-d') }}" readonly>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Tham chiếu</label>
+                                <input type="text" name="payment_reference" class="form-control" placeholder="Nhập mã tham chiếu">
+                            </div>
                         </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_status" value="Thanh toán sau" id="unpaid" checked>
+                            <label class="form-check-label" for="unpaid">Thanh toán sau</label>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
 
-            <!-- Cột phải: Thông tin đơn -->
+            <!-- Thông tin đơn -->
             <div class="col-lg-4">
                 <!-- Nhà cung cấp -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
-                        <label class="form-label">Nhà cung cấp</label>
-                        <input type="text" class="form-control" placeholder="Tìm theo tên, SDT, mã NCC...(F4)">
-                    </div>
-                </div>
-
-                <!-- Chi nhánh -->
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <label class="form-label">Chi nhánh nhập</label>
-                        <select name="branch_id" class="form-select">
-                            <option>Cửa hàng chính</option>
+                        <select name="supplier_id" class="form-select @error('user_id') is-invalid @enderror">
+                            <option value="">-- Nhà Cung Cấp --</option>
+                            @foreach ($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}"
+                                {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                {{ $supplier->name }}
+                            </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
-
                 <!-- Thông tin bổ sung -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <label class="form-label">Nhân viên phụ trách</label>
-                        <select name="staff_id" class="form-select mb-2">
-                            <option>YTHANH ÊBAN</option>
+                        <select name="user_id" class="form-select @error('user_id') is-invalid @enderror">
+                            <option value="">-- Chọn nhân viên phụ trách --</option>
+                            @foreach ($users as $user)
+                            <option value="{{ $user->id }}"
+                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }}
+                            </option>
+                            @endforeach
                         </select>
 
                         <label class="form-label">Ngày nhập dự kiến</label>
-                        <input type="date" name="expected_date" class="form-control mb-2">
+                        <input type="date" name="import_date" class="form-control mb-2">
 
                         <label class="form-label">Mã đơn nhập</label>
                         <input type="text" name="code" class="form-control mb-2">
@@ -158,70 +213,194 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Submit -->
+        </div>
+        <!-- Nút Lưu -->
         <div class="mt-4 text-end">
-            <button class="btn btn-primary">
-                <i data-feather="save"></i> Lưu đơn nhập
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save me-2"></i> Lưu đơn nhập
             </button>
         </div>
     </form>
 </div>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#products').select2({
-            placeholder: 'Tìm theo tên, mã SKU, quét mã Barcode...',
-            ajax: {
-                url: '{{ route("products.search") }}', // tạo route này
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: data.map(item => ({
-                            id: item.id,
-                            text: `${item.name} (${item.slug})`
-                        }))
-                    };
-                },
-                cache: true
-            }
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const importId = this.dataset.id;
+                const quantity = this.value;
 
-        $('#products').on('select2:select', function(e) {
-            const data = e.params.data;
-            $.ajax({
-                url: '{{ route("products.info") }}',
-                method: 'GET',
-                data: {
-                    id: data.id
-                },
-                success: function(product) {
-                    const html = `
-                    <div class="border p-2 mb-2" data-id="${product.id}">
-                        <strong>${product.name}</strong> | SKU: ${product.slug}<br>
-                        Số lượng: <input type="number" name="quantities[${product.id}]" value="1" min="1" class="form-control mt-1" style="width: 100px; display: inline-block;">
-                        <button type="button" onclick="removeProduct(${product.id})" class="btn btn-sm btn-outline-danger">X</button>
-                    </div>
-                `;
-                    $('#selected-products-list').append(html);
-                }
+                fetch(`/admin/warehouse/update-quantity/${importId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            quantity: quantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Cập nhật thành công");
+                        } else {
+                            alert("Cập nhật thất bại!");
+                        }
+                    })
+                    .catch(() => alert("Lỗi máy chủ hoặc mạng!"));
             });
         });
     });
 
-    function removeProduct(id) {
-        $(`[data-id="${id}"]`).remove();
-        const selected = $('#products').val().filter(i => i != id);
-        $('#products').val(selected).trigger('change');
+    function formatCurrency(number) {
+        return new Intl.NumberFormat('vi-VN').format(number) + ' đ';
     }
+
+    function updateTotals() {
+        let total = 0;
+
+        document.querySelectorAll('tr').forEach(row => {
+            const priceCell = row.querySelector('td:nth-child(3)');
+            const quantityInput = row.querySelector('.quantity-input');
+            const totalCell = row.querySelector('td:nth-child(4)');
+
+            if (priceCell && quantityInput && totalCell) {
+                const priceText = priceCell.textContent.replace(/[^\d]/g, '');
+                const quantity = parseInt(quantityInput.value) || 0;
+                const price = parseInt(priceText) || 0;
+                const lineTotal = price * quantity;
+
+                total += lineTotal;
+                totalCell.textContent = formatCurrency(lineTotal);
+            }
+        });
+
+        const discount = parseInt(document.getElementById('discount')?.value) || 0;
+        const cost = parseInt(document.getElementById('additional_cost')?.value) || 0;
+        const grandTotal = total + cost - discount;
+
+        const display = document.getElementById('total-payable-display');
+        const input = document.getElementById('total-payable');
+
+        const finalAmount = grandTotal > 0 ? grandTotal : 0;
+
+        if (display) display.textContent = formatCurrency(finalAmount);
+        if (input) input.value = finalAmount;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gọi hàm lần đầu để hiển thị tổng
+        updateTotals();
+
+        // Cập nhật khi thay đổi số lượng
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('input', updateTotals);
+        });
+
+        // Cập nhật khi thay đổi chi phí/giảm giá
+        document.getElementById('discount').addEventListener('input', updateTotals);
+        document.getElementById('additional_cost').addEventListener('input', updateTotals);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const importId = this.dataset.id;
+                const row = this.closest('tr');
+
+                fetch(`/admin/warehouse/${importId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Xóa dòng khỏi bảng nếu thành công
+                            if (row) {
+                                row.remove();
+                            }
+                        } else {
+                            console.error("Xóa thất bại: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Lỗi khi xóa:", error);
+                    });
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const paidRadio = document.getElementById('paid');
+        const unpaidRadio = document.getElementById('unpaid');
+        const paymentDetail = document.getElementById('payment-detail');
+
+        function togglePaymentForm() {
+            if (paidRadio.checked) {
+                paymentDetail.classList.remove('d-none');
+            } else {
+                paymentDetail.classList.add('d-none');
+            }
+        }
+
+        paidRadio.addEventListener('change', togglePaymentForm);
+        unpaidRadio.addEventListener('change', togglePaymentForm);
+
+        // Gọi ngay để set đúng trạng thái ban đầu
+        togglePaymentForm();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const paidRadio = document.getElementById('paid');
+        const unpaidRadio = document.getElementById('unpaid');
+        const paymentAmountInput = document.getElementById('payment_amount');
+        const totalInput = document.getElementById('total-payable');
+        const paymentDateInput = document.getElementById('payment_date');
+
+        function handlePaymentAmountAndDate() {
+            const total = totalInput ? parseFloat(totalInput.value) : 0;
+
+            if (paidRadio.checked) {
+                // Cập nhật số tiền thanh toán bằng tổng tiền
+                if (paymentAmountInput) {
+                    paymentAmountInput.value = total;
+                }
+
+                // Khóa ngày thanh toán là hôm nay
+                if (paymentDateInput) {
+                    const today = new Date().toISOString().split('T')[0];
+                    paymentDateInput.value = today;
+                    paymentDateInput.readOnly = true;
+                }
+            } else {
+                if (paymentAmountInput) {
+                    paymentAmountInput.value = '';
+                }
+
+                if (paymentDateInput) {
+                    paymentDateInput.readOnly = false;
+                }
+            }
+        }
+
+        paidRadio.addEventListener('change', handlePaymentAmountAndDate);
+        unpaidRadio.addEventListener('change', handlePaymentAmountAndDate);
+
+        // Cập nhật khi người dùng thay đổi giảm giá hoặc chi phí
+        ['discount', 'additional_cost'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', handlePaymentAmountAndDate);
+            }
+        });
+
+        // Gọi lúc đầu để thiết lập đúng nếu form reload
+        handlePaymentAmountAndDate();
+    });
 </script>
 
 @endsection
