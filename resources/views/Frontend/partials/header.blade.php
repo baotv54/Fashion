@@ -20,11 +20,7 @@
                             </button>
                         </li>
                         <li class="{{ Request::is('/') ? 'active' : '' }}">
-<<<<<<< HEAD
                             <a href="/" title="Trang chủ" aria-label="Trang chính">Trang chủ</a>
-=======
-                            <a href="/" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
->>>>>>> origin/sangchatbotai
                         </li>
                         <li class="hasChild {{ Request::is('products') || Request::is('product/*') ? 'active' : '' }}">
                             <a href="/products" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
@@ -159,7 +155,6 @@
                 </div>
             </div>
             <div class="headers2-right">
-<<<<<<< HEAD
                 <form class="tool-search" action="{{ route('products.all') }}" method="GET">
                     <input type="hidden" name="type" value="product">
                     <input required name="search" id="product-search" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm..." value="{{ request('search') }}">
@@ -167,14 +162,6 @@
                     <button class="tool-search-overplay" title="Đóng"></button>
                     <!-- <div class="tool-search-smart"></div> -->
                     <ul id="search-suggestions" class="list-group position-absolute"></ul>
-=======
-                <form class="tool-search" action="https://f1genz-shoes.mysapo.net/search">
-                    <input type="hidden" name="type" value="product">
-                    <input required name="q" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="submit" title="Tìm kiếm"><i class="fal fa-search"></i></button>
-                    <button class="tool-search-overplay" title="Đóng"></button>
-                    <div class="tool-search-smart"></div>
->>>>>>> origin/sangchatbotai
                 </form>
                 @auth
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
@@ -204,7 +191,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
 </header>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- <a href="/product/${item.id}">${item.name}</a> -->
@@ -310,6 +296,3 @@
         font-style: italic;
     }
 </style>
-=======
-</header>
->>>>>>> origin/sangchatbotai

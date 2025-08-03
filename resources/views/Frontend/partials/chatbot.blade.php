@@ -9,19 +9,19 @@
         /* Google Fonts - Inter */
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Inter", sans-serif;
-}
+} */
 
- body {
+ /* body {
     width: 100%;
     min-height: 100vh;
     background: url('nick.mp4') no-repeat center center fixed;
     background-size: cover;
-} 
+} */
 
 #chatbot-toggler {
     position: fixed;
@@ -638,7 +638,7 @@ const closeChatbot = document.querySelector("#close-chatbot");
 
 
 // Api setup
-const API_KEY = "AIzaSyAKa06ydnfEI6uI-rfBOUslzKpjk91a65Y"; 
+const API_KEY = "AIzaSyAKa06ydnfEI6uI-rfBOUslzKpjk91a65Y";
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 const userData = {
@@ -694,7 +694,7 @@ const generateBotResponse = async (incomingMessageDiv) => {
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const formData = new FormData();
-            
+
             // Chuyển base64 thành file
             const byteCharacters = atob(userData.file.data);
             const byteNumbers = new Array(byteCharacters.length);
@@ -720,7 +720,7 @@ const generateBotResponse = async (incomingMessageDiv) => {
             }
 
             const data = await response.json();
-            
+
             if (data.success) {
                 let products = [];
                 if (data.products && Array.isArray(data.products)) {
@@ -734,7 +734,7 @@ const generateBotResponse = async (incomingMessageDiv) => {
                 let replyHTML = `<div class="ai-description"><strong>AI phân tích:</strong> ${typeof description === 'object' ? description.description || JSON.stringify(description) : description}</div>`;
                 replyHTML += `<div class="bot-reply">${data.message}</div>`;
                 replyHTML += renderProducts(products);
-                
+
                 messageElement.innerHTML = replyHTML;
             } else {
                 messageElement.innerText = data.message || "Không thể xử lý hình ảnh. Vui lòng thử lại.";
@@ -745,11 +745,11 @@ const generateBotResponse = async (incomingMessageDiv) => {
             messageElement.innerText = error.message;
             messageElement.style.color = "#ff0000";
         }
-        
+
         // Reset file data
         userData.file = {};
         fileUploadWrapper.classList.remove("file-uploaded");
-        
+
     } else {
         // Xử lý text message như cũ
         const productKeywords = ['sản phẩm', 'giày', 'nike', 'adidas', 'puma', 'vans', 'converse', 'giá', 'danh mục', 'thương hiệu', 'cỡ', 'size', 'màu', 'mua', 'tìm'];
@@ -792,7 +792,7 @@ const generateBotResponse = async (incomingMessageDiv) => {
                 role: "user",
                 parts: [{ text: userData.message }],
             });
-            
+
             const requestOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -876,8 +876,8 @@ fileInput.addEventListener("change", (e) => {
             data: base64String,
             mime_type: file.type
         };
-        
-        fileInput.value = ""; 
+
+        fileInput.value = "";
     };
 
     reader.readAsDataURL(file);
@@ -892,7 +892,7 @@ document.addEventListener('click', async (e) => {
     if (e.target.closest('.add-to-cart-btn')) {
         const button = e.target.closest('.add-to-cart-btn');
         const productId = button.getAttribute('data-product-id');
-        
+
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const response = await fetch('/chat/add-to-cart', {
@@ -902,14 +902,14 @@ document.addEventListener('click', async (e) => {
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     product_id: productId,
                     quantity: 1
                 }),
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 // Hiển thị thông báo thành công
                 Swal.fire({
@@ -919,7 +919,7 @@ document.addEventListener('click', async (e) => {
                     timer: 2000,
                     showConfirmButton: false
                 });
-                
+
                 // Thay đổi icon nút
                 button.innerHTML = '<span class="material-symbols-rounded">check</span>';
                 button.style.background = '#28a745';
@@ -1005,7 +1005,7 @@ chatBody.addEventListener('click', async (e) => {
     if (button && !button.classList.contains('success')) {
         const productId = button.dataset.productId;
         const originalHTML = button.innerHTML; // Lưu lại icon '+' ban đầu
-        
+
         button.innerHTML = '...'; // Trạng thái đang xử lý
         button.disabled = true;
 
@@ -1026,13 +1026,13 @@ chatBody.addEventListener('click', async (e) => {
             if (!response.ok) {
                 throw new Error(data.message || 'Có lỗi xảy ra khi thêm sản phẩm.');
             }
-            
+
             const botAvatar = `<svg class="bot-avatar" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 1024 1024"><path d="M738.3 287.6H285.7c-59 0-106.8 47.8-106.8 106.8v303.1c0 59 47.8 106.8 106.8 106.8h81.5v111.1c0 .7.8 1.1 1.4.7l166.9-110.6 41.8-.8h117.4l43.6-.4c59 0 106.8-47.8 106.8-106.8V394.5c0-59-47.8-106.9-106.8-106.9zM351.7 448.2c0-29.5 23.9-53.5 53.5-53.5s53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5-53.5-23.9-53.5-53.5zm157.9 267.1c-67.8 0-123.8-47.5-132.3-109h264.6c-8.6 61.5-64.5 109-132.3 109zm110-213.7c-29.5 0-53.5-23.9-53.5-53.5s23.9-53.5 53.5-53.5 53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5zM867.2 644.5V453.1h26.5c19.4 0 35.1 15.7 35.1 35.1v121.1c0 19.4-15.7 35.1-35.1 35.1h-26.5zM95.2 609.4V488.2c0-19.4 15.7-35.1 35.1-35.1h26.5v191.3h-26.5c-19.4 0-35.1-15.7-35.1-35.1zM561.5 149.6c0 23.4-15.6 43.3-36.9 49.7v44.9h-30v-44.9c-21.4-6.5-36.9-26.3-36.9-49.7 0-28.6 23.3-51.9 51.9-51.9s51.9 23.3 51.9 51.9z"/></svg>`;
             const successMessageContent = `${botAvatar}<div class="message-text">${data.message}</div>`;
             const successMessageDiv = createMessageElement(successMessageContent, "bot-message");
             chatBody.appendChild(successMessageDiv);
             chatBody.scrollTo({ behavior: "smooth", top: chatBody.scrollHeight });
-            
+
             // Chuyển nút sang trạng thái thành công (icon check)
             button.innerHTML = '<span class="material-symbols-rounded">check</span>';
             button.classList.add('success');
