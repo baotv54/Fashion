@@ -39,7 +39,7 @@ h1,
 
 a,
 .icon-print {
-    color: #2a9dcc;
+    /* color: #2a9dcc; */
     text-decoration: none;
     cursor: pointer
 }

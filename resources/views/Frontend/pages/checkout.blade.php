@@ -61,9 +61,9 @@
                     <header class="main__header">
                         <div class="logo logo--left">
 
-                            <h1 class="shop__name">
+                            <!-- <h1 class="shop__name">
                                 <a href="/">F1GENZ Shoes</a>
-                            </h1>
+                            </h1> -->
 
                         </div>
                     </header>
