@@ -111,7 +111,6 @@
                         <tbody>
                             @foreach ($orders as $order)
                             <tr>
-<<<<<<< HEAD
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-icon btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderModal{{ $order->id }}" title="Chi tiết đơn hàng">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-eye">
@@ -283,47 +282,12 @@
                                     <div class="d-flex align-items-center text-nowrap">
                                         <span class="ms-1">{{ ucfirst($order->payment_method) }}</span>
                                     </div>
-=======
-                                <td class="text-center"><strong>{{ $order->order_code }}</strong></td>
-                                <td>{{ $order->user->name ?? 'Khách vãng lai' }}</td>
-                                <td>{{ $order->email }}</td>
-                                <td>{{ $order->phone }}</td>
-                                <td class="small">
-                                    {{ $order->address }}, {{ $order->ward }},
-                                    {{ $order->district }}, {{ $order->province }}
-                                </td>
-                                <td class="text-nowrap text-center">{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="text-end">{{ number_format($order->total, 0, ',', '.') }}₫</td>
-                                <td class="text-center">
-                                    @php
-                                    $statusMap = [
-                                    'ordered' => ['label' => 'Đặt hàng', 'class' => 'primary'],
-                                    'processing' => ['label' => 'Đang xử lý', 'class' => 'info'],
-                                    'confirmed' => ['label' => 'Đã xác nhận', 'class' => 'success'],
-                                    'shipping' => ['label' => 'Đang giao hàng', 'class' => 'warning'],
-                                    'delivered' => ['label' => 'Đã giao', 'class' => 'success'],
-                                    'cancelled' => ['label' => 'Đã hủy', 'class' => 'danger'],
-                                    'returned' => ['label' => 'Trả hàng', 'class' => 'dark'],
-                                    ];
-                                    $status = $statusMap[$order->status] ?? ['label' => 'Không xác định', 'class' => 'light'];
-                                    $textColor = in_array($status['class'], ['warning', 'light']) ? 'text-dark' : '';
-                                    @endphp
-                                    <span class="badge bg-{{ $status['class'] }} {{ $textColor }}">
-                                        {{ $status['label'] }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <a href="{{ route('orders.details', $order->id) }}" class="btn btn-sm btn-outline-primary">
-                                        <i data-feather="eye"></i> Xem
-                                    </a>
->>>>>>> origin/sangchatbotai
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-<<<<<<< HEAD
             </div>
 
             {{-- Footer: Pagination --}}
@@ -394,24 +358,3 @@
     </div>
 </div>
 @endsection
-=======
-
-                <!-- Pagination (nếu có) -->
-                @if(method_exists($orders, 'links'))
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $orders->links('pagination::bootstrap-4') }}
-                </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    @push('scripts')
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            feather.replace();
-        });
-    </script>
-    @endpush
-    @endsection
->>>>>>> origin/sangchatbotai

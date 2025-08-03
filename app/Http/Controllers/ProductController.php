@@ -8,17 +8,17 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Coupon;
 use App\Models\Attribute;
-use App\Models\AttributeValue;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
 use App\Models\Favorite;
 use App\Models\Banner;
-use App\Models\VariantAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
+use App\Models\AttributeValue;
+use App\Models\VariantAttributeValue;
 
 class ProductController extends Controller
 {
@@ -56,11 +56,6 @@ class ProductController extends Controller
     public function allProducts(Request $request)
     {
         $query = Product::with(['images', 'variants.attributeValues']);
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where('name', 'like', '%' . $search . '%');
-        }
 
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
@@ -105,19 +100,16 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        // Xử lý yêu cầu tìm kiếm thông minh (smart search)
-        if ($request->get('view') == 'smart') {
-            return view('Frontend.partials.product_search_smart_results', compact('products'));
-        }
-
         return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
     }
 
     public function show($id)
     {
         $product = Product::with([
+            'category',
+            'brand',
             'images',
-            'variants.attributeValues',
+            'variants.attributeValues.attribute',
             'reviews' => function ($query) {
                 $query->where('is_approved', true)->latest();
             },
@@ -126,64 +118,76 @@ class ProductController extends Controller
 
         $images = $product->images;
 
-        // Lấy thuộc tính "Màu"
-        $colorAttr = Attribute::where('name', 'Màu')->first();
-        $colors = $colorAttr
-            ? $product->variants
+        // Nhóm attributes theo tên thuộc tính
+        $attributes = $product->variants
             ->flatMap(function ($variant) {
                 return $variant->attributeValues;
             })
-            ->where('attribute_id', $colorAttr->id)
-            ->unique('id')
-            : collect();
+            ->groupBy(fn($attrVal) => $attrVal->attribute->name);
 
-        // Lấy thuộc tính "Kích Thước"
-        $sizeAttr = Attribute::where('name', 'Kích Thước')->first();
-        $sizes = $sizeAttr
-            ? $product->variants
-            ->flatMap(function ($variant) {
-                return $variant->attributeValues;
-            })
-            ->where('attribute_id', $sizeAttr->id)
-            ->unique('id')
-            : collect();
-
-        // Sản phẩm liên quan (trừ sản phẩm hiện tại)
-        $relatedProducts = Product::where('category_id', $product->category_id)
+        $relatedProducts = Product::with('images')
+            ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->latest()
             ->take(8)
             ->get();
 
-        // Kiểm tra người dùng đã mua chưa
         $hasPurchased = Auth::check() && OrderDetail::where('product_id', $id)
             ->whereHas('order', function ($q) {
                 $q->where('user_id', Auth::id());
             })->exists();
 
+        $totalSold = OrderDetail::where('product_id', $product->id)
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered');
+            })->sum('quantity');
+
+        $avgRating = $product->reviews->avg('rating');
+        $totalReviews = $product->reviews->count();
+
+        // Tạo mapping variants để JavaScript sử dụng
+        $variantMapping = [];
+        foreach ($product->variants as $variant) {
+            $attributeIds = $variant->attributeValues->pluck('id')->sort()->toArray();
+            $key = implode('-', $attributeIds);
+
+            $variantMapping[$key] = [
+                'id' => $variant->id,
+                'price' => $variant->price ?? $product->price,
+                'stock' => $variant->stock,
+                'image' => $variant->image,
+                'sku' => $variant->sku,
+            ];
+        }
+
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
-            'colors',
-            'sizes',
+            'attributes',
             'relatedProducts',
-            'hasPurchased'
+            'hasPurchased',
+            'avgRating',
+            'totalReviews',
+            'totalSold',
+            'variantMapping'
         ))->with('carts', Cart::content());
     }
 
-    public function getVariant(Request $request)
+    public function getVariantInfo($id)
     {
-        $variant = ProductVariant::where('product_id', $request->product_id)
-            ->whereHas('attributeValues', fn($q) => $q->where('attribute_value_id', $request->color_id))
-            ->whereHas('attributeValues', fn($q) => $q->where('attribute_value_id', $request->size_id))
-            ->with('attributeValues', 'product')
-            ->first();
+        $variant = ProductVariant::with(['product', 'attributeValues.attribute'])->findOrFail($id);
 
-        return $variant
-            ? response()->json(['success' => true, 'variant' => ['id' => $variant->id, 'price' => number_format($variant->price) . '₫', 'stock' => $variant->stock, 'image' => asset($variant->image ?? $variant->product->image)]])
-            : response()->json(['success' => false]);
+        return response()->json([
+            'id' => $variant->id,
+            'price' => $variant->price ?? $variant->product->price,
+            'stock' => $variant->stock,
+            'image' => $variant->image ? asset($variant->image) : null,
+            'sku' => $variant->sku,
+            'attributes' => $variant->attributeValues->map(function ($attrVal) {
+                return $attrVal->attribute->name . ': ' . $attrVal->value;
+            })->join(', '),
+        ]);
     }
-
     public function create()
     {
         return view('admin.products.create', [
@@ -195,39 +199,6 @@ class ProductController extends Controller
 
         ]);
     }
-
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|max:255',
-    //         'slug' => 'required|unique:products,slug',
-    //         'price' => 'required|numeric|min:0',
-    //         'brand_id' => 'required|exists:brands,id',
-    //         'category_id' => 'required|exists:categories,id',
-    //         'status' => 'required|boolean',
-    //         'description' => 'nullable',
-    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-    //         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
-    //     ]);
-
-    //     $product = Product::create($request->except(['image', 'images']));
-
-    //     if ($request->hasFile('image')) {
-    //         $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-    //         $request->file('image')->move(public_path('uploads/products'), $filename);
-    //         $product->update(['image' => 'uploads/products/' . $filename]);
-    //     }
-
-    //     if ($request->hasFile('images')) {
-    //         foreach ($request->file('images') as $img) {
-    //             $fileName = time() . '_' . $img->getClientOriginalName();
-    //             $img->move(public_path('uploads/products'), $fileName);
-    //             $product->images()->create(['image_path' => 'uploads/products/' . $fileName]);
-    //         }
-    //     }
-
-    //     return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
-    // }
     public function store(Request $request)
     {
         $request->validate([
@@ -305,7 +276,6 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
     }
-
     public function edit($id)
     {
         $product = Product::with('images')->findOrFail($id);
@@ -586,4 +556,33 @@ public function history()
         ]);
     }
 
+    public function quickview($id)
+    {
+        $product = Product::with([
+            'category',
+            'brand',
+            'images',
+            'variants.attributeValues.attribute'
+        ])->findOrFail($id);
+
+        // Lấy các thuộc tính màu sắc và kích thước
+        $colors = collect();
+        $sizes = collect();
+
+        if ($product->variants->isNotEmpty()) {
+            $attributes = $product->variants
+                ->flatMap(function ($variant) {
+                    return $variant->attributeValues;
+                })
+                ->groupBy(fn($attrVal) => $attrVal->attribute->name);
+
+            $colors = $attributes->get('Màu', collect());
+            $sizes = $attributes->get('Kích Thước', collect());
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => view('Frontend.partials.quickview-modal', compact('product', 'colors', 'sizes'))->render()
+        ]);
+    }
 }

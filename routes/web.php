@@ -147,7 +147,11 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
 
+// Thêm vào routes/web.php hoặc routes/api.php
+Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
+Route::post('/cart/update-variant', [CartController::class, 'updateVariant'])->name('cart.update-variant');
 Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

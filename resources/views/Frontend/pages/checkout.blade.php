@@ -385,12 +385,15 @@
                                                         {{$cart->name}}
                                                     </span>
 
-                                                    <!-- <span class="product__description__property">
-                                                        35
-                                                    </span> -->
-
-
-
+                                                    @if(isset($cart->variant) && $cart->variant)
+                                                    <div class="product__description__variants">
+                                                        @foreach($cart->variant->attributeValues as $attributeValue)
+                                                        <span class="product__description__property">
+                                                            {{$attributeValue->attribute->name}}: {{$attributeValue->value}}
+                                                        </span>
+                                                        @endforeach
+                                                    </div>
+                                                    @endif
                                                 </th>
                                                 <td class="product__quantity visually-hidden"><em>Số lượng:</em> 1</td>
                                                 <td class="product__price">
