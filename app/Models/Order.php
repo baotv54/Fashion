@@ -25,7 +25,7 @@ class Order extends Model
         'total',
         'payment_method',
         'status',
-        'partner_code', 
+        'partner_code',
         'shipping_fee',
 
     ];
@@ -39,4 +39,8 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id');
+    }
 }

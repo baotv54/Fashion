@@ -1026,6 +1026,7 @@
     </main>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
+    @include('Frontend.partials.chatbot')
 </body>
 @include('Frontend.partials.scrip')
 

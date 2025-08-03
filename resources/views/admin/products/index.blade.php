@@ -399,4 +399,12 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        feather.replace();
+    });
+</script>
+@endpush
 @endsection

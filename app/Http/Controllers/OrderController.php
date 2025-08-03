@@ -16,8 +16,8 @@ class OrderController extends Controller
     {
         $orders = Order::with('user')
             ->orderBy('created_at', 'desc')
-            ->paginate(10); 
-    
+            ->paginate(10);
+
         return view('admin.orders.index', compact('orders'));
     }
     public function updateStatus(Request $request, $id)

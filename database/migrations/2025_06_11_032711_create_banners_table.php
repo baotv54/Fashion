@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('subtitle')->nullable();
             $table->string('image'); // Đường dẫn ảnh
             $table->string('link')->nullable(); // URL khi click
+            $table->enum('target', ['_self', '_blank'])->default('_self');
             $table->timestamps();
         });
     }

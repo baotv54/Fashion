@@ -17,6 +17,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\ChatBotDemoController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostCategoryController;
@@ -68,6 +69,12 @@ Route::get('/faq', function () {
     return view('Frontend.pages.pages.faq');
 });
 
+Route::get('/lien-he', function () {
+    return view('Frontend.pages.pages.lien-he');
+});
+
+
+
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
 
@@ -106,10 +113,27 @@ Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpay_return']
 Route::get('/checkout/momo-return', [CheckoutController::class, 'momo_return'])->name('checkout.momo-return');
 Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name('checkout.momo-ipn');
 
-
-Route::post('/chat', [ChatBotController::class, 'sendMessage']);
-Route::get('/chat/history', [ChatBotController::class, 'getHistory']);
+Route::post('/chat/image-search-vector', [ChatBotController::class, 'imageSearchByVector'])->name('chat.imageSearchByVector');
+// Route::post('/chatbot', [ChatBotController::class, 'sendMessage']);
+Route::post('/chatbot', [ChatBotController::class, 'handle']);
+Route::post('/chat', [ChatBotController::class, 'sendMessage'])->name('chat.send');
+Route::get('/chat/history', [ChatBotController::class, 'getHistory'])->name('chat.history');
 Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
+Route::post('/chat/image-search', [ChatBotController::class, 'imageSearch'])->name('chat.imageSearch');
+
+// Chatbot Demo routes
+Route::prefix('chatbot-demo')->group(function () {
+    Route::get('/trends', [ChatBotDemoController::class, 'demoTrends'])->name('chatbot.demo.trends');
+    Route::get('/personalized', [ChatBotDemoController::class, 'demoPersonalizedRecommendations'])->name('chatbot.demo.personalized');
+    Route::get('/style-analysis', [ChatBotDemoController::class, 'demoStyleAnalysis'])->name('chatbot.demo.style');
+    Route::get('/outfit-suggestions', [ChatBotDemoController::class, 'demoOutfitSuggestions'])->name('chatbot.demo.outfit');
+    Route::get('/budget-analysis', [ChatBotDemoController::class, 'demoBudgetAnalysis'])->name('chatbot.demo.budget');
+    Route::get('/seasonal', [ChatBotDemoController::class, 'demoSeasonalRecommendations'])->name('chatbot.demo.seasonal');
+    Route::post('/smart-search', [ChatBotDemoController::class, 'demoSmartSearch'])->name('chatbot.demo.search');
+    Route::post('/compare', [ChatBotDemoController::class, 'demoProductComparison'])->name('chatbot.demo.compare');
+    Route::get('/size-guide', [ChatBotDemoController::class, 'demoSizeGuide'])->name('chatbot.demo.size');
+    Route::get('/all-features', [ChatBotDemoController::class, 'demoAllFeatures'])->name('chatbot.demo.all');
+});
 
 Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('product.getVariant');
 

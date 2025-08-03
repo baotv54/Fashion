@@ -127,14 +127,12 @@ class ProductVariantController extends Controller
     public function update(Request $request, $productId, $variantId)
     {
         $variant = ProductVariant::findOrFail($variantId);
-
         $request->validate([
             'price' => 'required|numeric',
             'stock' => 'required|numeric|min:0',
             'image' => 'nullable|image',
             'attribute_values' => 'required|array|min:1'
         ]);
-
         if ($request->hasFile('image')) {
             if ($variant->image) {
                 // Xóa ảnh cũ khỏi thư mục public/variants/
@@ -143,14 +141,12 @@ class ProductVariantController extends Controller
                     unlink($oldImagePath);
                 }
             }
-
             // Lưu ảnh mới vào thư mục public/variants/
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
             $imagePath = 'variants/' . $imageName;
             $request->file('image')->move(public_path('variants'), $imageName);
             $variant->image = $imagePath;
         }
-
         $variant->update([
             'price' => $request->price,
             'stock' => $request->stock,

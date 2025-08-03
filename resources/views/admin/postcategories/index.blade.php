@@ -46,7 +46,7 @@
                                     <input class="form-check-input" type="checkbox" aria-label="Chọn danh mục {{ $category->name }}">
                                 </td>
                                 <td>
-                                    <strong>{{ $category->name }}</strong>                                  
+                                    <strong>{{ $category->name }}</strong>
                                 </td>
                                 <td>
                                     <span class="badge {{ $category->status ? 'bg-label-success' : 'bg-label-secondary' }}">
