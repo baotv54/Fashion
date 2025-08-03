@@ -2,6 +2,7 @@
 <html class="no-js" lang="vi">
 
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <head>
 	@include('Frontend.partials.head')
