@@ -65,30 +65,57 @@
 <div class="card">
     <div class="card-header border-bottom">
         <h5 class="card-title">Bộ lọc</h5>
-        <div class="d-flex justify-content-between align-items-center row pt-4 gap-6 gap-md-0 g-md-6">
-            <div class="col-md-4 product_status"><select id="ProductStatus" class="form-select text-capitalize">
-                    <option value="">Trạng thái</option>
-                    <option value="Scheduled">Đã lên lịch</option>
-                    <option value="Publish">Công khai</option>
-                    <option value="Inactive">Không hiển thị</option>
-                </select></div>
-            <div class="col-md-4 product_category"><select id="ProductCategory" class="form-select text-capitalize">
-                    <option value="">Danh mục</option>
-                    <option value="Household">Gia dụng</option>
-                    ...
-                </select></div>
-            <div class="col-md-4 product_stock"><select id="ProductStock" class="form-select text-capitalize">
-                    <option value="">Tồn kho</option>
-                    <option value="Out_of_Stock">Hết hàng</option>
-                    <option value="In_Stock">Còn hàng</option>
-                </select></div>
-        </div>
+        <form method="GET" action="{{ route('products.index') }}" id="filter-form">
+            <div class="d-flex justify-content-between align-items-center row pt-4 gap-6 gap-md-0 g-md-6">
+
+                {{-- Ngày tạo --}}
+                <div class="col-md-4 product_status">
+                    <input type="date" name="created_date"
+                        value="{{ old('created_date', $createdDate) }}"
+                        class="form-control"
+                        onchange="document.getElementById('filter-form').submit()">
+                </div>
+
+                {{-- Danh mục --}}
+                <div class="col-md-4 product_category">
+                    <select name="category" class="form-select text-capitalize"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">Danh Mục</option>
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ $cat->id == $categoryId ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Tình trạng tồn kho --}}
+                <div class="col-md-4 product_stock">
+                    <select name="stock_status" class="form-select text-capitalize"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">Tồn Kho</option>
+                        <option value="out_of_stock" {{ $stockStatus == 'out_of_stock' ? 'selected' : '' }}>Hết hàng</option>
+                        <option value="low_stock" {{ $stockStatus == 'low_stock' ? 'selected' : '' }}>Sắp hết</option>
+                        <option value="in_stock" {{ $stockStatus == 'in_stock' ? 'selected' : '' }}>Còn hàng</option>
+                    </select>
+                </div>
+
+            </div>
+        </form>
     </div>
+
+
     <div class="card-datatable">
         <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
-                    <div class="dt-search mb-0 mb-md-6"><input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Search Product" aria-controls="DataTables_Table_0"><label for="dt-search-0"></label></div>
+                    <div class="dt-search mb-0 mb-md-6">
+                        <form method="GET" action="{{ route('products.index') }}">
+                            <input type="text" name="search" value="{{ old('search', $search) }}"
+                                class="form-control ms-0" id="dt-search-0" aria-controls="DataTables_Table_0" placeholder="Nhập tên sản phẩm ...">
+                            <label for="dt-search-0"></label>
+                        </form>
+                    </div>
                 </div>
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-4">

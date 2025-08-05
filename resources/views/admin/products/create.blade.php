@@ -106,25 +106,28 @@
                     </div>
                 </div>
 
-                <div id="variants-container" class="card" style="display:none;">
+                <div id="variants-container" class="card shadow-sm mt-3" style="display: none;">
                     <div class="card-body">
-                        <h5 class="card-title"><span id="variant-count">0</span> phiên bản</h5>
+                        <h5 class="card-title">
+                            <i class="fas fa-boxes me-1 text-primary"></i>
+                            <span id="variant-count">0</span> phiên bản được tạo
+                        </h5>
+
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle">
-                                <thead>
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Phiên bản</th>
-                                        <th>Giá</th>
-                                        <th>Số lượng</th>
-                                        <th>Ảnh</th>
-                                        <th>Xoá</th>
+                                        <th colspan="7" class="text-center">Danh sách biến thể sản phẩm</th>
                                     </tr>
                                 </thead>
-                                <tbody id="variant-list"></tbody>
+                                <tbody id="variant-list">
+                                    <!-- JS sẽ sinh ra các hàng tại đây -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Cột phải -->
@@ -332,12 +335,54 @@
             const valueIds = combo.map(v => v.id).join('-');
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td><input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">${name}</td>
-            <td><input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá" required></td>
-            <td><input type="number" name="variants[${index}][stock]" class="form-control" placeholder="Số lượng" required></td>
-            <td><input type="file" name="variants[${index}][image]" class="form-control"></td>
-            <td><button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="this.closest('tr').remove(); updateVariantCount()">X</button></td>
-        `;
+    <td colspan="7" class=" rounded-2 p-3">
+        <!-- Tên biến thể -->
+        <div class="row align-items-center mb-3">
+            <div class="col-md-8">
+                <div class="fw-bold fs-6">Phiên Bản : ${name}</div>
+                <input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">
+            </div>
+        </div>
+
+        <!-- Ảnh -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold text-dark">Ảnh sản phẩm:</label>
+                <input type="file" name="variants[${index}][image]" class="form-control form-control-sm border-secondary" />
+            </div>
+        </div>
+
+        <!-- Các input giá -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Giá Bán</label>
+                <input type="number" name="variants[${index}][price]" class="form-control form-control-sm" placeholder="Giá Bán" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Giá Nhập</label>
+                <input type="number" name="variants[${index}][import_price]" class="form-control form-control-sm" placeholder="Giá Nhập" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
+                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Tồn kho</label>
+                <input type="number" name="variants[${index}][stock]" class="form-control form-control-sm" placeholder="Tồn kho" required>
+            </div>
+        </div>
+
+        <!-- Nút xoá -->
+        <div class="row">
+            <div class="col-md-12 text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateVariantCount()">
+                    <i class="fas fa-trash-alt"></i> Xoá biến thể
+                </button>
+            </div>
+        </div>
+    </td>
+`;
+
             tbody.appendChild(row);
         });
 

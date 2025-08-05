@@ -9,20 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('image_vectors', function (Blueprint $table) {
-            $table->string('image_type')->nullable()->after('image_path');
-        });
-    }
+    public function up()
+{
+    Schema::table('product_variants', function (Blueprint $table) {
+        $table->integer('quantity')->default(0);
+    });
+}
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('image_vectors', function (Blueprint $table) {
-            $table->dropColumn('image_type');
+        Schema::table('product_variants', function (Blueprint $table) {
+            //
         });
     }
 };

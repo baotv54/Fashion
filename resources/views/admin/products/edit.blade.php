@@ -24,7 +24,7 @@
         </div>
         @endif
     </div>
-    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" >
+    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="row">
@@ -45,77 +45,66 @@
                     </div>
                 </div>
                 @if($product_variants->count() > 0)
-                <div class="card mb-4" id="variants-container">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light fw-semibold text-uppercase text-center">
+                        Danh sách biến thể sản phẩm
+                    </div>
+                    <br>
                     <div class="card-body">
-                        <h5 class="card-title">{{ $product_variants->count() }} phiên bản</h5>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Thuộc tính</th>
-                                        <th>Giá</th>
-                                        <th>Số lượng</th>
-                                        <th>Ảnh</th>
-                                        <th>Xoá</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($product_variants as $index => $variant)
-                                    <tr>
-                                        <td>
-                                            @php
-                                            $attributeValues = $variantAttributeValue->where('variant_id', $variant->id);
-                                            $valueIds = $attributeValues->pluck('attribute_value_id')->toArray();
-                                            @endphp
+                        @foreach($product_variants as $index => $variant)
+                        @php
+                        $attributeValues = $variantAttributeValue->where('variant_id', $variant->id);
+                        $valueIds = $attributeValues->pluck('attribute_value_id')->toArray();
+                        $variantName = $attributeValues->map(fn($v) => $v->attributeValue->value)->implode(' / ');
+                        @endphp
 
-                                            @if($attributeValues->count())
-                                            @foreach($attributeValues as $value)
-                                            <span class="badge bg-secondary me-1">
-                                                {{ $value->attributeValue->attribute->name ?? '---' }}:
-                                                {{ $value->attributeValue->value ?? '---' }}
-                                            </span>
-                                            @endforeach
-                                            @else
-                                            <span class="text-muted">Không có thuộc tính</span>
-                                            @endif
+                        <div class="border rounded-3 p-3 mb-4 bg-white position-relative">
+                            <br>
+                            <div class="fw-semibold mb-2">
+                                Phiên Bản: <span class="badge text-success border border-success bg-white me-1">
+                                    {{ $variantName ?: 'Không rõ' }}
+                                </span>
+                            </div>
+                            <br>
+                            <div class="mb-3">
+                                <label class="form-label">Ảnh sản phẩm:</label>
+                                @if($variant->image)
+                                <img src="{{ asset($variant->image) }}" alt="Ảnh" width="70" height="70" class="d-block mb-2 rounded shadow-sm" style="object-fit: cover;">
+                                @else
+                                <span class="text-muted d-block mb-2">Không có ảnh</span>
+                                @endif
+                                <input type="file" name="variants[{{ $index }}][image]" class="form-control form-control-sm" accept="image/*">
+                            </div>
 
-                                            <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant->id }}">
-                                            <input type="hidden" name="variants[{{ $index }}][value_ids]" value="{{ implode('-', $valueIds) }}">
-                                        </td>
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Giá Bán</label>
+                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $variant->price }}" class="form-control" placeholder="Giá Bán" min="0" step="1000">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Giá Nhập</label>
+                                    <input type="number" name="variants[{{ $index }}][import_price]" value="{{ $variant->import_price }}" class="form-control" placeholder="Giá Nhập" min="0" step="1000">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Giá Khuyến Mãi</label>
+                                    <input type="number" name="variants[{{ $index }}][discount_price]" value="{{ $variant->discount_price }}" class="form-control" placeholder="Giá KM" min="0" step="1000">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Tồn kho</label>
+                                    <input type="number" name="variants[{{ $index }}][stock]" value="{{ $variant->stock }}" class="form-control" placeholder="Tồn kho" min="0">
+                                </div>
+                            </div>
 
-                                        <td>
-                                            <input type="number"
-                                                name="variants[{{ $index }}][price]"
-                                                value="{{ $variant->price }}"
-                                                class="form-control form-control-sm"
-                                                min="0" step="1000">
-                                        </td>
+                            <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant->id }}">
+                            <input type="hidden" name="variants[{{ $index }}][value_ids]" value="{{ implode('-', $valueIds) }}">
 
-                                        <td>
-                                            <input type="number"
-                                                name="variants[{{ $index }}][stock]"
-                                                value="{{ $variant->stock }}"
-                                                class="form-control form-control-sm"
-                                                min="0">
-                                        </td>
-
-                                        <td>
-                                            @if($variant->image)
-                                            <img src="{{ asset($variant->image) }}" alt="Ảnh" width="60" height="60" style="object-fit: cover;" class="mb-2 d-block">
-                                            @else
-                                            <span class="text-muted d-block mb-2">Không có ảnh</span>
-                                            @endif
-
-                                            <input type="file"
-                                                name="variants[{{ $index }}][image]"
-                                                accept="image/*"
-                                                class="form-control form-control-sm">
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="text-end mt-3">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.border').remove(); updateVariantCount()">
+                                    <i class="fas fa-trash-alt me-1"></i> Xoá biến thể
+                                </button>
+                            </div>
                         </div>
+                        @endforeach
                     </div>
                 </div>
                 @endif

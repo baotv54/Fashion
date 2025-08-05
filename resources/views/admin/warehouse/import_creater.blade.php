@@ -78,12 +78,17 @@
                                             style="width: 80px;">
 
                                     </td>
-
-
                                     <td class="text-end">
-                                        {{ number_format($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) }} đ
+                                        <a href="#" class="text-primary text-decoration-underline update-price"
+                                            data-index="{{ $index }}"
+                                            data-product-id="{{ $item['product']->id }}"
+                                            data-variant-id="{{ $item['variant']->id ?? '' }}"
+                                            data-import-price="{{ $item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price }}"
+                                            data-price="{{ $item['is_variant'] ? $item['variant']->price ?? 0 : $item['product']->price ?? 0 }}"
+                                            data-discount-price="{{ $item['is_variant'] ? $item['variant']->discount_price ?? 0 : $item['product']->discount_price ?? 0 }}">
+                                            {{ number_format($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) }} đ
+                                        </a>
                                     </td>
-
                                     <td class="text-end fw-semibold">
                                         {{ number_format(($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) * ($item['quantity'] ?? 0)) }}
                                     </td>
@@ -222,6 +227,41 @@
             </button>
         </div>
     </form>
+
+    <!-- Modal cập nhật giá -->
+    <div class="modal fade" id="updatePriceModal" tabindex="-1" aria-labelledby="updatePriceLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="update-price-form" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updatePriceLabel">Cập nhật giá</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="product_id" id="modal-product-id">
+                        <input type="hidden" name="variant_id" id="modal-variant-id">
+                        <div class="mb-3">
+                            <label for="import_price" class="form-label">Giá nhập</label>
+                            <input type="number" class="form-control" name="import_price" id="modal-import-price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Giá Bán</label>
+                            <input type="number" class="form-control" name="price" id="modal-price">
+                        </div>
+                        <div class="mb-3">
+                            <label for="discount_price" class="form-label">Giá Khuyến Mãi</label>
+                            <input type="number" class="form-control" name="discount_price" id="modal-discount-price">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -401,6 +441,64 @@
         // Gọi lúc đầu để thiết lập đúng nếu form reload
         handlePaymentAmountAndDate();
     });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const updateLinks = document.querySelectorAll('.update-price');
+    const modal = new bootstrap.Modal(document.getElementById('updatePriceModal'));
+
+    updateLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Lấy dữ liệu từ data-attributes
+            const productId = this.dataset.productId;
+            const variantId = this.dataset.variantId;
+            const importPrice = this.dataset.importPrice;
+            const price = this.dataset.price;
+            const discountPrice = this.dataset.discountPrice;
+
+            // Đổ dữ liệu vào form trong modal
+            document.getElementById('modal-product-id').value = productId;
+            document.getElementById('modal-variant-id').value = variantId;
+            document.getElementById('modal-import-price').value = importPrice;
+            document.getElementById('modal-price').value = price;
+            document.getElementById('modal-discount-price').value = discountPrice;
+
+            // Mở modal
+            modal.show();
+        });
+    });
+
+    // Gửi form cập nhật giá
+    document.getElementById('update-price-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        fetch(`/admin/warehouse/update-price`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Cập nhật thành công');
+                location.reload(); // Reload trang để cập nhật UI
+            } else {
+                alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+            }
+        })
+        .catch(err => {
+            alert('Lỗi khi gửi yêu cầu: ' + err.message);
+        });
+    });
+});
+
 </script>
 
 @endsection

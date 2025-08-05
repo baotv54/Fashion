@@ -1047,6 +1047,8 @@
     </main>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
+    @include('Frontend.partials.Chatbot')
+
 
     <style>
         /* Recently Viewed Products Styling */

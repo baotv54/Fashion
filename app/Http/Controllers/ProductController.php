@@ -25,11 +25,36 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $categoryId = $request->input('category');
+        $createdDate = $request->input('created_date');
+        $stockStatus = $request->input('stock_status');
+
         $products = Product::with('category', 'brand', 'images')
             ->when($search, fn($query) => $query->where('name', 'like', "%$search%"))
+            ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
+            ->when($createdDate, function ($query) use ($createdDate) {
+                return $query->whereDate('created_at', $createdDate);
+            })
+            ->when($stockStatus, function ($query) use ($stockStatus) {
+                return $query->where(function ($q) use ($stockStatus) {
+                    if ($stockStatus === 'out_of_stock') {
+                        $q->where('quantity', 0);
+                    } elseif ($stockStatus === 'low_stock') {
+                        $q->whereBetween('quantity', [1, 9]);
+                    } elseif ($stockStatus === 'in_stock') {
+                        $q->where('quantity', '>=', 10);
+                    }
+                });
+            })
+            ->orderBy('created_at', 'desc')
             ->paginate(5);
-        return view('admin.products.index', compact('products', 'search'));
+
+        // Lấy danh mục để đổ vào form lọc
+        $categories = \App\Models\Category::all();
+
+        return view('admin.products.index', compact('products', 'search', 'categoryId', 'createdDate', 'stockStatus', 'categories'));
     }
+
 
     public function homepage()
     {
@@ -260,6 +285,8 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'price' => $variantData['price'],
                     'stock' => $variantData['stock'],
+                    'import_price' => $variantData['import_price'],
+                    'discount_price' => $variantData['discount_price'],
                     'image' => $imagePath,
                 ]);
 
@@ -431,26 +458,26 @@ class ProductController extends Controller
     //     $products = Product::with('images')->where('name', 'like', "%$query%")->get();
     //     return view('admin.products.index', compact('products'));
     // }
-public function search(Request $request)
-{
-    $query = $request->get('q');
-    $products = Product::where('name', 'like', "%{$query}%")
-        ->orWhere('slug', 'like', "%{$query}%")
-        ->limit(20)
-        ->get();
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+        $products = Product::where('name', 'like', "%{$query}%")
+            ->orWhere('slug', 'like', "%{$query}%")
+            ->limit(20)
+            ->get();
 
-    return response()->json($products);
-}
+        return response()->json($products);
+    }
 
-public function info(Request $request)
-{
-    $product = Product::findOrFail($request->id);
-    return response()->json([
-        'id' => $product->id,
-        'name' => $product->name,
-        'slug' => $product->slug,
-    ]);
-}
+    public function info(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        return response()->json([
+            'id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+        ]);
+    }
 
     public function import(Request $request)
     {
@@ -462,22 +489,22 @@ public function info(Request $request)
     }
 
     public function warehouse(Request $request)
-{
-    $search = $request->input('search');
-    $stockFilter = $request->input('stock_filter');
-    $categoryId = $request->input('category_id');
+    {
+        $search = $request->input('search');
+        $stockFilter = $request->input('stock_filter');
+        $categoryId = $request->input('category_id');
 
-    $products = Product::with('category', 'brand', 'images')
-        ->when($search, fn($query) => $query->where('name', 'like', "%$search%"))
-        ->when($stockFilter === 'in_stock', fn($query) => $query->where('quantity', '>', 0))
-        ->when($stockFilter === 'out_stock', fn($query) => $query->where('quantity', '=', 0))
-        ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
-        ->paginate(10);
+        $products = Product::with('category', 'brand', 'images')
+            ->when($search, fn($query) => $query->where('name', 'like', "%$search%"))
+            ->when($stockFilter === 'in_stock', fn($query) => $query->where('quantity', '>', 0))
+            ->when($stockFilter === 'out_stock', fn($query) => $query->where('quantity', '=', 0))
+            ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
+            ->paginate(10);
 
-    $categories = Category::all(); // Load tất cả danh mục để đổ ra select
+        $categories = Category::all(); // Load tất cả danh mục để đổ ra select
 
-    return view('admin.warehouse.index', compact('products', 'search', 'stockFilter', 'categoryId', 'categories'));
-}
+        return view('admin.warehouse.index', compact('products', 'search', 'stockFilter', 'categoryId', 'categories'));
+    }
 
     // public function import_creater ()
     // {
@@ -495,44 +522,44 @@ public function info(Request $request)
 
     //     ]);
     // }
-// public function import_creater()
-// {
-//     // Lấy tất cả sản phẩm có biến thể kèm các thông tin cần thiết
-//     return view('admin.warehouse.import_creater', [
-//             'products' => Product::all(),
-//             // 'suppliers' => Supplier::all(),
-//         ]);
-// }
+    // public function import_creater()
+    // {
+    //     // Lấy tất cả sản phẩm có biến thể kèm các thông tin cần thiết
+    //     return view('admin.warehouse.import_creater', [
+    //             'products' => Product::all(),
+    //             // 'suppliers' => Supplier::all(),
+    //         ]);
+    // }
 
-public function search3(Request $request)
-{
-    $term = $request->get('term');
-    $products = Product::where('name', 'like', '%' . $term . '%')->limit(10)->get();
+    public function search3(Request $request)
+    {
+        $term = $request->get('term');
+        $products = Product::where('name', 'like', '%' . $term . '%')->limit(10)->get();
 
-    return response()->json($products->map(function ($p) {
-        return [
-            'id' => $p->id,
-            'label' => $p->name,
-            'value' => $p->name,
-        ];
-    }));
-}
-
-
-public function search2(Request $request)
-{
-    $query = $request->get('query');
-    $products = Product::where('name', 'like', "%{$query}%")
-                ->select('id', 'name', 'image as image_url')
- // chọn các cột cần thiết
-                ->limit(10)
-                ->get();
-
-    return response()->json($products);
-}
+        return response()->json($products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'label' => $p->name,
+                'value' => $p->name,
+            ];
+        }));
+    }
 
 
-public function history()
+    public function search2(Request $request)
+    {
+        $query = $request->get('query');
+        $products = Product::where('name', 'like', "%{$query}%")
+            ->select('id', 'name', 'image as image_url')
+            // chọn các cột cần thiết
+            ->limit(10)
+            ->get();
+
+        return response()->json($products);
+    }
+
+
+    public function history()
     {
         return view('admin.warehouse.history', [
             'brands' => Brand::all(),

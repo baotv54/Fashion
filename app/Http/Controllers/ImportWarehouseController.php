@@ -27,12 +27,20 @@ class ImportWarehouseController extends Controller
 
     public function product(Request $request)
     {
+        $search = $request->input('search');
+
         // Lấy tất cả product_id và variant_id đã tồn tại trong bảng import
         $importedProductIds = ImportWarehouse::whereNull('variant_id')->pluck('product_id')->unique();
         $importedVariantIds = ImportWarehouse::whereNotNull('variant_id')->pluck('variant_id')->unique();
 
-        // Lấy tất cả sản phẩm và biến thể
-        $products = Product::with('variants')->get();
+        // Lấy tất cả sản phẩm và biến thể, kèm điều kiện tìm kiếm nếu có
+        $productQuery = Product::with('variants');
+
+        if (!empty($search)) {
+            $productQuery->where('name', 'like', '%' . $search . '%');
+        }
+
+        $products = $productQuery->get();
 
         // Lấy tất cả attribute values của biến thể
         $variantAttributeValues = VariantAttributeValue::with('attributeValue.attribute')
@@ -50,6 +58,7 @@ class ImportWarehouseController extends Controller
                             'is_variant' => true,
                             'product' => $product,
                             'variant' => $variant,
+                            'quantity' => $variant->quantity ?? 0,
                             'attributes' => $variantAttributeValues[$variant->id] ?? collect(),
                         ];
                     }
@@ -61,16 +70,51 @@ class ImportWarehouseController extends Controller
                         'is_variant' => false,
                         'product' => $product,
                         'variant' => null,
+                        'quantity' => $product->quantity ?? 0,
                         'attributes' => collect(),
                     ];
                 }
             }
         }
 
+        // Sắp xếp theo số lượng tăng dần
+        $items = collect($items)->sortBy('quantity')->values();
+
         return view('admin.warehouse.product', [
             'items' => $items,
         ]);
     }
+
+
+    public function updatePrice(Request $request)
+{
+    $productId = $request->input('product_id');
+    $variantId = $request->input('variant_id');
+    $importPrice = $request->input('import_price');
+    $price = $request->input('price');
+    $discountPrice = $request->input('discount_price');
+
+    try {
+        if ($variantId) {
+            $variant = ProductVariant::findOrFail($variantId);
+            $variant->import_price = $importPrice;
+            $variant->price = $price;
+            $variant->discount_price = $discountPrice;
+            $variant->save();
+        } else {
+            $product = Product::findOrFail($productId);
+            $product->import_price = $importPrice;
+            $product->price = $price;
+            $product->discount_price = $discountPrice;
+            $product->save();
+        }
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
 
 
 
