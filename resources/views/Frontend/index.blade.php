@@ -237,6 +237,371 @@
                 </div>
             </div>
         </section>
+        
+        <!-- Section sản phẩm yêu thích -->
+        @auth
+        @if($favoriteProducts->count() > 0)
+        <style>
+            .favorite-product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+            .favorite-product-image img:hover {
+                transform: scale(1.05);
+            }
+            .favorite-product-actions button:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
+            }
+            .home-favorites-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 280px) !important;
+                gap: 25px !important;
+                justify-content: center !important;
+            }
+            
+            @media (max-width: 1200px) {
+                .home-favorites-grid {
+                    grid-template-columns: repeat(3, 280px) !important;
+                }
+            }
+            
+            @media (max-width: 900px) {
+                .home-favorites-grid {
+                    grid-template-columns: repeat(2, 280px) !important;
+                    gap: 20px !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .home-favorites-grid {
+                    grid-template-columns: repeat(1, 280px) !important;
+                    gap: 20px !important;
+                }
+                .section-title-all h2 {
+                    font-size: 2rem !important;
+                }
+            }
+        </style>
+        <section class="home-favorites" style="padding: 60px 0; background: #f8f9fa;">
+            <div class="container">
+                <div class="section-title-all text-center" style="margin-bottom: 40px;">
+                    <h2 style="color: #333; font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">
+                        <i class="fas fa-heart" style="color: #dc3545; margin-right: 10px;"></i>
+                        Sản Phẩm Yêu Thích Của Bạn
+                    </h2>
+                    <!-- <p style="color: #666; font-size: 1.1rem;"> Những sản phẩm bạn đã thêm vào danh sách yêu thích</p> -->
+                    <div style="width: 80px; height: 3px; background: #dc3545; margin: 20px auto;"></div>
+                </div>
+                
+                <div class="home-favorites-grid">
+                    @foreach($favoriteProducts as $product)
+                    <div class="favorite-product-card" style="background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative;">
+                        <div class="favorite-badge" style="position: absolute; top: 15px; right: 15px; background: rgba(220, 53, 69, 0.9); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; z-index: 2;">
+                            <i class="fas fa-heart"></i> Yêu thích
+                        </div>
+                        
+                        <div class="favorite-product-image" style="position: relative; overflow: hidden; height: 250px;">
+                            <a href="{{ route('product.show', $product->id) }}">
+                                <img src="{{ $product->image }}" alt="{{ $product->name }}" 
+                                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                            </a>
+                        </div>
+                        
+                        <div class="favorite-product-info" style="padding: 20px;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; color: #333;">
+                                <a href="{{ route('product.show', $product->id) }}" style="text-decoration: none; color: inherit;">
+                                    {{ Str::limit($product->name, 50) }}
+                                </a>
+                            </h3>
+                            
+                            @if($product->brand)
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 8px;">
+                                <i class="fas fa-tag"></i> {{ $product->brand->name }}
+                            </p>
+                            @endif
+                            
+                            <div class="favorite-product-price" style="margin-bottom: 15px;">
+                                <span style="color: #dc3545; font-weight: 700; font-size: 1.2rem;">
+                                    {{ number_format($product->price, 0, ',', '.') }}₫
+                                </span>
+                                @if($product->original_price && $product->original_price > $product->price)
+                                <del style="color: #999; font-size: 0.9rem; margin-left: 8px;">
+                                    {{ number_format($product->original_price, 0, ',', '.') }}₫
+                                </del>
+                                @endif
+                            </div>
+                            
+                            <div class="favorite-product-actions" style="display: flex; gap: 10px;">
+                                <form method="POST" action="{{ route('cart.add') }}" style="flex: 1;">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" style="width: 100%; background: #28a745; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.3s ease;">
+                                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                                    </button>
+                                </form>
+                                
+                                <form class="favorite-form" method="POST" action="{{ route('favorites.toggle') }}">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <button type="submit" class="favorite-btn" data-product-id="{{ $product->id }}" 
+                                            title="Bỏ yêu thích"
+                                            style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: background 0.3s ease;">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                
+                <div class="text-center" style="margin-top: 40px;">
+                    <a href="{{ route('favorites.index') }}" 
+                       style="display: inline-block; background: #dc3545; color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: background 0.3s ease;">
+                        <i class="fas fa-heart"></i> Xem tất cả sản phẩm yêu thích ({{ $favorites->count() }})
+                    </a>
+                </div>
+            </div>
+        </section>
+        @endif
+        @endauth
+
+        {{-- Section Sản phẩm bán chạy --}}
+        @if($bestSellingProducts->count() > 0)
+        <style>
+            .bestselling-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 280px) !important;
+                gap: 25px !important;
+                justify-content: center !important;
+            }
+            
+            .bestselling-product-card {
+                background: #fff !important;
+                border-radius: 15px !important;
+                overflow: hidden !important;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+                transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+                position: relative !important;
+            }
+            
+            .bestselling-product-card:hover {
+                transform: translateY(-5px) !important;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+            
+            .bestselling-badge {
+                position: absolute !important;
+                top: 15px !important;
+                left: 15px !important;
+                background: linear-gradient(45deg, #ff6b35, #f7931e) !important;
+                color: white !important;
+                padding: 5px 10px !important;
+                border-radius: 20px !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                z-index: 2 !important;
+            }
+            
+            .bestselling-product-image {
+                position: relative !important;
+                overflow: hidden !important;
+                height: 250px !important;
+            }
+            
+            .bestselling-product-image img {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                transition: transform 0.3s ease !important;
+            }
+            
+            .bestselling-product-image img:hover {
+                transform: scale(1.05) !important;
+            }
+            
+            .bestselling-product-info {
+                padding: 20px !important;
+            }
+            
+            .bestselling-product-info h3 {
+                font-size: 1.1rem !important;
+                font-weight: 600 !important;
+                margin-bottom: 8px !important;
+                color: #333 !important;
+            }
+            
+            .bestselling-product-info h3 a {
+                text-decoration: none !important;
+                color: inherit !important;
+            }
+            
+            .bestselling-product-info p {
+                color: #666 !important;
+                font-size: 0.9rem !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .bestselling-product-price {
+                margin-bottom: 15px !important;
+            }
+            
+            .bestselling-product-price span {
+                color: #ff6b35 !important;
+                font-weight: 700 !important;
+                font-size: 1.2rem !important;
+            }
+            
+            .bestselling-product-price del {
+                color: #999 !important;
+                font-size: 0.9rem !important;
+                margin-left: 8px !important;
+            }
+            
+            .bestselling-product-actions {
+                display: flex !important;
+                gap: 10px !important;
+            }
+            
+            .bestselling-product-actions form:first-child {
+                flex: 1 !important;
+            }
+            
+            .bestselling-product-actions button {
+                border: none !important;
+                border-radius: 8px !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .bestselling-product-actions button:first-child {
+                width: 100% !important;
+                background: #28a745 !important;
+                color: white !important;
+                padding: 10px !important;
+            }
+            
+            .bestselling-product-actions button:last-child {
+                background: #ff6b35 !important;
+                color: white !important;
+                padding: 10px 15px !important;
+            }
+            
+            .bestselling-product-actions button:hover {
+                opacity: 0.9 !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            @media (max-width: 1200px) {
+                .bestselling-grid {
+                    grid-template-columns: repeat(3, 280px) !important;
+                }
+            }
+            
+            @media (max-width: 900px) {
+                .bestselling-grid {
+                    grid-template-columns: repeat(2, 280px) !important;
+                    gap: 20px !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .bestselling-grid {
+                    grid-template-columns: repeat(1, 280px) !important;
+                    gap: 20px !important;
+                }
+            }
+        </style>
+        <section class="bestselling-section" style="padding: 60px 0; background: #fff;">
+            <div class="container">
+                <div class="section-title-all text-center" style="margin-bottom: 40px;">
+                    <h2 style="color: #333; font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">
+                        <i class="fas fa-fire" style="color: #ff6b35; margin-right: 10px;"></i>
+                        Sản Phẩm Bán Chạy
+                    </h2>
+                    <div style="width: 80px; height: 3px; background: #ff6b35; margin: 20px auto;"></div>
+                </div>
+                
+                <div class="bestselling-grid">
+                    @foreach($bestSellingProducts as $product)
+                    <div class="bestselling-product-card">
+                        <div class="bestselling-badge">
+                            <i class="fas fa-fire"></i> Bán chạy
+                        </div>
+                        
+                        <div class="bestselling-product-image">
+                            <a href="{{ route('product.show', $product->id) }}">
+                                <img src="{{ $product->image }}" alt="{{ $product->name }}">
+                            </a>
+                        </div>
+                        
+                        <div class="bestselling-product-info">
+                            <h3>
+                                <a href="{{ route('product.show', $product->id) }}">
+                                    {{ $product->name }}
+                                </a>
+                            </h3>
+                            
+                            <div class="bestselling-product-price">
+                                <span>
+                                    {{ number_format($product->price, 0, ',', '.') }}₫
+                                </span>
+                                @if($product->original_price && $product->original_price > $product->price)
+                                <del>
+                                    {{ number_format($product->original_price, 0, ',', '.') }}₫
+                                </del>
+                                @endif
+                            </div>
+                            
+                            <div class="bestselling-product-tags" style="display: flex; align-items: center; gap: 8px; margin: 10px 0;">
+                                <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">freeship</span>
+                                <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">new</span>
+                                <div class="product-rating" style="display: flex; gap: 2px;">
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: 12px;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: 12px;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: 12px;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: 12px;"></i>
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: 12px;"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="bestselling-product-actions">
+                                <form method="POST" action="{{ route('cart.add') }}">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit">
+                                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                                    </button>
+                                </form>
+                                
+                                @auth
+                                <form class="favorite-form" method="POST" action="{{ route('favorites.toggle') }}">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <button type="submit" class="favorite-btn" data-product-id="{{ $product->id }}" 
+                                            title="{{ $favorites->contains('product_id', $product->id) ? 'Bỏ yêu thích' : 'Thêm vào yêu thích' }}"
+                                            style="color: {{ $favorites->contains('product_id', $product->id) ? '#dc3545' : '#ff6b35' }}; background: {{ $favorites->contains('product_id', $product->id) ? 'rgba(220, 53, 69, 0.1)' : 'transparent' }};">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </form>
+                                @else
+                                <a href="{{ route('login') }}" style="background: #ff6b35; color: white; border: none; padding: 10px 15px; border-radius: 8px; text-decoration: none; display: inline-block;">
+                                    <i class="fas fa-heart"></i>
+                                </a>
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+        @endif
+        
         <div class="modal fade" id="modal-coupon" tabindex="-1" role="dialog" aria-labelledby="modal-coupon"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">

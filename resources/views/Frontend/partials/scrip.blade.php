@@ -16,15 +16,56 @@
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
+                    var productId = form.find('input[name="product_id"]').val();
+                    
                     if (response.status === 'added') {
-                        btn.css('color', 'red');
+                        // Cập nhật tất cả button yêu thích của sản phẩm này
+                        $('.favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': '#dc3545',
+                            'background': 'rgba(220, 53, 69, 0.1)'
+                        });
                         countEl.text(count + 1);
+                        
+                        // Hiển thị thông báo thêm thành công
+                        // showToast('Đã thêm vào danh sách yêu thích!', 'success');
+                        
                     } else if (response.status === 'removed') {
-                        btn.css('color', 'gray');
+                        // Cập nhật button yêu thích ở section favorites và products
+                        $('.favorite-product-card .favorite-btn[data-product-id="' + productId + '"], .product-item .favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': 'gray',
+                            'background': 'transparent'
+                        });
+                        
+                        // Cập nhật button yêu thích ở section bestselling (màu cam)
+                        $('.bestselling-product-card .favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': '#ff6b35',
+                            'background': 'transparent'
+                        });
+                        
                         countEl.text(Math.max(count - 1, 0));
+                        
+                        // Hiển thị thông báo xóa thành công
+                        showToast('Đã xóa khỏi danh sách yêu thích!', 'info');
 
+                        // Xóa khỏi trang favorites
                         if (window.location.pathname === '{{ route("favorites.index") }}') {
                             form.closest('.product-item').remove();
+                        }
+                        
+                        // Xóa khỏi section favorites ở trang chủ
+                        if (window.location.pathname === '/') {
+                            $('.favorite-product-card').each(function() {
+                                var cardProductId = $(this).find('input[name="product_id"]').val();
+                                if (cardProductId === productId) {
+                                    $(this).fadeOut(300, function() {
+                                        $(this).remove();
+                                        // Ẩn section nếu không còn sản phẩm yêu thích
+                                        if ($('.favorite-product-card').length === 0) {
+                                            $('.home-favorites').fadeOut(500);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     }
                 },
@@ -35,6 +76,40 @@
         });
     });
 
+    // Hàm hiển thị thông báo toast
+    function showToast(message, type = 'success') {
+        // Tạo toast element
+        const toast = $(`
+            <div class="custom-toast toast-${type}" style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#17a2b8'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 9999;
+                font-weight: 600;
+                display: none;
+                min-width: 300px;
+            ">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}" style="margin-right: 8px;"></i>
+                ${message}
+            </div>
+        `);
+        
+        // Thêm vào body và hiển thị
+        $('body').append(toast);
+        toast.fadeIn(300);
+        
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+            toast.fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 3000);
+    }
 
     let chatOpened = false;
 
