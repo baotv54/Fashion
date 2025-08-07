@@ -2,13 +2,39 @@
 <script src="{{ asset('js/recently-viewed.js') }}"></script>
 <script src="{{ asset('js/product-comparison.js') }}"></script>
 <script>
+    function showToast(message, type = 'success') {
+        // Simple toast notification
+        var toast = $('<div class="toast-notification">')
+            .text(message)
+            .css({
+                'position': 'fixed',
+                'top': '20px',
+                'right': '20px',
+                'background': type === 'success' ? '#28a745' : '#17a2b8',
+                'color': 'white',
+                'padding': '10px 20px',
+                'border-radius': '5px',
+                'z-index': '9999',
+                'opacity': '0'
+            });
+        
+        $('body').append(toast);
+        toast.animate({opacity: 1}, 300);
+        
+        setTimeout(function() {
+            toast.animate({opacity: 0}, 300, function() {
+                toast.remove();
+            });
+        }, 3000);
+    }
+
     $(document).ready(function() {
         $('.favorite-form').on('submit', function(e) {
             e.preventDefault();
 
             var form = $(this);
             var btn = form.find('button.favorite-btn');
-            var countEl = $('#wishlist-count'); // 💥 sửa ở đây
+            var countEl = $('#wishlist-count');
             var countText = countEl.text().trim();
             var count = parseInt(countText, 10);
             if (isNaN(count)) count = 0;
@@ -18,15 +44,42 @@
                 method: 'POST',
                 data: form.serialize(),
                 success: function(response) {
+                    var productId = form.find('input[name="product_id"]').val();
                     if (response.status === 'added') {
-                        btn.css('color', 'red');
+                        $('.favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': '#dc3545',
+                            'background': 'rgba(220, 53, 69, 0.1)'
+                        });
                         countEl.text(count + 1);
+                        // showToast('Đã thêm vào danh sách yêu thích!', 'success'); // Commented out by user
                     } else if (response.status === 'removed') {
-                        btn.css('color', 'gray');
+                        $('.favorite-product-card .favorite-btn[data-product-id="' + productId + '"], .product-item .favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': 'gray',
+                            'background': 'transparent'
+                        });
+                        $('.bestselling-product-card .favorite-btn[data-product-id="' + productId + '"]').css({
+                            'color': '#ff6b35',
+                            'background': 'transparent'
+                        });
                         countEl.text(Math.max(count - 1, 0));
+                        showToast('Đã xóa khỏi danh sách yêu thích!', 'info');
 
                         if (window.location.pathname === '{{ route("favorites.index") }}') {
                             form.closest('.product-item').remove();
+                        }
+                        
+                        if (window.location.pathname === '/') {
+                            $('.favorite-product-card').each(function() {
+                                var cardProductId = $(this).find('input[name="product_id"]').val();
+                                if (cardProductId === productId) {
+                                    $(this).fadeOut(300, function() {
+                                        $(this).remove();
+                                        if ($('.favorite-product-card').length === 0) {
+                                            $('.home-favorites').fadeOut(500);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     }
                 },

@@ -237,6 +237,555 @@
                 </div>
             </div>
         </section>
+        
+        <!-- Section sản phẩm yêu thích -->
+        @if($favoriteProducts->count() > 0)
+        <style>
+            .favorite-product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+            .favorite-product-image img:hover {
+                transform: scale(1.05);
+            }
+            .home-favorites-container {
+                position: relative;
+                overflow: hidden;
+                padding: 20px 0;
+                width: 100%; /* Chiều rộng bằng container chính */
+                margin: 0 auto;
+            }
+            .home-favorites-grid {
+                display: flex;
+                gap: 20px;
+                transition: transform 0.3s ease;
+                width: calc(280px * 8 + 20px * 7); /* 8 sản phẩm + gaps */
+            }
+            .home-favorites-slider {
+                overflow: hidden;
+                position: relative;
+            }
+            .slider-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ddd;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 10;
+                transition: all 0.3s ease;
+            }
+            .slider-nav:hover {
+                background: white;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .slider-nav.prev {
+                left: -15px;
+            }
+            .slider-nav.next {
+                right: -15px;
+            }
+            .slider-nav i {
+                font-size: 14px;
+                color: #333;
+            }
+            .favorite-product-card {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                transition: all 0.3s ease;
+                width: 280px;
+                height: 430px; /* Tăng từ 380px lên 430px */
+                display: flex;
+                flex-direction: column;
+            }
+            .favorite-product-image {
+                width: 100%;
+                height: 250px; /* Tăng từ 200px lên 250px */
+                overflow: hidden;
+                position: relative;
+            }
+            .favorite-product-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .favorite-badge {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                background: #dc3545;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+            }
+            .favorite-product-info {
+                padding: 12px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .favorite-product-info h4 {
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0 0 6px 0;
+                line-height: 1.3;
+                height: 36px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            .favorite-product-info .brand-category {
+                font-size: 11px;
+                color: #666;
+                margin: 2px 0;
+            }
+            .favorite-product-price {
+                font-size: 16px;
+                font-weight: 700;
+                color: #e74c3c;
+                margin: 8px 0;
+                text-align: center;
+            }
+            .favorite-product-rating {
+                display: flex;
+                justify-content: center;
+                gap: 2px;
+                margin: 4px 0 8px 0;
+            }
+            .favorite-product-rating i {
+                color: #ffc107;
+                font-size: 12px;
+            }
+            .favorite-product-actions {
+                display: flex;
+                gap: 6px;
+                margin-top: 8px;
+                justify-content: center;
+            }
+            .favorite-product-actions button {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-width: 120px;
+            }
+            .favorite-product-actions .btn-cart {
+                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+            }
+            .favorite-product-actions .btn-cart:hover {
+                background: linear-gradient(135deg, #e55a2b 0%, #e8851a 100%);
+                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+            }
+            .favorite-product-actions .btn-favorite {
+                background: rgba(220, 53, 69, 0.1);
+                color: #dc3545;
+                border: 1px solid #dc3545;
+            }
+            .favorite-product-actions .btn-favorite:hover {
+                background: #dc3545;
+                color: white;
+            }
+        </style>
+        <section class="home-favorites">
+            <div class="container">
+                <div class="section-title-all">
+                    <div>
+                        <span>Yêu thích</span>
+                        <h2>Sản phẩm được yêu thích nhất</h2>
+                    </div>
+                    <a href="{{ route('products.all') }}" aria-label="Xem tất cả">Xem tất cả <i class="fal fa-arrow-right"></i></a>
+                </div>
+                <div class="home-favorites-slider">
+                    <div class="home-favorites-container">
+                        <div class="slider-nav prev" onclick="slideProducts('prev')">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="slider-nav next" onclick="slideProducts('next')">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="home-favorites-grid" id="favorites-slider">
+                            @foreach($favoriteProducts as $product)
+                    <div class="favorite-product-card">
+                        <div class="favorite-product-image">
+                            <a href="{{ route('product.show', $product->id) }}">
+                                @if($product->images->first())
+                                    <img src="{{ asset($product->images->first()->image_path) }}" 
+                                         alt="{{ $product->name }}" title="From images table">
+                                @elseif($product->image)
+                                    <img src="{{ asset($product->image) }}" 
+                                         alt="{{ $product->name }}" title="From product.image field">
+                                @else
+                                    <img src="{{ asset('images/product_demo_1e889.jpg') }}" 
+                                         alt="{{ $product->name }}" title="Default image">
+                                @endif
+                            </a>
+                            <span class="favorite-badge">🔥 {{ $product->favorite_count ?? 0 }} yêu thích</span>
+                        </div>
+                        <div class="favorite-product-info">
+                            <div>
+                                <h4><a href="{{ route('product.show', $product->id) }}">{{ $product->name }}</a></h4>
+                                @if($product->brand)
+                                <div class="brand-category">Thương hiệu: {{ $product->brand->name }}</div>
+                                @endif
+                                @if($product->category)
+                                <div class="brand-category">Danh mục: {{ $product->category->name }}</div>
+                                @endif
+                            </div>
+                            <div>
+                                <div class="favorite-product-price">{{ number_format($product->price, 0, ',', '.') }}₫</div>
+                                <div class="favorite-product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="favorite-product-actions">
+                                    <form method="POST" action="{{ route('cart.add') }}">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn-cart">Thêm vào giỏ</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+        let currentSlide = 0;
+        const totalSlides = {{ $favoriteProducts->count() }};
+        const slidesToShow = 4; // Số sản phẩm hiển thị cùng lúc
+        const maxSlide = Math.max(0, totalSlides - slidesToShow);
+        
+        function slideProducts(direction) {
+            const slider = document.getElementById('favorites-slider');
+            if (!slider) return;
+            
+            if (direction === 'next' && currentSlide < maxSlide) {
+                currentSlide++;
+            } else if (direction === 'prev' && currentSlide > 0) {
+                currentSlide--;
+            }
+            
+            const translateX = currentSlide * (280 + 20); // width + gap
+            slider.style.transform = `translateX(-${translateX}px)`;
+            
+            // Ẩn/hiện nút navigation
+            document.querySelector('.slider-nav.prev').style.opacity = currentSlide === 0 ? '0.5' : '1';
+            document.querySelector('.slider-nav.next').style.opacity = currentSlide === maxSlide ? '0.5' : '1';
+        }
+        
+        // Khởi tạo
+        document.addEventListener('DOMContentLoaded', function() {
+            slideProducts('none'); // Cập nhật trạng thái ban đầu
+        });
+        </script>
+        @endif
+
+        <!-- Section sản phẩm bán chạy -->
+        <style>
+            .bestselling-container {
+                position: relative;
+                overflow: hidden;
+                padding: 20px 0;
+                width: 100%; /* Chiều rộng bằng container chính */
+                margin: 0 auto;
+            }
+            .bestselling-grid {
+                display: flex;
+                gap: 20px;
+                transition: transform 0.3s ease;
+                width: calc(280px * 8 + 20px * 7); /* 8 sản phẩm + gaps */
+            }
+            .bestselling-slider {
+                overflow: hidden;
+                position: relative;
+            }
+            .bestselling-slider-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 107, 53, 0.9);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 10;
+                transition: all 0.3s ease;
+            }
+            .bestselling-slider-nav:hover {
+                background: #ff6b35;
+                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+            }
+            .bestselling-slider-nav.prev {
+                left: 10px;
+            }
+            .bestselling-slider-nav.next {
+                right: 10px;
+            }
+            .bestselling-slider-nav i {
+                font-size: 14px;
+                color: white;
+            }
+            .bestselling-product-card {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                transition: all 0.3s ease;
+                width: 280px;
+                height: 430px; /* Tăng từ 380px lên 430px */
+                display: flex;
+                flex-direction: column;
+            }
+            .bestselling-product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+            .bestselling-product-image {
+                width: 100%;
+                height: 250px; /* Tăng từ 200px lên 250px */
+                overflow: hidden;
+                position: relative;
+            }
+            .bestselling-product-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .bestselling-product-image img:hover {
+                transform: scale(1.05);
+            }
+            .bestselling-badge {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                background: linear-gradient(45deg, #ff6b35, #f7931e);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+            }
+            .bestselling-product-info {
+                padding: 12px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .bestselling-product-info h4 {
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0 0 6px 0;
+                line-height: 1.3;
+                height: 36px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            .bestselling-product-info .brand-category {
+                font-size: 11px;
+                color: #666;
+                margin: 2px 0;
+            }
+            .bestselling-product-info .sold-info {
+                font-size: 12px;
+                color: #ff6b35;
+                font-weight: 600;
+                margin: 4px 0;
+            }
+            .bestselling-product-price {
+                font-size: 16px;
+                font-weight: 700;
+                color: #e74c3c;
+                margin: 8px 0;
+                text-align: center;
+            }
+            .bestselling-product-rating {
+                display: flex;
+                justify-content: center;
+                gap: 2px;
+                margin: 4px 0 8px 0;
+            }
+            .bestselling-product-rating i {
+                color: #ffc107;
+                font-size: 12px;
+            }
+            .bestselling-product-actions {
+                display: flex;
+                gap: 6px;
+                margin-top: 8px;
+                justify-content: center;
+            }
+            .bestselling-product-actions button {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-width: 120px;
+            }
+            .bestselling-product-actions .btn-cart {
+                background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+            }
+            .bestselling-product-actions .btn-cart:hover {
+                background: linear-gradient(135deg, #e55a2b 0%, #e8851a 100%);
+                box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+            }
+            .bestselling-product-actions .btn-favorite {
+                background: transparent;
+                color: #ff6b35;
+                border: 1px solid #ff6b35;
+            }
+            .bestselling-product-actions .btn-favorite:hover {
+                background: #ff6b35;
+                color: white;
+            }
+        </style>
+        <section class="bestselling-section">
+            <div class="container">
+                <div class="section-title-all">
+                    <div>
+                        <span>Bán chạy</span>
+                        <h2>Sản phẩm bán chạy nhất</h2>
+                    </div>
+                </div>
+                <div class="bestselling-slider">
+                    <div class="bestselling-container">
+                        <div class="bestselling-slider-nav prev" onclick="slideBestselling('prev')">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="bestselling-slider-nav next" onclick="slideBestselling('next')">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="bestselling-grid" id="bestselling-slider">
+                            @foreach($bestSellingProducts as $product)
+                    <div class="bestselling-product-card">
+                        <div class="bestselling-product-image">
+                            <a href="{{ route('product.show', $product->id) }}">
+                                @if($product->images->first())
+                                    <img src="{{ asset($product->images->first()->image_path) }}" 
+                                         alt="{{ $product->name }}">
+                                @elseif($product->image)
+                                    <img src="{{ asset($product->image) }}" 
+                                         alt="{{ $product->name }}">
+                                @else
+                                    <img src="{{ asset('images/product_demo_1e889.jpg') }}" 
+                                         alt="{{ $product->name }}">
+                                @endif
+                            </a>
+                            <span class="bestselling-badge">Bán chạy</span>
+                        </div>
+                        <div class="bestselling-product-info">
+                            <div>
+                                <h4><a href="{{ route('product.show', $product->id) }}">{{ $product->name }}</a></h4>
+                                @if($product->brand)
+                                <div class="brand-category">Thương hiệu: {{ $product->brand->name }}</div>
+                                @endif
+                                @if($product->category)
+                                <div class="brand-category">Danh mục: {{ $product->category->name }}</div>
+                                @endif
+                                <div class="sold-info">🔥 Đã bán: {{ $product->total_sold ?? 0 }}</div>
+                            </div>
+                            <div>
+                                <div class="bestselling-product-price">{{ number_format($product->price, 0, ',', '.') }}₫</div>
+                                <div class="bestselling-product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="bestselling-product-actions">
+                                    <form method="POST" action="{{ route('cart.add') }}">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn-cart">Thêm vào giỏ</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+        let currentBestsellingSlide = 0;
+        const totalBestsellingSlides = {{ $bestSellingProducts->count() }};
+        const bestsellingToShow = 4; // Số sản phẩm hiển thị cùng lúc
+        const maxBestsellingSlide = Math.max(0, totalBestsellingSlides - bestsellingToShow);
+        
+        function slideBestselling(direction) {
+            const slider = document.getElementById('bestselling-slider');
+            if (!slider) return;
+            
+            if (direction === 'next' && currentBestsellingSlide < maxBestsellingSlide) {
+                currentBestsellingSlide++;
+            } else if (direction === 'prev' && currentBestsellingSlide > 0) {
+                currentBestsellingSlide--;
+            }
+            
+            const translateX = currentBestsellingSlide * (280 + 20); // width + gap
+            slider.style.transform = `translateX(-${translateX}px)`;
+            
+            // Ẩn/hiện nút navigation
+            const prevBtn = document.querySelector('.bestselling-slider-nav.prev');
+            const nextBtn = document.querySelector('.bestselling-slider-nav.next');
+            if (prevBtn) prevBtn.style.opacity = currentBestsellingSlide === 0 ? '0.5' : '1';
+            if (nextBtn) nextBtn.style.opacity = currentBestsellingSlide === maxBestsellingSlide ? '0.5' : '1';
+        }
+        
+        // Khởi tạo bestselling slider
+        document.addEventListener('DOMContentLoaded', function() {
+            slideBestselling('none'); // Cập nhật trạng thái ban đầu
+        });
+        </script>
+        
         <div class="modal fade" id="modal-coupon" tabindex="-1" role="dialog" aria-labelledby="modal-coupon"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">

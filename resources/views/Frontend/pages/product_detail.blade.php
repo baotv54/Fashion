@@ -36,7 +36,7 @@
 
 		.star-filled,
 		.star-half {
-			color: #ffc107;
+			color: #ffc107; 
 			font-size: 14px;
 			filter: drop-shadow(0 1px 2px rgba(255, 193, 7, 0.3));
 			animation: starTwinkle 2s ease-in-out infinite;
@@ -196,7 +196,7 @@
 		/* Low stock warning */
 		.low-stock {
 			color: #ff6b6b !important;
-			font-weight: bold;
+				font-weight: bold;
 		}
 
 		/* Disabled quantity controls */
@@ -213,7 +213,7 @@
 
 		/* Stock display improvements */
 		#product-stock {
-			font-weight: 500;
+				font-weight: 500;
 			transition: color 0.3s ease;
 		}
 
@@ -3926,32 +3926,32 @@
 	</script>
 </head>
 <body class="">
-	@include('Frontend.partials.header')
-	<main class="main-layout">
+@include('Frontend.partials.header')
+<main class="main-layout">
 
 
-		<div class="main-product">
+	<div class="main-product">
 			<div class="main-product-breadcrumb" title="{{$product->name}}">
-				<div class="container">
-					<div class="section-title-all">
-						<h1>{{$product->name}}</h1>
-					</div>
-					<div class="breadcrumb-wrap">
-						<ol class="breadcrumb">
+			<div class="container">
+				<div class="section-title-all">
+					<h1>{{$product->name}}</h1>
+				</div>
+				<div class="breadcrumb-wrap">
+					<ol class="breadcrumb">
 							<li class="breadcrumb-item"><a href="/" aria-label="Trang chủ"
-									title="Trang chủ">Trang chủ</a></li>
+								title="Trang chủ">Trang chủ</a></li>
 							<li class="breadcrumb-item"><a href="/products" aria-label="Tất cả sản phẩm"
 									title="Tất cả sản phẩm">Tất cả sản phẩm</a></li>
 							<li class="breadcrumb-item"><span>{{$product->name}}</span></li>
-						</ol>
-					</div>
+					</ol>
 				</div>
 			</div>
-			<div class="container">
-				<div class="main-product-wrap">
-					<div class="main-product-left main-product-feature" data-style="style1">
-						<!-- Style 1 -->
-						<div class="main-product-feature-featured">
+		</div>
+		<div class="container">
+			<div class="main-product-wrap">
+				<div class="main-product-left main-product-feature" data-style="style1">
+					<!-- Style 1 -->
+					<div class="main-product-feature-featured">
 							{{-- Ảnh chính sản phẩm --}}
 							@if($product->image)
 							<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
@@ -3967,18 +3967,18 @@
 							@endif
 
 							{{-- Ảnh phụ sản phẩm --}}
-							@foreach ($images as $index => $image)
-							<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
+						@foreach ($images as $index => $image)
+						<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
 								title="{{ $product->name }}" data-index="{{ $index + 1 }}" class="main-image-link">
-								<picture>
-									<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
-									<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
+							<picture>
+								<source media="(max-width: 480px)" srcset="{{ asset($image->image_path) }}">
+								<source media="(min-width: 481px)" srcset="{{ asset($image->image_path) }}">
 									<img class="w-auto main-product-image" width="600" height="600" loading="lazy"
-										src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
+									src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
 										alt="{{ $product->name }}" style="display: none;">
-								</picture>
-							</a>
-							@endforeach
+							</picture>
+						</a>
+						@endforeach
 
 							{{-- Ảnh biến thể (nếu có) --}}
 							@if($product->variants && $product->variants->count())
@@ -3998,9 +3998,9 @@
 							@endif
 							@endforeach
 							@endif
-						</div>
+					</div>
 
-						<div class="main-product-feature-thumbs">
+					<div class="main-product-feature-thumbs">
 							{{-- Ảnh chính thumbnail --}}
 							@if($product->image)
 							<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
@@ -4012,14 +4012,14 @@
 							@endif
 
 							{{-- Ảnh phụ thumbnail --}}
-							@foreach ($images as $index => $image)
-							<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
+						@foreach ($images as $index => $image)
+						<a href="#" onclick="return false;" aria-label="{{ $product->name }}"
 								title="{{ $product->name }}" data-index="{{ $index + 1 }}" class="thumb-link">
 								<img class="w-auto" width="80" height="80" loading="lazy"
 									src="{{ asset($image->image_path) }}" title="{{ $product->name }}"
 									alt="{{ $product->name }}">
-							</a>
-							@endforeach
+						</a>
+						@endforeach
 
 							{{-- Ảnh biến thể thumbnail --}}
 							@if($product->variants && $product->variants->count())
@@ -4035,10 +4035,10 @@
 							@endif
 							@endforeach
 							@endif
-						</div>
 					</div>
+				</div>
 
-					<div class="main-product-right">
+				<div class="main-product-right">
 						<div class="main-product-share">
 							{{-- Share buttons code --}}
 						</div>
@@ -4074,8 +4074,8 @@
 							</div>
 						</div>
 
-						<div class="main-product-price">
-							<div class="main-product-price-wrap">
+					<div class="main-product-price">
+						<div class="main-product-price-wrap">
 								<span class="main-product-price-this" id="product-price">
 									@if($product->discount_price && $product->discount_price < $product->price)
 										<del class="main-product-price-compare">{{ number_format($product->price, 0, ',', '.') }}₫</del>
@@ -4084,7 +4084,7 @@
 										{{ number_format($product->price, 0, ',', '.') }}₫
 										@endif
 								</span>
-							</div>
+						</div>
 
 							{{-- Rating and sold info --}}
 							<div class="product-rating-summary">
@@ -4100,7 +4100,7 @@
 											<i class="far fa-star star-empty"></i>
 											@endif
 											@endfor
-									</div>
+					</div>
 									<span class="rating-score">{{ number_format($avgRating, 1) }}/5</span>
 								</div>
 								<span class="divider">|</span>
@@ -4129,8 +4129,8 @@
 							<div class="main-product-swatch">
 								@foreach ($attributes as $attributeName => $values)
 								@if ($values->isNotEmpty())
-								<div class="product-sw-line">
-									<div class="product-sw-select">
+						<div class="product-sw-line">
+							<div class="product-sw-select">
 										<div class="product-sw-title">{{ $attributeName }}</div>
 
 										@php
@@ -4138,7 +4138,7 @@
 										@endphp
 
 										@foreach ($uniqueValues as $value)
-										<span class="product-sw-select-item">
+									<span class="product-sw-select-item">
 											<input type="radio"
 												name="attributes[{{ $attributeName }}]"
 												id="attribute-{{ \Str::slug($attributeName) }}-{{ $value->id }}"
@@ -4152,48 +4152,48 @@
 												data-attribute-name="{{ $attributeName }}"
 												data-value-id="{{ $value->id }}">
 												{{ $value->value }}
-											</label>
-										</span>
-										@endforeach
-									</div>
-								</div>
-								@endif
+										</label>
+									</span>
 								@endforeach
 							</div>
+						</div>
+								@endif
+								@endforeach
+					</div>
 
 							{{-- Số lượng --}}
 							<div class="main-product-quantity shop-quantity-wrap mt-4">
 								<label for="quantity-input">Số lượng</label>
-								<div class="shop-quantity">
-									<button type="button" data-type="shop-quantity-minus" title="Giảm">-</button>
+						<div class="shop-quantity">
+							<button type="button" data-type="shop-quantity-minus" title="Giảm">-</button>
 									<input type="number"
 										name="quantity"
 										id="quantity-input"
 										value="1"
 										min="1"
 										max="{{ $product->variants->count() > 0 ? '' : $product->quantity }}">
-									<button type="button" data-type="shop-quantity-plus" title="Tăng">+</button>
-								</div>
-							</div>
+							<button type="button" data-type="shop-quantity-plus" title="Tăng">+</button>
+						</div>
+					</div>
 
 							{{-- Miễn phí ship --}}
 							<div class="main-product-freeship">
 								<div class="shop-freeship" data-freeship-price="50000000">
 									<div class="shop-freeship-bar">
 										<div class="shop-freeship-bar-main"><span></span></div>
-									</div>
+					</div>
 									<div class="shop-freeship-note">
 										Mua thêm <span>38.223.000₫</span> để được miễn phí giao hàng trên toàn quốc
-									</div>
+				</div>
+			</div>
 								</div>
-							</div>
 
 							{{-- Buttons --}}
 							<div class="main-product-cta">
 								<button type="submit" id="add-to-cart-btn" data-type="main-product-add" title="Thêm vào giỏ">
 									<strong>Thêm vào giỏ</strong>
 									<span>Chọn ngay sản phẩm bạn yêu thích</span>
-								</button>
+										</button>
 								<button type="button" data-type="main-product-send-help" title="Tư vấn">
 									<strong>Tư vấn</strong>
 									<span>Tư vấn thiết kế nội thất tùy chọn</span>
@@ -4202,10 +4202,10 @@
 									<strong>Liên hệ</strong>
 									<span>Chúng tôi luôn bên bạn 24/7</span>
 								</button>
-							</div>
+										</div>
 						</form>
+						</div>
 					</div>
-				</div>
 
 				<div class="sapo-buyxgety-module-detail-v2"></div>
 				<div class="main-product-description">
@@ -4219,27 +4219,27 @@
 						<div class="main-product-description-left-item" data-type="des">
 							<div class="main-product-description-item-data">
 								{!! $product->description !!}
-							</div>
+									</div>
 							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Mô tả sản phẩm" title="Xem đầy đủ Mô tả sản phẩm">Xem thêm</a>
-						</div>
+								</div>
 						<div class="main-product-description-left-item" data-type="page1">
 							<div class="main-product-description-item-data">
 								<p>Chính sách bảo mật này nhằm giúp Quý khách hiểu về cách website thu thập và sử dụng thông tin cá nhân của mình thông qua việc sử dụng trang web, bao gồm mọi thông tin có thể cung cấp thông qua trang web khi Quý khách đăng ký tài khoản, đăng ký nhận thông tin liên lạc từ chúng tôi, hoặc khi Quý khách mua sản phẩm, dịch vụ, yêu cầu thêm thông tin dịch vụ từ chúng tôi.</p>
 								<p>Chúng tôi sử dụng thông tin cá nhân của Quý khách để liên lạc khi cần thiết liên quan đến việc Quý khách sử dụng website của chúng tôi, để trả lời các câu hỏi hoặc gửi tài liệu và thông tin Quý khách yêu cầu.</p>
 								<p><span class="wysiwyg-font-size-medium">Trang web của chúng tôi coi trọng việc bảo mật thông tin và sử dụng các biện pháp tốt nhất để bảo vệ thông tin cũng như việc thanh toán của khách hàng.&nbsp;</span></p>
 								<p><span class="wysiwyg-font-size-medium">Mọi thông tin giao dịch sẽ được bảo mật ngoại trừ trong trường hợp cơ quan pháp luật yêu cầu.</span></p>
-							</div>
+									</div>
 							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách bảo mật" title="Xem đầy đủ Chính sách bảo mật">Xem thêm</a>
-						</div>
+								</div>
 						<div class="main-product-description-left-item" data-type="page2">
 							<div class="main-product-description-item-data">
 								<p><strong>1. Điều kiện đổi trả</strong></p>
 								<p>Quý Khách hàng cần kiểm tra tình trạng hàng hóa và có thể đổi hàng/ trả lại hàng&nbsp;ngay tại thời điểm giao/nhận hàng&nbsp;trong những trường hợp sau:</p>
-								<ul>
+									<ul>
 									<li>Hàng không đúng chủng loại, mẫu mã trong đơn hàng đã đặt hoặc như trên website tại thời điểm đặt hàng.</li>
 									<li>Không đủ số lượng, không đủ bộ như trong đơn hàng.</li>
 									<li>Tình trạng bên ngoài bị ảnh hưởng như rách bao bì, bong tróc, bể vỡ…</li>
-								</ul>
+									</ul>
 								<p>&nbsp;Khách hàng có trách nhiệm trình giấy tờ liên quan chứng minh sự thiếu sót trên để hoàn thành việc&nbsp;hoàn trả/đổi trả hàng hóa.&nbsp;</p>
 								<p><br></p>
 								<p><strong>2. Quy định về thời gian thông báo và gửi sản phẩm đổi trả</strong></p>
@@ -4249,9 +4249,9 @@
 									<li><strong>Địa điểm đổi trả sản phẩm</strong>: Khách hàng có thể mang hàng trực tiếp đến văn phòng/ cửa hàng của chúng tôi hoặc chuyển qua đường bưu điện.</li>
 								</ul>
 								<p>Trong trường hợp Quý Khách hàng có ý kiến đóng góp/khiếu nại liên quan đến chất lượng sản phẩm, Quý Khách hàng vui lòng liên hệ đường dây chăm sóc khách hàng&nbsp;của chúng tôi.</p>
-							</div>
+								</div>
 							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
-						</div>
+							</div>
 						<div class="main-product-description-left-item" data-type="page3">
 							<div class="main-product-description-item-data">
 								<p><span class="wysiwyg-font-size-medium"><strong>1. Giới thiệu</strong></span></p>
@@ -4265,9 +4265,9 @@
 								<p><span class="wysiwyg-font-size-medium"><strong>3. Thanh toán an toàn và tiện lợi</strong></span></p>
 								<p><span class="wysiwyg-font-size-medium">Người mua có thể tham khảo các phương thức thanh toán sau đây và lựa chọn áp dụng phương thức phù hợp:</span></p>
 								<p><span class="wysiwyg-font-size-medium"><strong><u>Cách 1</u></strong>: Thanh toán trực tiếp (người mua nhận hàng tại địa chỉ người bán)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 2</u></strong><strong>:</strong>&nbsp;Thanh toán sau (COD – giao hàng và thu tiền tận nơi)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 3</u></strong><strong>:</strong>&nbsp;Thanh toán online qua thẻ tín dụng, chuyển khoản</span></p>
-							</div>
+					</div>
 							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
-						</div>
+				</div>
 					</div>
 					<div class="main-product-description-right">
 						<label><span>Thông số kỹ thuật</span></label>
@@ -4277,10 +4277,10 @@
 							<p>Tuy nhiên thời điểm này giày Converse All Star chỉ thế hiện đúng chức năng của mình mà chưa đạt được độ tinh tế về thời trang. Vì vậy, sau khi Chuck Taylor tham gia vào đội ngũ Converse đã mang đến cho sản phẩm một sự thay đổi mới, đảm được tính thời trang cho sản phẩm. Sự thay đổi này đã khiến Converse có những bước chuyển mình và dần khẳng định được vị thế trong lĩnh vực giày thể thao.</p>
 							<p>Mẫu giày Converse CTAS SP OX với màu trắng sáng giúp làm bật tone và tôn thêm vẻ đẹp cho bộ outfit cực chất của bạn. Thiết kế đơn giản dễ dàng phối hợp với nhiều kiểu quần áo cho bạn tự do thay đổi trang phục. Thân giày được làm từ chất vải dệt dày dặn và bền bỉ, để bạn có cảm giác tự tin và an tâm trong mọi hoạt động.</p>
 							<p>
-						</div>
-					</div>
+									</div>
+								</div>
 
-				</div>
+								</div>
 
 				<div id="sapo-product-reviews" class="sapo-product-reviews" data-id="33445561">
 					<div id="sapo-product-reviews-noitem" style="display: none;">
@@ -4288,30 +4288,30 @@
 							<p data-content-text="language.suggest_noitem"></p>
 							<div class="product-reviews-summary-actions">
 								<button type="button" class="btn-new-review" onclick="BPR.newReview(this); return false;" data-content-str="language.newreview"></button>
-							</div>
+								</div>
 							<div id="noitem-bpr-form_" data-id="formId" class="noitem-bpr-form" style="display:none;">
 								<div class="sapo-product-reviews-form"></div>
-							</div>
 						</div>
 					</div>
-
 				</div>
 
-				<div class="main-product-relate">
-					<div class="section-title-all">
-						<h2>Sản phẩm liên quan</h2>
-					</div>
-					<div class="main-product-relate-data">
-						@foreach($relatedProducts as $product)
-						<div class="product-item" data-id="{{ $product->id }}" data-handle="{{ Str::slug($product->name) }}">
-							<div class="product-item-wrap">
-								<div class="product-item-image hasThumbs hasThumbsIcon">
-									<div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+			</div>
+
+			<div class="main-product-relate">
+				<div class="section-title-all">
+					<h2>Sản phẩm liên quan</h2>
+				</div>
+				<div class="main-product-relate-data">
+					@foreach($relatedProducts as $product)
+					<div class="product-item" data-id="{{ $product->id }}" data-handle="{{ Str::slug($product->name) }}">
+						<div class="product-item-wrap">
+							<div class="product-item-image hasThumbs hasThumbsIcon">
+								<div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
 
 									{{-- Giữ lại phần hiển thị giảm giá --}}
 									<span class="product-item-discount">-{{ $product->discount ?? 10 }}%</span>
 
-									<a class="product-item-link" href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
+								<a class="product-item-link" href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
 										{{-- Ảnh chính --}}
 										<img class="w-auto" loading="lazy" width="480" height="480"
 											src="{{ asset($product->image ?? ($product->images->first()->image_path ?? 'images/default.jpg')) }}"
@@ -4327,7 +4327,7 @@
 
 
 									{{-- Thumbnail --}}
-									<ul class="product-item-thumbs">
+								<ul class="product-item-thumbs">
 										@foreach($product->images->take(3) as $thumb)
 										<li>
 											<a href="{{ route('product.show', $product->id) }}">
@@ -4337,10 +4337,10 @@
 											</a>
 										</li>
 										@endforeach
-									</ul>
-								</div>
+								</ul>
+							</div>
 
-								<div class="product-item-action">
+							<div class="product-item-action">
 									{{-- Nút yêu thích với icon SVG giữ nguyên class + thêm logic yêu thích --}}
 									<form class="favorite-form" method="POST" action="{{ route('favorites.toggle') }}">
 										@csrf
@@ -4379,46 +4379,46 @@
 											<path d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z" fill="#000000" data-original="#000000" class=""></path>
 										</svg></button>
 									{{-- Nút thêm vào giỏ --}}
-									<form method="POST" action="{{ route('cart.add') }}">
-										@csrf
+								<form method="POST" action="{{ route('cart.add') }}">
+									@csrf
 										<input type="hidden" name="product_id" value="{{ $product->id }}">
 										<input type="hidden" name="quantity" value="1">
 										<button type="button" title="Thêm vào giỏ" class="shop-addLoop-button" data-type="shop-addLoop-button"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" x="0" y="0" viewBox="0 0 459.361 459.361" style="enable-background: new 0 0 512 512" xml:space="preserve" class="">
 												<path d="M371.2,325.731c19.1-0.2,35.8-13.1,40.7-31.6l47.1-175.4c1.5-5.7-1.8-11.5-7.5-13.1c-0.9-0.2-1.8-0.4-2.7-0.4H94.5 l-24.1-89c-1.2-4.6-5.4-7.9-10.2-7.9H0v21.3h51.8l23.3,87c-0.1,0.7-0.1,1.4,0,2.1l48,176c0.3,1.4,0.8,2.9,1.3,4.3l16.2,59 c-15.6,8.3-26.2,24.7-26.2,43.6c0,27.3,22.1,49.4,49.4,49.4c27.3,0,49.4-22.1,49.4-49.4c0-8.5-2.2-16.6-6-23.6 c-0.9-1.6-1.8-3.2-2.9-4.8H330c-5.6,8-9,17.8-9,28.4c0,27.3,22.1,49.4,49.4,49.4s49.4-22.1,49.4-49.4c0-12.9-4.9-24.6-13-33.4 c-8.7-9.9-21.5-16.2-35.8-16.3H161.9l-7.5-27.5c3.2,0.8,6.5,1.3,9.8,1.3H371.2z M370.5,373.231c15.7,0,28.4,12.7,28.4,28.4 s-12.7,28.4-28.4,28.4c-15.7,0-28.4-12.7-28.4-28.4S354.8,373.231,370.5,373.231z M163.8,373.231c15.7,0,28.3,12.8,28.3,28.4 c0,15.7-12.7,28.4-28.4,28.4c-15.7,0-28.3-12.7-28.3-28.4S148.1,373.231,163.8,373.231z M144.8,290.931l-23.9-87.4l-21.3-76.8 h334.9l-43.3,162.6c-2.4,9.3-10.7,15.8-20.3,16H164C155.3,304.831,147.7,299.231,144.8,290.931z" fill="#000000" data-original="#000000"></path>
 											</svg></button>
 
-									</form>
-								</div>
+								</form>
+							</div>
 
-								<div class="product-item-detail">
-									<h3 class="product-item-detail-name">
+							<div class="product-item-detail">
+								<h3 class="product-item-detail-name">
 										<a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
 											{{ $product->name }}
 										</a>
-									</h3>
+								</h3>
 
-									<div class="product-item-detail-price">
-										<span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
-										@if($product->original_price)
+								<div class="product-item-detail-price">
+									<span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+									@if($product->original_price)
 										<del>{{ number_format($product->original_price, 0, ',', '.') }}₫</del>
-										@endif
-									</div>
+									@endif
+								</div>
 
-									<div class="product-item-detail-info">
-										<div class="product-item-detail-info-data">
+								<div class="product-item-detail-info">
+									<div class="product-item-detail-info-data">
 											{{-- Giữ lại các tag new, freeship, hot --}}
 											<span class="product-item-detail-info-tag">new</span>
 											<span class="product-item-detail-info-tag">freeship</span>
 											<span class="product-item-detail-info-tag">hot</span>
-										</div>
-										<div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
 									</div>
+									<div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
 								</div>
 							</div>
 						</div>
-						@endforeach
 					</div>
+					@endforeach
 				</div>
+			</div>			
 
 
 				<div class="recently-viewed-products mt-5" id="product-page-recently-viewed" style="display: none;">
@@ -4446,15 +4446,15 @@
 								<button type="submit" title="Đăng ký">Đăng ký</button>
 							</form>
 						</div>
-					</div>
 				</div>
-			</div>
+			</div>			
 		</div>
+	</div>
 
-	</main>
-	@include('Frontend.partials.footer')
-	@include('Frontend.partials.modal')
-	<script>
+</main>
+@include('Frontend.partials.footer')
+@include('Frontend.partials.modal')
+<script>
 		$("body").removeClass("preload");
 		document.addEventListener('lazybeforeunveil', function(e) {
 			var bg = e.target.getAttribute('data-bg');
@@ -4483,7 +4483,7 @@
 					$(this).removeAttr('loading');
 				})
 			});
-		} else {
+                } else {
 			// Jquery touch
 			jQuery.event.special.touchstart = {
 				setup: function(e, t, n) {
@@ -4500,8 +4500,8 @@
 			};
 		}
 	</script> <button class="overplay-all" title="Đóng"></button>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
 			const quantityInput = document.getElementById('quantity-input');
 			const minusBtn = document.querySelector('[data-type="shop-quantity-minus"]');
 			const plusBtn = document.querySelector('[data-type="shop-quantity-plus"]');
@@ -4556,8 +4556,8 @@
 					if (current > 1) quantityInput.value = current - 1;
 				}
 			});
-		});
-	</script>
+	});
+</script>
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {
 			const tabButtons = document.querySelectorAll(".main-product-description-left-head li");
@@ -4586,7 +4586,7 @@
 			});
 		});
 	</script>
-	<script>
+<script>
 		document.addEventListener("DOMContentLoaded", function() {
 			const readMoreLinks = document.querySelectorAll('.main-product-description-item-readmore');
 
@@ -4612,7 +4612,7 @@
 					if (dataContainer.classList.contains('expanded')) {
 						dataContainer.classList.remove('expanded');
 						this.textContent = 'Xem thêm';
-					} else {
+		} else {
 						dataContainer.classList.add('expanded');
 						this.textContent = 'Thu gọn';
 					}
@@ -4655,7 +4655,7 @@
 			}
 		};
 
-		document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function() {
 			// Elements
 			const quantityInput = document.getElementById('quantity-input');
 			const minusBtn = document.querySelector('[data-type="shop-quantity-minus"]');
@@ -4986,7 +4986,7 @@
 				const thumbLinks = document.querySelectorAll('.thumb-link');
 				thumbLinks.forEach(thumb => {
 					thumb.addEventListener('click', function(e) {
-						e.preventDefault();
+				e.preventDefault();
 
 						// Remove active class from all
 						document.querySelectorAll('.thumb-link.active, .main-image-link.active').forEach(link => {
@@ -5073,9 +5073,9 @@
 						} else {
 							dataContainer.classList.add('expanded');
 							this.textContent = 'Thu gọn';
-						}
-					});
-				});
+			}
+		});
+	});
 			}
 
 			function handleFormSubmit(e) {

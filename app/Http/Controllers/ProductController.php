@@ -63,13 +63,35 @@ class ProductController extends Controller
         $coupons = Coupon::latest()->take(4)->get();
         $banners = Banner::latest()->take(4)->get();
         $favorites = collect(); // luôn khởi tạo rỗng
+        $favoriteProducts = collect(); // Sản phẩm yêu thích để hiển thị ở trang chủ
+        
+        // Lấy sản phẩm bán chạy dựa trên số lượng đã bán trong OrderDetail
+        $bestSellingProducts = Product::with(['images', 'brand', 'category'])
+            ->addSelect(['total_sold' => OrderDetail::selectRaw('COALESCE(SUM(quantity), 0)')
+                ->whereColumn('product_id', 'products.id')
+            ])
+            ->orderByDesc('total_sold')
+            ->orderByDesc('created_at')
+            ->take(8)
+            ->get();
 
         if (Auth::check()) {
             $favorites = Favorite::with('product')
                 ->where('user_id', Auth::id())
                 ->get();
         }
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites', 'banners'));
+        
+        // Lấy sản phẩm được yêu thích nhất (dựa trên số lượng favorite)
+        $favoriteProducts = Product::with(['images', 'brand', 'category'])
+            ->addSelect(['favorite_count' => Favorite::selectRaw('COUNT(*)')
+                ->whereColumn('product_id', 'products.id')
+            ])
+            ->whereHas('favorites') // Chỉ lấy sản phẩm có ít nhất 1 favorite
+            ->orderByDesc('favorite_count')
+            ->orderByDesc('created_at')
+            ->take(8)
+            ->get();
+        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites', 'banners', 'favoriteProducts', 'bestSellingProducts'));
     }
 
     public function aboutPage()
