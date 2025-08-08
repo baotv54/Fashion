@@ -20,7 +20,7 @@
                             </button>
                         </li>
                         <li class="{{ Request::is('/') ? 'active' : '' }}">
-                            <a href="/" title="Trang chủ" aria-label="Trang chủ">Trang chủ</a>
+                            <a href="/" title="Trang chủ" aria-label="Trang chính">Trang chủ</a>
                         </li>
                         <li class="hasChild {{ Request::is('products') || Request::is('product/*') ? 'active' : '' }}">
                             <a href="/products" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
@@ -155,12 +155,13 @@
                 </div>
             </div>
             <div class="headers2-right">
-                <form class="tool-search" action="https://f1genz-shoes.mysapo.net/search">
+                <form class="tool-search" action="{{ route('products.all') }}" method="GET">
                     <input type="hidden" name="type" value="product">
-                    <input required name="q" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm...">
+                    <input required name="search" id="product-search" autocomplete="off" type="text" placeholder="Tìm kiếm sản phẩm..." value="{{ request('search') }}">
                     <button type="submit" title="Tìm kiếm"><i class="fal fa-search"></i></button>
                     <button class="tool-search-overplay" title="Đóng"></button>
-                    <div class="tool-search-smart"></div>
+                    <!-- <div class="tool-search-smart"></div> -->
+                    <ul id="search-suggestions" class="list-group position-absolute"></ul>
                 </form>
                 @auth
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
@@ -171,6 +172,11 @@
                 <button class="has-count" type="button" title="Yêu thích" onclick="window.location.href='{{ route('favorites.index') }}'">
                     <i class="fal fa-heart"></i>
                     <span id="wishlist-count">{{ isset($favorites) ? $favorites->count() : 0 }}</span>
+                </button>
+                <!-- Nút So sánh sản phẩm -->
+                <button class="shop-tool has-count" type="button" title="So sánh sản phẩm" data-type="shop-compare-header">
+                    <i class="fas fa-balance-scale"></i>
+                    <span class="shop-compare-count">0</span>
                 </button>
                 @else
                 <button class="shop-tool" type="button" data-type="shop-customer-header" data-toggle="modal"
@@ -191,3 +197,107 @@
         </div>
     </div>
 </header>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <a href="/product/${item.id}">${item.name}</a> -->
+
+<script>
+    $(document).ready(function() {
+        $('#product-search').on('input', function() {
+            let query = $(this).val();
+            if (query.length > 1) {
+                $.ajax({
+                    url: "{{ route('product.search') }}",
+                    method: 'GET',
+                    data: {
+                        query: query
+                    },
+                    success: function(data) {
+                        $('#search-suggestions').empty();
+
+                        if (data.length > 0) {
+                            let html = `<div class="search-title"><strong>Sản phẩm (${data.length})</strong></div>`;
+                            data.forEach(function(item) {
+                                html += `
+                <div class="search-item" data-id="${item.id}">
+                    <img src="${item.image_url}" alt="${item.name}">
+                    <a href="/product/${item.id}">${item.name}</a>
+                </div>
+            `;
+                            });
+                            $('#search-suggestions').html(html);
+                        } else {
+                            $('#search-suggestions').html(`<div class="search-empty">Không tìm thấy sản phẩm</div>`);
+                        }
+                    }
+                });
+            } else {
+                $('#search-suggestions').empty();
+            }
+        });
+
+        // Ẩn gợi ý khi click ngoài
+        $(document).click(function(e) {
+            if (!$(e.target).closest('#product-search').length) {
+                $('#search-suggestions').empty();
+            }
+        });
+    });
+</script>
+<style>
+   #search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    /* Bỏ border */
+    border: none;
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0;
+    z-index: 999;
+
+    /* Thêm hiệu ứng bóng */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .search-title {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+        font-size: 15px;
+        color: #222;
+    }
+
+    .search-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .search-item img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .search-item span {
+        font-size: 14px;
+        color: #000;
+    }
+
+    .search-item:hover {
+        background-color: #f8f8f8;
+    }
+
+    .search-empty {
+        padding: 10px 15px;
+        color: #999;
+        font-style: italic;
+    }
+</style>

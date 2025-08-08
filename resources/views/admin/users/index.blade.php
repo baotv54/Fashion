@@ -57,7 +57,6 @@
                                 >
                                     <i data-feather="edit"></i>
                                 </button>
-
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete({{ $user->id }})" title="Xoá">
                                     <i data-feather="trash-2"></i>
                                 </button>

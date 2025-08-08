@@ -243,6 +243,30 @@
                 <div class="modal-content "></div>
             </div>
         </div>
+
+        <!-- Recently Viewed Products Section -->
+        <section class="home-recently-viewed" id="recently-viewed-section" style="display: none;">
+            <div class="container">
+                <div class="home-recently-viewed-wrap">
+                    <div class="home-recently-viewed-header">
+                        <div class="section-title-all">
+                            <div>
+                                <span>F1GENZ</span>
+                                <h2>Sản phẩm vừa xem</h2>
+                            </div>
+                            <button type="button" onclick="clearRecentlyViewed()" class="clear-recently-viewed">
+                                Xóa tất cả <i class="fal fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="home-recently-viewed-body">
+                        <div id="recently-viewed-products" class="recently-viewed-products-list">
+                            <!-- Sản phẩm sẽ được render bằng JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section class="home-about">
             <div class="container">
                 <div class="home-about-top">
@@ -1023,6 +1047,178 @@
     </main>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
+    @include('Frontend.partials.Chatbot')
+
+
+    <style>
+        /* Recently Viewed Products Styling */
+        .home-recently-viewed {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+
+        .home-recently-viewed-header .section-title-all {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .clear-recently-viewed {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .clear-recently-viewed:hover {
+            background: #c82333;
+        }
+
+        .recently-viewed-products-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .recently-viewed-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .recently-viewed-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .recently-viewed-item-image {
+            position: relative;
+            padding-bottom: 100%;
+            overflow: hidden;
+        }
+
+        .recently-viewed-item-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .recently-viewed-item:hover .recently-viewed-item-image img {
+            transform: scale(1.05);
+        }
+
+        .recently-viewed-item-content {
+            padding: 15px;
+        }
+
+        .recently-viewed-item-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            text-decoration: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recently-viewed-item-title:hover {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .recently-viewed-item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .recently-viewed-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .recently-viewed-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .recently-viewed-btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .recently-viewed-btn-primary:hover {
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .recently-viewed-btn-remove {
+            background: #6c757d;
+            color: white;
+            flex: 0 0 auto;
+            width: 40px;
+        }
+
+        .recently-viewed-btn-remove:hover {
+            background: #5a6268;
+        }
+
+        .recently-viewed-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-size: 16px;
+        }
+
+        .recently-viewed-empty i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .recently-viewed-products-list {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .home-recently-viewed {
+                padding: 40px 0;
+            }
+
+            .home-recently-viewed-header .section-title-all {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+
+    <script src="{{ asset('js/recently-viewed.js') }}"></script>
+
 </body>
 @include('Frontend.partials.scrip')
 

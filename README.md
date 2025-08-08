@@ -79,3 +79,4 @@ php artisan serve
 
 ---
 
+python image_vector_api.py

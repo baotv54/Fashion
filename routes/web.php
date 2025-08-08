@@ -17,16 +17,41 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\ChatBotDemoController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ImportWarehouseController;
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\ComparisonController;
 use Illuminate\Support\Facades\Route;
 
 
+
 Route::get('/', [ProductController::class, 'homepage'])->name('Frontend.index');
+
+// Routes cho Contact Form - CHÍNH THỨC
+Route::get('/lien-he', function () {
+    return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ với giao diện cũ đã sửa validation
+})->name('contact.show');
+Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
+
+// ======================= COMMENTED - BACKUP ROUTES =======================
+// Backup route cho trang liên hệ cũ (có lỗi form) - KHÔNG SỬ DỤNG
+// Route::get('/lien-he-old', function () {
+//     return view('Frontend.pages.pages.lien-he');
+// })->name('contact.old');
+
+// Test contact route - CHỈ DÙNG ĐỂ DEBUG
+// Route::get('/test-contact', function () {
+//     return view('test-contact');
+// })->name('test.contact');
+// =====================================================================
 
 Route::get('/Login', function () {
     return view('Frontend.pages.account.login');
@@ -52,6 +77,7 @@ Route::get('/lien-he', function () {
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -88,10 +114,27 @@ Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpay_return']
 Route::get('/checkout/momo-return', [CheckoutController::class, 'momo_return'])->name('checkout.momo-return');
 Route::post('/checkout/momo-ipn', [CheckoutController::class, 'momo_ipn'])->name('checkout.momo-ipn');
 
-
-Route::post('/chat', [ChatBotController::class, 'sendMessage']);
-Route::get('/chat/history', [ChatBotController::class, 'getHistory']);
+Route::post('/chat/image-search-vector', [ChatBotController::class, 'imageSearchByVector'])->name('chat.imageSearchByVector');
+// Route::post('/chatbot', [ChatBotController::class, 'sendMessage']);
+Route::post('/chatbot', [ChatBotController::class, 'handle']);
+Route::post('/chat', [ChatBotController::class, 'sendMessage'])->name('chat.send');
+Route::get('/chat/history', [ChatBotController::class, 'getHistory'])->name('chat.history');
 Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
+Route::post('/chat/image-search', [ChatBotController::class, 'imageSearch'])->name('chat.imageSearch');
+
+// Chatbot Demo routes
+Route::prefix('chatbot-demo')->group(function () {
+    Route::get('/trends', [ChatBotDemoController::class, 'demoTrends'])->name('chatbot.demo.trends');
+    Route::get('/personalized', [ChatBotDemoController::class, 'demoPersonalizedRecommendations'])->name('chatbot.demo.personalized');
+    Route::get('/style-analysis', [ChatBotDemoController::class, 'demoStyleAnalysis'])->name('chatbot.demo.style');
+    Route::get('/outfit-suggestions', [ChatBotDemoController::class, 'demoOutfitSuggestions'])->name('chatbot.demo.outfit');
+    Route::get('/budget-analysis', [ChatBotDemoController::class, 'demoBudgetAnalysis'])->name('chatbot.demo.budget');
+    Route::get('/seasonal', [ChatBotDemoController::class, 'demoSeasonalRecommendations'])->name('chatbot.demo.seasonal');
+    Route::post('/smart-search', [ChatBotDemoController::class, 'demoSmartSearch'])->name('chatbot.demo.search');
+    Route::post('/compare', [ChatBotDemoController::class, 'demoProductComparison'])->name('chatbot.demo.compare');
+    Route::get('/size-guide', [ChatBotDemoController::class, 'demoSizeGuide'])->name('chatbot.demo.size');
+    Route::get('/all-features', [ChatBotDemoController::class, 'demoAllFeatures'])->name('chatbot.demo.all');
+});
 
 Route::post('/get-variant-id', [ProductController::class, 'getVariant'])->name('product.getVariant');
 
@@ -104,7 +147,11 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
 
+// Thêm vào routes/web.php hoặc routes/api.php
+Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
+Route::post('/cart/update-variant', [CartController::class, 'updateVariant'])->name('cart.update-variant');
 Route::middleware(['auth'])->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -144,6 +191,16 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
+// Routes cho so sánh sản phẩm (không cần đăng nhập)
+Route::prefix('comparison')->group(function () {
+    Route::get('/', [ComparisonController::class, 'index'])->name('comparison.index');
+    Route::post('/add', [ComparisonController::class, 'add'])->name('comparison.add');
+    Route::post('/remove', [ComparisonController::class, 'remove'])->name('comparison.remove');
+    Route::post('/clear', [ComparisonController::class, 'clear'])->name('comparison.clear');
+    Route::get('/count', [ComparisonController::class, 'count'])->name('comparison.count');
+    Route::get('/products', [ComparisonController::class, 'getProducts'])->name('comparison.products');
+});
+
 
 Route::middleware(['auth'])->group(function () {
     //group routes
@@ -160,8 +217,43 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/delete-image/{imageId}', [ProductController::class, 'deleteImage'])->name('products.deleteImage');
             Route::get('/admin/products/{productId}/set-primary-image/{imageId}', [ProductController::class, 'setPrimaryImage'])->name('products.setPrimaryImage');
             Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+            Route::get('/warehouse', [ProductController::class, 'warehouse'])->name('warehouse.index');
+            // Route::get('/import_creater', [ProductController::class, 'import_creater'])->name('warehouse.import_creater');
+            Route::get('/history', [ProductController::class, 'history'])->name('warehouse.history');
+            Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
+            Route::get('/products/info', [ProductController::class, 'info'])->name('products.info');
+            // routes/web.php hoặc api.php
+            Route::get('/api/products/search', [ProductController::class, 'ajaxSearch'])->name('products.ajaxSearch');
+            Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
         });
         // Routes quản lý sản phẩm biến thể
+        Route::get('/product/search', [ProductController::class, 'search2'])->name('product.search');
+
+
+
+        Route::prefix('warehouse')->group(function () {
+            Route::get('/index', [ImportWarehouseController::class, 'index'])->name('warehouse.list');
+            Route::get('/import_creater', [ImportWarehouseController::class, 'create'])->name('warehouse.import_creater');
+            Route::post('/store', [ImportWarehouseController::class, 'store'])->name('warehouse.store');
+            Route::get('/products', [ImportWarehouseController::class, 'product'])->name('warehouse.product');
+            Route::post('/store_warehouse', [ImportWarehouseController::class, 'store_warehouse'])->name('warehouse.store_warehouse');
+            // Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::post('/update-quantity/{id}', [ImportWarehouseController::class, 'updateQuantity'])->name('warehouse.update_quantity');
+            Route::get('/ImportWarehouseController', [ImportWarehouseController::class, 'calculateTotal'])->name('warehouse.calculate_total');
+            Route::get('/import/{id}', [ImportWarehouseController::class, 'show'])->name('warehouse.show');
+            Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
+            Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
+            Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
+
+
+
+
+
+        });
+
+
+
         Route::prefix('products/{productId}/variants')->group(function () {
             Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
             Route::get('/create', [ProductVariantController::class, 'create'])->name('product_variants.create');
@@ -169,6 +261,17 @@ Route::middleware(['auth'])->group(function () {
             Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
             Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
             Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+        });
+
+        // Routers quản lý nhà cung cấp
+        Route::prefix('suppliers')->group(function () {
+            Route::get('/', [SupplierController::class, 'index'])->name('suppliers.index');
+            Route::get('/create', [SupplierController::class, 'create'])->name('suppliers.create');
+            Route::post('/', [SupplierController::class, 'store'])->name('suppliers.store');
+            Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+            Route::put('/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
+            Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+            Route::get('/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
         });
 
         // Routes cho Attribute
@@ -257,15 +360,26 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-        //Routes Quản lý Banne
+        //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
             Route::post('/', [BannerController::class, 'store'])->name('banners.store');
-             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+            Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
             Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
         });
+
+        // Routes quản lý liên hệ
+        Route::prefix('contacts')->group(function () {
+            Route::get('/', [ContactController::class, 'index'])->name('contacts.index');
+            Route::get('/{id}', [ContactController::class, 'showDetail'])->name('contacts.show');
+            Route::post('/{id}/update-status', [ContactController::class, 'updateStatus'])->name('contacts.updateStatus');
+            Route::post('/{id}/reply', [ContactController::class, 'reply'])->name('contacts.reply');
+            Route::delete('/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+        });
+        // CRUD Size
+        Route::resource('sizes', SizeController::class);
     });
 });
 
@@ -278,9 +392,9 @@ Route::middleware(['auth'])->group(function () {
 // });
 
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::get('/cart', function () {
 //     return view('Frontend.pages.cart');
@@ -311,4 +425,12 @@ Route::middleware(['auth'])->group(function () {
 // Route::get('/order-detail', function () {
 //     return view('Frontend.pages.account.order-detail');
 // });
+
+// ======================= COMMENTED - TEST ROUTES =======================
+// Test contact form - trang riêng không phụ thuộc template cũ - CHỈ DÙNG ĐỂ DEBUG
+// Route::get('/test-contact-simple', function () {
+//     return view('test-contact-simple');
+// })->name('contact.test');
+// =====================================================================
+
 require __DIR__ . '/auth.php';

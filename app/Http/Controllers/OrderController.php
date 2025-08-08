@@ -16,16 +16,9 @@ class OrderController extends Controller
     {
         $orders = Order::with('user')
             ->orderBy('created_at', 'desc')
-            ->paginate(10); 
-    
-        return view('admin.orders.index', compact('orders'));
-    }
-    
-    public function show($id)
-    {
-        $order = Order::with(['orderDetails', 'user'])->findOrFail($id);
+            ->paginate(10);
 
-        return view('admin.orders.show', compact('order'));
+        return view('admin.orders.index', compact('orders'));
     }
     public function updateStatus(Request $request, $id)
     {
@@ -37,7 +30,7 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
-        return redirect()->route('orders.index')->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
     }
     public function userOrderHistory()
     {
@@ -129,14 +122,25 @@ class OrderController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
-    public function cancelOrder($id)
+    public function cancelOrder(Request $request, $id)
     {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+            'cancel_reason_other' => 'nullable|string|max:255',
+        ]);
+
         $order = Order::where('id', $id)
             ->where('user_id', Auth::id())
             ->whereIn('status', ['ordered', 'processing', 'confirmed'])
             ->firstOrFail();
 
+        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
+        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp' 
+            ? $request->cancel_reason_other 
+            : $request->cancel_reason;
+
         $order->status = 'cancelled';
+        $order->cancel_reason = $cancelReason;
         $order->save();
 
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
