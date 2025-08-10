@@ -29,13 +29,6 @@
                             <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}">
                             @error('slug')<small class="text-danger">{{ $message }}</small>@enderror
                         </div>
-
-                        <div class="mb-3">
-                            <label for="quantity" class="form-label">Số Lượng sản phẩm</label>
-                            <input type="number" name="quantity" class="form-control" id="quantity" placeholder="Nhập Số Lượng" value="{{ old('quantity') }}">
-                            @error('quantity')<small class="text-danger">{{ $message }}</small>@enderror
-                        </div>
-
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
                             <textarea name="description" class="form-control" id="description" rows="4" placeholder="Nhập mô tả sản phẩm">{{ old('description') }}</textarea>
@@ -365,10 +358,6 @@
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
                 <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM" required>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Tồn kho</label>
-                <input type="number" name="variants[${index}][stock]" class="form-control form-control-sm" placeholder="Tồn kho" required>
             </div>
         </div>
 

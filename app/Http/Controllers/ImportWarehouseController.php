@@ -19,11 +19,33 @@ use Illuminate\Support\Facades\DB;
 class ImportWarehouseController extends Controller
 {
     // Hiển thị danh sách nhập kho
-    public function index()
-    {
-        $imports = ImportWarehouseMain::with('supplier', 'user')->latest()->paginate(10);
-        return view('admin.order_warehouse.index', compact('imports'));
+    public function index(Request $request)
+{
+    $query = ImportWarehouseMain::with('supplier', 'user')->latest();
+
+    // Lọc theo ngày (created_at)
+    if ($request->has('date') && $request->date != null) {
+        $query->whereDate('created_at', $request->date);
     }
+
+    // Lọc theo trạng thái
+    if ($request->has('status') && $request->status != null) {
+        if ($request->status === 'hoan-thanh') {
+            $query->where('import_type', 'Đã Nhập Kho')
+                  ->where('payment_status', 'Đã thanh toán');
+        } elseif ($request->status === 'dang-giao-dich') {
+            $query->where(function ($q) {
+                $q->where('import_type', '!=', 'Đã Nhập Kho')
+                  ->orWhere('payment_status', '!=', 'Đã thanh toán');
+            });
+        }
+    }
+
+    $imports = $query->paginate(10);
+
+    return view('admin.order_warehouse.index', compact('imports'));
+}
+
 
     public function product(Request $request)
     {

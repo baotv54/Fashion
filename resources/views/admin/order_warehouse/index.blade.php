@@ -20,31 +20,37 @@
     </div>
 
     {{-- Tabs trạng thái --}}
+    @php
+        $currentStatus = request('status');
+    @endphp
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="#">Tất cả</a>
+            <a class="nav-link {{ !$currentStatus ? 'active' : '' }}"
+               href="{{ route('warehouse.list', request()->except('status')) }}">Tất cả</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Đang giao dịch</a>
+            <a class="nav-link {{ $currentStatus == 'dang-giao-dich' ? 'active' : '' }}"
+               href="{{ route('warehouse.list', array_merge(request()->except('page'), ['status' => 'dang-giao-dich'])) }}">Đang giao dịch</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Hoàn thành</a>
+            <a class="nav-link {{ $currentStatus == 'hoan-thanh' ? 'active' : '' }}"
+               href="{{ route('warehouse.list', array_merge(request()->except('page'), ['status' => 'hoan-thanh'])) }}">Hoàn thành</a>
         </li>
     </ul>
 
     {{-- Bộ lọc tìm kiếm --}}
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        <input type="text" class="form-control flex-grow-1" placeholder="Tìm theo mã đơn, tên, SĐT, mã NCC">
-        <select class="form-select" style="max-width: 180px;">
-            <option selected>Trạng thái nhập</option>
-            <option>Chưa nhập</option>
-            <option>Đã nhập</option>
+    <form method="GET" action="{{ route('warehouse.list') }}" class="d-flex flex-wrap gap-2 mb-3">
+        <input type="date" name="date" class="form-control" style="max-width: 180px;" value="{{ request('date') }}">
+
+        <select name="status" class="form-select" style="max-width: 180px;">
+            <option value="">Tất cả trạng thái</option>
+            <option value="dang-giao-dich" {{ request('status') == 'dang-giao-dich' ? 'selected' : '' }}>Đang giao dịch</option>
+            <option value="hoan-thanh" {{ request('status') == 'hoan-thanh' ? 'selected' : '' }}>Hoàn thành</option>
         </select>
-        <input type="date" class="form-control" style="max-width: 180px;">
-        <input type="text" class="form-control" placeholder="Sản phẩm" style="max-width: 180px;">
-        <button class="btn btn-outline-secondary">Bộ lọc khác</button>
-        <button class="btn btn-light">Lưu bộ lọc</button>
-    </div>
+
+        <button class="btn btn-outline-secondary">Lọc</button>
+        <a href="{{ route('warehouse.list') }}" class="btn btn-light">Xóa lọc</a>
+    </form>
 
     {{-- Danh sách đơn --}}
     <div class="card shadow-sm">
@@ -71,7 +77,7 @@
                                 {{ $import->code }}
                             </a>
                         </td>
-                       <td>{{ \Carbon\Carbon::parse($import->created_at)->format('d/m/Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($import->created_at)->format('d/m/Y') }}</td>
                         <td>
                             <span class="badge bg-success-subtle text-success border border-success">{{ $import->status ?? '-' }}</span>
                         </td>
@@ -80,8 +86,7 @@
                         </td>
                         <td>{{ $import->supplier->name ?? '-' }}</td>
                         <td>{{ $import->user->name ?? '-' }}</td>
-                        <td>{{ $import->total_price ?? '-' }}</td>
-
+                        <td>{{ number_format($import->total_price) }}₫</td>
                     </tr>
                     @empty
                     <tr>
@@ -91,11 +96,72 @@
                 </tbody>
             </table>
         </div>
-    </div>
+        @if ($imports->hasPages())
+            <div class="row mx-3 justify-content-between mt-4">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
+                    <div class="dt-info">
+                        Hiển thị {{ $imports->firstItem() }} đến {{ $imports->lastItem() }} trong tổng số {{ $imports->total() }} Đơn Hàng
+                    </div>
+                </div>
 
-    {{-- Phân trang --}}
-    <div class="d-flex justify-content-end mt-3">
-        {{ $imports->links() }}
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
+                    <div class="dt-paging">
+                        <nav aria-label="pagination">
+                            <ul class="pagination">
+                                {{-- First --}}
+                                <li class="dt-paging-button page-item {{ $imports->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link first" href="{{ $imports->url(1) }}">
+                                        <i class="icon-base ti tabler-chevrons-left icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Previous --}}
+                                <li class="dt-paging-button page-item {{ $imports->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link previous" href="{{ $imports->previousPageUrl() }}">
+                                        <i class="icon-base ti tabler-chevron-left icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Page numbers --}}
+                                @foreach ($imports->getUrlRange(
+                                max(1, $imports->currentPage() - 2),
+                                min($imports->lastPage(), $imports->currentPage() + 2)
+                                ) as $page => $url)
+                                <li class="dt-paging-button page-item {{ $imports->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                                @endforeach
+
+                                {{-- Dấu 3 chấm nếu có --}}
+                                @if ($imports->lastPage() > $imports->currentPage() + 2)
+                                <li class="dt-paging-button page-item disabled">
+                                    <span class="page-link ellipsis">…</span>
+                                </li>
+                                <li class="dt-paging-button page-item">
+                                    <a class="page-link" href="{{ $imports->url($imports->lastPage()) }}">{{ $imports->lastPage() }}</a>
+                                </li>
+                                @endif
+
+                                {{-- Next --}}
+                                <li class="dt-paging-button page-item {{ !$imports->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link next" href="{{ $imports->nextPageUrl() }}">
+                                        <i class="icon-base ti tabler-chevron-right icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Last --}}
+                                <li class="dt-paging-button page-item {{ !$imports->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link last" href="{{ $imports->url($imports->lastPage()) }}">
+                                        <i class="icon-base ti tabler-chevrons-right icon-18px"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+            @endif
     </div>
 </div>
 @endsection

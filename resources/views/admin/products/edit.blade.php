@@ -44,6 +44,50 @@
                         </div>
                     </div>
                 </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Thông tin giá</h5>
+
+                        <div class="row">
+                            <!-- Giá bán -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Giá bán</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" placeholder="Nhập giá bán sản phẩm" name="price" id="price" value="{{ old('price', $product->price ) }}">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                                @error('price')<small class="text-danger">{{ $message }}</small>@enderror
+
+                            </div>
+
+                            <!-- Giá so sánh -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    Giá Nhập
+                                    <span class="text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Giá nhập sản phẩm"></span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" placeholder="Nhập giá vốn sản phẩm" name="import_price" id="import_price" value="{{ old('import_price', $product->import_price) }}">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                                @error('import_price')<small class="text-danger">{{ $message }}</small>@enderror
+                            </div>
+                        </div>
+
+                        <!-- Giá vốn -->
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label">
+                                Giá Khuyến Mãi
+                                <span class="text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Giá Khuyến Mãi"></span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" placeholder="Giá Khuyến Mãi" name="discount_price" id="discount_price" value="{{ old('discount_price', $product->discount_price ) }}">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if($product_variants->count() > 0)
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-light fw-semibold text-uppercase text-center">
@@ -61,7 +105,7 @@
                         <div class="border rounded-3 p-3 mb-4 bg-white position-relative">
                             <br>
                             <div class="fw-semibold mb-2">
-                                Phiên Bản: <span class="badge text-success border border-success bg-white me-1">
+                                Phiên Bản: <span class="text-success">
                                     {{ $variantName ?: 'Không rõ' }}
                                 </span>
                             </div>
@@ -88,10 +132,6 @@
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Khuyến Mãi</label>
                                     <input type="number" name="variants[{{ $index }}][discount_price]" value="{{ $variant->discount_price }}" class="form-control" placeholder="Giá KM" min="0" step="1000">
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <label class="form-label">Tồn kho</label>
-                                    <input type="number" name="variants[{{ $index }}][stock]" value="{{ $variant->stock }}" class="form-control" placeholder="Tồn kho" min="0">
                                 </div>
                             </div>
 

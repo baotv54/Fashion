@@ -229,7 +229,6 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|max:255',
             'slug' => 'required|unique:products,slug',
-            'quantity' => 'required|integer|min:0|max:255',
             'import_price' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|min:0',
@@ -240,6 +239,44 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'variants' => 'nullable|array'
+        ], [
+            'name.required' => 'Vui lòng nhập tên sản phẩm.',
+            'name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
+
+            'slug.required' => 'Vui lòng nhập đường dẫn (slug) cho sản phẩm.',
+            'slug.unique' => 'Slug này đã tồn tại. Vui lòng chọn slug khác.',
+            'slug.max' => 'Slug không được vượt quá 255 ký tự.',
+
+            'import_price.required' => 'Vui lòng nhập giá nhập.',
+            'import_price.numeric' => 'Giá nhập phải là một số.',
+            'import_price.min' => 'Giá nhập phải lớn hơn hoặc bằng 0.',
+
+            'price.required' => 'Vui lòng nhập giá bán.',
+            'price.numeric' => 'Giá bán phải là một số.',
+            'price.min' => 'Giá bán phải lớn hơn hoặc bằng 0.',
+
+            'discount_price.numeric' => 'Giá giảm phải là một số.',
+            'discount_price.min' => 'Giá giảm phải lớn hơn hoặc bằng 0.',
+
+            'brand_id.required' => 'Vui lòng chọn thương hiệu.',
+            'brand_id.exists' => 'Thương hiệu không tồn tại.',
+
+            'category_id.required' => 'Vui lòng chọn danh mục.',
+            'category_id.exists' => 'Danh mục không tồn tại.',
+
+            'status.required' => 'Vui lòng chọn trạng thái hiển thị.',
+            'status.boolean' => 'Trạng thái phải là đúng hoặc sai.',
+
+            'image.required' => 'Vui lòng chọn ảnh đại diện.',
+            'image.image' => 'Tệp tải lên phải là hình ảnh.',
+            'image.mimes' => 'Ảnh đại diện chỉ chấp nhận các định dạng: jpeg, png, jpg, webp.',
+            'image.max' => 'Ảnh đại diện không được vượt quá 2MB.',
+
+            'images.*.image' => 'Mỗi ảnh phụ phải là một tệp hình ảnh.',
+            'images.*.mimes' => 'Ảnh phụ chỉ chấp nhận các định dạng: jpeg, png, jpg, webp.',
+            'images.*.max' => 'Mỗi ảnh phụ không được vượt quá 2MB.',
+
+            'variants.array' => 'Dữ liệu biến thể phải là dạng danh sách.'
         ]);
 
         // Tạo sản phẩm
@@ -284,7 +321,6 @@ class ProductController extends Controller
                 $variant = ProductVariant::create([
                     'product_id' => $product->id,
                     'price' => $variantData['price'],
-                    'stock' => $variantData['stock'],
                     'import_price' => $variantData['import_price'],
                     'discount_price' => $variantData['discount_price'],
                     'image' => $imagePath,
@@ -303,6 +339,8 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
     }
+
+
     public function edit($id)
     {
         $product = Product::with('images')->findOrFail($id);
@@ -328,6 +366,9 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required|max:255',
+            'import_price' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
             'brand_id' => 'required|exists:brands,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|boolean',
@@ -361,7 +402,7 @@ class ProductController extends Controller
         $variants = $request->input('variants', []);
         if (!empty($variants)) {
             foreach ($variants as $index => $variantData) {
-                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
+                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'],$variantData['discount_price'])) {
                     continue;
                 }
 
@@ -394,7 +435,8 @@ class ProductController extends Controller
                     // Cập nhật biến thể
                     $variant->update([
                         'price' => $variantData['price'],
-                        'stock' => $variantData['stock'],
+                        'import_price' => $variantData['import_price'],
+                        'discount_price' => $variantData['discount_price'],
                         'image' => $imagePath,
                     ]);
 
@@ -405,7 +447,8 @@ class ProductController extends Controller
                     $variant = ProductVariant::create([
                         'product_id' => $product->id,
                         'price' => $variantData['price'],
-                        'stock' => $variantData['stock'],
+                        'import_price' => $variantData['import_price'],
+                        'discount_price' => $variantData['discount_price'],
                         'image' => $imagePath,
                     ]);
                 }
