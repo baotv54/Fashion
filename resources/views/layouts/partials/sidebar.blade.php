@@ -53,29 +53,59 @@
         </li>
 
         <!-- Apps & Pages -->
-        <li class="menu-header small">
-            <span class="menu-header-text" data-i18n="Ứng dụng & Trang">Ứng dụng &amp; Trang</span>
+         <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Tổng Quan">Tổng Quan</span>
         </li>
-        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-            <a href="#" class="menu-link">
-                <i class="menu-icon icon-base ti tabler-mail"></i>
-                <div data-i18n="Email">Email</div>
+        <li class="menu-item {{ Request::routeIs(['orders.index']) ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="fa-sharp fa-solid fa-newspaper me-2"></i>
+                <div data-i18n="Quản Lý Đơn Hàng">Quản Lý Đơn Hàng </div>
             </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::routeIs('orders.index') ? 'active' : '' }}">
+                    <a href="{{ route('orders.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Sách Đơn Hàng">Danh Sách Đơn Hàng</div>
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-            <a href="#" class="menu-link">
-                <i class="menu-icon icon-base ti tabler-messages"></i>
-                <div data-i18n="Trò chuyện">Trò chuyện</div>
+
+
+        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'categories.index', 'categories.create', 'brands.index','attributes.index', 'sizes.index']) ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="fa-solid fa-box-open me-2"></i>
+                <div data-i18n="Quản Lý Sản Phẩm">Quản Lý Sản Phẩm </div>
             </a>
-        </li>
-        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-            <a href="#" class="menu-link">
-                <i class="menu-icon icon-base ti tabler-layout-kanban"></i>
-                <div data-i18n="Kanban">Kanban</div>
-            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::routeIs('products.index') ? 'active' : '' }}">
+                    <a href="{{ route('products.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Sách Sản Phẩm">Danh Sách Sản Phẩm</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('categories.index') ? 'active' : '' }}">
+                    <a href="{{ route('categories.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Mục">Danh Mục</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('brands.index') ? 'active' : '' }}">
+                    <a href="{{ route('brands.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Thương Hiệu"> Thương Hiệu </div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('attributes.index') ? 'active' : '' }}">
+                    <a href="{{ route('attributes.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Biến Thể">Biến Thể </div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('sizes.index') ? 'active' : '' }}">
+                    <a href="{{ route('sizes.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Bảng Chọn Size">Bảng Chọn Size </div>
+                    </a>
+                </li>
+            </ul>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics', 'orders.index', 'contacts.index', 'products.index', 'products.create', 'categories.index', 'categories.create', 'post-categories.index', 'post-categories.create', 'brands.index', 'brands.create', 'posts.index', 'posts.create', 'coupons.index', 'coupons.create', 'banners.index', 'banners.create']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics', 'products.index', 'products.create', 'categories.index', 'categories.create', 'post-categories.create', 'brands.index', 'brands.create', 'posts.index', 'posts.create', 'coupons.index', 'coupons.create', 'banners.create']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
@@ -86,113 +116,12 @@
                         <div data-i18n="Thống kê">Thống kê</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('orders.index') ? 'active' : '' }}">
-                    <a href="{{ route('orders.index') }}" class="menu-link">
-                        <div data-i18n="Danh sách đơn hàng">Danh sách đơn hàng</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ Request::routeIs('contacts.index') ? 'active' : '' }}">
-                    <a href="{{ route('contacts.index') }}" class="menu-link">
-                        <div data-i18n="Danh sách liên hệ">Danh sách liên hệ</div>
-                    </a>
-                </li>
                 <li class="menu-item {{ Request::routeIs('reviews.approve') ? 'active' : '' }}">
                     <a href="{{ route('reviews.approve', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Quản lý đánh giá">Quản lý đánh giá</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs(['categories.index', 'categories.create', 'post-categories.index', 'post-categories.create', 'brands.index', 'brands.create']) ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <div data-i18n="Danh mục & Thương hiệu">Danh mục & Thương hiệu</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs(['categories.index', 'categories.create']) ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <div data-i18n="Sản phẩm">Sản phẩm</div>
-                            </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('categories.index') ? 'active' : '' }}">
-                                    <a href="{{ route('categories.index') }}" class="menu-link">
-                                        <div data-i18n="Danh mục sản phẩm">Danh mục sản phẩm</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('categories.create') ? 'active' : '' }}">
-                                    <a href="{{ route('categories.create') }}" class="menu-link">
-                                        <div data-i18n="Thêm danh mục sản phảm">Thêm danh mục sản phảm</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs(['post-categories.index', 'post-categories.create']) ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <div data-i18n="Bài viết">Bài viết</div>
-                            </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('post-categories.index') ? 'active' : '' }}">
-                                    <a href="{{ route('post-categories.index') }}" class="menu-link">
-                                        <div data-i18n="Danh mục bài viết">Danh mục bài viết</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('post-categories.create') ? 'active' : '' }}">
-                                    <a href="{{ route('post-categories.create') }}" class="menu-link">
-                                        <div data-i18n="Thêm danh mục bài viết">Thêm danh mục bài viết</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs(['brands.index', 'brands.create']) ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <div data-i18n="Thương hiệu">Thương hiệu</div>
-                            </a>
-                            <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('brands.index') ? 'active' : '' }}">
-                                    <a href="{{ route('brands.index') }}" class="menu-link">
-                                        <div data-i18n="Danh mục thương hiệu">Danh mục thương hiệu</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('brands.create') ? 'active' : '' }}">
-                                    <a href="{{ route('brands.create') }}" class="menu-link">
-                                        <div data-i18n="Thêm danh mục thương hiệu">Thêm danh mục thương hiệu</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="menu-item {{ Request::routeIs(['products.index', 'products.create']) ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <div data-i18n="Sản phẩm">Sản phẩm</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs('products.index') ? 'active' : '' }}">
-                            <a href="{{ route('products.index') }}" class="menu-link">
-                                <div data-i18n="Danh sách sản phẩm">Danh sách sản phẩm</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('products.create') ? 'active' : '' }}">
-                            <a href="{{ route('products.create') }}" class="menu-link">
-                                <div data-i18n="Thêm sản phẩm">Thêm sản phẩm</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="menu-item {{ Request::routeIs(['posts.index', 'posts.create']) ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <div data-i18n="Bài viết">Bài viết</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs('posts.index') ? 'active' : '' }}">
-                            <a href="{{ route('posts.index') }}" class="menu-link">
-                                <div data-i18n="Danh sách bài viết">Danh sách bài viết</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('posts.create') ? 'active' : '' }}">
-                            <a href="{{ route('posts.create') }}" class="menu-link">
-                                <div data-i18n="Thêm bài viết">Thêm bài viết</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+
                 <li class="menu-item {{ Request::routeIs(['coupons.index', 'coupons.create']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Mã giảm giá">Mã giảm giá</div>
@@ -206,23 +135,6 @@
                         <li class="menu-item {{ Request::routeIs('coupons.create') ? 'active' : '' }}">
                             <a href="{{ route('coupons.create') }}" class="menu-link">
                                 <div data-i18n="Thêm mã giảm giá">Thêm mã giảm giá</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create']) ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <div data-i18n="Banner">Banner</div>
-                    </a>
-                    <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">
-                            <a href="{{ route('banners.index') }}" class="menu-link">
-                                <div data-i18n="Danh sách Banner">Danh sách Banner</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('banners.create') ? 'active' : '' }}">
-                            <a href="{{ route('banners.create') }}" class="menu-link">
-                                <div data-i18n="Thêm Banner">Thêm Banner</div>
                             </a>
                         </li>
                     </ul>
@@ -283,20 +195,59 @@
                 </li>
             </ul>
         </li>
+        <!-- Giao Tiếp  -->
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Giao Tiếp"> Giao Tiếp</span>
+        </li>
+        <li class="menu-item {{ Request::routeIs('contacts.index') ? 'active' : '' }}">
+            <a href="{{ route('contacts.index', ['review' => 1]) }}" class="menu-link">
+                <i class="menu-icon icon-base ti tabler-mail"></i>
+                <div data-i18n="Email">Email</div>
+            </a>
+        </li>
         <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+            <a href="#" class="menu-link">
+                <i class="menu-icon icon-base ti tabler-messages"></i>
+                <div data-i18n="Trò chuyện">Trò chuyện</div>
+            </a>
+        </li>
+        <li class="menu-item {{ Request::routeIs(['posts.index', 'post-categories.index']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon icon-base ti tabler-settings"></i>
-                <div data-i18n="Vai trò & Quyền hạn">Vai trò & Quyền hạn</div>
+                <i class="fa-sharp fa-solid fa-newspaper me-2"></i>
+                <div data-i18n="Tin Tức">Tin Tức</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Vai trò">Vai trò</div>
+                <li class="menu-item {{ Request::routeIs('posts.index') ? 'active' : '' }}">
+                    <a href="{{ route('posts.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Sách Bài Viết">Danh Sách Bài Viết</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs('post-categories.index') ? 'active' : '' }}">
+                    <a href="{{ route('post-categories.index', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Danh Mục">Danh Mục</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+            <a href="#" class="menu-link">
+                <i class="menu-icon icon-base ti tabler-layout-kanban"></i>
+                <div data-i18n="Kanban">Kanban</div>
+            </a>
+        </li>
+        <!-- Hệ Thống -->
+         <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Hệ Thống">Hệ Thống</span>
+        </li>
+        <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon icon-base ti tabler-settings"></i>
+                <div data-i18n="Cấu Hình Hệ Thống">Cấu Hình Hệ Thống</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">
                     <a href="#" class="menu-link">
-                        <div data-i18n="Quyền">Quyền</div>
+                        <div data-i18n="Quản Lý Baner">Quản Lý Baner</div>
                     </a>
                 </li>
             </ul>

@@ -380,6 +380,8 @@ Route::middleware(['auth'])->group(function () {
         });
         // CRUD Size
         Route::resource('sizes', SizeController::class);
+        Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
+
     });
 });
 
