@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductReviewMedia extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'product_review_id',
+        'file_path',
+        'type', // image hoặc video
+    ];
+
+    public function review()
+    {
+        return $this->belongsTo(ProductReview::class, 'product_review_id');
+    }
+}

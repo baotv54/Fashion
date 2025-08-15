@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Contact Form - F1GENZ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .debug {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Contact Form</h1>
+            <p>Form liên hệ đơn giản - Không phụ thuộc template cũ</p>
+        </div>
+        
+        <div class="content">
+            <!-- Thông báo -->
+            @if(session('success'))
+                <div class="alert alert-success">
+                    <strong>✅ Thành công!</strong> {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    <strong>❌ Có lỗi!</strong> {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <strong>❌ Lỗi validation:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
+            <form method="POST" action="{{ route('contact.store') }}" id="contact-form">
+                @csrf
+                
+                <div class="form-group">
+                    <label for="name">Tên của bạn <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" 
+                           placeholder="Nhập họ và tên đầy đủ"
+                           value="{{ old('name') }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Số điện thoại <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" 
+                           placeholder="VD: 0901234567"
+                           value="{{ old('phone') }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" 
+                           placeholder="example@email.com"
+                           value="{{ old('email') }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Nội dung tin nhắn <span class="required">*</span></label>
+                    <textarea id="message" name="message" 
+                              placeholder="Nhập nội dung bạn muốn liên hệ..."
+                              required>{{ old('message') }}</textarea>
+                </div>
+                
+                <button type="submit" class="btn" id="submit-btn">
+                    <span id="btn-text">🚀 Gửi thông tin</span>
+                    <span id="btn-loading" style="display: none;">⏳ Đang gửi...</span>
+                </button>
+            </form>
+            
+            <!-- Debug Info -->
+            <div class="debug">
+                <strong>🔧 Debug Information:</strong><br>
+                📍 Action: {{ route('contact.store') }}<br>
+                🔒 CSRF: {{ csrf_token() }}<br>
+                📝 Method: POST<br>
+                🌐 URL: {{ request()->fullUrl() }}<br>
+                📊 PHP Version: {{ PHP_VERSION }}<br>
+                🅻 Laravel: {{ app()->version() }}<br>
+                @if(old())
+                    🔄 Old Data: {{ json_encode(old()) }}<br>
+                @endif
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ route('contact.show') }}" style="color: #667eea; text-decoration: none;">
+                    ← Quay lại trang liên hệ chính
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Test Contact Form loaded successfully!');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+
+            console.log('📋 Form elements:', {
+                form: !!form,
+                submitBtn: !!submitBtn,
+                btnText: !!btnText,
+                btnLoading: !!btnLoading
+            });
+
+            if (!form || !submitBtn) {
+                console.error('❌ Required form elements not found!');
+                return;
+            }
+
+            form.addEventListener('submit', function(e) {
+                console.log('📤 Form submission started');
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                
+                // Get form data
+                const formData = new FormData(form);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                console.log('📋 Form data:', data);
+                
+                // Basic validation
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const message = document.getElementById('message').value.trim();
+                
+                if (!name || !phone || !email || !message) {
+                    e.preventDefault();
+                    alert('❌ Vui lòng điền đầy đủ thông tin!');
+                    resetButton();
+                    return false;
+                }
+                
+                if (phone.length < 10) {
+                    e.preventDefault();
+                    alert('❌ Số điện thoại phải có ít nhất 10 ký tự!');
+                    resetButton();
+                    return false;
+                }
+                
+                console.log('✅ Validation passed, submitting to Laravel...');
+                // Let the form submit naturally
+            });
+            
+            function resetButton() {
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+            
+            // Reset button if there are errors
+            if (document.querySelector('.alert-danger')) {
+                resetButton();
+                console.log('🔄 Reset button due to validation errors');
+            }
+        });
+    </script>
+</body>
+</html> 
