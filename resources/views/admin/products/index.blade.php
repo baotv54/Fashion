@@ -2,7 +2,7 @@
 
 @section('content')
 <!-- Product List Widget -->
-<div class="card mb-6">
+<!-- <div class="card mb-6">
     <div class="card-widget-separator-wrapper">
         <div class="card-body card-widget-separator">
             <div class="row gy-4 gy-sm-1">
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Product List Table -->
 <div class="card">
@@ -367,7 +367,7 @@
                         Hiển thị {{ $products->firstItem() }} đến {{ $products->lastItem() }} trong tổng số {{ $products->total() }} sản phẩm
                     </div>
                 </div>
-                
+
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-paging">
                         <nav aria-label="pagination">

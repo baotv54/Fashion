@@ -299,43 +299,38 @@ class ProductController extends Controller
         }
 
         // Thêm biến thể nếu có
-        $variants = $request->input('variants', []);
-        if (!empty($variants)) {
-            foreach ($variants as $index => $variantData) {
-                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
-                    continue;
-                }
+        $variants = $request->variants ?? [];
 
-                // Xử lý ảnh biến thể
-                $imagePath = null;
-                $imageInputName = "variants.$index.image";
+        foreach ($variants as $index => $variantData) {
+            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'], $variantData['discount_price'])) {
+                continue;
+            }
 
-                if ($request->hasFile($imageInputName)) {
-                    $file = $request->file($imageInputName);
-                    $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $imagePath = 'variants/' . $imageName;
-                    $file->move(public_path('variants'), $imageName);
-                }
+            $imagePath = null;
+            if (isset($variantData['image']) && $variantData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                $file = $variantData['image'];
+                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('variants'), $imageName);
+                $imagePath = 'variants/' . $imageName;
+            }
 
-                // Tạo biến thể
-                $variant = ProductVariant::create([
-                    'product_id' => $product->id,
-                    'price' => $variantData['price'],
-                    'import_price' => $variantData['import_price'],
-                    'discount_price' => $variantData['discount_price'],
-                    'image' => $imagePath,
+            $variant = ProductVariant::create([
+                'product_id' => $product->id,
+                'price' => $variantData['price'],
+                'import_price' => $variantData['import_price'],
+                'discount_price' => $variantData['discount_price'],
+                'image' => $imagePath,
+            ]);
+
+            $valueIds = explode('-', $variantData['value_ids']);
+            foreach ($valueIds as $valueId) {
+                VariantAttributeValue::create([
+                    'variant_id' => $variant->id,
+                    'attribute_value_id' => $valueId,
                 ]);
-
-                // Gán các giá trị thuộc tính
-                $valueIds = explode('-', $variantData['value_ids']);
-                foreach ($valueIds as $valueId) {
-                    VariantAttributeValue::create([
-                        'variant_id' => $variant->id,
-                        'attribute_value_id' => $valueId,
-                    ]);
-                }
             }
         }
+
 
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
     }
@@ -402,7 +397,7 @@ class ProductController extends Controller
         $variants = $request->input('variants', []);
         if (!empty($variants)) {
             foreach ($variants as $index => $variantData) {
-                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'],$variantData['discount_price'])) {
+                if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'], $variantData['discount_price'])) {
                     continue;
                 }
 
