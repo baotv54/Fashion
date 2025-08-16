@@ -5117,6 +5117,8 @@
 	</script>
 
 	</main>
+    {{-- Live Chat riêng cho trang sản phẩm (không dùng chatbot AI cũ) --}}
+    @include('Frontend.partials.product_live_chat', ['productId' => $product->id])
 </body>
 
 </html>

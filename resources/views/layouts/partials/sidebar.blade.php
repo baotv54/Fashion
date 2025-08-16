@@ -206,9 +206,9 @@
             </a>
         </li>
         <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-            <a href="#" class="menu-link">
+            <a href="{{ route('admin.plc.index') }}" class="menu-link">
                 <i class="menu-icon icon-base ti tabler-messages"></i>
-                <div data-i18n="Trò chuyện">Trò chuyện</div>
+                <div data-i18n="Live Chat sản phẩm">Live Chat sản phẩm</div>
             </a>
         </li>
         <li class="menu-item {{ Request::routeIs(['posts.index', 'post-categories.index']) ? 'active open' : '' }}">

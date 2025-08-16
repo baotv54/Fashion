@@ -20,6 +20,8 @@ use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\ChatBotDemoController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\ProductLiveChatAdminController;
+use App\Http\Controllers\ProductLiveChatController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
@@ -121,6 +123,14 @@ Route::post('/chat', [ChatBotController::class, 'sendMessage'])->name('chat.send
 Route::get('/chat/history', [ChatBotController::class, 'getHistory'])->name('chat.history');
 Route::post('/chat/add-to-cart', [ChatBotController::class, 'addToCart'])->name('chat.addToCart');
 Route::post('/chat/image-search', [ChatBotController::class, 'imageSearch'])->name('chat.imageSearch');
+
+// Product Live Chat (non-AI) - dành riêng cho trang chi tiết sản phẩm
+Route::prefix('product-live-chat')->group(function () {
+    Route::post('/start', [ProductLiveChatController::class, 'start'])->name('plc.start');
+    Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
+    Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
+    Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+});
 
 // Chatbot Demo routes
 Route::prefix('chatbot-demo')->group(function () {
@@ -225,6 +235,14 @@ Route::middleware(['auth'])->group(function () {
             // routes/web.php hoặc api.php
             Route::get('/api/products/search', [ProductController::class, 'ajaxSearch'])->name('products.ajaxSearch');
             Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
+        });
+
+        // Quản trị Product Live Chat (non-AI)
+        Route::prefix('live-chat')->group(function () {
+            Route::get('/', [ProductLiveChatAdminController::class, 'index'])->name('admin.plc.index');
+            Route::get('/{id}', [ProductLiveChatAdminController::class, 'show'])->name('admin.plc.show');
+            Route::post('/reply', [ProductLiveChatAdminController::class, 'reply'])->name('admin.plc.reply');
+            Route::post('/{id}/close', [ProductLiveChatAdminController::class, 'close'])->name('admin.plc.close');
         });
         // Routes quản lý sản phẩm biến thể
         Route::get('/product/search', [ProductController::class, 'search2'])->name('product.search');
