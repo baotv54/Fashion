@@ -4421,12 +4421,12 @@
 				</div>
 
 
-				<div class="recently-viewed-products mt-5" id="product-page-recently-viewed" style="display: none;">
-                <h3>Sản phẩm vừa xem</h3>
-                <div id="product-page-recently-viewed-list" class="row">
-                    <!-- Sản phẩm sẽ được render bằng JavaScript -->
-                </div>
-            </div>
+				<div class="main-product-seen">
+					<div class="section-title-all">
+						<h2>Sản phẩm đã xem</h2>
+					</div>
+					<div class="main-product-seen-data"></div>
+				</div>
 
 			</div>
 		</div>
@@ -5117,8 +5117,6 @@
 	</script>
 
 	</main>
-    {{-- Live Chat riêng cho trang sản phẩm (không dùng chatbot AI cũ) --}}
-    @include('Frontend.partials.product_live_chat', ['productId' => $product->id])
 </body>
 
 </html>
