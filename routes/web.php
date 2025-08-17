@@ -235,6 +235,8 @@ Route::middleware(['auth'])->group(function () {
             // routes/web.php hoặc api.php
             Route::get('/api/products/search', [ProductController::class, 'ajaxSearch'])->name('products.ajaxSearch');
             Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
+            Route::get('/{id}/missing-variants', [ProductController::class, 'missingVariants'])->name('products.missingVariants');
+            Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
         });
 
         // Quản trị Product Live Chat (non-AI)
@@ -263,11 +265,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
-
-
-
-
-
         });
 
 
@@ -399,7 +396,6 @@ Route::middleware(['auth'])->group(function () {
         // CRUD Size
         Route::resource('sizes', SizeController::class);
         Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
-
     });
 });
 

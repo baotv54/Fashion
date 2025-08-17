@@ -147,6 +147,14 @@
                         @endforeach
                     </div>
                 </div>
+                <div class="text-end mb-3">
+                    <button type="button" class="btn btn-success btn-sm" id="load-missing-variants">
+                        <i class="fas fa-plus"></i> Thêm biến thể
+                    </button>
+                </div>
+
+                <div id="missing-variants-container"></div>
+
                 @endif
 
                 <div id="variants-container" class="card" style="display:none;">
@@ -346,6 +354,57 @@
             }
         });
     });
+
+
+    document.getElementById('load-missing-variants').addEventListener('click', function() {
+    const container = document.getElementById('missing-variants-container');
+    const productId = {{ $product->id }};
+    fetch(`/admin/products/${productId}/missing-variants`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-muted">Tất cả tổ hợp biến thể đã tồn tại.</p>';
+                return;
+            }
+            container.innerHTML = '';
+            data.forEach((item, index) => {
+                const variantHtml = `
+                    <div class="border rounded-3 p-3 mb-3 variant-item">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="fw-semibold">${item.name}</div>
+                            <button type="button" class="btn btn-sm btn-danger remove-variant">Xóa</button>
+                        </div>
+                        <input type="hidden" name="variants[${index}][value_ids]" value="${item.ids.join('-')}">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá bán">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <input type="number" name="variants[${index}][import_price]" class="form-control" placeholder="Giá nhập">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <input type="number" name="variants[${index}][discount_price]" class="form-control" placeholder="Giá KM">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <input type="file" name="variants[${index}][image]" class="form-control">
+                            </div>
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', variantHtml);
+            });
+
+            // Gắn sự kiện xóa
+            container.querySelectorAll('.remove-variant').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.variant-item').remove();
+                });
+            });
+        })
+        .catch(() => {
+            container.innerHTML = '<p class="text-danger">Không tải được tổ hợp biến thể.</p>';
+        });
+});
+
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

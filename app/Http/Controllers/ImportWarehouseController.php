@@ -409,7 +409,7 @@ class ImportWarehouseController extends Controller
                 'import_warehouse_id' => $main->id,
                 'product_id' => $productId,
                 'variant_id' => $variantId,
-                'quantity' => $quantity,
+                'stock' => $quantity,
                 'price' => $price,
                 'total' => $price * $quantity,
             ]);

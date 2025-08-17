@@ -354,6 +354,51 @@ class ProductController extends Controller
 
         ]);
     }
+public function missingVariants($id)
+{
+    $product = Product::with('variants.attributeValues.attribute')->findOrFail($id);
+
+    // Lấy danh sách attribute_id mà sản phẩm đang có
+    $attributeIds = $product->variants
+        ->flatMap(fn($v) => $v->attributeValues->pluck('attribute_id'))
+        ->unique();
+
+    // Lấy các attribute cùng value liên quan đến sản phẩm
+    $attributes = Attribute::with('values')
+        ->whereIn('id', $attributeIds)
+        ->get();
+
+    // Sinh ra tất cả tổ hợp có thể có từ các attribute này
+    $combinations = [[]];
+    foreach ($attributes as $attribute) {
+        $temp = [];
+        foreach ($combinations as $combination) {
+            foreach ($attribute->values as $value) {
+                $temp[] = array_merge($combination, [$value]);
+            }
+        }
+        $combinations = $temp;
+    }
+
+    // Lấy tổ hợp đã có
+    $existing = $product->variants->map(function($variant) {
+        return $variant->attributeValues->pluck('id')->sort()->values()->toArray();
+    })->toArray();
+
+    // Lọc tổ hợp chưa có
+    $missing = [];
+    foreach ($combinations as $combo) {
+        $ids = collect($combo)->pluck('id')->sort()->values()->toArray();
+        if (!in_array($ids, $existing)) {
+            $missing[] = [
+                'ids' => $ids,
+                'name' => collect($combo)->pluck('value')->implode(' / ')
+            ];
+        }
+    }
+
+    return response()->json($missing);
+}
 
     public function update(Request $request, $id)
     {
@@ -463,22 +508,20 @@ class ProductController extends Controller
     }
 
     public function destroy($id)
-    {
-        $product = Product::findOrFail($id);
-        if ($product->image && file_exists(public_path($product->image))) {
-            unlink(public_path($product->image));
-        }
+{
+    $product = Product::with('variants')->findOrFail($id);
 
-        foreach ($product->images as $img) {
-            if (file_exists(public_path($img->image_path))) {
-                unlink(public_path($img->image_path));
-            }
-            $img->delete();
-        }
-
-        $product->delete();
-        return redirect()->route('products.index')->with('success', 'Xóa sản phẩm thành công.');
+    // Xóa mềm product_variants liên quan
+    foreach ($product->variants as $variant) {
+        $variant->delete(); // soft delete
     }
+
+    // Xóa mềm chính product
+    $product->delete();
+
+    return redirect()->route('products.index')->with('success', 'Đã xóa mềm sản phẩm thành công.');
+}
+
 
     public function deleteImage($id)
     {

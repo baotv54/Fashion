@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     protected $table = 'products'; // Tên bảng trong database
 
@@ -23,6 +27,7 @@ class Product extends Model
         'category_id',
         'image', // Ảnh chính (nếu có)
         'status',
+        'delete_at',
     ];
 
     /**
@@ -70,4 +75,5 @@ class Product extends Model
     {
         return $this->hasMany(Favorite::class);
     }
+
 }
