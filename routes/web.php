@@ -243,6 +243,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
             Route::get('/{id}/missing-variants', [ProductController::class, 'missingVariants'])->name('products.missingVariants');
             Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
+            Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+            Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
         });
 
         // Quản trị Product Live Chat (non-AI)
@@ -271,6 +273,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
+            Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
+
         });
 
 

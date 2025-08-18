@@ -142,7 +142,7 @@
             </ul>
         </li>
 
-        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-warehouse me-2"></i>
                 <div data-i18n="Quản Lý Kho">Quản Lý Kho</div>
@@ -163,14 +163,14 @@
                         <div data-i18n="Nhập Hàng">Nhập Hàng</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item {{ Request::routeIs('warehouse.list') ? 'active' : '' }}">
-                    <a href="{{ route('warehouse.list', ['review' => 1]) }}" class="menu-link">
-                        <div data-i18n="Danh Sách Nhập Hàng">Danh Sách Nhập Hàng</div>
-                    </a>
-                </li> -->
                 <li class="menu-item {{ Request::routeIs('suppliers.index') ? 'active' : '' }}">
                     <a href="{{ route('suppliers.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhà Cung Cấp">Nhà Cung Cấp</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('warehouse.trashed') ? 'active' : '' }}">
+                    <a href="{{ route('warehouse.trashed', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Đơn Hàng Đã Xóa">Đơn Hàng Đã Xóa</div>
                     </a>
                 </li>
             </ul>
@@ -191,6 +191,21 @@
                 <li class="menu-item {{ Request::routeIs('users.create') ? 'active' : '' }}">
                     <a href="{{ route('users.create', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Thêm người dùng">Thêm người dùng</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- e-commerce-app menu end -->
+        <li class="menu-item {{ Request::routeIs(['products.trashed']) ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="fa-solid fa-trash me-2"></i>
+                <div data-i18n="Thùng Rác">Thùng Rác</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Request::routeIs('products.trashed') ? 'active' : '' }}">
+                    <a href="{{ route('products.trashed', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Sản Phẩm">Sản Phẩm</div>
                     </a>
                 </li>
             </ul>

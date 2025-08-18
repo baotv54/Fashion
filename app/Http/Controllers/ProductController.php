@@ -10,6 +10,7 @@ use App\Models\Coupon;
 use App\Models\Attribute;
 use App\Models\ProductVariant;
 use App\Models\OrderDetail;
+use App\Models\Order;
 use App\Models\Favorite;
 use App\Models\Banner;
 use Illuminate\Http\Request;
@@ -55,22 +56,77 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products', 'search', 'categoryId', 'createdDate', 'stockStatus', 'categories'));
     }
 
+    public function trashed()
+    {
+        $products = Product::onlyTrashed()->paginate(10);
+        return view('admin.products.restore', compact('products'));
+    }
+
 
     public function homepage()
-    {
-        $products = Product::latest()->take(8)->get();
-        $carts = Cart::content();
-        $coupons = Coupon::latest()->take(4)->get();
-        $banners = Banner::latest()->take(4)->get();
-        $favorites = collect(); // luôn khởi tạo rỗng
+{
+    $products = Product::latest()->take(8)->get();
+    $carts = Cart::content();
+    $orders = Order::all();
+    $order_details = OrderDetail::with(['product', 'variant'])->get();
+    $coupons = Coupon::latest()->take(4)->get();
+    $banners = Banner::latest()->take(4)->get();
+    $favorites = collect(); // luôn khởi tạo rỗng
 
-        if (Auth::check()) {
-            $favorites = Favorite::with('product')
-                ->where('user_id', Auth::id())
-                ->get();
-        }
-        return view('Frontend.index', compact('products', 'carts', 'coupons', 'favorites', 'banners'));
+    // Top sản phẩm được thích nhiều nhất
+    $topFavorites = Product::withCount('favorites')
+        ->having('favorites_count', '>', 0)
+        ->orderByDesc('favorites_count')
+        ->take(12)
+        ->get();
+
+    // Gom nhóm số lượng bán theo product_id
+    $productSales = $order_details->map(function ($detail) {
+        // Nếu có biến thể thì lấy product_id từ variant, ngược lại lấy trực tiếp product_id
+        $mainProductId = $detail->product_variant_id
+            ? $detail->variant->product_id
+            : $detail->product_id;
+
+        return [
+            'product_id' => $mainProductId,
+            'quantity'   => $detail->quantity,
+        ];
+    })
+    ->groupBy('product_id')
+    ->map(function ($items) {
+        return $items->sum('quantity'); // tổng số lượng cho từng sản phẩm
+    })
+    ->sortDesc()
+    ->take(12);
+
+    // Lấy thông tin sản phẩm
+    $topSelling = Product::whereIn('id', $productSales->keys())->get();
+
+    // Gắn thêm thuộc tính total_quantity vào product
+    $topSelling = $topSelling->map(function ($product) use ($productSales) {
+        $product->total_quantity = $productSales[$product->id] ?? 0;
+        return $product;
+    })->sortByDesc('total_quantity');
+
+    if (Auth::check()) {
+        $favorites = Favorite::with('product')
+            ->where('user_id', Auth::id())
+            ->get();
     }
+
+    return view('Frontend.index', compact(
+        'products',
+        'carts',
+        'coupons',
+        'favorites',
+        'banners',
+        'topFavorites',
+        'topSelling'
+    ));
+}
+
+
+
 
     public function aboutPage()
     {
@@ -354,51 +410,51 @@ class ProductController extends Controller
 
         ]);
     }
-public function missingVariants($id)
-{
-    $product = Product::with('variants.attributeValues.attribute')->findOrFail($id);
+    public function missingVariants($id)
+    {
+        $product = Product::with('variants.attributeValues.attribute')->findOrFail($id);
 
-    // Lấy danh sách attribute_id mà sản phẩm đang có
-    $attributeIds = $product->variants
-        ->flatMap(fn($v) => $v->attributeValues->pluck('attribute_id'))
-        ->unique();
+        // Lấy danh sách attribute_id mà sản phẩm đang có
+        $attributeIds = $product->variants
+            ->flatMap(fn($v) => $v->attributeValues->pluck('attribute_id'))
+            ->unique();
 
-    // Lấy các attribute cùng value liên quan đến sản phẩm
-    $attributes = Attribute::with('values')
-        ->whereIn('id', $attributeIds)
-        ->get();
+        // Lấy các attribute cùng value liên quan đến sản phẩm
+        $attributes = Attribute::with('values')
+            ->whereIn('id', $attributeIds)
+            ->get();
 
-    // Sinh ra tất cả tổ hợp có thể có từ các attribute này
-    $combinations = [[]];
-    foreach ($attributes as $attribute) {
-        $temp = [];
-        foreach ($combinations as $combination) {
-            foreach ($attribute->values as $value) {
-                $temp[] = array_merge($combination, [$value]);
+        // Sinh ra tất cả tổ hợp có thể có từ các attribute này
+        $combinations = [[]];
+        foreach ($attributes as $attribute) {
+            $temp = [];
+            foreach ($combinations as $combination) {
+                foreach ($attribute->values as $value) {
+                    $temp[] = array_merge($combination, [$value]);
+                }
+            }
+            $combinations = $temp;
+        }
+
+        // Lấy tổ hợp đã có
+        $existing = $product->variants->map(function ($variant) {
+            return $variant->attributeValues->pluck('id')->sort()->values()->toArray();
+        })->toArray();
+
+        // Lọc tổ hợp chưa có
+        $missing = [];
+        foreach ($combinations as $combo) {
+            $ids = collect($combo)->pluck('id')->sort()->values()->toArray();
+            if (!in_array($ids, $existing)) {
+                $missing[] = [
+                    'ids' => $ids,
+                    'name' => collect($combo)->pluck('value')->implode(' / ')
+                ];
             }
         }
-        $combinations = $temp;
+
+        return response()->json($missing);
     }
-
-    // Lấy tổ hợp đã có
-    $existing = $product->variants->map(function($variant) {
-        return $variant->attributeValues->pluck('id')->sort()->values()->toArray();
-    })->toArray();
-
-    // Lọc tổ hợp chưa có
-    $missing = [];
-    foreach ($combinations as $combo) {
-        $ids = collect($combo)->pluck('id')->sort()->values()->toArray();
-        if (!in_array($ids, $existing)) {
-            $missing[] = [
-                'ids' => $ids,
-                'name' => collect($combo)->pluck('value')->implode(' / ')
-            ];
-        }
-    }
-
-    return response()->json($missing);
-}
 
     public function update(Request $request, $id)
     {
@@ -508,20 +564,49 @@ public function missingVariants($id)
     }
 
     public function destroy($id)
-{
-    $product = Product::with('variants')->findOrFail($id);
+    {
+        $product = Product::with('variants')->findOrFail($id);
 
-    // Xóa mềm product_variants liên quan
-    foreach ($product->variants as $variant) {
-        $variant->delete(); // soft delete
+        // Kiểm tra số lượng sản phẩm chính
+        if ($product->quantity > 0) {
+            return redirect()->route('products.index')
+                ->with('error', 'Sản phẩm còn tồn kho, không thể xóa.');
+        }
+
+        // Kiểm tra số lượng của tất cả biến thể
+        foreach ($product->variants as $variant) {
+            if ($variant->quantity > 0) {
+                return redirect()->route('products.index')
+                    ->with('error', 'Một số biến thể còn tồn kho, không thể xóa.');
+            }
+        }
+
+        // Nếu tất cả số lượng đều nhỏ hơn 1 thì cho phép xóa mềm
+        foreach ($product->variants as $variant) {
+            $variant->delete(); // soft delete
+        }
+
+        $product->delete(); // soft delete product
+
+        return redirect()->route('products.index')->with('success', 'Đã xóa mềm sản phẩm thành công.');
     }
 
-    // Xóa mềm chính product
-    $product->delete();
+    public function restore($id)
+    {
+        $product = Product::withTrashed()->with(['variants' => function ($query) {
+            $query->withTrashed();
+        }])->findOrFail($id);
 
-    return redirect()->route('products.index')->with('success', 'Đã xóa mềm sản phẩm thành công.');
-}
+        // Khôi phục sản phẩm
+        $product->restore();
 
+        // Khôi phục các biến thể liên quan
+        foreach ($product->variants as $variant) {
+            $variant->restore();
+        }
+
+        return redirect()->route('products.index')->with('success', 'Sản phẩm đã được khôi phục thành công.');
+    }
 
     public function deleteImage($id)
     {
