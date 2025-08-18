@@ -15,36 +15,36 @@
         <h1 class="d-none">F1GENZ Shoes</h1>
         <section id="home-slider">
             <div class="home-slider-main">
-                @foreach ($banners as $banner)
-                <div class="home-slider-main-item">
-                    <a href="{{ $banner->link ?? '#' }}"
-                        aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
-                        <picture>
-                            {{-- Ảnh cho màn hình nhỏ --}}
-                            <source width="600" height="800" media="(max-width: 600px)"
-                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                 @foreach ($banners as $banner)
+                    <div class="home-slider-main-item">
+                        <a href="{{ $banner->link ?? '#' }}"
+                            aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
+                            <picture>
+                                {{-- Ảnh cho màn hình nhỏ --}}
+                                <source width="600" height="800" media="(max-width: 600px)"
+                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                            {{-- Ảnh cho màn hình lớn --}}
-                            <source width="1920" height="700" media="(min-width: 601px)"
-                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                                {{-- Ảnh cho màn hình lớn --}}
+                                <source width="1920" height="700" media="(min-width: 601px)"
+                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                            {{-- Ảnh chính hiển thị --}}
-                            <img width="1920" height="700" loading="lazy" decoding="async"
-                                src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
-                                title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
-                                alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
-                        </picture>
+                                {{-- Ảnh chính hiển thị --}}
+                                <img width="1920" height="700" loading="lazy" decoding="async"
+                                    src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
+                                    title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
+                                    alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
+                            </picture>
 
-                        <div class="home-slider-item-content">
-                            <div class="container">
-                                <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
+                            <div class="home-slider-item-content">
+                                <div class="container">
+                                    <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
 
-                                <p>{{ $banner->subtitle }}</p>
-                                <span>Xem ngay</span>
+                                    <p>{{ $banner->subtitle }}</p>
+                                    <span>Xem ngay</span>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         </section>

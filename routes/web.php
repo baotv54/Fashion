@@ -68,9 +68,7 @@ Route::get('/db', function () {
     return view('layouts.Dashboard');
 });
 
-Route::get('/faq', function () {
-    return view('Frontend.pages.pages.faq');
-});
+Route::get('/faq', [BannerController::class, 'listLogo'])->name('question');
 
 Route::get('/lien-he', function () {
     return view('Frontend.pages.pages.lien-he');
@@ -385,14 +383,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-        //Routes Quản lý Banner
+       //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
-            Route::post('/', [BannerController::class, 'store'])->name('banners.store');
+            Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
+
             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
-            Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
-            Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+            Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+             Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+
+             Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
+            Route::post('/', [BannerController::class, 'storeLogo'])->name('logo.store');
+            Route::get('/{id}/editLogo', [BannerController::class, 'editLogo'])->name('logo.edit');
+            Route::put('/{id}', [BannerController::class, 'updateLogo'])->name('logo.update');
+            Route::delete('/{id}', [BannerController::class, 'deleteLogo'])->name('logo.destroy');
         });
 
         // Routes quản lý liên hệ

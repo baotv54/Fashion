@@ -2,10 +2,13 @@
     <div class="container">
         <div class="footers2-wrap">
             <div class="footers2-top">
-                <div class="footers2-top-item footers2-top-one">
-                    <a href="index.html" title="F1GENZ Shoes" aria-label="F1GENZ Shoes">
-                        <img title="F1GENZ Shoes" loading="lazy" src="{{ asset('images/footers2_one_logoe889.png') }}" alt="F1GENZ Shoes">
+                @foreach ($logos as $logo) 
+              
+              <div class="footers2-top-item footers2-top-one">
+                    <a href="/" aria-label="F1GENZ Shoes">
+                        <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
                     </a>
+               
                     <p>F1GENZ SHOES luôn cam kết, đảm bảo đưa sản phẩm trực tiếp từ nhà sản xuất đến tay người dùng và kiểm soát được chất lượng để đáp ứng được nhu cầu ngày càng cao của khách hàng. Tất cả các sản phẩm tại F1GENZ SHOES đều có nguồn gốc xuất xứ rõ ràng, chất lượng.</p>
                 </div>
                 <div class="footers2-top-item footers2-top-two">
@@ -79,6 +82,7 @@
                         </ul>
                     </div>
                 </div>
+                @endforeach
             </div>
             <div class="footers2-bot">
                 <p class="text-copyright">© 2025 - Bản quyền thuộc về
