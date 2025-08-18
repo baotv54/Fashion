@@ -3799,21 +3799,137 @@
                                 alt="{{ $user->name }}" />
                         </span>
                         <h3>Xin chào, <b>{{ $user->name }}</b></h3>
-                        <ul>
-                            <li><a href="/account">Thông tin tài khoản</a></li>
-                            <li><a href="/order-history">Đơn hàng của bạn</a></li>
-                            <li><a href="/account/addresses">Danh sách địa chỉ</a></li>
-                            <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" style="background:none;border:none;padding:0;margin:0;color:#dc3545;cursor:pointer;">
-                                        Đăng xuất
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
+                         <!-- Nút toggle chỉ hiện trên mobile -->
+                        <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
+
+                        <div class="menu-content">
+                            <ul class="account-menu">
+                                <li><a href="/account">Thông tin tài khoản</a></li>
+                                <li><a href="/order-history">Đơn hàng của bạn</a></li>
+                                <li><a href="/my-voucher">Mã giảm giá của bạn</a></li>
+                                <li><a href="/myHistorycoupons">Mã giảm giá đã sử dụng</a></li>
+                                <li><a href="/account/addresses">Danh sách địa chỉ</a></li>
+                                <li><a href="/account/changepassword">Đổi mật khẩu</a></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="logout-btn">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const toggleBtn = document.querySelector(".menu-toggle");
+                            const sidebar = document.querySelector(".acc-sidebar");
+
+                            if (toggleBtn && sidebar) {
+                                toggleBtn.addEventListener("click", function() {
+                                    sidebar.classList.toggle("active");
+                                });
+                            }
+                        });
+                    </script>
+                    <style>
+                        /* ===== Sidebar layout trên PC ===== */
+                        .acc-wrap {
+                            display: flex;
+                            gap: 20px;
+                            align-items: flex-start;
+                            /* tránh bị lệch dọc */
+                        }
+
+                        .acc-sidebar {
+                            width: 250px;
+                            flex-shrink: 0;
+                        }
+
+                        .acc-data {
+                            flex: 1;
+                        }
+
+                        /* ===== Menu danh sách ===== */
+                        .account-menu {
+                            list-style: none !important;
+                            padding: 0;
+                            margin: 20px 0 0;
+                        }
+
+                        .account-menu li {
+                            margin-bottom: 12px;
+                        }
+
+                        .account-menu a {
+                            display: block;
+                            padding: 12px 18px;
+                            background: #f8f9fa;
+                            border-radius: 6px;
+                            color: #333;
+                            text-decoration: none;
+                            font-size: 15px;
+                            transition: background 0.2s, color 0.2s;
+                        }
+
+                        .account-menu a:hover {
+                            background: #007bff;
+                            color: #fff;
+                        }
+
+                        /* ===== Nút logout ===== */
+                        .logout-btn {
+                            width: 100%;
+                            padding: 12px 18px;
+                            background: #dc3545;
+                            color: #fff;
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 15px;
+                            cursor: pointer;
+                        }
+
+                        .logout-btn:hover {
+                            background: #b71c1c;
+                        }
+
+                        /* ===== Nút menu toggle (ẩn PC) ===== */
+                        .menu-toggle {
+                            display: none;
+                            font-size: 28px;
+                            background: none;
+                            border: none;
+                            cursor: pointer;
+                            margin-bottom: 12px;
+                        }
+
+                        /* ===== Mobile ===== */
+                        @media (max-width: 768px) {
+                            .acc-wrap {
+                                flex-direction: column;
+                            }
+
+                            .acc-sidebar {
+                                width: 100%;
+                            }
+
+                            .menu-toggle {
+                                display: block;
+                                /* hiện nút toggle trên mobile */
+                            }
+
+                            .acc-sidebar .menu-content {
+                                display: none;
+                            }
+
+                            .acc-sidebar.active .menu-content {
+                                display: block;
+                                background: #fff;
+                                padding: 10px;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                            }
+                        }
+                    </style>
 
                     <!-- Main Content -->
                     <div class="acc-data acc-data-order">

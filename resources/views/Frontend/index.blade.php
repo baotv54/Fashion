@@ -199,6 +199,19 @@
 
         <section class="home-coupon">
             <div class="container">
+                <div class="home-gallery-wrap-header">
+                    <div class="section-title-all">
+                        <div>
+                            <h2>Mã giảm giá săn giá hời</h2>
+                        </div>
+                        <a href="\couponList" title="Xem thêm">Xem thêm <i class="fal fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                @if (session('success'))
+                    <div class="alert alert-success" id="flash-message" style="margin: 15px;">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="home-coupon-wrap">
                     @foreach ($coupons as $coupon)
                         <div class="home-coupon-item">
@@ -206,6 +219,7 @@
                                 src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
                                 alt="Mã : F1SHOES">
                             <div class="home-coupon-content">
+
                                 <div class="home-coupon-content-head">
                                     <h3>Mã : {{ $coupon->code }}</h3>
                                     <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
@@ -228,8 +242,22 @@
                                             {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
                                         </span>
                                     </button>
-                                    <button data-type="coupon-copy" data-coupon="{{ $coupon->code }}">Sao chép
-                                        mã</button>
+
+                                    {{-- Nút lưu mã --}}
+                                    @auth
+                                        @php $isSaved = Auth::user()->savedCoupons->contains($coupon->id); @endphp
+
+                                        <button
+                                            class="btn {{ $isSaved ? 'btn-danger' : 'btn-outline-primary' }} btn-save-coupon"
+                                            data-coupon-id="{{ $coupon->id }}" {{ $isSaved ? 'disabled' : '' }}
+                                            style="margin-left: 10px;">
+                                            {{ $isSaved ? 'Đã lưu' : 'Lưu mã giảm giá' }}
+                                        </button>
+                                    @else
+                                        <button href="{{ route('login') }}" class="btn btn-outline-secondary"
+                                            style="margin-left: 10px;">Đăng nhập để lưu mã</button>
+                                    @endauth
+
                                 </div>
                             </div>
                         </div>
@@ -1045,6 +1073,53 @@
         </section>
 
     </main>
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-save-coupon').forEach(button => {
+                button.addEventListener('click', function() {
+                    const couponId = this.dataset.couponId;
+
+                    fetch(`/coupon/save/${couponId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Lỗi khi lưu mã.');
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Chỉ cập nhật nút sang trạng thái "Đã lưu"
+                            this.classList.remove('btn-outline-primary');
+                            this.classList.add('btn-danger');
+                            this.innerText = 'Đã lưu';
+                            this.disabled = true; // khóa nút
+
+                            showToast(data.message || 'Lưu mã thành công');
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            showToast('Có lỗi xảy ra khi xử lý.', true);
+                        });
+                });
+            });
+
+            function showToast(message, isError = false) {
+                const toast = document.createElement('div');
+                toast.className = `alert ${isError ? 'alert-danger' : 'alert-success'}`;
+                toast.innerText = message;
+                toast.style.position = 'fixed';
+                toast.style.bottom = '20px';
+                toast.style.right = '20px';
+                toast.style.zIndex = '9999';
+                toast.style.minWidth = '200px';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        });
+    </script>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
     @include('Frontend.partials.Chatbot')

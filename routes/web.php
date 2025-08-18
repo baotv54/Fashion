@@ -12,6 +12,7 @@ use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\SavedCouponController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
@@ -103,6 +104,11 @@ Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSucces
 
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
 Route::post('/remove-coupon', [CouponController::class, 'removeCoupon'])->name('remove.coupon');
+Route::post('/coupon/save/{id}', [SavedCouponController::class, 'save'])->name('coupon.save');
+Route::delete('/coupon/remove/{id}', [SavedCouponController::class, 'remove'])->name('coupon.remove');
+Route::get('/my-voucher', [SavedCouponController::class, 'myCoupons'])->name('coupon.my');
+Route::get('/myHistorycoupons', [SavedCouponController::class, 'myHistorycoupons'])->name('coupon.history');
+Route::get('/couponList', [CouponController::class, 'list'])->name('list.coupon');
 
 Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.province');
 Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict'])->name('address.district');
@@ -347,7 +353,7 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
         });
-        // Routes quản mã giảm giá
+         // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {
             Route::get('/', [CouponController::class, 'index'])->name('coupons.index');
             Route::get('/create', [CouponController::class, 'create'])->name('coupons.create');

@@ -484,12 +484,17 @@ class CartController extends Controller
 
             $subtotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
             $discount = floatval(Session::get('coupon.discount', 0));
+            $user = Auth::user();
+            $coupons = $user->savedCoupons()
+                ->wherePivot('used', 0) // ❗ chỉ lấy mã chưa dùng
+                ->orderByDesc('coupon_user.created_at')
+                ->get();
             $shippingFee = 0;
             $total = $subtotal - $discount + $shippingFee;
 
             $addresses = Auth::check() ? \App\Models\Address::where('user_id', Auth::id())->get() : collect();
 
-            return view('Frontend.pages.checkout', compact('cartsWithVariants', 'subtotal', 'discount', 'shippingFee', 'total', 'addresses'));
+            return view('Frontend.pages.checkout', compact('cartsWithVariants', 'subtotal', 'discount', 'shippingFee', 'total', 'addresses', 'coupons'));
         } catch (\Exception $e) {
             Log::error('Error loading checkout: ' . $e->getMessage());
             return back()->with('error', 'Có lỗi xảy ra khi tải trang thanh toán');
