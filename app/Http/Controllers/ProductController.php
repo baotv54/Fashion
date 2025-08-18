@@ -20,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
+use App\Models\Post;
+
 
 class ProductController extends Controller
 {
@@ -30,22 +32,16 @@ class ProductController extends Controller
         $createdDate = $request->input('created_date');
         $stockStatus = $request->input('stock_status');
 
+        // Lấy products với filter
         $products = Product::with('category', 'brand', 'images')
+            ->withCount('favorites') // thêm số lượt thích
             ->when($search, fn($query) => $query->where('name', 'like', "%$search%"))
             ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
-            ->when($createdDate, function ($query) use ($createdDate) {
-                return $query->whereDate('created_at', $createdDate);
-            })
+            ->when($createdDate, fn($query) => $query->whereDate('created_at', $createdDate))
             ->when($stockStatus, function ($query) use ($stockStatus) {
-                return $query->where(function ($q) use ($stockStatus) {
-                    if ($stockStatus === 'out_of_stock') {
-                        $q->where('quantity', 0);
-                    } elseif ($stockStatus === 'low_stock') {
-                        $q->whereBetween('quantity', [1, 9]);
-                    } elseif ($stockStatus === 'in_stock') {
-                        $q->where('quantity', '>=', 10);
-                    }
-                });
+                $query->when($stockStatus === 'out_of_stock', fn($q) => $q->where('quantity', 0))
+                    ->when($stockStatus === 'low_stock', fn($q) => $q->whereBetween('quantity', [1, 9]))
+                    ->when($stockStatus === 'in_stock', fn($q) => $q->where('quantity', '>=', 10));
             })
             ->orderBy('created_at', 'desc')
             ->paginate(5);
@@ -53,7 +49,40 @@ class ProductController extends Controller
         // Lấy danh mục để đổ vào form lọc
         $categories = \App\Models\Category::all();
 
-        return view('admin.products.index', compact('products', 'search', 'categoryId', 'createdDate', 'stockStatus', 'categories'));
+        // Tính số lượng đã bán cho các sản phẩm trong $products
+        $productIds = $products->pluck('id');
+        $order_details = OrderDetail::with('variant')
+            ->whereIn('product_id', $productIds)
+            ->orWhereHas('variant', fn($q) => $q->whereIn('product_id', $productIds))
+            ->get();
+
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+            return [
+                'product_id' => $mainProductId,
+                'quantity' => $detail->quantity,
+            ];
+        })
+            ->groupBy('product_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+        // Gắn sold_count cho từng product
+        $products->getCollection()->transform(function ($product) use ($productSales) {
+            $product->sold_count = $productSales[$product->id] ?? 0;
+            // $product->favorites_count đã có nhờ withCount('favorites')
+            return $product;
+        });
+
+        return view('admin.products.index', compact(
+            'products',
+            'search',
+            'categoryId',
+            'createdDate',
+            'stockStatus',
+            'categories'
+        ));
     }
 
     public function trashed()
@@ -65,24 +94,28 @@ class ProductController extends Controller
 
     public function homepage()
 {
-    $products = Product::latest()->take(8)->get();
-    $carts = Cart::content();
-    $orders = Order::all();
-    $order_details = OrderDetail::with(['product', 'variant'])->get();
-    $coupons = Coupon::latest()->take(4)->get();
-    $banners = Banner::latest()->take(4)->get();
-    $favorites = collect(); // luôn khởi tạo rỗng
-
-    // Top sản phẩm được thích nhiều nhất
-    $topFavorites = Product::withCount('favorites')
-        ->having('favorites_count', '>', 0)
-        ->orderByDesc('favorites_count')
+    $products = Product::with('variants')
+        ->withCount('favorites') // thêm số lượt thích
+        ->where(function ($query) {
+            $query->where('quantity', '>', 0)
+                  ->orWhereHas('variants', function ($q) {
+                      $q->where('quantity', '>', 0);
+                  });
+        })
+        ->orderBy('created_at', 'desc')
         ->take(12)
         ->get();
 
+    $carts = Cart::content();
+    $orders = Order::all();
+    $posts = Post::all();
+    $order_details = OrderDetail::with(['product', 'variant'])->get();
+    $coupons = Coupon::latest()->take(4)->get();
+    $banners = Banner::latest()->take(4)->get();
+    $favorites = collect();
+
     // Gom nhóm số lượng bán theo product_id
     $productSales = $order_details->map(function ($detail) {
-        // Nếu có biến thể thì lấy product_id từ variant, ngược lại lấy trực tiếp product_id
         $mainProductId = $detail->product_variant_id
             ? $detail->variant->product_id
             : $detail->product_id;
@@ -94,19 +127,37 @@ class ProductController extends Controller
     })
     ->groupBy('product_id')
     ->map(function ($items) {
-        return $items->sum('quantity'); // tổng số lượng cho từng sản phẩm
-    })
-    ->sortDesc()
-    ->take(12);
+        return $items->sum('quantity');
+    });
 
-    // Lấy thông tin sản phẩm
-    $topSelling = Product::whereIn('id', $productSales->keys())->get();
-
-    // Gắn thêm thuộc tính total_quantity vào product
-    $topSelling = $topSelling->map(function ($product) use ($productSales) {
-        $product->total_quantity = $productSales[$product->id] ?? 0;
+    // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
+    $products = $products->map(function ($product) use ($productSales) {
+        $product->sold_count = $productSales[$product->id] ?? 0;
+        // $product->favorites_count đã có nhờ withCount('favorites')
         return $product;
-    })->sortByDesc('total_quantity');
+    });
+
+    // Top sản phẩm được thích nhiều nhất
+    $topFavorites = Product::withCount('favorites')
+        ->having('favorites_count', '>', 0)
+        ->orderByDesc('favorites_count')
+        ->take(4)
+        ->get()
+        ->map(function ($product) use ($productSales) {
+            $product->sold_count = $productSales[$product->id] ?? 0;
+            return $product;
+        });
+
+    // Top 4 sản phẩm bán chạy
+    $topSelling = Product::withCount('favorites')
+        ->whereIn('id', $productSales->keys())
+        ->get()
+        ->map(function ($product) use ($productSales) {
+            $product->sold_count = $productSales[$product->id] ?? 0;
+            return $product;
+        })
+        ->sortByDesc('sold_count')
+        ->take(4);
 
     if (Auth::check()) {
         $favorites = Favorite::with('product')
@@ -121,7 +172,8 @@ class ProductController extends Controller
         'favorites',
         'banners',
         'topFavorites',
-        'topSelling'
+        'topSelling',
+        'posts'
     ));
 }
 
