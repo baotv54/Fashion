@@ -407,33 +407,330 @@
                                     </table>
                                 </div>
                                 @endforeach
-                                <div class="order-summary__section order-summary__section--discount-code" id="discountCode">
+                                <!-- Modal Hiển thị Danh sách Voucher -->
+                                <div class="order-summary__section order-summary__section--discount-code"
+                                    id="discountCode">
                                     <h3 class="visually-hidden">Mã khuyến mại</h3>
                                     <div class="edit_checkout animate-floating-labels">
                                         <div class="fieldset">
                                             <div class="field">
-                                                <div class="field__input-btn-wrapper">
-                                                    <div class="field__input-wrapper">
-                                                        <label for="reductionCode" class="">Nhập mã giảm giá</label>
-                                                        <input name="coupon_code" id="reductionCode" type="text" class="field__input" autocomplete="off">
-                                                    </div>
-                                                    <button class="field__input-btn btn spinner" type="button" id="applyCoupon">
-                                                        <span class="spinner-label">Áp dụng</span>
-                                                    </button>
+                                                <label for="reductionCode">Nhập mã giảm giá</label>
+                                                <div class="voucher-row">
+                                                    <input name="coupon_code" id="reductionCode" type="text"
+                                                        class="field__input" autocomplete="off">
+                                                    <button class="btn-voucher" type="button" id="applyCoupon">Áp
+                                                        dụng</button>
+                                                    <button class="btn-voucher" type="button"
+                                                        id="chooseVoucherBtn">Chọn Voucher</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    @if(Session::has('coupon'))
-                                    <div class="alert alert-success mt-3">
-                                        <strong>Mã giảm giá:</strong> {{ Session::get('coupon.code') }}<br>
-                                        <strong>Giảm giá:</strong>
-                                        -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
-                                        <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">Xóa mã</button>
+                                    {{-- Chỗ riêng để hiển thị thông tin coupon --}}
+                                    <div id="appliedCouponWrapper">
+                                        @if (Session::has('coupon'))
+                                            <div class="alert alert-success mt-3">
+                                                <strong>Mã giảm giá:</strong> {{ Session::get('coupon.code') }}<br>
+                                                <strong>Giảm giá:</strong>
+                                                -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
+                                                <button type="button" class="btn btn-danger btn-sm float-end"
+                                                    id="removeCoupon">Xóa mã</button>
+                                            </div>
+                                        @endif
                                     </div>
-                                    @endif
                                 </div>
+
+                                <!-- Modal Hiển thị Danh sách Voucher -->
+                                <div id="voucherModal" class="modal" style="display: none;">
+                                    <div class="voucher-modal-content">
+                                        <h5 class="voucher-title">Chọn Mã Giảm Giá</h5>
+
+                                        <section class="voucher-list">
+                                            @foreach ($coupons as $coupon)
+                                                <label class="voucher-item">
+                                                    <div class="voucher-left">
+                                                        <img src="{{ asset($coupon->image) }}" alt="icon"
+                                                            class="voucher-icon">
+                                                    </div>
+                                                    <div class="voucher-right">
+                                                        <div class="voucher-text-top">
+                                                            <strong>
+                                                                @if ($coupon->type == 'percent')
+                                                                    Giảm {{ $coupon->value }}%
+                                                                @else
+                                                                    Giảm
+                                                                    {{ number_format($coupon->value, 0, ',', '.') }}₫
+                                                                @endif
+                                                            </strong>
+                                                            <span>Đơn tối thiểu
+                                                                {{ number_format($coupon->min_cart_value ?? 0, 0, ',', '.') }}₫</span>
+                                                        </div>
+                                                        <div class="voucher-meta">
+                                                            <small>HSD:
+                                                                {{ \Carbon\Carbon::parse($coupon->expiry_date)->format('d.m.Y') }}</small>
+                                                            <a href="javascript:void(0)">Điều kiện</a>
+                                                        </div>
+                                                    </div>
+                                                    <input type="radio" name="selected_coupon"
+                                                        class="voucher-radio" value="{{ $coupon->code }}">
+                                                </label>
+                                            @endforeach
+                                        </section>
+
+                                        <div class="voucher-modal-footer">
+                                            <button class="btn btn-secondary" id="closeVoucherModal">Trở lại</button>
+                                            <button class="btn btn-danger" id="confirmVoucher">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="couponMessage" class="alert d-none mt-3"></div>
+
+                                <style>
+                                    .voucher-row {
+                                        display: flex;
+                                        gap: 10px;
+                                        align-items: stretch;
+                                        margin-top: 6px;
+                                    }
+
+                                    .field__input {
+                                        flex: 1;
+                                        padding: 10px 12px;
+                                        border-radius: 6px;
+                                        border: 1px solid #ccc;
+                                        font-size: 15px;
+                                        height: 42px;
+                                    }
+
+                                    .btn-voucher {
+                                        background-color: #2d8dd6;
+                                        color: #fff;
+                                        border: none;
+                                        padding: 0 16px;
+                                        font-size: 15px;
+                                        border-radius: 6px;
+                                        white-space: nowrap;
+                                        height: 42px;
+                                        transition: background 0.3s ease;
+                                        font-weight: 600;
+                                    }
+
+                                    .btn-voucher:hover {
+                                        background-color: #1b6fb3;
+                                    }
+
+                                    .modal {
+                                        position: fixed;
+                                        z-index: 9999;
+                                        left: 460px;
+                                        top: 120px;
+                                        width: 590px;
+                                        height: 570px;
+                                        overflow: hidden;
+                                        background-color: #ffffff;
+                                        animation: fadeIn 0.3s ease;
+                                    }
+
+                                    @keyframes fadeIn {
+                                        from {
+                                            opacity: 0;
+                                            transform: translateY(-20px);
+                                        }
+
+                                        to {
+                                            opacity: 1;
+                                            transform: translateY(0);
+                                        }
+                                    }
+
+                                    .voucher-modal-content {
+                                        max-width: 650px;
+                                        background: #ffffff;
+                                        border-radius: 12px;
+                                        margin: 5% auto;
+                                        padding: 25px 20px;
+                                        position: relative;
+                                        animation: slideUp 0.4s ease;
+                                    }
+
+                                    @keyframes slideUp {
+                                        from {
+                                            opacity: 0;
+                                            transform: translateY(50px);
+                                        }
+
+                                        to {
+                                            opacity: 1;
+                                            transform: translateY(0);
+                                        }
+                                    }
+
+                                    .voucher-title {
+                                        font-weight: bold;
+                                        font-size: 22px;
+                                        margin-bottom: 20px;
+                                        color: #333;
+                                    }
+
+                                    .voucher-list {
+                                        max-height: 400px;
+                                        overflow-y: auto;
+                                        border-top: 1px solid #ddd;
+                                        border-bottom: 1px solid #ddd;
+                                        margin-bottom: 20px;
+                                        padding-right: 5px;
+                                    }
+
+                                    .voucher-item {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        padding: 15px 12px;
+                                        border-bottom: 1px solid #eee;
+                                        position: relative;
+                                        background: #decfdb;
+                                        cursor: pointer;
+                                        transition: all 0.3s ease;
+                                        border-radius: 8px;
+                                    }
+
+                                    .voucher-item:hover {
+                                        background: #f6d076;
+                                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                                        transform: translateY(-1px);
+                                    }
+
+                                    .voucher-icon {
+                                        width: 80px;
+                                        height: 80px;
+                                        object-fit: contain;
+                                        border-radius: 8px;
+                                        border: 1px solid #eee;
+                                        background-color: #f9f9f9;
+                                    }
+
+                                    .voucher-left {
+                                        margin-right: 15px;
+                                    }
+
+                                    .voucher-right {
+                                        flex: 1;
+                                    }
+
+                                    .voucher-text-top {
+                                        font-size: 15px;
+                                        font-weight: 600;
+                                        color: #d32f2f;
+                                    }
+
+                                    .voucher-text-top span {
+                                        display: block;
+                                        color: #666;
+                                        font-size: 13px;
+                                        margin-top: 5px;
+                                    }
+
+                                    .voucher-meta {
+                                        font-size: 12px;
+                                        color: #888;
+                                        display: flex;
+                                        justify-content: space-between;
+                                        margin-top: 8px;
+                                    }
+
+                                    .voucher-radio {
+                                        transform: scale(1.3);
+                                        margin-left: 15px;
+                                        accent-color: #ff5722;
+                                    }
+
+                                    .voucher-modal-footer {
+                                        display: flex;
+                                        justify-content: flex-end;
+                                        gap: 10px;
+                                    }
+
+                                    .voucher-modal-footer .btn {
+                                        padding: 8px 20px;
+                                        font-size: 15px;
+                                        border-radius: 8px;
+                                        transition: background 0.3s ease;
+                                    }
+
+                                    .voucher-modal-footer .btn-secondary:hover {
+                                        background: #c5c5c5;
+                                    }
+
+                                    .voucher-modal-footer .btn-danger {
+                                        background: #ff5722;
+                                        border: none;
+                                    }
+
+                                    .voucher-modal-footer .btn-danger:hover {
+                                        background: #e64a19;
+                                    }
+
+                                    /* Mobile responsive (max-width <= 768px) */
+                                    @media (max-width: 768px) {
+                                        .modal {
+                                            left: 0 !important;
+                                            top: 0 !important;
+                                            width: 100% !important;
+                                            height: 100% !important;
+                                            border-radius: 0;
+                                        }
+
+                                        .voucher-modal-content {
+                                            width: 95%;
+                                            margin: 20px auto;
+                                            padding: 20px 15px;
+                                        }
+
+                                        .voucher-list {
+                                            max-height: 300px;
+                                            padding-right: 0;
+                                        }
+
+                                        .voucher-item {
+                                            flex-direction: column;
+                                            align-items: flex-start;
+                                        }
+
+                                        .voucher-meta {
+                                            flex-direction: column;
+                                            gap: 4px;
+                                        }
+
+                                        .voucher-radio {
+                                            margin-left: 0;
+                                            margin-top: 8px;
+                                        }
+
+                                        .voucher-row {
+                                            flex-direction: column;
+                                            align-items: stretch;
+                                        }
+
+                                        .btn-voucher {
+                                            width: 100%;
+                                            text-align: center;
+                                        }
+
+                                        .field__input {
+                                            width: 100%;
+                                        }
+
+                                        .voucher-modal-footer {
+                                            flex-direction: column;
+                                            gap: 8px;
+                                        }
+
+                                        .voucher-modal-footer .btn {
+                                            width: 100%;
+                                        }
+                                    }
+                                </style>
 
                                 <div class="order-summary__section order-summary__section--total-lines order-summary--collapse-element"
                                     data-define="{subTotalPriceText: '1.900.000₫'}"
@@ -697,13 +994,14 @@
             // ======================= MÃ GIẢM GIÁ ========================== //
             document.getElementById('applyCoupon').addEventListener('click', function() {
                 const code = document.getElementById('reductionCode').value;
-                if (!code) return alert('Vui lòng nhập mã giảm giá!');
+                if (!code) return showMessage('Vui lòng nhập mã giảm giá!', 'danger');
 
                 fetch('/apply-coupon', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         },
                         body: JSON.stringify({
                             coupon_code: code
@@ -712,14 +1010,14 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            alert('Áp dụng mã giảm giá thành công!');
+                            showMessage('Áp dụng mã giảm giá thành công!', 'success');
                             updateCouponDisplay(data.code, data.discount);
                             updateOrderTotalDynamic(null, data.discount);
                         } else {
-                            alert(data.message || 'Mã giảm giá không hợp lệ!');
+                            showMessage(data.message || 'Mã giảm giá không hợp lệ!', 'danger');
                         }
                     })
-                    .catch(() => alert('Đã xảy ra lỗi khi áp dụng mã!'));
+                    .catch(() => showMessage('Đã xảy ra lỗi khi áp dụng mã!', 'danger'));
             });
 
             document.addEventListener('click', function(e) {
@@ -728,28 +1026,35 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
                             }
                         })
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                alert(data.message);
+                                showMessage(data.message, 'success');
                                 removeCouponDisplay();
                                 updateOrderTotalDynamic(null, 0);
+                            } else {
+                                showMessage(data.message || 'Không thể xóa mã!', 'danger');
                             }
-                        });
+                        })
+                        .catch(() => showMessage('Đã xảy ra lỗi khi xóa mã giảm giá!', 'danger'));
                 }
             });
 
             function updateCouponDisplay(code, discount) {
-                const container = document.getElementById('discountCode');
-                container.innerHTML = `
-                <div class="alert alert-success mt-3">
-                    <strong>Mã giảm giá:</strong> ${code}<br>
-                    <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
-                    <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">Xóa mã</button>
-                </div>`;
+                const wrapper = document.getElementById('appliedCouponWrapper');
+                wrapper.innerHTML = `
+        <div class="alert alert-success mt-3">
+            <strong>Mã giảm giá:</strong> ${code}<br>
+            <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
+            <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">
+                <i class="fas fa-times-circle"></i> Xóa mã
+            </button>
+        </div>
+    `;
                 addDiscountRow(code, discount);
             }
 
@@ -768,8 +1073,8 @@
             }
 
             function removeCouponDisplay() {
-                const container = document.getElementById('discountCode');
-                container.innerHTML = '';
+                const wrapper = document.getElementById('appliedCouponWrapper');
+                wrapper.innerHTML = ''; // chỉ xoá phần alert thôi
                 const row = document.querySelector('.total-line--discount');
                 if (row) row.remove();
             }
@@ -855,6 +1160,49 @@
                 }
             });
         });
+    </script>
+    <script>
+        // Mở modal
+        document.getElementById('chooseVoucherBtn').addEventListener('click', function() {
+            document.getElementById('voucherModal').style.display = 'block';
+        });
+
+        // Đóng modal
+        document.getElementById('closeVoucherModal').addEventListener('click', function() {
+            document.getElementById('voucherModal').style.display = 'none';
+        });
+
+        // Xác nhận chọn mã
+        document.getElementById('confirmVoucher').addEventListener('click', function() {
+            const selected = document.querySelector('input[name="selected_coupon"]:checked');
+            if (selected) {
+                document.getElementById('reductionCode').value = selected.value;
+                document.getElementById('applyCoupon').click(); // Gọi áp dụng mã
+                document.getElementById('voucherModal').style.display = 'none';
+            } else {
+                showMessage('Vui lòng chọn 1 mã giảm giá!', 'danger'); // ✅ Thay vì alert()
+            }
+        });
+        // Highlight mã đang chọn
+        document.querySelectorAll('.voucher-item input[type="radio"]').forEach((radio) => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.voucher-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.closest('.voucher-item').classList.add('active');
+            });
+        });
+
+        function showMessage(message, type = 'success') {
+            const msgDiv = document.getElementById('couponMessage');
+            msgDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+            msgDiv.classList.add('alert', `alert-${type}`);
+            msgDiv.innerHTML = `<strong>${message}</strong>`;
+
+            setTimeout(() => {
+                msgDiv.classList.add('d-none');
+            }, 4000);
+        }
     </script>
 
 </body>

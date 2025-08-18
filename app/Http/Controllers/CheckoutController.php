@@ -32,6 +32,19 @@ class CheckoutController extends Controller
             'vnpay' => $this->vnpay_payment($request),
             default => $this->processCODPayment($request),
         };
+
+        // Cập nhật coupon nếu có
+        if (Session::has('coupon')) {
+            try {
+                $this->handleCouponUsage(Session::get('coupon.code'));
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+            Session::forget('coupon');
+        }
+
+        Cart::destroy();
+        Session::forget('coupon');
     }
 
     /**
@@ -88,6 +101,15 @@ class CheckoutController extends Controller
             $this->createOrderDetail($order, $cartItem);
         }
 
+         // Đánh dấu coupon đã dùng
+        if (Session::has('coupon')) {
+            try {
+                $this->handleCouponUsage(Session::get('coupon.code'));
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+        }
+
         $this->updateCouponUsage();
         $this->clearCartAndSession();
 
@@ -132,6 +154,15 @@ class CheckoutController extends Controller
             $this->createOrderDetail($order, (object) $cartItem);
         }
 
+         // Đánh dấu coupon đã dùng
+        if (Session::has('coupon')) {
+            try {
+                $this->handleCouponUsage(Session::get('coupon.code'));
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+        }
+
         $this->updateCouponUsage();
         $this->clearCartAndSession();
 
@@ -174,6 +205,15 @@ class CheckoutController extends Controller
         foreach ($orderData['cart_items'] as $cartItem) {
             $this->createOrderDetail($order, (object) $cartItem);
         }
+
+           // Đánh dấu coupon đã dùng
+    if (Session::has('coupon')) {
+        try {
+            $this->handleCouponUsage(Session::get('coupon.code'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 
         $this->updateCouponUsage();
         $this->clearCartAndSession();
@@ -430,5 +470,34 @@ class CheckoutController extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+
+     private function handleCouponUsage($couponCode)
+    {
+        $user = Auth::user();
+        if (!$user || !$couponCode) return;
+
+        $coupon = Coupon::where('code', $couponCode)->first();
+        if (!$coupon) return;
+
+        // Kiểm tra nếu user đã dùng mã này
+        $pivot = $user->savedCoupons()->where('coupon_id', $coupon->id)->first();
+
+        if ($pivot && $pivot->pivot->used) {
+            throw new \Exception('Bạn đã sử dụng mã giảm giá này rồi!');
+        }
+
+        if (!$pivot) {
+            // Gán nếu chưa lưu
+            $user->savedCoupons()->attach($coupon->id, ['used' => true]);
+        } else {
+            // Đánh dấu đã dùng
+            $user->savedCoupons()->updateExistingPivot($coupon->id, ['used' => true]);
+        }
+
+        // Tăng lượt dùng hệ thống nếu còn giới hạn
+        if ($coupon->usage_limit === null || $coupon->used < $coupon->usage_limit) {
+            $coupon->increment('used');
+        }
     }
 }
