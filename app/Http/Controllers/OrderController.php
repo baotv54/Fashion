@@ -1,0 +1,239 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Gloudemans\Shoppingcart\Facades\Cart;
+
+use Illuminate\Support\Facades\Auth;
+
+class OrderController extends Controller
+{
+    public function index()
+    {
+        $orders = Order::with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.orders.index', compact('orders'));
+    }
+
+    /**
+     * Điều chỉnh tồn kho theo chi tiết đơn hàng (tăng/giảm)
+     * direction: 'increase' | 'decrease'
+     */
+    private function adjustStockForOrder(Order $order, string $direction = 'increase'): void
+    {
+        $order->loadMissing('orderDetails');
+        foreach ($order->orderDetails as $detail) {
+            $qty = (int) ($detail->quantity ?? 0);
+            if ($qty <= 0) {
+                continue;
+            }
+
+            if ($detail->variant_id) {
+                $variant = ProductVariant::where('id', $detail->variant_id)->lockForUpdate()->first();
+                if ($variant) {
+                    if ($direction === 'increase') {
+                        $variant->increment('stock', $qty);
+                    } else {
+                        $variant->decrement('stock', $qty);
+                    }
+                }
+            } else if ($detail->product_id) {
+                $product = Product::where('id', $detail->product_id)->lockForUpdate()->first();
+                if ($product) {
+                    if ($direction === 'increase') {
+                        $product->increment('quantity', $qty);
+                    } else {
+                        $product->decrement('quantity', $qty);
+                    }
+                }
+            }
+        }
+    }
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:ordered,processing,confirmed,shipping,delivered,cancelled,returned',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $order = Order::with('orderDetails')->findOrFail($id);
+            $oldStatus = $order->status;
+            $order->status = $request->status;
+            $order->save();
+
+            // Hoàn tồn khi chuyển sang cancelled/returned từ trạng thái chưa hoàn tất
+            if (in_array($order->status, ['cancelled', 'returned']) && !in_array($oldStatus, ['cancelled', 'returned'])) {
+                $this->adjustStockForOrder($order, 'increase');
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể cập nhật trạng thái đơn: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
+    }
+    public function userOrderHistory()
+    {
+        $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
+        return view('Frontend.pages.account.orders', compact('orders')); // Truyền $orders sang view
+    }
+    public function userOrderDetails($id)
+    {
+        // Lấy thông tin đơn hàng của người dùng hiện tại
+        $order = Order::with(['orderDetails.product'])->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        // Trả về view chi tiết đơn hàng
+        return view('Frontend.pages.account.order-detail', compact('order'));
+    }
+    public function updateAddress(Request $request, $id)
+    {
+        // Validate dữ liệu đầu vào
+        $request->validate([
+            'address' => 'required|max:255',
+            'province' => 'required|max:255',
+            'district' => 'required|max:255',
+            'ward' => 'required|max:255',
+        ]);
+
+        // Tìm đơn hàng của người dùng hiện tại
+        $order = Order::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        // Kiểm tra trạng thái đơn hàng
+        if ($order->status !== 'processing') {
+            return redirect()->back()->with('error', 'Bạn chỉ có thể thay đổi địa chỉ khi đơn hàng đang ở trạng thái Đang xử lý.');
+        }
+
+        // Cập nhật địa chỉ giao hàng
+        $order->address = $request->address;
+        $order->province = $request->province;
+        $order->district = $request->district;
+        $order->ward = $request->ward;
+        $order->save();
+
+        return redirect()->back()->with('success', 'Cập nhật địa chỉ giao hàng thành công!');
+    }
+    public function orderSuccess($order_id)
+    {
+        // Lấy thông tin đơn hàng từ cơ sở dữ liệu
+        $order = Order::with('orderDetails')->findOrFail($order_id);
+
+        return view('Frontend.pages.checkout_success', compact('order'));
+    }
+    public function getProvince()
+    {
+        $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/province";
+        $token = env('GHNHANH_API_KEY');
+        $options = [
+            'http' => [
+                'header' => "Token: $token\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response, true);
+        return response()->json($data['data'] ?? []);
+    }
+    public function getDistrict($provinceId)
+    {
+        $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/district?province_id=$provinceId";
+        $token = env('GHNHANH_API_KEY');
+        $options = [
+            'http' => [
+                'header' => "Token: $token\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response, true);
+        return response()->json($data['data'] ?? []);
+    }
+    public function getWard($districtId)
+    {
+        $url = env('GHNHANH_API_URL') . "/shiip/public-api/master-data/ward?district_id=$districtId";
+        $token = env('GHNHANH_API_KEY');
+        $options = [
+            'http' => [
+                'header' => "Token: $token\r\n"
+            ]
+        ];
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response, true);
+        return response()->json($data['data'] ?? []);
+    }
+
+    public function cancelOrder(Request $request, $id)
+    {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+            'cancel_reason_other' => 'nullable|string|max:255',
+        ]);
+
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['ordered', 'processing', 'confirmed'])
+            ->firstOrFail();
+
+        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
+        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp' 
+            ? $request->cancel_reason_other 
+            : $request->cancel_reason;
+
+        try {
+            DB::beginTransaction();
+
+            $order->status = 'cancelled';
+            $order->cancel_reason = $cancelReason;
+            $order->save();
+
+            // Hoàn tồn kho khi người dùng hủy đơn
+            $this->adjustStockForOrder($order, 'increase');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể huỷ đơn hàng: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
+    }
+
+
+    public function reorder($id)
+    {
+        $order = Order::with('orderDetails.product')
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        foreach ($order->orderDetails as $item) {
+            if ($item->product) {
+                Cart::add([
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'qty' => $item->quantity,
+                    'price' => $item->price,
+                    'options' => [
+                        // Nếu có variant: 'size' => $item->size, 'color' => $item->color,...
+                        'image' => $item->product->image,
+                    ]
+                ]);
+            }
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Các sản phẩm đã được thêm lại vào giỏ hàng.');
+    }
+}

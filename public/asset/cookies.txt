@@ -1,0 +1,8 @@
+# HTTrack Website Copier Cookie File
+# This file format is compatible with Netscape cookies
+f1genz-shoes.mysapo.net	TRUE	/	FALSE	1999999999	_landing_page	%2F
+f1genz-shoes.mysapo.net	TRUE	/	FALSE	1999999999	cart	c314f5db932cdaf9a0fb14963c03fc6a
+f1genz-shoes.mysapo.net	TRUE	/	FALSE	1999999999	cart_sig	a5265d1be78b79a95019e130a0123468
+f1genz-shoes.mysapo.net	TRUE	/	FALSE	1999999999	cart_currency	VND
+f1genz-shoes.mysapo.net	TRUE	/	FALSE	1999999999	samesite	none
+
