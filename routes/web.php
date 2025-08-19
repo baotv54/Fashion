@@ -30,6 +30,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ImportWarehouseController;
+use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
 use Illuminate\Support\Facades\Route;
@@ -274,10 +275,13 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
             Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
-
         });
 
-
+        Route::prefix('returns')->group(function () {
+            Route::get('/create/{id}', [PurchaseReturnController::class, 'show'])->name('returns.show');
+            Route::post('/store', [PurchaseReturnController::class, 'store'])->name('returns.store');
+            Route::get('/', [PurchaseReturnController::class, 'index'])->name('returns.list');
+        });
 
         Route::prefix('products/{productId}/variants')->group(function () {
             Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
@@ -357,7 +361,7 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
         });
-         // Routes quản mã giảm giá
+        // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {
             Route::get('/', [CouponController::class, 'index'])->name('coupons.index');
             Route::get('/create', [CouponController::class, 'create'])->name('coupons.create');

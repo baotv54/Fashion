@@ -15,6 +15,7 @@ class ImportWarehouseDetail extends Model
         'variant_id',
         'quantity',
         'price',
+        'stock',
     ];
 
     public function warehouse()
