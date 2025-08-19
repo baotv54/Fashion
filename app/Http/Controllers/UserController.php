@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ class UserController extends Controller
         $users = User::latest()->select(
             'id',
             'name',
+            'phone',
+            'avatar',
             'password',
             'email',
             'role'
@@ -37,6 +40,8 @@ class UserController extends Controller
         $validatedDate = $request->validate(
             [
                 'name' => 'required|max:15',
+                'phone' => 'nullable|max:15',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:8',
                 'role' => 'required|max:15',
@@ -87,8 +92,5 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User đã bị xóa thành công.');
     }
-
-
-
 
 }

@@ -32,6 +32,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ImportWarehouseController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
+use App\Http\Controllers\PopupController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -68,7 +69,9 @@ Route::get('/db', function () {
     return view('layouts.Dashboard');
 });
 
-Route::get('/faq', [BannerController::class, 'listLogo'])->name('question');
+Route::get('/faq', function () {
+    return view('Frontend.pages.pages.faq');
+});
 
 Route::get('/lien-he', function () {
     return view('Frontend.pages.pages.lien-he');
@@ -205,6 +208,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
+
 // Routes cho so sánh sản phẩm (không cần đăng nhập)
 Route::prefix('comparison')->group(function () {
     Route::get('/', [ComparisonController::class, 'index'])->name('comparison.index');
@@ -243,6 +247,16 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
             Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
+        });
+
+         //routes quản lý popup
+        Route::prefix('popup')->group(function () {
+            Route::get('/index', [PopupController::class, 'index'])->name('popups.index');
+            Route::get('/create', [PopupController::class, 'create'])->name('popups.create');
+            Route::post('/', [PopupController::class, 'store'])->name('popups.store');
+            Route::get('/{id}/edit', [PopupController::class, 'edit'])->name('popups.edit');
+            Route::put('/{id}', [PopupController::class, 'update'])->name('popups.update');
+            Route::delete('/{popup}', [PopupController::class, 'destroy'])->name('popups.destroy');
         });
 
         // Quản trị Product Live Chat (non-AI)
