@@ -3833,10 +3833,15 @@
             <div class="acc-wrap">
                 <!-- Sidebar -->
                 <div class="acc-sidebar">
-                    <span>
-                        <img width="64" height="64"
-                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                             alt="{{ $user->name }}" />
+                     <span>
+                       
+                             @if ($user->avatar)
+                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar" 
+                           alt="{{ $user->name }}">
+                    @else
+                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
+                            alt="{{ $user->name }}">
+                    @endif
                     </span>
                     <h3>Xin chào, <b>{{ $user->name }}</b></h3>
                      <!-- Nút toggle chỉ hiện trên mobile -->
@@ -3972,11 +3977,10 @@
                     </style>
 
                 <!-- Main content -->
-                <div class="acc-data acc-data-profile">
-                    <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
+                    <div class="acc-data acc-data-profile">
+                        <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
 
-                    <!-- Chi tiết cá nhân -->
-                    <div class="profile-info">
+                        <div class="profile-info">
                         <p><strong>Họ tên:</strong> {{ $user->name }}</p>
                         <p><strong>Email:</strong> {{ $user->email }}</p>
                         @if($user->phone)
@@ -3987,18 +3991,16 @@
                         @endif
                     </div>
 
-                    <!-- Cập nhật thông tin -->
-                    <div class="profile-update mt-4">
-                        <h1 class="title-head">Cập nhật thông tin</h1>
-                        @include('profile.partials.update-profile-information-form')
-                    </div>
+                        <div class="profile-update mt-4">
+                            <h1 class="title-head">Cập nhật thông tin</h1>
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
 
-                    <!-- Xóa tài khoản -->
-                    <div class="profile-delete mt-5">
-                        <h1 class="title-head" style="color: #dc3545;">Xóa tài khoản</h1>
-                        @include('profile.partials.delete-user-form')
+                        <div class="profile-delete mt-5">
+                            <h1 class="title-head" style="color: #dc3545;">Xóa tài khoản</h1>
+                            @include('profile.partials.delete-user-form')
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>

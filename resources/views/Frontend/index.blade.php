@@ -15,36 +15,36 @@
         <h1 class="d-none">F1GENZ Shoes</h1>
         <section id="home-slider">
             <div class="home-slider-main">
-                @foreach ($banners as $banner)
-                <div class="home-slider-main-item">
-                    <a href="{{ $banner->link ?? '#' }}"
-                        aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
-                        <picture>
-                            {{-- Ảnh cho màn hình nhỏ --}}
-                            <source width="600" height="800" media="(max-width: 600px)"
-                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                 @foreach ($banners as $banner)
+                    <div class="home-slider-main-item">
+                        <a href="{{ $banner->link ?? '#' }}"
+                            aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
+                            <picture>
+                                {{-- Ảnh cho màn hình nhỏ --}}
+                                <source width="600" height="800" media="(max-width: 600px)"
+                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                            {{-- Ảnh cho màn hình lớn --}}
-                            <source width="1920" height="700" media="(min-width: 601px)"
-                                srcset="{{ asset('imgBanner/' . $banner->image) }}">
+                                {{-- Ảnh cho màn hình lớn --}}
+                                <source width="1920" height="700" media="(min-width: 601px)"
+                                    srcset="{{ asset('imgBanner/' . $banner->image) }}">
 
-                            {{-- Ảnh chính hiển thị --}}
-                            <img width="1920" height="700" loading="lazy" decoding="async"
-                                src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
-                                title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
-                                alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
-                        </picture>
+                                {{-- Ảnh chính hiển thị --}}
+                                <img width="1920" height="700" loading="lazy" decoding="async"
+                                    src="{{ asset('imgBanner/' . $banner->image) }}" class="w-100"
+                                    title="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}"
+                                    alt="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}" />
+                            </picture>
 
-                        <div class="home-slider-item-content">
-                            <div class="container">
-                                <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
+                            <div class="home-slider-item-content">
+                                <div class="container">
+                                    <h2>{!! $banner->title !!} <br /> Sale tất cả sản phẩm</h2>
 
-                                <p>{{ $banner->subtitle }}</p>
-                                <span>Xem ngay</span>
+                                    <p>{{ $banner->subtitle }}</p>
+                                    <span>Xem ngay</span>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         </section>
@@ -836,6 +836,121 @@
                 </div>
             </div>
         </section>
+         @php
+            $popups = \App\Models\Popup::where('status', 1)
+                ->orderByRaw("CASE WHEN media_type = 'image' THEN 0 ELSE 1 END") // ảnh trước, video sau
+                ->latest()
+                ->get();
+        @endphp
+
+        @foreach ($popups as $popup)
+            <div class="modal fade" id="myModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 rounded-3 overflow-hidden shadow-lg animate-zoom">
+
+                        <div class="row g-0">
+                            {{-- Media --}}
+                            <div class="col-md-6">
+                                @if ($popup->media_type === 'image')
+                                    <img src="{{ asset('storage/' . $popup->media_path) }}" alt="Popup Image"
+                                        class="w-100 h-100" style="object-fit: cover;">
+                                @elseif ($popup->media_type === 'video')
+                                    <video autoplay muted controls class="w-100 h-100" style="object-fit: cover;">
+                                        <source src="{{ asset('storage/' . $popup->media_path) }}"
+                                            type="video/mp4">
+                                    </video>
+                                @endif
+                            </div>
+
+                            {{-- Nội dung --}}
+                            <div
+                                class="col-md-6 d-flex flex-column justify-content-center p-4 bg-light position-relative">
+
+                                {{-- Nút đóng --}}
+                                <button type="button" class="btn-close-custom" data-dismiss="modal"
+                                    aria-label="Close">
+                                    &times;
+                                </button>
+
+                                {{-- Tiêu đề --}}
+                                @if ($popup->title)
+                                    <h3 class="fw-bold text-uppercase mb-3" style="color: #ff9800;">
+                                        {{ $popup->title }}
+                                    </h3>
+                                @endif
+
+                                {{-- Mô tả --}}
+                                @if ($popup->description)
+                                    <p class="mb-4 text-secondary" style="line-height: 1.6;">
+                                        {{ $popup->description }}
+                                    </p>
+                                @endif
+
+                                {{-- Form --}}
+
+                                <div class="input-group mb-3">
+                                    <input placeholder="Nhập email của bạn" class="form-control">
+                                    <button type="button" class="btn btn-warning text-white px-4"
+                                        onclick="window.location.href='/Register'">
+                                        Đăng ký
+                                    </button>
+                                </div>
+
+
+                                <small class="text-muted">
+                                    🎁 Nhận ngay coupon giảm <b class="text-danger">15%</b> khi đăng ký
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- CSS & Animation --}}
+            <style>
+                @keyframes zoomIn {
+                    from {
+                        transform: scale(0.8);
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
+
+                .animate-zoom {
+                    animation: zoomIn 0.4s ease;
+                }
+
+                .modal-dialog {
+                    max-width: 900px;
+                }
+
+                .modal-content .btn-close-custom {
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                    background: #fff;
+                    border: none;
+                    border-radius: 50%;
+                    width: 35px;
+                    height: 35px;
+                    font-size: 1.5rem;
+                    line-height: 1;
+                    color: #333;
+
+                    z-index: 9999;
+                    cursor: pointer;
+                }
+
+                .modal-content .btn-close-custom:hover {
+                    background: #ffb400;
+                    color: #ffffff;
+                }
+            </style>
+        @endforeach
 
     </main>
      <script>
@@ -882,6 +997,32 @@
                 toast.style.minWidth = '200px';
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Lấy ngày hiện tại dạng YYYY-MM-DD
+            let today = new Date().toISOString().slice(0, 10);
+
+            // Kiểm tra xem đã lưu ngày hiển thị popup chưa
+            if (localStorage.getItem('popupShownDate') !== today) {
+                setTimeout(function() {
+                    $('#popupModal').modal('show');
+                    // Lưu ngày hôm nay để không hiển thị lại
+                    localStorage.setItem('popupShownDate', today);
+                }, 1000);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!localStorage.getItem('popupShown')) {
+                setTimeout(function() {
+                    $('#myModal').modal('show');
+                    localStorage.setItem('popupShown', 'yes');
+                }, 1000);
             }
         });
     </script>
