@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
+<<<<<<< HEAD
 use Illuminate\Auth\Events\Failed;
+=======
+>>>>>>> sang002
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -43,10 +46,13 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+<<<<<<< HEAD
             // Tìm user theo email để trigger Failed event
             $user = \App\Models\User::where('email', $this->email)->first();
             event(new Failed('web', $user, $this->only('email', 'password')));
             
+=======
+>>>>>>> sang002
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

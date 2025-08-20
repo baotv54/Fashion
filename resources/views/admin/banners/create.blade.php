@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
 
             {{-- Nút hành động --}}
@@ -104,7 +104,7 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <style>
-           
+
         </style>
     @endpush
 
@@ -155,6 +155,6 @@
                 });
             }
         </script>
-         
+
     @endpush
 @endsection

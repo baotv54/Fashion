@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProductLiveChatMessageCreated;
 use App\Models\ProductLiveChatMessage;
 use App\Models\ProductLiveChatAttachment;
 use App\Models\ProductLiveChatThread;
@@ -13,12 +14,25 @@ class ProductLiveChatController extends Controller
 {
     private function getSessionToken(Request $request): string
     {
-        // Dùng session để lưu token duy nhất cho phiên duyệt
+        // Ưu tiên token từ cookie để không mất sau khi refresh/trình duyệt khởi động lại
+        $cookieToken = $request->cookie('plc_session_token');
+        if ($cookieToken) {
+            // Đồng bộ vào session nếu chưa có
+            if (!$request->session()->has('plc_session_token')) {
+                $request->session()->put('plc_session_token', $cookieToken);
+            }
+            return $cookieToken;
+        }
+
+        // Nếu chưa có cookie thì lấy từ session hoặc tạo mới
         $token = $request->session()->get('plc_session_token');
         if (!$token) {
             $token = Str::random(40);
             $request->session()->put('plc_session_token', $token);
         }
+
+        // Ghi cookie thời hạn 30 ngày để giữ nguyên thread qua lần truy cập sau
+        \Cookie::queue(cookie('plc_session_token', $token, 60 * 24 * 30));
         return $token;
     }
 
@@ -71,6 +85,14 @@ class ProductLiveChatController extends Controller
             'message' => $request->input('message'),
         ]);
 
+        // Broadcast realtime event for text message
+        event(new ProductLiveChatMessageCreated(
+            threadId: $thread->id,
+            sender: 'user',
+            message: $msg->message,
+            attachments: []
+        ));
+
         return response()->json([
             'message' => 'Đã gửi',
             'data' => [
@@ -110,7 +132,7 @@ class ProductLiveChatController extends Controller
                         'type' => $a->type,
                         'mime' => $a->mime,
                         'size' => $a->size,
-                        'url' => Storage::disk('public')->url($path),
+                        'url' => asset('storage/' . ltrim($path, '/')),
                     ];
                 }),
             ];
@@ -161,6 +183,24 @@ class ProductLiveChatController extends Controller
             'size' => $file->getSize(),
         ]);
 
+        // Prepare attachment payload with public URL
+        $publicPath = str_starts_with($attachment->path, 'public/') ? substr($attachment->path, 7) : $attachment->path;
+        $attPayload = [[
+            'id' => $attachment->id,
+            'type' => $attachment->type,
+            'mime' => $attachment->mime,
+            'size' => $attachment->size,
+            'url' => asset('storage/' . ltrim($publicPath, '/')),
+        ]];
+
+        // Broadcast realtime event for attachment message
+        event(new ProductLiveChatMessageCreated(
+            threadId: $thread->id,
+            sender: 'user',
+            message: null,
+            attachments: $attPayload
+        ));
+
         return response()->json([
             'message' => 'Đã gửi tệp',
             'data' => [
@@ -170,9 +210,63 @@ class ProductLiveChatController extends Controller
                     'type' => $attachment->type,
                     'mime' => $attachment->mime,
                     'size' => $attachment->size,
-                    'url' => Storage::disk('public')->url($attachment->path),
+                    'url' => asset('storage/' . ltrim($publicPath, '/')),
                 ],
             ],
+        ]);
+    }
+
+    // Long-polling: trả về các tin nhắn mới hơn since_id
+    public function poll(Request $request)
+    {
+        $request->validate([
+            'thread_id' => 'required|integer|exists:product_live_chat_threads,id',
+            'since_id' => 'nullable|integer|min:0',
+        ]);
+
+        $thread = ProductLiveChatThread::findOrFail($request->input('thread_id'));
+
+        // Nếu không đăng nhập (phía user), áp dụng kiểm tra session token
+        if (!auth()->check()) {
+            $sessionToken = $this->getSessionToken($request);
+            if ($thread->session_token !== $sessionToken) {
+                return response()->json(['message' => 'Phiên không hợp lệ.'], 403);
+            }
+        }
+
+        $sinceId = (int) $request->input('since_id', 0);
+
+        $newMessages = ProductLiveChatMessage::where('thread_id', $thread->id)
+            ->when($sinceId > 0, function ($q) use ($sinceId) {
+                $q->where('id', '>', $sinceId);
+            })
+            ->orderBy('id')
+            ->with('attachments')
+            ->get();
+
+        $payload = $newMessages->map(function ($m) {
+            return [
+                'id' => $m->id,
+                'sender' => $m->sender,
+                'message' => $m->message,
+                'created_at' => $m->created_at,
+                'attachments' => $m->attachments->map(function ($a) {
+                    $path = str_starts_with($a->path, 'public/') ? substr($a->path, 7) : $a->path;
+                    return [
+                        'id' => $a->id,
+                        'type' => $a->type,
+                        'mime' => $a->mime,
+                        'size' => $a->size,
+                        'url' => asset('storage/' . ltrim($path, '/')),
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'thread_id' => $thread->id,
+            'messages' => $payload,
+            'last_id' => $payload->last()['id'] ?? $sinceId,
         ]);
     }
 }

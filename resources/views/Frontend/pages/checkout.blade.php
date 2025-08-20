@@ -14,12 +14,12 @@
     @include('Frontend.partials.head')
 
     <link rel="shortcut icon" href="//bizweb.dktcdn.net/assets/sapo_favicon.png" type="image/x-icon" />
-    <!-- <link rel="stylesheet" href="{{ asset('css/flag-icons.min.css') }}" />
+    <!-- <link rel="stylesheet" href="{{asset('css/flag-icons.min.css')}}" />
 
-    <link rel="stylesheet" href="{{ asset('css/checkout.vendor.min.css') }}"> -->
+    <link rel="stylesheet" href="{{asset('css/checkout.vendor.min.css')}}"> -->
 
 
-    <link rel="stylesheet" href="{{ asset('css/checkout.min.css') }}">
+    <link rel="stylesheet" href="{{asset('css/checkout.min.css')}}">
 
 
 </head>
@@ -1125,7 +1125,7 @@
                 <i class="fas fa-ticket-alt"></i> Mã giảm giá: <span class="text-dark">${code}</span>
             </h6>
             <p class="mb-0 text-muted">
-                <i class="fas fa-tag"></i> Giảm giá: 
+                <i class="fas fa-tag"></i> Giảm giá:
                 <span class="fw-bold text-danger">-${new Intl.NumberFormat('vi-VN').format(discount)}₫</span>
             </p>
         </div>
@@ -1287,6 +1287,76 @@
                 msgDiv.classList.add('d-none');
             }, 4000);
         }
+    </script>
+
+    <script>
+        // Polling tồn kho ở trang checkout: gọi /cart/validate mỗi 10s, khóa nút đặt hàng khi có lỗi
+        (function () {
+            const FORM_SELECTOR = '#checkoutForm';
+            const SUBMIT_SELECTOR = '#checkoutForm button[type="submit"]';
+            const WARNING_ID = 'checkout-stock-warning';
+
+            function ensureWarningContainer() {
+                let el = document.getElementById(WARNING_ID);
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = WARNING_ID;
+                    el.className = 'alert alert-danger';
+                    el.style.display = 'none';
+                    const sidebar = document.querySelector('.sidebar__content') || document.querySelector('.main__content') || document.body;
+                    sidebar.prepend(el);
+                }
+                return el;
+            }
+
+            function setSubmitDisabled(disabled, message) {
+                const btn = document.querySelector(SUBMIT_SELECTOR);
+                const form = document.querySelector(FORM_SELECTOR);
+                const warn = ensureWarningContainer();
+                if (!btn || !form) return;
+                if (disabled) {
+                    btn.classList.add('disabled');
+                    btn.setAttribute('aria-disabled', 'true');
+                    btn.addEventListener('click', blockClick, { passive: false });
+                    warn.textContent = message || 'Một số sản phẩm đã hết hoặc không đủ hàng. Vui lòng cập nhật giỏ hàng trước khi đặt.';
+                    warn.style.display = '';
+                } else {
+                    btn.classList.remove('disabled');
+                    btn.removeAttribute('aria-disabled');
+                    btn.removeEventListener('click', blockClick);
+                    const warn = document.getElementById(WARNING_ID);
+                    if (warn) warn.style.display = 'none';
+                }
+            }
+
+            function blockClick(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+
+            function applyValidation(payload) {
+                if (!payload || !Array.isArray(payload.items)) return;
+                const hasIssue = payload.items.some(it => !it.ok);
+                setSubmitDisabled(hasIssue, 'Một số sản phẩm trong đơn không đủ tồn. Vui lòng kiểm tra lại.');
+            }
+
+            async function pollValidate() {
+                try {
+                    const res = await fetch('/cart/validate', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    if (!res.ok) return;
+                    const json = await res.json();
+                    applyValidation(json);
+                } catch (err) {
+                    // im lặng, không hiển thị lỗi mạng
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                pollValidate();
+                setInterval(pollValidate, 10000);
+            });
+        })();
     </script>
 
 </body>

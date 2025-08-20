@@ -37,7 +37,7 @@
                             <th>Subtitle</th>
                             <th>Link</th>
                             <th>Ảnh</th>
-                        
+
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -85,7 +85,7 @@
         </div>
     </div>
     <div class="container-fluid p-0">
-       
+
 
         {{-- Nút thêm mới --}}
         <div class="mb-3 d-flex justify-content-end">

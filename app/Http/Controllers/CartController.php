@@ -500,4 +500,68 @@ class CartController extends Controller
             return back()->with('error', 'Có lỗi xảy ra khi tải trang thanh toán');
         }
     }
+
+    /**
+     * API: Validate tồn kho toàn bộ giỏ hàng (real-time polling)
+     * GET /cart/validate
+     */
+    public function validateCart()
+    {
+        try {
+            $items = [];
+            $hasIssue = false;
+
+            foreach (Cart::content() as $cartItem) {
+                $type = $cartItem->options['type'] ?? 'product';
+                $requested = (int)($cartItem->qty ?? 0);
+                $available = 0;
+                $ok = true;
+                $message = '';
+
+                if ($type === 'variant' && isset($cartItem->options['variant_id'])) {
+                    $variant = ProductVariant::find($cartItem->options['variant_id']);
+                    $available = (int)($variant->stock ?? 0);
+                    if (!$variant || $available <= 0) {
+                        $ok = false;
+                        $message = 'Hết hàng';
+                    } elseif ($requested > $available) {
+                        $ok = false;
+                        $message = 'Không đủ hàng. Còn lại: ' . $available;
+                    }
+                } else {
+                    $product = Product::find($cartItem->options['product_id'] ?? null);
+                    $available = (int)($product->quantity ?? 0);
+                    if (!$product || $available <= 0) {
+                        $ok = false;
+                        $message = 'Hết hàng';
+                    } elseif ($requested > $available) {
+                        $ok = false;
+                        $message = 'Không đủ hàng. Còn lại: ' . $available;
+                    }
+                }
+
+                if (!$ok) {
+                    $hasIssue = true;
+                }
+
+                $items[] = [
+                    'rowId' => $cartItem->rowId,
+                    'name' => $cartItem->name,
+                    'type' => $type,
+                    'requested' => $requested,
+                    'available' => $available,
+                    'ok' => $ok,
+                    'message' => $message,
+                ];
+            }
+
+            return response()->json([
+                'ok' => !$hasIssue,
+                'items' => $items,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error validating cart stock: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'error' => 'Không thể kiểm tra tồn kho'], 500);
+        }
+    }
 }

@@ -1,13 +1,13 @@
 <header class="headers2">
     <div class="container">
         <div class="headers2-wrap">
-            @foreach ($logos as $logo) 
-              
+            @foreach ($logos as $logo)
+
               <div class="headers2-left">
                     <a href="/" aria-label="F1GENZ Shoes">
                         <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
                     </a>
-                </div> 
+                </div>
             <div class="headers2-center">
                 <nav class="headers2-center-menu">
                     <ul class="menu0">

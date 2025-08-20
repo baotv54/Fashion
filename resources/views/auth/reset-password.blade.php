@@ -6,7 +6,7 @@
                 <div class="mb-4">
                     <img src="{{ asset('images/shop_logo_imagee889.png') }}" alt="F1GENZ Shoes" title="F1GENZ Shoes" class="h-12 mx-auto">
                 </div>
-                
+
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">{{ __('Đặt lại mật khẩu') }}</h1>
                 <p class="mt-2 text-sm text-gray-600">{{ __('Nhập email và tạo mật khẩu mới cho tài khoản của bạn.') }}</p>
             </div>

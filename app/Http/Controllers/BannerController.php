@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Banner;
-use App\Models\Logo; 
+use App\Models\Logo;
 
 class BannerController extends Controller
 {
@@ -167,5 +167,5 @@ class BannerController extends Controller
         return redirect()->route('banners.index')->with('success', 'Banner đã được xóa thành công!');
     }
 
-   
+
 }

@@ -214,7 +214,6 @@ class CouponController extends Controller
     {
         $coupons = Coupon::latest()->paginate(10);
         $products = Product::latest()->take(8)->get();
-
         return view('Frontend.pages.couponList', compact('coupons', 'products'));
     }
 }
