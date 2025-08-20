@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,10 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            // Tìm user theo email để trigger Failed event
+            $user = \App\Models\User::where('email', $this->email)->first();
+            event(new Failed('web', $user, $this->only('email', 'password')));
+            
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
