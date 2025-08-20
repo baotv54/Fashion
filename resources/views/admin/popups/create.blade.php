@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="my-4 text-center fw-bold text-primary">
-        {{ isset($popups) ? '✏️ Chỉnh sửa Popup' : '➕ Thêm mới Popup' }}
+        {{ isset($popups) ? ' Chỉnh sửa Popup' : ' Thêm mới Popup' }}
     </h1>
 
     <form action="{{ isset($popups) ? route('popups.update', $popups->id) : route('popups.store') }}"
