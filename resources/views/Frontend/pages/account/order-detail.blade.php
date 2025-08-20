@@ -3787,6 +3787,7 @@
 <body class="">
     @include('Frontend.partials.header')
     @php $user = Auth::user(); @endphp
+    @include('Frontend.pages.account.reorder-stock-alert')
 
     <main class="main-layout">
         <div class="acc">

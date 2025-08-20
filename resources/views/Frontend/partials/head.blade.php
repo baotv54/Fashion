@@ -155,6 +155,8 @@
 	<link rel="preload stylesheet" as="style" href="{{ asset('css/fancye889.css') }}">
 	<link rel="preload stylesheet" as="style" href="{{ asset('css/main.scss.css') }}">
 	<link rel="preload stylesheet" as="style" href="{{ asset('css/index.scss.css') }}">
+	<link rel="preload stylesheet" as="style" href="{{ asset('css/product.scsse889.css') }}">
+
 
 	<script fetchpriority="low" defer src="{{ asset('js/plugine889.js') }}"></script>
 	<script fetchpriority="low" defer src="{{ asset('js/fancybox.umd.js') }}"></script>

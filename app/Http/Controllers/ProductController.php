@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -115,23 +116,23 @@ class ProductController extends Controller
             },
             'reviews.user'
         ])->findOrFail($id);
-    
+
         $images = $product->images;
-    
+
         // Nhóm attributes theo tên thuộc tính
         $attributes = $product->variants
             ->flatMap(function ($variant) {
                 return $variant->attributeValues;
             })
             ->groupBy(fn($attrVal) => $attrVal->attribute->name);
-    
+
         $relatedProducts = Product::with('images')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->latest()
             ->take(8)
             ->get();
-    
+
         // Kiểm tra đã mua và trạng thái đơn hàng hoàn thành
         $canReview = false;
         $userReview = null;
@@ -139,23 +140,23 @@ class ProductController extends Controller
             $hasCompletedOrder = OrderDetail::where('product_id', $id)
                 ->whereHas('order', function ($q) {
                     $q->where('user_id', Auth::id())
-                      ->where('status', 'delivered');
+                        ->where('status', 'delivered');
                 })->exists();
-    
+
             // Kiểm tra đã đánh giá chưa
             $userReview = $product->reviews->where('user_id', Auth::id())->first();
             $canReview = $hasCompletedOrder && !$userReview;
         }
-    
+
         $totalSold = OrderDetail::where('product_id', $product->id)
             ->whereHas('order', function ($query) {
                 $query->where('status', 'delivered');
             })->sum('quantity');
-    
+
         // Thống kê đánh giá từ collection đã load
         $avgRating = $product->reviews->avg('rating');
         $totalReviews = $product->reviews->count();
-    
+
         $ratingStats = [];
         for ($i = 1; $i <= 5; $i++) {
             $count = $product->reviews->where('rating', $i)->count();
@@ -165,22 +166,30 @@ class ProductController extends Controller
                 'percentage' => round($percentage, 2),
             ];
         }
-    
-        // Tạo mapping variants để JavaScript sử dụng
+
+        // FIX: Tạo mapping variants với cách sắp xếp nhất quán
         $variantMapping = [];
         foreach ($product->variants as $variant) {
-            $attributeIds = $variant->attributeValues->pluck('id')->sort()->toArray();
+            // Sắp xếp theo ID attribute value để đảm bảo consistency
+            $attributeIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
             $key = implode('-', $attributeIds);
-    
+
             $variantMapping[$key] = [
                 'id' => $variant->id,
                 'price' => $variant->price ?? $product->price,
                 'stock' => $variant->stock,
                 'image' => $variant->image,
                 'sku' => $variant->sku,
+                'attribute_value_ids' => $attributeIds, // Thêm dòng này
             ];
+
+            // Debug: Log ra để kiểm tra
+            Log::info("Variant {$variant->id}: key={$key}, attributes=" . json_encode($attributeIds));
         }
-    
+
+        // FIX: Tính toán hasVariants chính xác
+        $hasVariants = $product->variants->count() > 0;
+
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
@@ -190,6 +199,7 @@ class ProductController extends Controller
             'totalReviews',
             'totalSold',
             'variantMapping',
+            'hasVariants',
             'ratingStats',
             'canReview',
             'userReview'

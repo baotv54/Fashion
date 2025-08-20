@@ -287,12 +287,12 @@ class CartController extends Controller
                     ], 400);
                 }
                 if ($variant->stock < $quantity) {
-    return response()->json([
-        'success' => false,
-        'message' => 'Sản phẩm không đủ hàng trong kho.',
-        'stock' => $variant->stock,
-    ], 400);
-}
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm không đủ hàng trong kho.',
+                        'stock' => $variant->stock,
+                    ], 400);
+                }
                 $this->addVariantToCart($variant, $quantity);
             } else {
                 if (($product->quantity ?? 0) < $quantity) {

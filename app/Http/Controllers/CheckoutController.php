@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Mail\OrderConfirmationMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -13,6 +15,7 @@ use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
 use App\Helpers\GHNHelper;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
@@ -77,6 +80,80 @@ class CheckoutController extends Controller
     }
 
     /**
+     * Trừ số lượng trong kho
+     */
+    private function decreaseStockQuantity($cartItems)
+    {
+        DB::transaction(function () use ($cartItems) {
+            foreach ($cartItems as $cartItem) {
+                if (is_array($cartItem)) {
+                    $cartItem = (object) $cartItem;
+                }
+
+                $productId = $cartItem->options['product_id'] ?? $cartItem->id;
+                $quantity = $cartItem->qty;
+
+                Log::info('Đang trừ kho cho sản phẩm', [
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'options' => $cartItem->options ?? []
+                ]);
+
+                // Kiểm tra xem có phải là variant không
+                if (isset($cartItem->options['type']) && $cartItem->options['type'] === 'variant') {
+                    $variantId = $cartItem->options['variant_id'] ?? null;
+                    
+                    if ($variantId) {
+                        // Trừ kho cho variant - sử dụng trường 'stock' thay vì 'quantity'
+                        $variant = ProductVariant::find($variantId);
+                        if ($variant) {
+                            if ($variant->stock >= $quantity) {
+                                $variant->decrement('stock', $quantity);
+                                Log::info('Đã trừ kho variant thành công', [
+                                    'variant_id' => $variantId,
+                                    'old_stock' => $variant->stock + $quantity,
+                                    'new_stock' => $variant->stock,
+                                    'decreased_amount' => $quantity
+                                ]);
+                            } else {
+                                Log::warning('Không đủ số lượng variant trong kho', [
+                                    'variant_id' => $variantId,
+                                    'available' => $variant->stock,
+                                    'requested' => $quantity
+                                ]);
+                            }
+                        } else {
+                            Log::error('Không tìm thấy variant', ['variant_id' => $variantId]);
+                        }
+                    }
+                } else {
+                    // Trừ kho cho sản phẩm chính
+                    $product = Product::find($productId);
+                    if ($product) {
+                        if ($product->quantity >= $quantity) {
+                            $product->decrement('quantity', $quantity);
+                            Log::info('Đã trừ kho sản phẩm thành công', [
+                                'product_id' => $productId,
+                                'old_quantity' => $product->quantity + $quantity,
+                                'new_quantity' => $product->quantity,
+                                'decreased_amount' => $quantity
+                            ]);
+                        } else {
+                            Log::warning('Không đủ số lượng sản phẩm trong kho', [
+                                'product_id' => $productId,
+                                'available' => $product->quantity,
+                                'requested' => $quantity
+                            ]);
+                        }
+                    } else {
+                        Log::error('Không tìm thấy sản phẩm', ['product_id' => $productId]);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Xử lý thanh toán COD
      */
     private function processCODPayment(Request $request)
@@ -87,6 +164,9 @@ class CheckoutController extends Controller
         foreach (Cart::content() as $cartItem) {
             $this->createOrderDetail($order, $cartItem);
         }
+
+        // Trừ số lượng trong kho cho COD
+        $this->decreaseStockQuantity(Cart::content());
 
         $this->updateCouponUsage();
         $this->clearCartAndSession();
@@ -132,6 +212,9 @@ class CheckoutController extends Controller
             $this->createOrderDetail($order, (object) $cartItem);
         }
 
+        // Trừ số lượng trong kho khi thanh toán VNPay thành công
+        $this->decreaseStockQuantity($orderData['cart_items']);
+
         $this->updateCouponUsage();
         $this->clearCartAndSession();
 
@@ -175,6 +258,9 @@ class CheckoutController extends Controller
             $this->createOrderDetail($order, (object) $cartItem);
         }
 
+        // Trừ số lượng trong kho khi thanh toán MoMo thành công
+        $this->decreaseStockQuantity($orderData['cart_items']);
+
         $this->updateCouponUsage();
         $this->clearCartAndSession();
 
@@ -196,10 +282,48 @@ class CheckoutController extends Controller
                 
                 // Gửi email xác nhận khi thanh toán thành công qua IPN
                 $this->sendOrderConfirmationEmail($order);
+                
+                // Nếu chưa trừ kho (tránh trừ 2 lần), thì trừ kho
+                if ($order->payment_status === 'pending') {
+                    $order->load('orderDetails');
+                    $this->decreaseStockFromOrderDetails($order->orderDetails);
+                }
             }
             return response()->json(['message' => 'Success', 'status' => 'ok']);
         }
         return response()->json(['message' => 'Failed', 'status' => 'error']);
+    }
+
+    /**
+     * Trừ kho từ order details (dành cho IPN)
+     */
+    private function decreaseStockFromOrderDetails($orderDetails)
+    {
+        DB::transaction(function () use ($orderDetails) {
+            foreach ($orderDetails as $detail) {
+                if ($detail->variant_id) {
+                    // Trừ kho cho variant - sử dụng trường 'stock'
+                    $variant = ProductVariant::find($detail->variant_id);
+                    if ($variant && $variant->stock >= $detail->quantity) {
+                        $variant->decrement('stock', $detail->quantity);
+                        Log::info('Đã trừ kho variant từ IPN', [
+                            'variant_id' => $detail->variant_id,
+                            'quantity' => $detail->quantity
+                        ]);
+                    }
+                } else {
+                    // Trừ kho cho sản phẩm chính
+                    $product = Product::find($detail->product_id);
+                    if ($product && $product->quantity >= $detail->quantity) {
+                        $product->decrement('quantity', $detail->quantity);
+                        Log::info('Đã trừ kho sản phẩm từ IPN', [
+                            'product_id' => $detail->product_id,
+                            'quantity' => $detail->quantity
+                        ]);
+                    }
+                }
+            }
+        });
     }
 
     /**

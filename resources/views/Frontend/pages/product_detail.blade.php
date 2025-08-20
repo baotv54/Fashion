@@ -4146,16 +4146,6 @@
 								<strong>Danh mục: </strong>
 								<span>{{$product->category->name}}</span>
 							</div>
-							<div class="main-product-info-stock">
-								<strong>Tồn kho: </strong>
-								<span id="product-stock">
-									@if($product->variants->count() > 0)
-									Vui lòng chọn thuộc tính
-									@else
-									{{ $product->quantity }} sản phẩm
-									@endif
-								</span>
-							</div>
 						</div>
 
 						<div class="main-product-price">
@@ -4262,8 +4252,18 @@
 									<button type="button" data-type="shop-quantity-plus" title="Tăng" @if($product->variants->count() > 0) disabled style="opacity:0.5;" @endif
 										>+</button>
 								</div>
+								<div class="main-product-info-stock">
+								<strong>Tồn kho: </strong>
+								<span id="product-stock">
+									@if($product->variants->count() > 0)
+									Vui lòng chọn thuộc tính
+									@else
+									{{ $product->quantity }} sản phẩm
+									@endif
+								</span>
 							</div>
-
+							</div>
+							
 							{{-- Thông báo lỗi thêm giỏ hàng (hiển thị ngay tại trang) --}}
 							<div id="add-to-cart-error" style="display:none; color:#b91c1c; background:#fde8e8; border:1px solid #f5c2c7; padding:10px; border-radius:6px; margin-top:10px;">
 							</div>
@@ -4619,21 +4619,6 @@
 			attributeInputs.forEach(input => {
 				input.addEventListener('change', updateQuantityState);
 			});
-
-			plusBtn.addEventListener('click', function() {
-				if (!quantityInput.disabled) {
-					let current = parseInt(quantityInput.value);
-					let max = parseInt(quantityInput.max) || 999;
-					if (current < max) quantityInput.value = current + 1;
-				}
-			});
-
-			minusBtn.addEventListener('click', function() {
-				if (!quantityInput.disabled) {
-					let current = parseInt(quantityInput.value);
-					if (current > 1) quantityInput.value = current - 1;
-				}
-			});
 		});
 	</script>
 	<script>
@@ -4727,7 +4712,48 @@
 	<script>
 		// Variant mapping từ PHP
 		const variantMapping = @json($variantMapping);
-		const hasVariants = @json($product->variants->count() > 0);
+		const hasVariants = @json($hasVariants ?? false);
+		// Thêm vào phần đầu script, sau khi declare variantMapping
+		console.log('Variant mapping:', variantMapping);
+		console.log('Has variants:', hasVariants);
+
+		// Thêm function debug findMatchingVariant - FIXED VERSION
+		function findMatchingVariant(selectedAttributes) {
+			// Chuyển đổi sang string để tránh vấn đề parseInt, sau đó sort
+			const attributeIds = Object.values(selectedAttributes).map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
+			const key = attributeIds.join('-');
+			
+			console.log('Looking for key:', key);
+			console.log('Available keys:', Object.keys(variantMapping));
+			console.log('Selected attributes raw:', selectedAttributes);
+			console.log('Attribute IDs processed:', attributeIds);
+			
+			const variant = variantMapping[key] || null;
+			
+			if (!variant) {
+				// Thử debug từng variant để xem có match không
+				console.log('Debugging variants:');
+				Object.entries(variantMapping).forEach(([mapKey, mapVariant]) => {
+					console.log(`Variant key ${mapKey} vs looking for ${key}`);
+					console.log('Exact match:', mapKey === key);
+				});
+				
+				// Thử cách khác: tìm theo attribute_value_ids nếu có
+				console.log('Trying alternative matching...');
+				Object.entries(variantMapping).forEach(([mapKey, mapVariant]) => {
+					if (mapVariant.attribute_value_ids) {
+						const mapIds = mapVariant.attribute_value_ids.map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
+						const mapKey2 = mapIds.join('-');
+						console.log(`Alternative key ${mapKey2} vs ${key}`, mapKey2 === key);
+						if (mapKey2 === key && !variant) {
+							return mapVariant;
+						}
+					}
+				});
+			}
+			
+			return variant;
+		}
 
 		document.addEventListener('DOMContentLoaded', function() {
 			// Elements
@@ -4796,47 +4822,70 @@
 			}
 
 			function markOutOfStockVariants() {
-				// Duyệt qua tất cả các variant để check stock
-				Object.values(variantMapping).forEach(variant => {
-					if (variant.stock <= 0) {
-						// Tìm các input radio tương ứng với variant này
-						const attributeIds = variant.attribute_value_ids;
-						attributeIds.forEach(attrId => {
-							const input = document.querySelector(`input[value="${attrId}"]`);
-							if (input) {
-								const label = input.nextElementSibling;
-								if (label) {
-									label.classList.add('out-of-stock');
-									label.style.opacity = '0.5';
-									label.style.textDecoration = 'line-through';
-									label.style.pointerEvents = 'none';
-									input.disabled = true;
-								}
-							}
-						});
+				// Thay vì disable ngay, ta sẽ kiểm tra từng attribute value
+				// xem nó có thể kết hợp thành variant còn hàng không
+				
+				const attributeOptions = document.querySelectorAll('.attribute-option');
+				
+				attributeOptions.forEach(option => {
+					const shouldDisable = checkIfAttributeValueShouldBeDisabled(option.value);
+					
+					if (shouldDisable) {
+						const label = option.nextElementSibling;
+						if (label) {
+							label.classList.add('out-of-stock');
+							label.style.opacity = '0.5';
+							label.style.textDecoration = 'line-through';
+							label.style.pointerEvents = 'none';
+							option.disabled = true;
+						}
 					}
 				});
 			}
-
+			function checkIfAttributeValueShouldBeDisabled(attributeValueId) {
+				// Tìm tất cả variants có chứa attribute value này
+				const variantsWithThisValue = Object.values(variantMapping).filter(variant => {
+					return variant.attribute_value_ids && 
+						variant.attribute_value_ids.includes(parseInt(attributeValueId));
+				});
+				
+				// Nếu không có variant nào chứa attribute value này, disable nó
+				if (variantsWithThisValue.length === 0) {
+					return true;
+				}
+				
+				// Kiểm tra xem có ít nhất một variant còn hàng không
+				const hasAvailableVariant = variantsWithThisValue.some(variant => {
+					return variant.stock && variant.stock > 0;
+				});
+				
+				// Chỉ disable nếu TẤT CẢ variants chứa attribute value này đều hết hàng
+				return !hasAvailableVariant;
+			}
 			function handleAttributeChange() {
 				if (!hasVariants) return;
 
 				const selectedAttributes = getSelectedAttributes();
 				const allAttributesSelected = checkAllAttributesSelected(selectedAttributes);
 
+				// Cập nhật trạng thái disable cho các options còn lại
+				updateAvailableOptions(selectedAttributes);
+
+				console.log('Selected attributes:', selectedAttributes);
+				console.log('All selected:', allAttributesSelected);
+
 				if (allAttributesSelected) {
-					// Tìm biến thể phù hợp theo thuộc tính đã chọn
 					const variant = findMatchingVariant(selectedAttributes);
+					
+					console.log('Found variant:', variant);
+					
 					if (variant) {
-						// Lưu biến thể đã chọn để các logic khác sử dụng
 						window.selectedVariantData = variant;
 						selectedVariantId.value = variant.id || '';
 
-						// Cập nhật thông tin hiển thị (giá, SKU, tồn kho, ảnh)
 						updateProductInfo(variant);
-						updateProductImage(variant);
+						// updateProductImage(variant);
 
-						// Quản lý số lượng và nút thêm giỏ theo tồn kho
 						if (variant.stock && variant.stock > 0) {
 							enableQuantityControls();
 							quantityInput.setAttribute('max', variant.stock);
@@ -4849,7 +4898,7 @@
 							showOutOfStockMessage();
 						}
 					} else {
-						// Không tìm thấy biến thể phù hợp
+						console.warn('No matching variant found for selected attributes');
 						resetProductInfo();
 						disableQuantityControls();
 						addToCartBtn.disabled = true;
@@ -4857,7 +4906,6 @@
 						selectedVariantId.value = '';
 					}
 				} else {
-					// Chưa chọn đủ thuộc tính
 					resetProductInfo();
 					disableQuantityControls();
 					addToCartBtn.disabled = true;
@@ -4865,7 +4913,85 @@
 					selectedVariantId.value = '';
 				}
 			}
+			function updateAvailableOptions(selectedAttributes) {
+				const attributeLines = document.querySelectorAll('.product-sw-line');
+				
+				attributeLines.forEach(line => {
+					const attributeName = line.querySelector('.product-sw-title').textContent.trim();
+					const options = line.querySelectorAll('.attribute-option');
+					
+					// Nếu thuộc tính này đã được chọn, skip
+					if (selectedAttributes[attributeName]) {
+						return;
+					}
+					
+					options.forEach(option => {
+						const shouldDisable = checkIfOptionShouldBeDisabled(
+							option.value, 
+							attributeName, 
+							selectedAttributes
+						);
+						
+						const label = option.nextElementSibling;
+						if (shouldDisable) {
+							label.classList.add('temp-disabled');
+							label.style.opacity = '0.5';
+							option.disabled = true;
+						} else {
+							// Re-enable nếu trước đó bị disable tạm thời
+							label.classList.remove('temp-disabled');
+							if (!label.classList.contains('out-of-stock')) {
+								label.style.opacity = '1';
+								option.disabled = false;
+							}
+						}
+					});
+				});
+			}
+			function checkIfOptionShouldBeDisabled(optionValue, attributeName, currentSelections) {
+				// Tạo selection mới bao gồm option này
+				const testSelection = { ...currentSelections, [attributeName]: optionValue };
+				
+				// Tìm các variants có thể match với selection này
+				const possibleVariants = Object.values(variantMapping).filter(variant => {
+					if (!variant.attribute_value_ids) return false;
+					
+					// Kiểm tra xem variant này có chứa tất cả attribute values đã chọn không
+					return Object.values(testSelection).every(selectedValueId => {
+						return variant.attribute_value_ids.includes(parseInt(selectedValueId));
+					});
+				});
+				
+				// Nếu không có variant nào có thể match, hoặc tất cả đều hết hàng
+				if (possibleVariants.length === 0) {
+					return true;
+				}
+				
+				const hasStockVariant = possibleVariants.some(variant => variant.stock > 0);
+				return !hasStockVariant;
+			}
 
+			// Cập nhật CSS để phân biệt giữa hết hàng vĩnh viễn và tạm thời
+			const style = document.createElement('style');
+			style.textContent = `
+				.product-sw-select-item-span.out-of-stock {
+					opacity: 0.5 !important;
+					text-decoration: line-through !important;
+					pointer-events: none !important;
+					background-color: #f5f5f5 !important;
+				}
+				
+				.product-sw-select-item-span.temp-disabled {
+					opacity: 0.6 !important;
+					background-color: #fafafa !important;
+					cursor: not-allowed !important;
+				}
+				
+				.product-sw-select-item-span.temp-disabled:hover {
+					background-color: #fafafa !important;
+				}
+			`;
+			document.head.appendChild(style);
 			function getSelectedAttributes() {
 				const selectedAttributes = {};
 				document.querySelectorAll('.product-sw-line').forEach(line => {
@@ -4882,12 +5008,47 @@
 				const totalAttributeGroups = document.querySelectorAll('.product-sw-line').length;
 				return Object.keys(selectedAttributes).length === totalAttributeGroups;
 			}
-
-			function findMatchingVariant(selectedAttributes) {
-				const attributeIds = Object.values(selectedAttributes).sort();
-				const key = attributeIds.join('-');
-				return variantMapping[key] || null;
+			
+		// Thay thế function findMatchingVariant bằng cách này:
+		function findMatchingVariant(selectedAttributes) {
+			console.log('Finding variant for:', selectedAttributes);
+			
+			// Lấy tất cả attribute value IDs đã chọn
+			const selectedIds = Object.values(selectedAttributes).map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
+			console.log('Selected IDs sorted:', selectedIds);
+			
+			// Tìm variant có attribute_value_ids khớp
+			for (const [key, variant] of Object.entries(variantMapping)) {
+				console.log(`Checking variant ${key}:`, variant);
+				
+				if (variant.attribute_value_ids) {
+					const variantIds = variant.attribute_value_ids.map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
+					console.log(`Variant ${key} IDs:`, variantIds);
+					
+					// So sánh arrays
+					if (arraysEqual(selectedIds, variantIds)) {
+						console.log(`Found matching variant: ${key}`);
+						return variant;
+					}
+				} else {
+					// Fallback: so sánh với key (cách cũ)
+					const keyIds = key.split('-').sort((a, b) => parseInt(a) - parseInt(b));
+					if (arraysEqual(selectedIds, keyIds)) {
+						console.log(`Found matching variant via key: ${key}`);
+						return variant;
+					}
+				}
 			}
+			
+			console.log('No matching variant found');
+			return null;
+		}
+		
+		// Helper function để so sánh arrays
+		function arraysEqual(arr1, arr2) {
+			if (arr1.length !== arr2.length) return false;
+			return arr1.every((val, index) => val === arr2[index]);
+		}
 
 			function updateProductInfo(variant) {
 				// Cập nhật giá
@@ -4897,9 +5058,9 @@
 
 				if (variant.price && variant.price < originalPrice) {
 					priceElement.innerHTML = `
-                <del class="main-product-price-compare">${formatPrice(originalPrice)}₫</del>
-                ${formatPrice(variantPrice)}₫
-            `;
+						<del class="main-product-price-compare">${formatPrice(originalPrice)}₫</del>
+						${formatPrice(variantPrice)}₫
+					`;
 				} else {
 					priceElement.innerHTML = `${formatPrice(variantPrice)}₫`;
 				}
@@ -4910,23 +5071,38 @@
 					skuElement.textContent = variant.sku || variant.id;
 				}
 
-				// Cập nhật tồn kho
+				// FIX: Cập nhật tồn kho - đảm bảo hiển thị đúng
 				const stockElement = document.getElementById('product-stock');
 				if (stockElement) {
-					stockElement.textContent = `${variant.stock} sản phẩm`;
-					// Thêm class cảnh báo nếu tồn kho thấp
-					if (variant.stock <= 5) {
-						stockElement.classList.add('low-stock');
-						stockElement.style.color = '#ff6b6b';
-					} else {
+					if (variant.stock !== undefined && variant.stock !== null) {
+						stockElement.textContent = `${variant.stock} sản phẩm`;
+						
+						// Reset màu sắc trước khi áp dụng logic mới
 						stockElement.classList.remove('low-stock');
 						stockElement.style.color = '';
+						
+						// Thêm class cảnh báo nếu tồn kho thấp hoặc hết hàng
+						if (variant.stock <= 0) {
+							stockElement.textContent = 'Hết hàng';
+							stockElement.style.color = '#ff6b6b';
+						} else if (variant.stock <= 5) {
+							stockElement.classList.add('low-stock');
+							stockElement.style.color = '#ff9800';
+						}
+					} else {
+						stockElement.textContent = 'Đang cập nhật...';
 					}
 				}
 
-				// Cập nhật max quantity
-				if (parseInt(quantityInput.value) > variant.stock) {
-					quantityInput.value = Math.min(variant.stock, 1);
+				// FIX: Cập nhật max quantity - đảm bảo không vượt quá tồn kho
+				if (variant.stock !== undefined && variant.stock !== null) {
+					quantityInput.setAttribute('max', variant.stock);
+					
+					// Nếu số lượng hiện tại vượt quá tồn kho mới, điều chỉnh lại
+					const currentQuantity = parseInt(quantityInput.value);
+					if (currentQuantity > variant.stock) {
+						quantityInput.value = Math.max(1, Math.min(variant.stock, 1));
+					}
 				}
 			}
 
