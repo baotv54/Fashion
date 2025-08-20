@@ -138,6 +138,7 @@ Route::prefix('product-live-chat')->group(function () {
     Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
     Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
     Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+    Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
 });
 
 // Chatbot Demo routes

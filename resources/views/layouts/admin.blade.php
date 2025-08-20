@@ -160,6 +160,8 @@
     <!-- Page JS -->
     <script src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/js/app-chat.js"></script>
 
+    @stack('scripts')
+
 </body>
 
 </html>
