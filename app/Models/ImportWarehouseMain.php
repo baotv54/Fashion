@@ -15,18 +15,21 @@ class ImportWarehouseMain extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'order_warehouses';
     protected $fillable = [
-    'code',
-    'supplier_id',
-    'user_id',
-    'note',
-    'import_date',
-    'total_price',
-    'payment_status',
-    'payment_method',
-    'payment_amount',
-    'payment_date',
-    'payment_reference',
-    'deleted_at'
+        'code',
+        'supplier_id',
+        'user_id',
+        'note',
+        'import_date',
+        'total_price',
+        'payment_status',
+        'payment_method',
+        'payment_amount',
+        'payment_date',
+        'payment_reference',
+        'name_cost',        // mới thêm
+        'additional_cost',  // mới thêm
+        'discount',
+        'deleted_at'
     ];
 
     public function supplier()
@@ -39,9 +42,8 @@ class ImportWarehouseMain extends Model
         return $this->belongsTo(User::class);
     }
 
-   public function details()
-{
-    return $this->hasMany(ImportWarehouseDetail::class, 'import_warehouse_id');
-}
-
+    public function details()
+    {
+        return $this->hasMany(ImportWarehouseDetail::class, 'import_warehouse_id');
+    }
 }

@@ -128,10 +128,6 @@
                                 </button>
                             </form>
                         </td>
-                        <td class="text-primary fw-semibold text-break" style="max-width: 200px;">
-                            <a href="{{ route('returns.show', $import->id) }}" class="text-decoration-none">
-                                Hoàn Trả </a>
-                        </td>
                     </tr>
                     @empty
                     <tr>

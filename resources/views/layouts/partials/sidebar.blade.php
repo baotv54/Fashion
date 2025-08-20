@@ -142,7 +142,7 @@
             </ul>
         </li>
 
-        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed','returns.list']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-warehouse me-2"></i>
                 <div data-i18n="Quản Lý Kho">Quản Lý Kho</div>
@@ -161,6 +161,11 @@
                 <li class="menu-item {{ Request::routeIs('warehouse.list') ? 'active' : '' }}">
                     <a href="{{ route('warehouse.list', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhập Hàng">Nhập Hàng</div>
+                    </a>
+                </li>
+                 <li class="menu-item {{ Request::routeIs('returns.list') ? 'active' : '' }}">
+                    <a href="{{ route('returns.list', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Trả Hàng">Trả Hàng</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::routeIs('suppliers.index') ? 'active' : '' }}">

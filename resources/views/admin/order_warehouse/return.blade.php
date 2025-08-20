@@ -100,6 +100,39 @@
                         <p><strong>Tổng số lượng hàng trả:</strong> <span id="total_qty">0</span></p>
                         <p><strong>Giá trị hàng trả:</strong> <span id="return_value">0</span>đ</p>
                         <h5 class="mt-3">Giá trị hoàn trả: <span class="text-success" id="refund_value">0</span>đ</h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="refund_status" value="Đã Hoàn Tiền" id="paid">
+                            <label class="form-check-label" for="paid">Đã Hoàn Tiền</label>
+                        </div>
+
+                        <!-- Form chi tiết thanh toán -->
+                        <div id="payment-detail" class="border p-3 rounded d-none">
+                            <div class="mb-2">
+                                <label class="form-label">Hình thức thanh toán</label>
+                                <select name="payment_method" class="form-select">
+                                    <option value="">Chọn hình thức thanh toán</option>
+                                    <option value="Tiền mặt">Tiền mặt</option>
+                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Thẻ">Thẻ</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Số tiền thanh toán</label>
+                                <input type="text" name="payment_amount" id="payment_amount" class="form-control" readonly>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Ngày ghi nhận</label>
+                                <input type="date" name="payment_date" id="payment_date" class="form-control" value="{{ date('Y-m-d') }}" readonly>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Tham chiếu</label>
+                                <input type="text" name="payment_reference" class="form-control" placeholder="Nhập mã tham chiếu">
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="refund_status" value="Đang Xử Lý" id="unpaid" checked>
+                            <label class="form-check-label" for="unpaid">Hoàn tiền sau</label>
+                        </div>
                     </div>
                 </div>
 
@@ -122,6 +155,14 @@
                         <p>Email: {{ $main->supplier->email ?? '' }}</p>
                         <p>SĐT: {{ $main->supplier->phone ?? '' }}</p>
                         <p>Địa chỉ: {{ $main->supplier->address_detail ?? '' }}</p>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Lý do hoàn trả</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea name="reason" id="reason" class="form-control mb-2" rows="3" placeholder="Nhập lý do hoàn trả"></textarea>
                     </div>
                 </div>
             </div>
@@ -178,6 +219,76 @@
         }
 
         qtyInputs.forEach(input => input.addEventListener("input", calculate));
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const qtyInputs = document.querySelectorAll(".return-qty");
+        const totalQtyEl = document.getElementById("total_qty");
+        const returnValueEl = document.getElementById("return_value");
+        const refundValueEl = document.getElementById("refund_value");
+
+        const totalQtyInput = document.getElementById("total_quantity_input");
+        const totalAmountInput = document.getElementById("total_amount_input");
+
+        const paidRadio = document.getElementById("paid");
+        const unpaidRadio = document.getElementById("unpaid");
+        const paymentDetail = document.getElementById("payment-detail");
+        const paymentAmountInput = document.getElementById("payment_amount");
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat("vi-VN").format(num);
+        }
+
+        function calculate() {
+            let totalQty = 0;
+            let totalValue = 0;
+
+            qtyInputs.forEach(input => {
+                let qty = parseInt(input.value) || 0;
+                const max = parseInt(input.max);
+                const min = parseInt(input.min);
+
+                if (qty < min) {
+                    qty = min;
+                    input.value = min;
+                } else if (qty > max) {
+                    qty = max;
+                    input.value = max;
+                }
+
+                const price = parseFloat(input.dataset.price) || 0;
+                const lineTotal = qty * price;
+                totalQty += qty;
+                totalValue += lineTotal;
+
+                input.closest("tr").querySelector(".line-total").textContent = formatCurrency(lineTotal) + "đ";
+            });
+
+            totalQtyEl.textContent = totalQty;
+            returnValueEl.textContent = formatCurrency(totalValue);
+            refundValueEl.textContent = formatCurrency(totalValue);
+
+            totalQtyInput.value = totalQty;
+            totalAmountInput.value = totalValue;
+
+            // nếu chọn "Đã thanh toán" thì cập nhật số tiền thanh toán
+            if (paidRadio.checked) {
+                paymentAmountInput.value = totalValue;
+            }
+        }
+
+        qtyInputs.forEach(input => input.addEventListener("input", calculate));
+
+        // Toggle hiển thị chi tiết thanh toán
+        paidRadio.addEventListener("change", () => {
+            paymentDetail.classList.remove("d-none");
+            paymentAmountInput.value = totalAmountInput.value;
+        });
+
+        unpaidRadio.addEventListener("change", () => {
+            paymentDetail.classList.add("d-none");
+            paymentAmountInput.value = "";
+        });
     });
 </script>
 @endsection

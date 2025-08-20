@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use App\Models\VariantAttributeValue;
 use App\Models\User;
 use App\Models\Supplier;
+use App\Models\Cost;
+use App\Models\Discount;
+
 use Illuminate\Support\Facades\DB;
 
 
@@ -171,6 +174,8 @@ class ImportWarehouseController extends Controller
     {
         $users = User::where('role', 'admin')->get();
         $suppliers = Supplier::all();
+        $costs = Cost::all();
+        $discounts = Discount::all();
         // Lấy tất cả bản ghi nhập kho (có product và variant liên kết)
         $importwarehouses = ImportWarehouse::with(['product', 'variant'])->latest()->get();
 
@@ -232,6 +237,8 @@ class ImportWarehouseController extends Controller
             'importwarehouses' => $importwarehouses,
             'users' => $users,
             'suppliers' => $suppliers,
+            'discounts' => $discounts,
+            'costs' => $costs,
         ]);
     }
 
@@ -366,8 +373,9 @@ class ImportWarehouseController extends Controller
 
     public function store_warehouse(Request $request)
     {
+        // Validate dữ liệu
         $request->validate([
-            'code' => 'required|string',
+            'code' => 'required|string|unique:order_warehouses,code',
             'supplier_id' => 'required|exists:suppliers,id',
             'user_id' => 'required|exists:users,id',
             'import_date' => 'required|date',
@@ -378,7 +386,10 @@ class ImportWarehouseController extends Controller
             'variant_id' => 'nullable|array',
             'variant_id.*' => 'nullable|exists:product_variants,id',
             'note' => 'nullable|string',
-            'total_price' => 'required|numeric|min:1',
+            'total_price' => 'required|numeric|min:1|max:999999999', // giới hạn max tránh overflow
+            'cost_name' => 'nullable|string',
+            'discount' => 'nullable|numeric|min:0|lte:total_price|max:999999999',
+            'additional_cost' => 'nullable|numeric|min:0|lte:total_price|max:999999999',
 
             'payment_status' => 'required|in:Đã thanh toán,Thanh toán sau',
             'payment_method' => 'nullable|string|required_if:payment_status,Đã thanh toán',
@@ -387,6 +398,7 @@ class ImportWarehouseController extends Controller
             'payment_reference' => 'nullable|string|required_if:payment_status,Đã thanh toán',
         ], [
             'code.required' => 'Vui lòng nhập mã đơn.',
+            'code.unique' => 'Mã đơn đã tồn tại, vui lòng nhập mã khác.',
             'supplier_id.required' => 'Vui lòng chọn nhà cung cấp.',
             'user_id.required' => 'Vui lòng chọn người tạo đơn.',
             'import_date.required' => 'Vui lòng chọn ngày nhập.',
@@ -399,7 +411,8 @@ class ImportWarehouseController extends Controller
             'total_price.required' => 'Vui lòng nhập tổng tiền.',
             'total_price.numeric' => 'Tổng tiền phải là số.',
             'total_price.min' => 'Tổng tiền phải lớn hơn 0.',
-
+            'discount.lte' => 'Số tiền giảm giá không được lớn hơn tổng tiền sản phẩm.',
+            'additional_cost.lte' => 'Chi phí bổ sung không được lớn hơn tổng tiền sản phẩm.',
             'payment_status.required' => 'Vui lòng chọn trạng thái thanh toán.',
             'payment_method.required_if' => 'Vui lòng chọn phương thức thanh toán.',
             'payment_amount.required_if' => 'Vui lòng nhập số tiền thanh toán.',
@@ -409,7 +422,7 @@ class ImportWarehouseController extends Controller
             'payment_reference.required_if' => 'Vui lòng nhập mã tham chiếu thanh toán.',
         ]);
 
-        // Tạo đơn chính
+        // Tạo đơn nhập chính
         $main = ImportWarehouseMain::create([
             'code' => $request->code,
             'supplier_id' => $request->supplier_id,
@@ -418,7 +431,9 @@ class ImportWarehouseController extends Controller
             'import_date' => $request->import_date,
             'status' => 'Đang Giao Dịch',
             'total_price' => $request->total_price,
-
+            'cost_name' => $request->cost_name,
+            'discount' => $request->discount ?? 0,
+            'additional_cost' => $request->additional_cost ?? 0,
             'payment_status' => $request->payment_status,
             'payment_method' => $request->payment_status === 'Đã thanh toán' ? $request->payment_method : null,
             'payment_amount' => $request->payment_status === 'Đã thanh toán' ? $request->payment_amount : null,
@@ -451,11 +466,27 @@ class ImportWarehouseController extends Controller
             ]);
         }
 
+        // Xóa tạm các bảng trung gian (nếu cần)
         ImportWarehouse::truncate();
+        Cost::truncate();
+        Discount::truncate();
 
-        return redirect()->route('warehouse.list')->with('success', 'Tạo đơn nhập hàng thành công!');
+        return redirect()->route('warehouse.index')->with('success', 'Tạo đơn nhập hàng thành công!');
     }
 
+
+    public function delete($id)
+    {
+        try {
+            // Xóa trong DB
+            $item = ImportWarehouse::findOrFail($id);
+            $item->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 
 
 
@@ -561,5 +592,40 @@ class ImportWarehouseController extends Controller
         $order->save();
 
         return redirect()->back()->with('success', 'Xác nhận thanh toán thành công!');
+    }
+
+    public function costs(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'additional_cost' => 'required|numeric|min:1',
+        ]);
+
+        // Xóa tất cả chi phí cũ trước khi thêm mới
+        Cost::truncate(); // Xóa toàn bộ bảng Cost, hoặc nếu muốn xóa từng bản ghi: Cost::query()->delete();
+
+        $cost = Cost::create([
+            'name' => $request->name,
+            'additional_cost' => $request->additional_cost,
+        ]);
+
+        return response()->json(['success' => true, 'cost' => $cost]);
+    }
+
+
+    public function discounts(Request $request)
+    {
+        $request->validate([
+            'discount' => 'required|numeric|min:1',
+        ]);
+
+        // Xóa tất cả giảm giá cũ trước khi thêm mới
+        Discount::truncate(); // hoặc Discount::query()->delete();
+
+        $discount = Discount::create([
+            'discount' => $request->discount,
+        ]);
+
+        return response()->json(['success' => true, 'discount' => $discount]);
     }
 }

@@ -250,7 +250,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
         });
 
-         //routes quản lý popup
+        //routes quản lý popup
         Route::prefix('popup')->group(function () {
             Route::get('/index', [PopupController::class, 'index'])->name('popups.index');
             Route::get('/create', [PopupController::class, 'create'])->name('popups.create');
@@ -280,6 +280,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/store_warehouse', [ImportWarehouseController::class, 'store_warehouse'])->name('warehouse.store_warehouse');
             // Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
             Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::delete('/delete/{id}', [ImportWarehouseController::class, 'delete'])->name('warehouse.delete');
             Route::post('/update-quantity/{id}', [ImportWarehouseController::class, 'updateQuantity'])->name('warehouse.update_quantity');
             Route::get('/ImportWarehouseController', [ImportWarehouseController::class, 'calculateTotal'])->name('warehouse.calculate_total');
             Route::get('/import/{id}', [ImportWarehouseController::class, 'show'])->name('warehouse.show');
@@ -287,12 +288,16 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
             Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
+            Route::post('/costs', [ImportWarehouseController::class, 'costs'])->name('warehouse.costs');
+            Route::post('/discounts', [ImportWarehouseController::class, 'discounts'])->name('warehouse.discounts');
         });
 
         Route::prefix('returns')->group(function () {
             Route::get('/create/{id}', [PurchaseReturnController::class, 'show'])->name('returns.show');
             Route::post('/store', [PurchaseReturnController::class, 'store'])->name('returns.store');
             Route::get('/', [PurchaseReturnController::class, 'index'])->name('returns.list');
+            Route::get('/details/{id}', [PurchaseReturnController::class, 'details'])->name('returns.details');
+            Route::post('/payment_confirm/{id}', [PurchaseReturnController::class, 'confirmPayment'])->name('returns.confirm_payment');
         });
 
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -401,7 +406,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-       //Routes Quản lý Banner
+        //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
@@ -409,9 +414,9 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
-             Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+            Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
-             Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
+            Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
             Route::post('/', [BannerController::class, 'storeLogo'])->name('logo.store');
             Route::get('/{id}/editLogo', [BannerController::class, 'editLogo'])->name('logo.edit');
             Route::put('/{id}', [BannerController::class, 'updateLogo'])->name('logo.update');

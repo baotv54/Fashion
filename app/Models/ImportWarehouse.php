@@ -15,6 +15,9 @@ class ImportWarehouse extends Model
         'product_id',
         'variant_id',
         'quantity',
+        'name_cost',        // mới thêm
+        'additional_cost',  // mới thêm
+        'discount',         // mới thêm
     ];
 
     // Quan hệ tới sản phẩm

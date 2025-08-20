@@ -115,19 +115,46 @@
                     <div class="card-body">
                         <ul class="list-unstyled mb-3">
 
+                            <!-- Giảm giá -->
                             <li class="d-flex justify-content-between">
-                                <span>Giảm giá:</span>
-                                <input type="number" name="discount" id="discount" class="form-control form-control-sm w-25 text-end" value="0" min="0">
+                                <span class="text-primary" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#discountModal">
+                                    Giảm giá:
+                                </span>
+                                @php
+                                $totalDiscount = $discounts->sum('discount');
+                                @endphp
+                                <p>{{ number_format($totalDiscount) }} đ</p>
+                                <input type="hidden" name="discount" id="discount" value="{{ $totalDiscount }}">
                             </li>
+
+                            <!-- Chi phí nhập hàng -->
                             <li class="d-flex justify-content-between">
-                                <span>Chi phí nhập hàng:</span>
-                                <input type="number" name="additional_cost" id="additional_cost" class="form-control form-control-sm w-25 text-end" value="0" min="0">
+                                <span class="text-primary" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#costModal">
+                                    Chi phí nhập hàng:
+                                </span>
+                                @php
+                                $totalCost = $costs->sum('additional_cost');
+                                @endphp
+                                <p>{{ number_format($totalCost) }} đ</p>
+                                <input type="hidden" name="additional_cost" id="additional_cost" value="{{ $totalCost }}">
                             </li>
+
                             <hr>
+
+                            <!-- Tổng tiền sản phẩm -->
                             <li class="d-flex justify-content-between fw-bold">
-                                <span>Tiền cần trả NCC:<strong id="grand-total"></strong></span>
+                                <span>Tổng Tiền Sản Phẩm:</span>
+                                <span id="total-products-display" class="text-primary fw-bold">0 đ</span>
+                                <input type="hidden" name="total_price" id="total-products-input" value="0" min="1">
+                            </li>
+
+                            <br>
+
+                            <!-- Tổng tiền cần trả -->
+                            <li class="d-flex justify-content-between fw-bold">
+                                <span>Tổng Tiền Cần Trả:</span>
                                 <span id="total-payable-display" class="text-danger fw-bold">0 đ</span>
-                                <input type="hidden" name="total_price" id="total-payable" class="text-danger fw-bold" value="0" min="1">
+                                <input type="hidden" id="total-payable" value="0">
                             </li>
                         </ul>
 
@@ -200,8 +227,10 @@
                         </select>
 
                         <label class="form-label">Ngày nhập dự kiến</label>
-                        <input type="date" name="import_date" class="form-control mb-2">
-
+                        @php
+                        $today = date('Y-m-d');
+                        @endphp
+                        <input type="date" name="import_date" class="form-control mb-2" min="{{ $today }}">
                         <label class="form-label">Mã đơn nhập</label>
                         <input type="text" name="code" class="form-control mb-2">
 
@@ -263,6 +292,56 @@
         </div>
     </div>
 </div>
+<!-- Modal Giảm giá -->
+<div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="discountModalLabel">Thêm Giảm Giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="discountForm" action="{{ route('warehouse.discounts') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="discountValue" class="form-label">Số tiền giảm</label>
+                        <input type="number" name="discount" value="{{ $discounts->first()?->discount ?? '' }}" class="form-control" id="discountValue" min="0" required>
+                        <input type="hidden" name="id" id="discountId">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi phí -->
+<div class="modal fade" id="costModal" tabindex="-1" aria-labelledby="costModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="costModalLabel">Thêm Chi Phí Nhập Hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="costForm" action="{{ route('warehouse.costs') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="costName" class="form-label">Tên Chi phí</label>
+                        <input type="text" name="name" value="{{ $costs->first()?->name ?? '' }}" class="form-control" id="costName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="costAmount" class="form-label">Tiền Chi Phí</label>
+                        <input type="number" name="additional_cost" value="{{ $costs->first()?->additional_cost ?? '' }}" class="form-control" id="costAmount" min="0" required>
+                    </div>
+                    <input type="hidden" name="id" id="costId">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.quantity-input').forEach(input => {
@@ -297,9 +376,11 @@
         return new Intl.NumberFormat('vi-VN').format(number) + ' đ';
     }
 
-    function updateTotals() {
-        let total = 0;
 
+    function updateTotals() {
+        let totalProducts = 0;
+
+        // Tính tổng từng dòng
         document.querySelectorAll('tr').forEach(row => {
             const priceCell = row.querySelector('td:nth-child(3)');
             const quantityInput = row.querySelector('.quantity-input');
@@ -311,24 +392,41 @@
                 const price = parseInt(priceText) || 0;
                 const lineTotal = price * quantity;
 
-                total += lineTotal;
+                totalProducts += lineTotal;
                 totalCell.textContent = formatCurrency(lineTotal);
             }
         });
 
         const discount = parseInt(document.getElementById('discount')?.value) || 0;
         const cost = parseInt(document.getElementById('additional_cost')?.value) || 0;
-        const grandTotal = total + cost - discount;
 
-        const display = document.getElementById('total-payable-display');
-        const input = document.getElementById('total-payable');
-
+        const grandTotal = totalProducts + cost - discount;
         const finalAmount = grandTotal > 0 ? grandTotal : 0;
 
-        if (display) display.textContent = formatCurrency(finalAmount);
-        if (input) input.value = finalAmount;
+        // Hiển thị tổng tiền sản phẩm
+        const totalProductsDisplay = document.getElementById('total-products-display'); // span
+        const totalProductsInput = document.getElementById('total-products-input'); // hidden input
+        if (totalProductsDisplay) totalProductsDisplay.textContent = formatCurrency(totalProducts);
+        if (totalProductsInput) totalProductsInput.value = totalProducts;
+
+        // Hiển thị tổng tiền cần trả
+        const totalPayableDisplay = document.getElementById('total-payable-display'); // span
+        const totalPayableInput = document.getElementById('total-payable'); // hidden input
+        if (totalPayableDisplay) totalPayableDisplay.textContent = formatCurrency(finalAmount);
+        if (totalPayableInput) totalPayableInput.value = finalAmount;
+
+        // Cập nhật payment_amount nếu chọn "Đã thanh toán"
+        const paidRadio = document.getElementById('paid');
+        const paymentAmountInput = document.getElementById('payment_amount');
+        if (paidRadio && paidRadio.checked && paymentAmountInput) {
+            paymentAmountInput.value = finalAmount;
+        }
     }
 
+    // Hàm format tiền
+    function formatCurrency(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " đ";
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         // Gọi hàm lần đầu để hiển thị tổng
@@ -350,7 +448,7 @@
                 const importId = this.dataset.id;
                 const row = this.closest('tr');
 
-                fetch(`/admin/warehouse/${importId}`, {
+                fetch(`/admin/warehouse/delete/${importId}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -445,60 +543,114 @@
 
 
     document.addEventListener('DOMContentLoaded', function() {
-    const updateLinks = document.querySelectorAll('.update-price');
-    const modal = new bootstrap.Modal(document.getElementById('updatePriceModal'));
+        const updateLinks = document.querySelectorAll('.update-price');
+        const modal = new bootstrap.Modal(document.getElementById('updatePriceModal'));
 
-    updateLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        updateLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Lấy dữ liệu từ data-attributes
+                const productId = this.dataset.productId;
+                const variantId = this.dataset.variantId;
+                const importPrice = this.dataset.importPrice;
+                const price = this.dataset.price;
+                const discountPrice = this.dataset.discountPrice;
+
+                // Đổ dữ liệu vào form trong modal
+                document.getElementById('modal-product-id').value = productId;
+                document.getElementById('modal-variant-id').value = variantId;
+                document.getElementById('modal-import-price').value = importPrice;
+                document.getElementById('modal-price').value = price;
+                document.getElementById('modal-discount-price').value = discountPrice;
+
+                // Mở modal
+                modal.show();
+            });
+        });
+
+        // Gửi form cập nhật giá
+        document.getElementById('update-price-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Lấy dữ liệu từ data-attributes
-            const productId = this.dataset.productId;
-            const variantId = this.dataset.variantId;
-            const importPrice = this.dataset.importPrice;
-            const price = this.dataset.price;
-            const discountPrice = this.dataset.discountPrice;
-
-            // Đổ dữ liệu vào form trong modal
-            document.getElementById('modal-product-id').value = productId;
-            document.getElementById('modal-variant-id').value = variantId;
-            document.getElementById('modal-import-price').value = importPrice;
-            document.getElementById('modal-price').value = price;
-            document.getElementById('modal-discount-price').value = discountPrice;
-
-            // Mở modal
-            modal.show();
+            const formData = new FormData(this);
+            fetch(`/admin/warehouse/update-price`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Cập nhật thành công');
+                        location.reload(); // Reload trang để cập nhật UI
+                    } else {
+                        alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
+                    }
+                })
+                .catch(err => {
+                    alert('Lỗi khi gửi yêu cầu: ' + err.message);
+                });
         });
     });
 
-    // Gửi form cập nhật giá
-    document.getElementById('update-price-form').addEventListener('submit', function(e) {
-        e.preventDefault();
 
+    document.getElementById('costForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // ngăn form reload trang
         const formData = new FormData(this);
-        fetch(`/admin/warehouse/update-price`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert('Cập nhật thành công');
-                location.reload(); // Reload trang để cập nhật UI
-            } else {
-                alert('Cập nhật thất bại: ' + (data.message || 'Lỗi không xác định'));
-            }
-        })
-        .catch(err => {
-            alert('Lỗi khi gửi yêu cầu: ' + err.message);
-        });
-    });
-});
+        const id = document.getElementById('costId').value;
+        let url = '/admin/warehouse/costs';
+        if (id) url += '/' + id;
 
+        fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Thêm/ cập nhật chi phí thành công');
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Không xác định'));
+                }
+            })
+            .catch(err => alert('Lỗi: ' + err.message));
+    });
+
+    document.getElementById('discountForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const id = document.getElementById('discountId').value;
+        let url = '/admin/warehouse/discounts';
+        if (id) url += '/' + id;
+
+        fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Thêm/ cập nhật giảm giá thành công');
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Không xác định'));
+                }
+            })
+            .catch(err => alert('Lỗi: ' + err.message));
+    });
 </script>
 
 @endsection
