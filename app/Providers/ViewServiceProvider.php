@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Favorite;
+use App\Models\Logo;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,7 @@ class ViewServiceProvider extends ServiceProvider
             $view->with([
                 'carts' => $carts,
                 'favorites' => $favorites,
+                'logos' => Logo::all(),
             ]);
         });
     }

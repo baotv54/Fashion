@@ -21,6 +21,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'avatar',
         'password',
         'role',
         'google_id',
@@ -54,10 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
-
-    public function orders()
+    public function savedCoupons()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsToMany(Coupon::class, 'coupon_user')->withPivot('used')->withTimestamps();
     }
 
     public function sendPasswordResetNotification($token): void

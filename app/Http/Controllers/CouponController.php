@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
+use App\Models\Product;
+
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Cart as ShoppingcartCart;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -41,7 +43,7 @@ class CouponController extends Controller
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        
+
 
         $data = $request->all();
 
@@ -63,7 +65,7 @@ class CouponController extends Controller
 
     public function edit($id)
     {
-        $coupon = Coupon::findOrFail($id); 
+        $coupon = Coupon::findOrFail($id);
         return view('admin.coupons.edit', compact('coupon'));
     }
 
@@ -76,14 +78,14 @@ class CouponController extends Controller
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date|after_or_equal:today', 
+            'start_date' => 'nullable|date|after_or_equal:today',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'status' => 'nullable|in:active,inactive',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        
+
         $data = $request->all();
 
         if ($request->hasFile('image')) {
@@ -104,12 +106,18 @@ class CouponController extends Controller
 
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id); 
+        $coupon = Coupon::findOrFail($id);
 
-        if ($coupon->image) {
-            Storage::disk('public')->delete($coupon->image);
+        // Xoá ảnh nếu tồn tại
+        if ($coupon->image && file_exists(public_path($coupon->image))) {
+            try {
+                unlink(public_path($coupon->image)); // Hoặc File::delete(public_path($coupon->image));
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Lỗi khi xoá ảnh: ' . $e->getMessage());
+            }
         }
 
+        // Xoá coupon
         $coupon->delete();
 
         return redirect()->back()->with('success', 'Xóa mã giảm giá thành công!');
@@ -136,17 +144,34 @@ class CouponController extends Controller
             return response()->json(['success' => false, 'message' => 'Mã giảm giá đã hết hạn!'], 400);
         }
 
-        // Kiểm tra số lượt sử dụng
+        // Kiểm tra số lượt sử dụng tổng thể
         if ($coupon->usage_limit && $coupon->used >= $coupon->usage_limit) {
             return response()->json(['success' => false, 'message' => 'Mã giảm giá đã đạt giới hạn sử dụng!'], 400);
         }
 
-        // Tính toán giảm giá
-        $cartTotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal())); // Tổng giá trị giỏ hàng
+        // Kiểm tra giá trị đơn hàng tối thiểu
+        $cartTotal = floatval(preg_replace('/[^\d.]/', '', Cart::subtotal()));
         if ($coupon->min_cart_value && $cartTotal < $coupon->min_cart_value) {
             return response()->json(['success' => false, 'message' => 'Giá trị đơn hàng không đủ để áp dụng mã giảm giá!'], 400);
         }
 
+        // ✅ KIỂM TRA NGƯỜI DÙNG ĐÃ DÙNG CHƯA
+        if (auth()->check()) {
+            $user = auth()->user();
+            $usedCoupon = $user->savedCoupons()
+                ->where('coupon_id', $coupon->id)
+                ->wherePivot('used', true)
+                ->exists();
+
+            if ($usedCoupon) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã sử dụng mã giảm giá này rồi!',
+                ], 400);
+            }
+        }
+
+        // Tính giảm giá
         $discount = 0;
         if ($coupon->type === 'percent') {
             $discount = $cartTotal * ($coupon->value / 100);
@@ -154,7 +179,7 @@ class CouponController extends Controller
             $discount = $coupon->value;
         }
 
-        // Lưu mã giảm giá vào session
+        // Lưu mã vào session
         Session::put('coupon', [
             'code' => $coupon->code,
             'type' => $coupon->type,
@@ -169,7 +194,7 @@ class CouponController extends Controller
             'type' => $coupon->type,
             'value' => $coupon->value,
             'discount' => $discount,
-            'total' => $cartTotal - $discount
+            'total' => $cartTotal - $discount,
         ]);
     }
     public function removeCoupon()
@@ -184,5 +209,12 @@ class CouponController extends Controller
             'message' => 'Mã giảm giá đã được xóa!',
             'discount' => 0
         ]);
+    }
+    public function list()
+    {
+        $coupons = Coupon::latest()->paginate(10);
+        $products = Product::latest()->take(8)->get();
+     
+        return view('Frontend.pages.couponList', compact('coupons', 'products'));
     }
 }

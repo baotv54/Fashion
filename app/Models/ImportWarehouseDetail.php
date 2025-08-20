@@ -15,6 +15,7 @@ class ImportWarehouseDetail extends Model
         'variant_id',
         'quantity',
         'price',
+        'stock',
     ];
 
     public function warehouse()
@@ -24,7 +25,8 @@ class ImportWarehouseDetail extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        // lấy cả sản phẩm đã bị soft delete
+        return $this->belongsTo(Product::class)->withTrashed();
     }
 
     public function variant()

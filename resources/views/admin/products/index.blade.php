@@ -1,70 +1,35 @@
 @extends('layouts.admin')
 
 @section('content')
-<!-- Product List Widget -->
-<!-- <div class="card mb-6">
-    <div class="card-widget-separator-wrapper">
-        <div class="card-body card-widget-separator">
-            <div class="row gy-4 gy-sm-1">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-                        <div>
-                            <p class="mb-1">In-store Sales</p>
-                            <h4 class="mb-1">$5,345.43</h4>
-                            <p class="mb-0"><span class="me-2">5k orders</span><span class="badge bg-label-success">+5.7%</span></p>
-                        </div>
-                        <span class="avatar me-sm-6">
-                            <span class="avatar-initial rounded"><i class="icon-base ti tabler-smart-home icon-28px text-heading"></i></span>
-                        </span>
-                    </div>
-                    <hr class="d-none d-sm-block d-lg-none me-6">
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                        <div>
-                            <p class="mb-1">Website Sales</p>
-                            <h4 class="mb-1">$674,347.12</h4>
-                            <p class="mb-0"><span class="me-2">21k orders</span><span class="badge bg-label-success">+12.4%</span></p>
-                        </div>
-                        <span class="avatar p-2 me-lg-6">
-                            <span class="avatar-initial rounded"><i class="icon-base ti tabler-device-laptop icon-28px text-heading"></i></span>
-                        </span>
-                    </div>
-                    <hr class="d-none d-sm-block d-lg-none">
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-                        <div>
-                            <p class="mb-1">Discount</p>
-                            <h4 class="mb-1">$14,235.12</h4>
-                            <p class="mb-0">6k orders</p>
-                        </div>
-                        <span class="avatar p-2 me-sm-6">
-                            <span class="avatar-initial rounded"><i class="icon-base ti tabler-gift icon-28px text-heading"></i></span>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="mb-1">Affiliate</p>
-                            <h4 class="mb-1">$8,345.23</h4>
-                            <p class="mb-0"><span class="me-2">150 orders</span><span class="badge bg-label-danger">-3.5%</span></p>
-                        </div>
-                        <span class="avatar p-2">
-                            <span class="avatar-initial rounded"><i class="icon-base ti tabler-wallet icon-28px text-heading"></i></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-<!-- Product List Table -->
 <div class="card">
 
     <div class="card-header border-bottom">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <h5 class="card-title">Bộ lọc</h5>
         <form method="GET" action="{{ route('products.index') }}" id="filter-form">
             <div class="d-flex justify-content-between align-items-center row pt-4 gap-6 gap-md-0 g-md-6">
@@ -104,7 +69,6 @@
             </div>
         </form>
     </div>
-
 
     <div class="card-datatable">
         <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
@@ -147,26 +111,13 @@
             <div class="justify-content-between dt-layout-table">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
                     <table class="datatables-products table dataTable dtr-column collapsed" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info" style="width: 100%;">
-                        <colgroup>
-                            <col data-dt-column="0" style="width: 49.775px;">
-                            <col data-dt-column="1" style="width: 55.9875px;">
-                            <col data-dt-column="2" style="width: 446.55px;">
-                            <col data-dt-column="3" style="width: 166.838px;">
-                            <col data-dt-column="4" style="width: 83.9625px;">
-                            <col data-dt-column="5" style="width: 86.4125px;">
-                            <col data-dt-column="6" style="width: 113.675px;">
-                            <col data-dt-column="7" style="width: 79.825px;">
-                            <col data-dt-column="8" style="width: 129.775px;">
-                        </colgroup>
                         <thead class="border-top">
                             <tr>
                                 <th></th>
-                                <th data-dt-column="1" rowspan="1" colspan="1" class="dt-select dt-orderable-none" aria-label=""><span class="dt-column-title"></span><span class="dt-column-order"></span><input class="form-check-input" type="checkbox" aria-label="Select all rows"></th>
                                 <th>Tên sản phẩm</th>
                                 <th>Danh mục</th>
-                                <th>Thương hiệu</th>
-                                <th>Giá</th>
-                                <th>Hành động</th>
+                                <th class="text-center">Giá</th>
+                                <th class="text-center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,7 +150,7 @@
                                                                     <div>
                                                                         <strong>{{ $product->name }}</strong>
                                                                         <br>
-                                                                        <small>{{ Str::limit($product->description, 100) }}</small>
+                                                                        <small>{{ Str::limit($product->slug, 100) }}</small>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -282,7 +233,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="dt-select"><input aria-label="Select row" class="form-check-input" type="checkbox"></td>
                                 <td class="sorting_1">
                                     <div class="d-flex justify-content-start align-items-center product-name">
                                         <div class="avatar-wrapper">
@@ -290,7 +240,7 @@
                                         </div>
                                         <div class="d-flex flex-column">
                                             <h6 class="text-nowrap mb-0">{{ Str::limit($product->name, 40) }}</h6>
-                                            <small class="text-truncate d-none d-sm-block">{{ Str::limit($product->description, 60) }}</small>
+                                            <small class="text-truncate d-none d-sm-block">{{ Str::limit($product->slug, 60) }}</small>
                                         </div>
                                     </div>
                                 </td>
@@ -314,7 +264,6 @@
                                         <span class="d-none">Out_of_Stock</span>
                                     </span>
                                 </td> -->
-                                <td class="text-center">{{ $product->brand->name}}</td>
                                 <td class="text-end">{{ number_format($product->price, 0) }} VND</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">

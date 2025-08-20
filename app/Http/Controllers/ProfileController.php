@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Banner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -26,17 +28,37 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Cập nhật avatar nếu có upload mới
+        if ($request->hasFile('avatar')) {
+            // Xoá avatar cũ nếu có
+            if ($user->avatar && Storage::exists('public/avatars/' . $user->avatar)) {
+                Storage::delete('public/avatars/' . $user->avatar);
+            }
+
+            // Lưu avatar mới
+            $avatarName = time() . '.' . $request->file('avatar')->extension();
+            $request->file('avatar')->move(public_path('avatars'), $avatarName);
+            $user->avatar = $avatarName;
         }
 
-        $request->user()->save();
+        $user->fill($request->except('avatar'));
 
-        return Redirect::to('/account')->with('status', 'profile-updated');
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+        $banners = Banner::latest()->take(4)->get();
+        return Redirect::to('/account')
+            ->with([
+                'status' => 'profile-updated',
+                'banners' => $banners,
+                'success' => 'Cập nhật thông tin thành công!',
+            ]);
     }
-
     /**
      * Delete the user's account.
      */

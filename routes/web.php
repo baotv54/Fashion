@@ -12,6 +12,7 @@ use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\SavedCouponController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
@@ -29,8 +30,10 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ImportWarehouseController;
+use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
+use App\Http\Controllers\PopupController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -103,6 +106,11 @@ Route::get('/checkout/success/{order_id}', [OrderController::class, 'orderSucces
 
 Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
 Route::post('/remove-coupon', [CouponController::class, 'removeCoupon'])->name('remove.coupon');
+Route::post('/coupon/save/{id}', [SavedCouponController::class, 'save'])->name('coupon.save');
+Route::delete('/coupon/remove/{id}', [SavedCouponController::class, 'remove'])->name('coupon.remove');
+Route::get('/my-voucher', [SavedCouponController::class, 'myCoupons'])->name('coupon.my');
+Route::get('/myHistorycoupons', [SavedCouponController::class, 'myHistorycoupons'])->name('coupon.history');
+Route::get('/couponList', [CouponController::class, 'list'])->name('list.coupon');
 
 Route::get('/address/province', [AddressController::class, 'getProvince'])->name('address.province');
 Route::get('/address/district/{provinceId}', [AddressController::class, 'getDistrict'])->name('address.district');
@@ -201,6 +209,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
+
 // Routes cho so sánh sản phẩm (không cần đăng nhập)
 Route::prefix('comparison')->group(function () {
     Route::get('/', [ComparisonController::class, 'index'])->name('comparison.index');
@@ -237,6 +246,18 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/products/search3', [ProductController::class, 'search3'])->name('products.search3');
             Route::get('/{id}/missing-variants', [ProductController::class, 'missingVariants'])->name('products.missingVariants');
             Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
+            Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+            Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
+        });
+
+         //routes quản lý popup
+        Route::prefix('popup')->group(function () {
+            Route::get('/index', [PopupController::class, 'index'])->name('popups.index');
+            Route::get('/create', [PopupController::class, 'create'])->name('popups.create');
+            Route::post('/', [PopupController::class, 'store'])->name('popups.store');
+            Route::get('/{id}/edit', [PopupController::class, 'edit'])->name('popups.edit');
+            Route::put('/{id}', [PopupController::class, 'update'])->name('popups.update');
+            Route::delete('/{popup}', [PopupController::class, 'destroy'])->name('popups.destroy');
         });
 
         // Quản trị Product Live Chat (non-AI)
@@ -265,9 +286,14 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
+            Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
         });
 
-
+        Route::prefix('returns')->group(function () {
+            Route::get('/create/{id}', [PurchaseReturnController::class, 'show'])->name('returns.show');
+            Route::post('/store', [PurchaseReturnController::class, 'store'])->name('returns.store');
+            Route::get('/', [PurchaseReturnController::class, 'index'])->name('returns.list');
+        });
 
         Route::prefix('products/{productId}/variants')->group(function () {
             Route::get('/', [ProductVariantController::class, 'index'])->name('product_variants.index');
@@ -375,14 +401,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-        //Routes Quản lý Banner
+       //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
-            Route::post('/', [BannerController::class, 'store'])->name('banners.store');
+            Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
+
             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
-            Route::put('/{id}', [BannerController::class, 'update'])->name('banners.update');
-            Route::delete('/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+            Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+             Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+
+             Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
+            Route::post('/', [BannerController::class, 'storeLogo'])->name('logo.store');
+            Route::get('/{id}/editLogo', [BannerController::class, 'editLogo'])->name('logo.edit');
+            Route::put('/{id}', [BannerController::class, 'updateLogo'])->name('logo.update');
+            Route::delete('/{id}', [BannerController::class, 'deleteLogo'])->name('logo.destroy');
         });
 
         // Routes quản lý liên hệ

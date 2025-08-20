@@ -25,6 +25,18 @@ class OrderDetail extends Model
     }
     public function product()
     {
+        // lấy cả sản phẩm đã bị soft delete
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+     public function products()
+    {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    // Quan hệ tới biến thể (nếu có)
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 }

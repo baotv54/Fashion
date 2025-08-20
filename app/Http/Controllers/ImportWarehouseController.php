@@ -20,32 +20,58 @@ class ImportWarehouseController extends Controller
 {
     // Hiển thị danh sách nhập kho
     public function index(Request $request)
-{
-    $query = ImportWarehouseMain::with('supplier', 'user')->latest();
+    {
+        $query = ImportWarehouseMain::with('supplier', 'user')->latest();
 
-    // Lọc theo ngày (created_at)
-    if ($request->has('date') && $request->date != null) {
-        $query->whereDate('created_at', $request->date);
-    }
-
-    // Lọc theo trạng thái
-    if ($request->has('status') && $request->status != null) {
-        if ($request->status === 'hoan-thanh') {
-            $query->where('import_type', 'Đã Nhập Kho')
-                  ->where('payment_status', 'Đã thanh toán');
-        } elseif ($request->status === 'dang-giao-dich') {
-            $query->where(function ($q) {
-                $q->where('import_type', '!=', 'Đã Nhập Kho')
-                  ->orWhere('payment_status', '!=', 'Đã thanh toán');
-            });
+        // Lọc theo ngày (created_at)
+        if ($request->has('date') && $request->date != null) {
+            $query->whereDate('created_at', $request->date);
         }
+
+        // Lọc theo trạng thái
+        if ($request->has('status') && $request->status != null) {
+            if ($request->status === 'hoan-thanh') {
+                $query->where('import_type', 'Đã Nhập Kho')
+                    ->where('payment_status', 'Đã thanh toán');
+            } elseif ($request->status === 'dang-giao-dich') {
+                $query->where(function ($q) {
+                    $q->where('import_type', '!=', 'Đã Nhập Kho')
+                        ->orWhere('payment_status', '!=', 'Đã thanh toán');
+                });
+            }
+        }
+
+        $imports = $query->paginate(10);
+
+        return view('admin.order_warehouse.index', compact('imports'));
     }
 
-    $imports = $query->paginate(10);
+    public function trashed(Request $request)
+    {
+        $query = ImportWarehouseMain::onlyTrashed()->with('supplier', 'user')->latest();
 
-    return view('admin.order_warehouse.index', compact('imports'));
-}
+        // Lọc theo ngày (deleted_at)
+        if ($request->has('date') && $request->date != null) {
+            $query->whereDate('deleted_at', $request->date);
+        }
 
+        // Lọc theo trạng thái
+        if ($request->has('status') && $request->status != null) {
+            if ($request->status === 'hoan-thanh') {
+                $query->where('import_type', 'Đã Nhập Kho')
+                    ->where('payment_status', 'Đã thanh toán');
+            } elseif ($request->status === 'dang-giao-dich') {
+                $query->where(function ($q) {
+                    $q->where('import_type', '!=', 'Đã Nhập Kho')
+                        ->orWhere('payment_status', '!=', 'Đã thanh toán');
+                });
+            }
+        }
+
+        $imports = $query->paginate(10);
+
+        return view('admin.order_warehouse.trashed', compact('imports'));
+    }
 
     public function product(Request $request)
     {
@@ -109,33 +135,33 @@ class ImportWarehouseController extends Controller
 
 
     public function updatePrice(Request $request)
-{
-    $productId = $request->input('product_id');
-    $variantId = $request->input('variant_id');
-    $importPrice = $request->input('import_price');
-    $price = $request->input('price');
-    $discountPrice = $request->input('discount_price');
+    {
+        $productId = $request->input('product_id');
+        $variantId = $request->input('variant_id');
+        $importPrice = $request->input('import_price');
+        $price = $request->input('price');
+        $discountPrice = $request->input('discount_price');
 
-    try {
-        if ($variantId) {
-            $variant = ProductVariant::findOrFail($variantId);
-            $variant->import_price = $importPrice;
-            $variant->price = $price;
-            $variant->discount_price = $discountPrice;
-            $variant->save();
-        } else {
-            $product = Product::findOrFail($productId);
-            $product->import_price = $importPrice;
-            $product->price = $price;
-            $product->discount_price = $discountPrice;
-            $product->save();
+        try {
+            if ($variantId) {
+                $variant = ProductVariant::findOrFail($variantId);
+                $variant->import_price = $importPrice;
+                $variant->price = $price;
+                $variant->discount_price = $discountPrice;
+                $variant->save();
+            } else {
+                $product = Product::findOrFail($productId);
+                $product->import_price = $importPrice;
+                $product->price = $price;
+                $product->discount_price = $discountPrice;
+                $product->save();
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
-
-        return response()->json(['success' => true]);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()]);
     }
-}
 
 
 
@@ -258,16 +284,25 @@ class ImportWarehouseController extends Controller
     // Xóa bản ghi
     public function destroy($id)
     {
-        $import = ImportWarehouse::find($id);
+        // $import = ImportWarehouse::find($id);
+        $import = ImportWarehouseMain::find($id);
+
 
         if (!$import) {
-            return response()->json(['success' => false, 'message' => 'Không tìm thấy bản ghi!'], 404);
+            return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
         }
 
+        if ($import->payment_status === "Đã thanh toán" && $import->import_type === "Chưa Nhập") {
+            return redirect()->back()->with('error', 'Vui Lòng Nhập Kho Trước Khi Xóa');
+        }
+
+        // Xóa mềm (đánh dấu deleted_at)
         $import->delete();
 
-        return response()->json(['success' => true, 'message' => 'Đã xóa đơn nhập kho!']);
+        return redirect()->back()->with('success', 'Đã xóa đơn nhập kho thành công!');
     }
+
+
 
     public function updateQuantity(Request $request, $id)
     {
@@ -409,6 +444,7 @@ class ImportWarehouseController extends Controller
                 'import_warehouse_id' => $main->id,
                 'product_id' => $productId,
                 'variant_id' => $variantId,
+                'quantity' => $quantity,
                 'stock' => $quantity,
                 'price' => $price,
                 'total' => $price * $quantity,
@@ -484,6 +520,7 @@ class ImportWarehouseController extends Controller
                 $variant = ProductVariant::find($variantId);
                 if ($variant) {
                     $variant->quantity += $quantity;
+                    $variant->stock += $quantity;
                     $variant->save();
                 }
             } else {
