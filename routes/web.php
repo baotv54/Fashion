@@ -166,6 +166,8 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
 Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
+Route::get('/products/{productId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+
 
 // Thêm vào routes/web.php hoặc routes/api.php
 Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
@@ -198,10 +200,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 
     // Routes cho đánh giá sản phẩm
-    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/products/{productId}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     //Yêu thích
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
@@ -403,7 +405,11 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
         });
 
-        Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
+        Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+        Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+        Route::post('/reviews/bulk-approve', [ReviewController::class, 'bulkApprove']);
+        Route::post('/reviews/{id}/hide', [ReviewController::class, 'toggleVisibility']);
+        
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
         //Routes Quản lý Banner
@@ -434,6 +440,14 @@ Route::middleware(['auth'])->group(function () {
         // CRUD Size
         Route::resource('sizes', SizeController::class);
         Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
+        // Route quản lý chat
+        Route::prefix('product-live-chat')->group(function () {
+            Route::post('/start', [ProductLiveChatController::class, 'start'])->name('plc.start');
+            Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
+            Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
+            Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+            Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
+        });
     });
 });
 

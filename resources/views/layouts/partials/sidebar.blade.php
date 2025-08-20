@@ -116,8 +116,8 @@
                         <div data-i18n="Thống kê">Thống kê</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('reviews.approve') ? 'active' : '' }}">
-                    <a href="{{ route('reviews.approve', ['review' => 1]) }}" class="menu-link">
+                <li class="menu-item {{ Request::routeIs('admin.reviews.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.reviews.index') }}" class="menu-link">
                         <div data-i18n="Quản lý đánh giá">Quản lý đánh giá</div>
                     </a>
                 </li>

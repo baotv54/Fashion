@@ -3,7 +3,6 @@
         <h5>Cập nhật thông tin</h5>
     </div> -->
     <div class="card-body">
-<<<<<<< HEAD
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" id="update-profile-form">
             @csrf
             @method('PATCH')
@@ -29,20 +28,10 @@
                 <label for="name" class="form-label">Họ tên</label>
                 <input type="text" name="name" id="name" class="form-control"
                     value="{{ old('name', $user->name) }}" required>
-=======
-        <form method="POST" action="{{ route('profile.update') }}">
-            @csrf
-            @method('PATCH')
-
-            <div class="mb-3">
-                <label for="name" class="form-label">Họ tên</label>
-                <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required>
->>>>>>> sang002
                 @error('name')
                     <div class="text-danger mt-2">{{ $message }}</div>
                 @enderror
             </div>
-<<<<<<< HEAD
             <div class="mb-3">
                 <label for="phone" class="form-label">Số điện thoại</label>
                 <input type="text" name="phone" id="phone" class="form-control"
@@ -56,30 +45,16 @@
                 <label for="email" class="form-label">Email</label>
                 <input type="email" name="email" id="email" class="form-control"
                     value="{{ old('email', $user->email) }}" required>
-=======
-
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
->>>>>>> sang002
                 @error('email')
                     <div class="text-danger mt-2">{{ $message }}</div>
                 @enderror
 
-<<<<<<< HEAD
                 @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->hasVerifiedEmail())
                     <div class="mt-2">
                         <small class="text-muted">
                             Địa chỉ email của bạn chưa được xác minh.
                             <button type="submit" form="send-verification" class="btn btn-link p-0">Nhấn vào đây để gửi
                                 lại email xác minh.</button>
-=======
-                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                    <div class="mt-2">
-                        <small class="text-muted">
-                            Địa chỉ email của bạn chưa được xác minh. 
-                            <button type="submit" form="send-verification" class="btn btn-link p-0">Nhấn vào đây để gửi lại email xác minh.</button>
->>>>>>> sang002
                         </small>
                         @if (session('status') === 'verification-link-sent')
                             <div class="text-success mt-1">Email xác minh đã được gửi lại.</div>

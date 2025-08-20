@@ -21,6 +21,7 @@ use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
 use App\Models\Post;
+use Illuminate\Support\Facades\Log;
 
 
 class ProductController extends Controller
@@ -93,89 +94,89 @@ class ProductController extends Controller
 
 
     public function homepage()
-{
-    $products = Product::with('variants')
-        ->withCount('favorites') // thêm số lượt thích
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                  ->orWhereHas('variants', function ($q) {
-                      $q->where('quantity', '>', 0);
-                  });
+    {
+        $products = Product::with('variants')
+            ->withCount('favorites') // thêm số lượt thích
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(12)
+            ->get();
+
+        $carts = Cart::content();
+        $orders = Order::all();
+        $posts = Post::all();
+        $order_details = OrderDetail::with(['product', 'variant'])->get();
+        $coupons = Coupon::latest()->take(4)->get();
+        $banners = Banner::latest()->take(4)->get();
+        $favorites = collect();
+
+        // Gom nhóm số lượng bán theo product_id
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+
+            return [
+                'product_id' => $mainProductId,
+                'quantity'   => $detail->quantity,
+            ];
         })
-        ->orderBy('created_at', 'desc')
-        ->take(12)
-        ->get();
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return $items->sum('quantity');
+            });
 
-    $carts = Cart::content();
-    $orders = Order::all();
-    $posts = Post::all();
-    $order_details = OrderDetail::with(['product', 'variant'])->get();
-    $coupons = Coupon::latest()->take(4)->get();
-    $banners = Banner::latest()->take(4)->get();
-    $favorites = collect();
-
-    // Gom nhóm số lượng bán theo product_id
-    $productSales = $order_details->map(function ($detail) {
-        $mainProductId = $detail->product_variant_id
-            ? $detail->variant->product_id
-            : $detail->product_id;
-
-        return [
-            'product_id' => $mainProductId,
-            'quantity'   => $detail->quantity,
-        ];
-    })
-    ->groupBy('product_id')
-    ->map(function ($items) {
-        return $items->sum('quantity');
-    });
-
-    // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
-    $products = $products->map(function ($product) use ($productSales) {
-        $product->sold_count = $productSales[$product->id] ?? 0;
-        // $product->favorites_count đã có nhờ withCount('favorites')
-        return $product;
-    });
-
-    // Top sản phẩm được thích nhiều nhất
-    $topFavorites = Product::withCount('favorites')
-        ->having('favorites_count', '>', 0)
-        ->orderByDesc('favorites_count')
-        ->take(4)
-        ->get()
-        ->map(function ($product) use ($productSales) {
+        // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
+        $products = $products->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
+            // $product->favorites_count đã có nhờ withCount('favorites')
             return $product;
         });
 
-    // Top 4 sản phẩm bán chạy
-    $topSelling = Product::withCount('favorites')
-        ->whereIn('id', $productSales->keys())
-        ->get()
-        ->map(function ($product) use ($productSales) {
-            $product->sold_count = $productSales[$product->id] ?? 0;
-            return $product;
-        })
-        ->sortByDesc('sold_count')
-        ->take(4);
+        // Top sản phẩm được thích nhiều nhất
+        $topFavorites = Product::withCount('favorites')
+            ->having('favorites_count', '>', 0)
+            ->orderByDesc('favorites_count')
+            ->take(4)
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            });
 
-    if (Auth::check()) {
-        $favorites = Favorite::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+        // Top 4 sản phẩm bán chạy
+        $topSelling = Product::withCount('favorites')
+            ->whereIn('id', $productSales->keys())
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            })
+            ->sortByDesc('sold_count')
+            ->take(4);
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
+        return view('Frontend.index', compact(
+            'products',
+            'carts',
+            'coupons',
+            'favorites',
+            'banners',
+            'topFavorites',
+            'topSelling',
+            'posts'
+        ));
     }
-
-    return view('Frontend.index', compact(
-        'products',
-        'carts',
-        'coupons',
-        'favorites',
-        'banners',
-        'topFavorites',
-        'topSelling',
-        'posts'
-    ));
-}
 
 
 
@@ -265,23 +266,45 @@ class ProductController extends Controller
             ->take(8)
             ->get();
 
-        $hasPurchased = Auth::check() && OrderDetail::where('product_id', $id)
-            ->whereHas('order', function ($q) {
-                $q->where('user_id', Auth::id());
-            })->exists();
+        // Kiểm tra đã mua và trạng thái đơn hàng hoàn thành
+        $canReview = false;
+        $userReview = null;
+        if (Auth::check()) {
+            $hasCompletedOrder = OrderDetail::where('product_id', $id)
+                ->whereHas('order', function ($q) {
+                    $q->where('user_id', Auth::id())
+                        ->where('status', 'delivered');
+                })->exists();
+
+            // Kiểm tra đã đánh giá chưa
+            $userReview = $product->reviews->where('user_id', Auth::id())->first();
+            $canReview = $hasCompletedOrder && !$userReview;
+        }
 
         $totalSold = OrderDetail::where('product_id', $product->id)
             ->whereHas('order', function ($query) {
                 $query->where('status', 'delivered');
             })->sum('quantity');
 
+        // Thống kê đánh giá từ collection đã load
         $avgRating = $product->reviews->avg('rating');
         $totalReviews = $product->reviews->count();
 
-        // Tạo mapping variants để JavaScript sử dụng
+        $ratingStats = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $count = $product->reviews->where('rating', $i)->count();
+            $percentage = $totalReviews > 0 ? ($count / $totalReviews * 100) : 0;
+            $ratingStats[$i] = [
+                'count' => $count,
+                'percentage' => round($percentage, 2),
+            ];
+        }
+
+        // FIX: Tạo mapping variants với cách sắp xếp nhất quán
         $variantMapping = [];
         foreach ($product->variants as $variant) {
-            $attributeIds = $variant->attributeValues->pluck('id')->sort()->toArray();
+            // Sắp xếp theo ID attribute value để đảm bảo consistency
+            $attributeIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
             $key = implode('-', $attributeIds);
 
             $variantMapping[$key] = [
@@ -290,19 +313,29 @@ class ProductController extends Controller
                 'stock' => $variant->stock,
                 'image' => $variant->image,
                 'sku' => $variant->sku,
+                'attribute_value_ids' => $attributeIds, // Thêm dòng này
             ];
+
+            // Debug: Log ra để kiểm tra
+            Log::info("Variant {$variant->id}: key={$key}, attributes=" . json_encode($attributeIds));
         }
+
+        // FIX: Tính toán hasVariants chính xác
+        $hasVariants = $product->variants->count() > 0;
 
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
             'attributes',
             'relatedProducts',
-            'hasPurchased',
             'avgRating',
             'totalReviews',
             'totalSold',
-            'variantMapping'
+            'variantMapping',
+            'hasVariants',
+            'ratingStats',
+            'canReview',
+            'userReview'
         ))->with('carts', Cart::content());
     }
 

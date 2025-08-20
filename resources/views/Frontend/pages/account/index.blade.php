@@ -3833,7 +3833,6 @@
             <div class="acc-wrap">
                 <!-- Sidebar -->
                 <div class="acc-sidebar">
-<<<<<<< HEAD
                      <span>
 
                              @if ($user->avatar)
@@ -3843,12 +3842,6 @@
                         <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
                             alt="{{ $user->name }}">
                     @endif
-=======
-                    <span>
-                        <img width="64" height="64"
-                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                             alt="{{ $user->name }}" />
->>>>>>> sang002
                     </span>
                     <h3>Xin chào, <b>{{ $user->name }}</b></h3>
                      <!-- Nút toggle chỉ hiện trên mobile -->
