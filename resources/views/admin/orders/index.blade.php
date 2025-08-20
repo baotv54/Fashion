@@ -69,33 +69,33 @@
                         <label for="dt-search-0"></label>
                     </div>
                 </div>
-                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0">
-                    <div class="dt-length">
-                        <select name="DataTables_Table_0_length" class="form-select" id="dt-length-0">
-                            <option value="7">7</option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        <label for="dt-length-0"></label>
-                    </div>
-                    <div class="dt-buttons btn-group flex-wrap">
-                        <div class="btn-group">
-                            <button class="btn buttons-collection btn-label-primary dropdown-toggle btn-label-secondary" type="button">
-                                <span class="d-flex align-items-center gap-1">
-                                    <i class="icon-base ti tabler-upload icon-xs"></i>
-                                    <span class="d-none d-sm-inline-block">Xuất dữ liệu</span>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {{-- Bảng dữ liệu --}}
             <div class="justify-content-between dt-layout-table">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
+                    {{-- Nav tabs --}}
+                    <ul class="nav nav-tabs mb-3">
+                        @php
+                        $statuses = [
+                        'all' => 'Tất cả',
+                        'ordered' => 'Đã đặt',
+                        'processing' => 'Đang xử lý',
+                        'confirmed' => 'Đã xác nhận',
+                        'shipping' => 'Đang giao',
+                        'delivered' => 'Đã giao',
+                        'cancelled' => 'Đã hủy',
+                        'returned' => 'Trả hàng',
+                        ];
+                        @endphp
+                        @foreach ($statuses as $key => $label)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}" href="{{ route('orders.index', ['status' => $key]) }}">
+                                {{ $label }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
                     <table class="datatables-order table border-top dataTable dtr-column collapsed" id="DataTables_Table_0" style="width: 100%;">
                         <thead>
                             <tr>
@@ -353,7 +353,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

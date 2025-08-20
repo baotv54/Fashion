@@ -12,14 +12,25 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $status = $request->get('status', 'all');
 
-        return view('admin.orders.index', compact('orders'));
+        $query = Order::with('user')->orderBy('created_at', 'desc');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+         $orders = $query->paginate(10)->appends(['status' => $status]);
+         
+
+        return view('admin.orders.index', [
+            'orders' => $orders,
+            'currentStatus' => $status
+        ]);
     }
+
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -122,25 +133,14 @@ class OrderController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
-    public function cancelOrder(Request $request, $id)
+    public function cancelOrder($id)
     {
-        $request->validate([
-            'cancel_reason' => 'required|string|max:255',
-            'cancel_reason_other' => 'nullable|string|max:255',
-        ]);
-
         $order = Order::where('id', $id)
             ->where('user_id', Auth::id())
             ->whereIn('status', ['ordered', 'processing', 'confirmed'])
             ->firstOrFail();
 
-        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
-        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp' 
-            ? $request->cancel_reason_other 
-            : $request->cancel_reason;
-
         $order->status = 'cancelled';
-        $order->cancel_reason = $cancelReason;
         $order->save();
 
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');

@@ -245,11 +245,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update_quantity', [ImportWarehouseController::class, 'update_quantity'])->name('warehouse.update_quantity');
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
-
-
-
-
-
         });
 
 
