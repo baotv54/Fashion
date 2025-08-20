@@ -78,7 +78,7 @@ class CouponController extends Controller
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date|after_or_equal:today',
+            'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'usage_limit' => 'nullable|integer|min:1',
             'status' => 'nullable|in:active,inactive',
@@ -214,7 +214,7 @@ class CouponController extends Controller
     {
         $coupons = Coupon::latest()->paginate(10);
         $products = Product::latest()->take(8)->get();
-     
+
         return view('Frontend.pages.couponList', compact('coupons', 'products'));
     }
 }

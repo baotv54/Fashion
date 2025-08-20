@@ -139,6 +139,40 @@
                         </li>
                     </ul>
                 </li>
+               <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Banner">Banner</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">
+                            <a href="{{ route('banners.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách Banner">Danh sách Banner</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('banners.create') ? 'active' : '' }}">
+                            <a href="{{ route('banners.create') }}" class="menu-link">
+                                <div data-i18n="Thêm Banner">Thêm Banner</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                 <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Popup">Popup</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs('popups.index') ? 'active' : '' }}">
+                            <a href="{{ route('popups.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách Popup">Danh sách Popup</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('popups.create') ? 'active' : '' }}">
+                            <a href="{{ route('popups.create') }}" class="menu-link">
+                                <div data-i18n="Thêm Popup">Thêm Popup</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </li>
 

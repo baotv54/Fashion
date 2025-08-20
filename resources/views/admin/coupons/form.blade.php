@@ -1,4 +1,4 @@
-@csrf
+
 
 <div class="row g-4">
     <!-- Cột trái -->
