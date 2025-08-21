@@ -183,9 +183,45 @@ class PurchaseReturnController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $import = PurchaseReturn::find($id);
+
+        if (!$import) {
+            return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
+        }
+
+        // Nếu chưa hoàn tiền thì không cho xóa
+        if ($import->refund_status !== "Đã Hoàn Tiền") {
+            return redirect()->back()->with('error', 'Chỉ được phép xóa khi đơn đã hoàn tiền!');
+        }
+
+        // Xóa mềm các chi tiết
+        ReturnDetail::where('return_id', $id)->delete();
+
+        // Xóa mềm bản ghi chính
+        $import->delete();
+
+        return redirect()->back()->with('success', 'Đã xóa đơn và chi tiết thành công!');
+    }
+
+
+
+    public function forceDestroy($id)
+    {
+        $import = ImportWarehouseMain::withTrashed()->find($id);
+
+        if (!$import) {
+            return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
+        }
+
+        // Xóa vĩnh viễn chi tiết
+        ImportWarehouseDetail::withTrashed()->where('import_warehouse_id', $id)->forceDelete();
+
+        // Xóa vĩnh viễn đơn nhập
+        $import->forceDelete();
+
+        return redirect()->back()->with('success', 'Đã xóa vĩnh viễn đơn nhập kho và chi tiết!');
     }
 
     public function confirmPayment(Request $request, $id)

@@ -72,14 +72,13 @@
                     <i class="fas fa-check-circle me-2"></i>{{$main->payment_status}}
                 </div>
                 <div class="card-body">
-                    <p><strong>Tổng tiền:</strong> {{ $main->details->sum('quantity') }} sản phẩm</p>
-                    <p><strong>Giảm giá:</strong> 0đ</p>
-                    <p><strong>Chi phí nhập hàng:</strong> 0đ</p>
-                    <p><strong>Tiền cần trả NCC:</strong> {{ number_format($main->total_price) }}đ</p>
+                    <p><strong>Tổng số :</strong> {{ $main->details->sum('quantity') }} sản phẩm</p>
+                    <p><strong>Giảm giá:</strong> {{ number_format($main->discount) }}đ</p>
+                    <p><strong>Chi phí nhập hàng:</strong> {{ number_format($main->additional_cost)}}</p>
+                    <p><strong>Tổng Tiền Sản Phẩm:</strong> {{ number_format($main->total_price) }}đ</p>
                     <div class="alert border d-flex justify-content-between align-items-center">
-                        <div><strong>Tiền cần trả NCC:</strong> {{ number_format($main->total_price) }}đ</div>
-                        <div><strong>Đã trả:</strong> {{ number_format($main->total_price) }}đ</div>
-                        <div><strong class="text-danger">Còn phải trả: 0đ</strong></div>
+                        <div><strong>Tiền cần trả NCC:</strong> {{ $main->total_price + $main->additional_cost - $main->discount }}đ</div>
+                        <div><strong>Đã trả:</strong> {{ number_format($main->payment_amount) }}đ</div>
                     </div>
                     @if($main->payment_status === 'Thanh toán sau')
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#paymentModal">
@@ -127,6 +126,25 @@
                     <p><strong>Tham chiếu:</strong> {{ $main->note ?? '---' }}</p>
                 </div>
             </div>
+            <br>
+            @if($main->payment_status === 'Thanh toán sau' ||$main->import_type === 'Đã Nhập Kho' )
+            <div class="text-end">
+            <form action="{{ route('warehouse.destroy', $main->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn hủy đơn này?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Hủy Đơn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M4 7l16 0" />
+                        <path d="M10 11l0 6" />
+                        <path d="M14 11l0 6" />
+                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                </button>
+            </form>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -151,7 +169,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Số tiền thanh toán</label>
-                            <input type="number" name="payment_amount" class="form-control" value="{{ $main->total_price }}" required>
+                            <input type="number" name="payment_amount" class="form-control" value="{{ $main->total_price + $main->additional_cost - $main->discount }}" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Ngày ghi nhận</label>
@@ -170,7 +188,6 @@
             </form>
         </div>
     </div>
-
 </div>
 <script>
     const API_URL = "https://online-gateway.ghn.vn/shiip/public-api";

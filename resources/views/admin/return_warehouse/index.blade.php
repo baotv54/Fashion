@@ -5,7 +5,7 @@
 
     {{-- Tiêu đề & nút tạo --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">Danh sách đơn nhập hàng</h4>
+        <h4 class="fw-bold mb-0">Danh sách đơn trả hàng</h4>
         <div>
             <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createReturnModal">
                 <i class="fas fa-plus-circle me-1"></i> Tạo đơn trả hàng
@@ -107,7 +107,7 @@
                         <td>{{ $return->user->name ?? '-' }}</td>
                         <td>{{ number_format($return->total_amount) }}₫</td>
                         <td>
-                            <form action="{{ route('warehouse.destroy', $return->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                            <form action="{{ route('returns.destroy', $return->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa">

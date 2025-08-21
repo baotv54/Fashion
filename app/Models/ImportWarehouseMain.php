@@ -34,14 +34,13 @@ class ImportWarehouseMain extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class)->withTrashed();
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
     public function details()
     {
         return $this->hasMany(ImportWarehouseDetail::class, 'import_warehouse_id');

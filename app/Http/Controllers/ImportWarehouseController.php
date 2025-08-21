@@ -291,23 +291,63 @@ class ImportWarehouseController extends Controller
     // Xóa bản ghi
     public function destroy($id)
     {
-        // $import = ImportWarehouse::find($id);
         $import = ImportWarehouseMain::find($id);
-
 
         if (!$import) {
             return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
         }
 
+        // Nếu không thuộc điều kiện thì không cho xóa
+
         if ($import->payment_status === "Đã thanh toán" && $import->import_type === "Chưa Nhập") {
             return redirect()->back()->with('error', 'Vui Lòng Nhập Kho Trước Khi Xóa');
         }
 
-        // Xóa mềm (đánh dấu deleted_at)
+        // Xóa mềm các chi tiết
+        ImportWarehouseDetail::where('import_warehouse_id', $id)->delete();
+
+        // Xóa mềm bản ghi chính
         $import->delete();
 
-        return redirect()->back()->with('success', 'Đã xóa đơn nhập kho thành công!');
+        return redirect()->back()->with('success', 'Đã xóa đơn nhập kho và chi tiết thành công!');
     }
+
+    // Xóa vĩnh viễn
+    public function forceDestroy($id)
+    {
+        $import = ImportWarehouseMain::withTrashed()->find($id);
+
+        if (!$import) {
+            return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
+        }
+
+        // Xóa vĩnh viễn chi tiết
+        ImportWarehouseDetail::withTrashed()->where('import_warehouse_id', $id)->forceDelete();
+
+        // Xóa vĩnh viễn đơn nhập
+        $import->forceDelete();
+
+        return redirect()->back()->with('success', 'Đã xóa vĩnh viễn đơn nhập kho và chi tiết!');
+    }
+
+    // Khôi phục
+    public function restore($id)
+    {
+        $import = ImportWarehouseMain::withTrashed()->find($id);
+
+        if (!$import) {
+            return redirect()->back()->with('error', 'Không tìm thấy bản ghi!');
+        }
+
+        // Khôi phục đơn nhập
+        $import->restore();
+
+        // Khôi phục chi tiết
+        ImportWarehouseDetail::withTrashed()->where('import_warehouse_id', $id)->restore();
+
+        return redirect()->back()->with('success', 'Đã khôi phục đơn nhập kho và chi tiết thành công!');
+    }
+
 
 
 
@@ -490,12 +530,40 @@ class ImportWarehouseController extends Controller
 
 
 
+    // public function show($id)
+    // {
+    //     // Lấy đơn nhập chính
+    //     $main = ImportWarehouseMain::with(['supplier', 'user', 'details.product', 'details.variant'])->findOrFail($id);
+
+    //     return view('admin.order_warehouse.details', compact('main'));
+    // }
+
     public function show($id)
     {
-        // Lấy đơn nhập chính
-        $main = ImportWarehouseMain::with(['supplier', 'user', 'details.product', 'details.variant'])->findOrFail($id);
+        $main = ImportWarehouseMain::with([
+            'supplier',   // supplier lấy luôn soft deleted
+            'user',       // user chỉ lấy active
+            'details.product', // product lấy luôn soft deleted
+            'details.variant'  // variant lấy luôn soft deleted
+        ])->findOrFail($id);
 
         return view('admin.order_warehouse.details', compact('main'));
+    }
+
+
+    public function showDeleted($id)
+    {
+        // Lấy đơn nhập chính
+        $main = ImportWarehouseMain::with([
+            'supplier',
+            'user',
+            'details' => function ($query) {
+                // Lấy cả dữ liệu đã bị xóa mềm
+                $query->onlyTrashed()->with(['product', 'variant']);
+            }
+        ])->findOrFail($id);
+
+        return view('admin.order_warehouse.details_deleted', compact('main'));
     }
 
 
@@ -550,7 +618,7 @@ class ImportWarehouseController extends Controller
                 // Cập nhật biến thể nếu có
                 $variant = ProductVariant::find($variantId);
                 if ($variant) {
-                    $variant->quantity += $quantity;
+                    $variant->quantity += 0;
                     $variant->stock += $quantity;
                     $variant->save();
                 }

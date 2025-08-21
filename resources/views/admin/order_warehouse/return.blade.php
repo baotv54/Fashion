@@ -80,7 +80,7 @@
                                             value="0" min="0"
                                             max="{{ $detail->stock }}"
                                             data-price="{{ $detail->price }}">
-                                        <small class="text-muted">SL nhập: {{ $detail->stock }}</small>
+                                        <small class="text-muted">có thể trả: {{ $detail->stock }}</small>
                                     </td>
                                     <td>{{ number_format($detail->price) }}đ</td>
                                     <td class="line-total">0đ</td>

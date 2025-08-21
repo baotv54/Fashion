@@ -292,6 +292,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
             Route::post('/costs', [ImportWarehouseController::class, 'costs'])->name('warehouse.costs');
             Route::post('/discounts', [ImportWarehouseController::class, 'discounts'])->name('warehouse.discounts');
+            Route::get('/showDeleted/{id}', [ImportWarehouseController::class, 'showDeleted'])->name('warehouse.showDeleted');
+            Route::delete('/import-warehouse/{id}/force-destroy', [ImportWarehouseController::class, 'forceDestroy'])->name('warehouse.forceDestroy');
+            Route::post('/import-warehouse/{id}/restore', [ImportWarehouseController::class, 'restore'])->name('warehouse.restore');
         });
 
         Route::prefix('returns')->group(function () {
@@ -300,6 +303,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [PurchaseReturnController::class, 'index'])->name('returns.list');
             Route::get('/details/{id}', [PurchaseReturnController::class, 'details'])->name('returns.details');
             Route::post('/payment_confirm/{id}', [PurchaseReturnController::class, 'confirmPayment'])->name('returns.confirm_payment');
+            Route::delete('/{id}', [PurchaseReturnController::class, 'destroy'])->name('returns.destroy');
         });
 
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -320,6 +324,11 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
             Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
             Route::get('/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
+            Route::get('/suppliers/trash', [SupplierController::class, 'trash'])->name('suppliers.trash');
+            Route::post('/restore/{id}', [SupplierController::class, 'restore'])->name('suppliers.restore');
+            Route::delete('/force-delete/{id}', [SupplierController::class, 'forceDelete'])->name('suppliers.forceDelete');
+            Route::put('/status/{id}', [SupplierController::class, 'update_status'])->name('suppliers.update_status');
+            Route::put('/status_2/{id}', [SupplierController::class, 'update_status_2'])->name('suppliers.update_status_2');
         });
 
         // Routes cho Attribute
@@ -409,7 +418,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
         Route::post('/reviews/bulk-approve', [ReviewController::class, 'bulkApprove']);
         Route::post('/reviews/{id}/hide', [ReviewController::class, 'toggleVisibility']);
-        
+
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
         //Routes Quản lý Banner
