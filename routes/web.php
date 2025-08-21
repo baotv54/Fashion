@@ -472,7 +472,7 @@ Route::get('/dashboard', function () {
 // });
 
 // Route::get('/', function () {
-//     return view('Frontend.index');
+//     return view('Frontend.index')
 // });
 // Route::get('/home', function () {
 //     return view('Frontend.index');
