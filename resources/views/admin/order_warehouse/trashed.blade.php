@@ -6,30 +6,30 @@
 
 
     @if(session('success'))
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') }}
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-        @endif
+    </div>
+    @endif
 
-        @if(session('error'))
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('error') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    @if(session('error'))
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('error') }}
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-        @endif
+    </div>
+    @endif
 
     {{-- Bộ lọc tìm kiếm --}}
     <form method="GET" action="{{ route('warehouse.list') }}" class="d-flex flex-wrap gap-2 mb-3">
@@ -58,7 +58,7 @@
                     @forelse($imports as $import)
                     <tr>
                         <td class="text-primary fw-semibold text-break" style="max-width: 200px;">
-                            <a href="{{ route('warehouse.show', $import->id) }}" class="text-decoration-none">
+                            <a href="{{ route('warehouse.showDeleted', $import->id) }}" class="text-decoration-none">
                                 {{ $import->code }}
                             </a>
                         </td>
@@ -73,18 +73,22 @@
                         <td>{{ $import->user->name ?? '-' }}</td>
                         <td>{{ number_format($import->total_price) }}₫</td>
                         <td>
-                            <form action="{{ route('warehouse.destroy', $import->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                            {{-- Form khôi phục --}}
+                            <form action="{{ route('warehouse.restore', $import->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-success"
+                                    onclick="return confirm('Bạn có chắc muốn khôi phục đơn này?')">
+                                    <i class="fas fa-undo"></i> Khôi phục
+                                </button>
+                            </form>
+
+                            {{-- Form xóa vĩnh viễn --}}
+                            <form action="{{ route('warehouse.forceDestroy', $import->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M4 7l16 0" />
-                                        <path d="M10 11l0 6" />
-                                        <path d="M14 11l0 6" />
-                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                    </svg>
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Bạn có chắc muốn xóa vĩnh viễn đơn này? Hành động này không thể hoàn tác.')">
+                                    <i class="fas fa-trash-alt"></i> Xóa vĩnh viễn
                                 </button>
                             </form>
                         </td>

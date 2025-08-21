@@ -236,7 +236,7 @@
         </li>
 
         <!-- e-commerce-app menu end -->
-        <li class="menu-item {{ Request::routeIs(['products.trashed']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.trashed','suppliers.trash']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-trash me-2"></i>
                 <div data-i18n="Thùng Rác">Thùng Rác</div>
@@ -245,6 +245,11 @@
                 <li class="menu-item {{ Request::routeIs('products.trashed') ? 'active' : '' }}">
                     <a href="{{ route('products.trashed', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Sản Phẩm">Sản Phẩm</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('suppliers.trash') ? 'active' : '' }}">
+                    <a href="{{ route('suppliers.trash', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Nhà cung cấp">Nhà cung cấp </div>
                     </a>
                 </li>
             </ul>
