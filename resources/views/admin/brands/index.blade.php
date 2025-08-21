@@ -3,19 +3,28 @@
 @section('content')
 <div class="card">
     <div class="card-datatable">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
         <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
                     <div class="dt-search mb-0 mb-md-6">
-                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Tìm kiếm danh mục" aria-controls="DataTables_Table_0">
-                        <label for="dt-search-0"></label>
+
                     </div>
                 </div>
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-6">
-                        <a href="{{ route('brands.create') }}" class="btn btn-primary">
-                            <i class="icon-base ti tabler-plus icon-16px me-2"></i> Thêm danh mục bài viết
-                        </a>
+                        <button class="btn add-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEcommerceBrandList"><span><i class="icon-base ti tabler-plus icon-16px me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Thêm Thương Hiệu</span></span></button>
                     </div>
                 </div>
             </div>
@@ -31,10 +40,8 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th class="dt-select dt-orderable-none">
-                                    <input class="form-check-input" type="checkbox" aria-label="Chọn tất cả">
-                                </th>
-                                <th>Tên danh mục</th>
+                                <th></th>
+                                <th>Tên Thương Hiệu</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
@@ -43,7 +50,7 @@
                             @forelse ($brands as $brand)
                             <tr>
                                 <td>
-                                    <input class="form-check-input" type="checkbox" aria-label="Chọn danh mục {{ $brand->name }}">
+                                
                                 </td>
                                 <td>
                                     <strong>{{ $brand->name }}</strong>
@@ -155,6 +162,39 @@
             </div>
             @endif
         </div>
+    </div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEcommerceBrandList" aria-labelledby="offcanvasEcommerceBrandListLabel" aria-modal="true" role="dialog">
+    <!-- Offcanvas Header -->
+    <div class="offcanvas-header py-6">
+        <h5 id="offcanvasEcommerceBrandListLabel" class="offcanvas-title">Thêm thương hiệu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <!-- Offcanvas Body -->
+    <div class="offcanvas-body border-top">
+        <form action="{{ route('brands.store') }}" method="POST" id="eCommerceBrandListForm" class="pt-0 fv-plugins-bootstrap5 fv-plugins-framework">
+            @csrf
+            <!-- Tên thương hiệu -->
+            <div class="mb-6 form-control-validation fv-plugins-icon-container">
+                <label class="form-label" for="Brand-title">Tên thương hiệu</label>
+                <input type="text" class="form-control" id="Brand-title" name="name" placeholder="Nhập tên thương hiệu" aria-label="Brand title" required>
+                @error('name')
+                <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+            <!-- Trạng thái -->
+            <div class="mb-6 form-control-validation fv-plugins-icon-container">
+                <label class="form-label" for="Brand-status">Trạng thái</label>
+                <select id="Brand-status" name="status" class="form-select">
+                    <option value="1">Hiển thị</option>
+                    <option value="0">Ẩn</option>
+                </select>
+            </div>
+            <!-- Submit -->
+            <div class="mb-6">
+                <button type="submit" class="btn btn-primary me-sm-3 me-1 waves-effect waves-light">Thêm thương hiệu</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

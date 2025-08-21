@@ -8,6 +8,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Favorite;
 use App\Models\Logo;
+use App\Models\Category;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,28 @@ class ViewServiceProvider extends ServiceProvider
                 'carts' => $carts,
                 'favorites' => $favorites,
                 'logos' => Logo::all(),
+            ]);
+        });
+
+        View::composer('*', function ($view) {
+            $carts = Cart::content();
+            $favorites = collect([]);
+            if (Auth::check()) {
+                $favorites = Favorite::with('product')
+                    ->where('user_id', Auth::id())
+                    ->get();
+            }
+
+            // Thêm menu danh mục
+            $headerCategories = Category::whereNull('parent_id')
+                ->with('children') // load đệ quy tất cả cấp con
+                ->get();
+
+            $view->with([
+                'carts' => $carts,
+                'favorites' => $favorites,
+                'logos' => Logo::all(),
+                'headerCategories' => $headerCategories, // truyền ra view
             ]);
         });
     }

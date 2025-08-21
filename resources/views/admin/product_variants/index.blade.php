@@ -3,11 +3,24 @@
 @section('content')
 <div class="card">
     <div class="card-datatable">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div id="DataTables_Variants_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
                     <div class="dt-search mb-0 mb-md-6">
-                        <input type="search" class="form-control ms-0" id="dt-search-variants" placeholder="Tìm kiếm biến thể" aria-controls="DataTables_Variants">
+
                         <label for="dt-search-variants"></label>
                     </div>
                 </div>
@@ -33,7 +46,7 @@
                         <thead>
                             <tr>
                                 <th class="dt-select dt-orderable-none">
-                                    <input class="form-check-input" type="checkbox" aria-label="Chọn tất cả biến thể">
+
                                 </th>
                                 <th>Ảnh</th>
                                 <th>Thuộc tính</th>
@@ -46,7 +59,7 @@
                             @forelse ($variants as $variant)
                             <tr>
                                 <td>
-                                    <input class="form-check-input" type="checkbox" aria-label="Chọn biến thể {{ $variant->id }}">
+
                                 </td>
                                 <td class="text-center">
                                     @if ($variant->image && file_exists(public_path($variant->image)))
@@ -59,14 +72,14 @@
                                     @if ($variant->attributeValues->isNotEmpty())
                                     @foreach ($variant->attributeValues as $value)
                                     <span class="badge bg-secondary me-1">
-                                        {{ $value->attributeValue->value ?? 'N/A' }}
+                                        {{ $value->value ?? 'N/A' }}
                                     </span>
                                     @endforeach
                                     @else
                                     <span class="text-muted">Không có thuộc tính</span>
                                     @endif
                                 </td>
-                                <td>{{ $variant->stock }}</td>
+                                <td class="text-center">{{ $variant->stock }}</td>
                                 <td>{{ number_format($variant->price) }} VNĐ</td>
                                 <td>
                                     <div class="btn-group" role="group">

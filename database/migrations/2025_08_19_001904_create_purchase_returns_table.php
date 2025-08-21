@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('supplier_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable(); // nhân viên tạo
             $table->integer('total_quantity')->default(0); // tổng số lượng trả
-            $table->decimal('total_amount', 20, 2)->default(0); // tổng giá trị hoàn trả
+            $table->decimal('total_amount', 10, 0)->default(0); // tổng giá trị hoàn trả
             $table->timestamps();
 
             $table->foreign('supplier_id')->references('id')->on('suppliers')->nullOnDelete();

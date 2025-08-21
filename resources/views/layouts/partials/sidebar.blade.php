@@ -71,7 +71,7 @@
         </li>
 
 
-        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'categories.index', 'categories.create', 'brands.index','attributes.index', 'sizes.index']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'products.edit', 'product_variants.index', 'product_variants.create', 'categories.index', 'categories.create', 'brands.index','attributes.index', 'sizes.index']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-box-open me-2"></i>
                 <div data-i18n="Quản Lý Sản Phẩm">Quản Lý Sản Phẩm </div>
@@ -105,7 +105,7 @@
             </ul>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics', 'products.index', 'products.create', 'categories.index', 'categories.create', 'post-categories.create', 'brands.index', 'brands.create', 'posts.index', 'posts.create', 'coupons.index', 'coupons.create', 'banners.create']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics','reviews.approve']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>

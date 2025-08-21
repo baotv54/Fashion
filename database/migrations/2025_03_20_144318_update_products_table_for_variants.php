@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::table('products', function (Blueprint $table) {
             // Cho phép giá và giá khuyến mãi có thể null nếu sản phẩm có biến thể
-            $table->decimal('price', 10, 2)->nullable()->change();
-            $table->decimal('discount_price', 10, 2)->nullable()->change();
+            $table->decimal('price', 10, 0)->nullable()->change();
+            $table->decimal('discount_price', 10, 0)->nullable()->change();
 
             // Thêm cột xác định sản phẩm có biến thể hay không
             $table->boolean('has_variants')->default(0)->after('status');
@@ -21,8 +21,8 @@ return new class extends Migration {
     {
         Schema::table('products', function (Blueprint $table) {
             // Quay lại trạng thái cũ
-            $table->decimal('price', 10, 2)->nullable(false)->change();
-            $table->decimal('discount_price', 10, 2)->nullable()->change();
+            $table->decimal('price', 10, 0)->nullable(false)->change();
+            $table->decimal('discount_price', 10, 0)->nullable()->change();
             $table->dropColumn('has_variants');
         });
     }

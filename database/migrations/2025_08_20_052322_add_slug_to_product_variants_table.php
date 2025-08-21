@@ -6,17 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    /**
+     * Run the migrations.
+     */
+    public function up()
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            $table->string('slug')->nullable()->change();
+            $table->string('slug')->nullable();
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            $table->string('slug')->nullable(false)->change();
+            $table->dropColumn('slug');
         });
     }
 };

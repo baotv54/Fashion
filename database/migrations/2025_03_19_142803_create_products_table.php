@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->unsignedBigInteger('category_id');
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2)->nullable();
+            $table->decimal('price', 10, 0);
+            $table->decimal('discount_price', 10, 0)->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(1); // 1: Hiển thị, 0: Ẩn

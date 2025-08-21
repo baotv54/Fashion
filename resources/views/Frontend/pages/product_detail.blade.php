@@ -3932,18 +3932,40 @@
 
 
         <div class="main-product">
-            <div class="main-product-breadcrumb" title="{{$product->name}}">
+            <div class="main-product-breadcrumb" title="{{ $product->name }}">
                 <div class="container">
                     <div class="section-title-all">
-                        <h1>{{$product->name}}</h1>
+                        <h1>{{ $product->name }}</h1>
                     </div>
                     <div class="breadcrumb-wrap">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/" aria-label="Trang chủ"
-                                    title="Trang chủ">Trang chủ</a></li>
-                            <li class="breadcrumb-item"><a href="/products" aria-label="Tất cả sản phẩm"
-                                    title="Tất cả sản phẩm">Tất cả sản phẩm</a></li>
-                            <li class="breadcrumb-item"><span>{{$product->name}}</span></li>
+                            {{-- Trang chủ --}}
+                            <li class="breadcrumb-item">
+                                <a href="{{ url('/') }}" aria-label="Trang chủ" title="Trang chủ">Trang chủ</a>
+                            </li>
+
+                            {{-- Breadcrumb danh mục cha (nếu có) --}}
+                            @if($product->category && $product->category->parent)
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('products.category', $product->category->parent->slug) }}">
+                                        {{ $product->category->parent->name }}
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Breadcrumb danh mục hiện tại --}}
+                            @if($product->category)
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('products.category', $product->category->slug) }}">
+                                        {{ $product->category->name }}
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Tên sản phẩm --}}
+                            <li class="breadcrumb-item active">
+                                <span>{{ $product->name }}</span>
+                            </li>
                         </ol>
                     </div>
                 </div>

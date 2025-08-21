@@ -15,8 +15,8 @@ return new class extends Migration
         $table->id();
         $table->string('code')->unique();                     // Mã coupon
         $table->enum('type', ['fixed', 'percent']);           // Loại giảm: số tiền hoặc %
-        $table->decimal('value', 10, 2);                      // Giá trị giảm
-        $table->decimal('min_cart_value', 10, 2)->default(0); // Đơn tối thiểu để áp dụng
+        $table->decimal('value', 10, 0);                      // Giá trị giảm
+        $table->decimal('min_cart_value', 10, 0)->default(0); // Đơn tối thiểu để áp dụng
         $table->date('start_date')->nullable();               // Ngày bắt đầu hiệu lực
         $table->date('end_date')->nullable();                 // Ngày kết thúc hiệu lực
         $table->integer('usage_limit')->nullable();           // Giới hạn số lượt sử dụng

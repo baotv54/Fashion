@@ -3,13 +3,25 @@
 @section('content')
 <div class="card mb-6">
     <div class="card-widget-separator-wrapper">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="card-body card-widget-separator">
             <div class="row gy-4 gy-sm-1">
                 <div class="col-sm-6 col-lg-3">
                     <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
                         <div>
-                            <h4 class="mb-0">56</h4>
-                            <p class="mb-0">Pending Payment</p>
+                            <h4 class="mb-0">{{ $ordered }}</h4>
+                            <p class="mb-0">Đã Đặt</p>
                         </div>
                         <span class="avatar me-sm-6">
                             <span class="avatar-initial bg-label-secondary rounded text-heading">
@@ -22,8 +34,8 @@
                 <div class="col-sm-6 col-lg-3">
                     <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
                         <div>
-                            <h4 class="mb-0">12,689</h4>
-                            <p class="mb-0">Completed</p>
+                            <h4 class="mb-0">{{$delivered}}</h4>
+                            <p class="mb-0">Hoàn Thành</p>
                         </div>
                         <span class="avatar p-2 me-lg-6">
                             <span class="avatar-initial bg-label-secondary rounded"><i class="icon-base ti tabler-checks icon-26px text-heading"></i></span>
@@ -34,8 +46,8 @@
                 <div class="col-sm-6 col-lg-3">
                     <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
                         <div>
-                            <h4 class="mb-0">124</h4>
-                            <p class="mb-0">Refunded</p>
+                            <h4 class="mb-0">{{$returned}}</h4>
+                            <p class="mb-0">Trả Hàng</p>
                         </div>
                         <span class="avatar p-2 me-sm-6">
                             <span class="avatar-initial bg-label-secondary rounded"><i class="icon-base ti tabler-wallet icon-26px text-heading"></i></span>
@@ -45,8 +57,8 @@
                 <div class="col-sm-6 col-lg-3">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h4 class="mb-0">32</h4>
-                            <p class="mb-0">Failed</p>
+                            <h4 class="mb-0">{{$cancelled}}</h4>
+                            <p class="mb-0">Đã Hủy</p>
                         </div>
                         <span class="avatar p-2">
                             <span class="avatar-initial bg-label-secondary rounded"><i class="icon-base ti tabler-alert-octagon icon-26px text-heading"></i></span>
@@ -65,30 +77,7 @@
             <div class="row mx-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto">
                     <div class="dt-search">
-                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Tìm kiếm đơn hàng">
-                        <label for="dt-search-0"></label>
-                    </div>
-                </div>
-                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0">
-                    <div class="dt-length">
-                        <select name="DataTables_Table_0_length" class="form-select" id="dt-length-0">
-                            <option value="7">7</option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        <label for="dt-length-0"></label>
-                    </div>
-                    <div class="dt-buttons btn-group flex-wrap">
-                        <div class="btn-group">
-                            <button class="btn buttons-collection btn-label-primary dropdown-toggle btn-label-secondary" type="button">
-                                <span class="d-flex align-items-center gap-1">
-                                    <i class="icon-base ti tabler-upload icon-xs"></i>
-                                    <span class="d-none d-sm-inline-block">Xuất dữ liệu</span>
-                                </span>
-                            </button>
-                        </div>
+         
                     </div>
                 </div>
             </div>
@@ -96,11 +85,32 @@
             {{-- Bảng dữ liệu --}}
             <div class="justify-content-between dt-layout-table">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
+                    {{-- Nav tabs --}}
+                    <ul class="nav nav-tabs mb-3">
+                        @php
+                        $statuses = [
+                        'all' => 'Tất cả',
+                        'ordered' => 'Đã đặt',
+                        'processing' => 'Đang xử lý',
+                        'confirmed' => 'Đã xác nhận',
+                        'shipping' => 'Đang giao',
+                        'delivered' => 'Đã giao',
+                        'cancelled' => 'Đã hủy',
+                        'returned' => 'Trả hàng',
+                        ];
+                        @endphp
+                        @foreach ($statuses as $key => $label)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}" href="{{ route('orders.index', ['status' => $key]) }}">
+                                {{ $label }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
                     <table class="datatables-order table border-top dataTable dtr-column collapsed" id="DataTables_Table_0" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th><input class="form-check-input" type="checkbox" aria-label="Chọn tất cả"></th>
                                 <th>Mã đơn</th>
                                 <th>Ngày</th>
                                 <th>Khách hàng</th>
@@ -243,8 +253,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><input aria-label="Chọn đơn hàng" class="form-check-input" type="checkbox"></td>
-                                <td><a href="{{ route('orders.details', $order->id) }}"><span>#{{ $order->order_code }}</span></a></td>
+                                <td><span>#{{ $order->order_code }}</span></td>
                                 <td><span class="text-nowrap">{{ $order->created_at->format('d/m/Y, H:i') }}</span></td>
                                 <td>
                                     <div class="d-flex justify-content-start align-items-center order-name text-nowrap">
@@ -353,7 +362,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

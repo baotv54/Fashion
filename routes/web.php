@@ -81,7 +81,12 @@ Route::get('/lien-he', function () {
 
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+// Trang tất cả sản phẩm
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+
+// Trang danh mục
+Route::get('/category/{slug}', [ProductController::class, 'allProducts'])->name('products.category');
+
 Route::get('/search', [ProductController::class, 'search'])->name('product.search');
 
 

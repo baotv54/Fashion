@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('subtotal', 15, 2)->default(0)->change();
-            $table->decimal('discount', 15, 2)->default(0)->change();
-            $table->decimal('shipping_fee', 15, 2)->default(0)->change();
-            $table->decimal('total', 15, 2)->default(0)->change();
+            $table->decimal('subtotal', 10, 0)->default(0)->change();
+            $table->decimal('discount', 10, 0)->default(0)->change();
+            $table->decimal('shipping_fee', 10, 0)->default(0)->change();
+            $table->decimal('total', 10, 0)->default(0)->change();
         });
     }
 

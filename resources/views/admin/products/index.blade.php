@@ -116,7 +116,7 @@
                                 <th></th>
                                 <th>Tên sản phẩm</th>
                                 <th>Danh mục</th>
-                                <th class="text-center">Giá</th>
+                                <th>Giá</th>
                                 <th class="text-center">Hành động</th>
                             </tr>
                         </thead>
@@ -163,11 +163,7 @@
                                                             <th>Thương hiệu</th>
                                                             <td>{{ $product->brand->name ?? 'N/A' }}</td>
                                                         </tr>
-                                                        <!-- <tr>
-                                                            <th>SKU</th>
-                                                            <td>{{ $product->sku }}</td>
-                                                        </tr> -->
-                                                        <tr>
+                                                        <tr >
                                                             <th>Giá</th>
                                                             <td>{{ number_format($product->price) }} VND</td>
                                                         </tr>
@@ -264,7 +260,7 @@
                                         <span class="d-none">Out_of_Stock</span>
                                     </span>
                                 </td> -->
-                                <td class="text-end">{{ number_format($product->price, 0) }} VND</td>
+                                <td>{{ number_format($product->price, 0) }} VND</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Sửa">

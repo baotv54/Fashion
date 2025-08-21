@@ -93,89 +93,89 @@ class ProductController extends Controller
 
 
     public function homepage()
-{
-    $products = Product::with('variants')
-        ->withCount('favorites') // thêm số lượt thích
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                  ->orWhereHas('variants', function ($q) {
-                      $q->where('quantity', '>', 0);
-                  });
+    {
+        $products = Product::with('variants')
+            ->withCount('favorites') // thêm số lượt thích
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(12)
+            ->get();
+
+        $carts = Cart::content();
+        $orders = Order::all();
+        $posts = Post::all();
+        $order_details = OrderDetail::with(['product', 'variant'])->get();
+        $coupons = Coupon::latest()->take(4)->get();
+        $banners = Banner::latest()->take(4)->get();
+        $favorites = collect();
+
+        // Gom nhóm số lượng bán theo product_id
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+
+            return [
+                'product_id' => $mainProductId,
+                'quantity'   => $detail->quantity,
+            ];
         })
-        ->orderBy('created_at', 'desc')
-        ->take(12)
-        ->get();
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return $items->sum('quantity');
+            });
 
-    $carts = Cart::content();
-    $orders = Order::all();
-    $posts = Post::all();
-    $order_details = OrderDetail::with(['product', 'variant'])->get();
-    $coupons = Coupon::latest()->take(4)->get();
-    $banners = Banner::latest()->take(4)->get();
-    $favorites = collect();
-
-    // Gom nhóm số lượng bán theo product_id
-    $productSales = $order_details->map(function ($detail) {
-        $mainProductId = $detail->product_variant_id
-            ? $detail->variant->product_id
-            : $detail->product_id;
-
-        return [
-            'product_id' => $mainProductId,
-            'quantity'   => $detail->quantity,
-        ];
-    })
-    ->groupBy('product_id')
-    ->map(function ($items) {
-        return $items->sum('quantity');
-    });
-
-    // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
-    $products = $products->map(function ($product) use ($productSales) {
-        $product->sold_count = $productSales[$product->id] ?? 0;
-        // $product->favorites_count đã có nhờ withCount('favorites')
-        return $product;
-    });
-
-    // Top sản phẩm được thích nhiều nhất
-    $topFavorites = Product::withCount('favorites')
-        ->having('favorites_count', '>', 0)
-        ->orderByDesc('favorites_count')
-        ->take(4)
-        ->get()
-        ->map(function ($product) use ($productSales) {
+        // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
+        $products = $products->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
+            // $product->favorites_count đã có nhờ withCount('favorites')
             return $product;
         });
 
-    // Top 4 sản phẩm bán chạy
-    $topSelling = Product::withCount('favorites')
-        ->whereIn('id', $productSales->keys())
-        ->get()
-        ->map(function ($product) use ($productSales) {
-            $product->sold_count = $productSales[$product->id] ?? 0;
-            return $product;
-        })
-        ->sortByDesc('sold_count')
-        ->take(4);
+        // Top sản phẩm được thích nhiều nhất
+        $topFavorites = Product::withCount('favorites')
+            ->having('favorites_count', '>', 0)
+            ->orderByDesc('favorites_count')
+            ->take(4)
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            });
 
-    if (Auth::check()) {
-        $favorites = Favorite::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+        // Top 4 sản phẩm bán chạy
+        $topSelling = Product::withCount('favorites')
+            ->whereIn('id', $productSales->keys())
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            })
+            ->sortByDesc('sold_count')
+            ->take(4);
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
+        return view('Frontend.index', compact(
+            'products',
+            'carts',
+            'coupons',
+            'favorites',
+            'banners',
+            'topFavorites',
+            'topSelling',
+            'posts'
+        ));
     }
-
-    return view('Frontend.index', compact(
-        'products',
-        'carts',
-        'coupons',
-        'favorites',
-        'banners',
-        'topFavorites',
-        'topSelling',
-        'posts'
-    ));
-}
 
 
 
@@ -186,26 +186,47 @@ class ProductController extends Controller
         return view('Frontend.pages.gioi-thieu', compact('products'));
     }
 
-    public function allProducts(Request $request)
+    public function allProducts(Request $request, $categorySlug = null)
     {
         $query = Product::with(['images', 'variants.attributeValues']);
 
+        $currentCategory = null; // biến mặc định
+
+        // Lọc theo danh mục nếu truyền slug
+        if ($categorySlug) {
+            $category = Category::with('parent')->where('slug', $categorySlug)->first();
+            if ($category) {
+                $currentCategory = $category; // gán vào để dùng ở breadcrumb
+
+                // Lấy tất cả id danh mục con
+                $categoryIds = $category->children()->pluck('id')->toArray();
+                $categoryIds[] = $category->id;
+
+                $query->whereIn('category_id', $categoryIds);
+            }
+        }
+
+        // Lọc theo brand
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
         }
 
+        // Lọc theo category (checkbox filter)
         if ($request->filled('category')) {
             $query->whereIn('category_id', $request->category);
         }
 
+        // Lọc theo size
         if ($request->filled('size')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->size));
         }
 
+        // Lọc theo color
         if ($request->filled('color')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->color));
         }
 
+        // Lọc theo price
         if ($request->filled('price')) {
             $query->where(function ($q) use ($request) {
                 foreach ($request->price as $price) {
@@ -220,6 +241,7 @@ class ProductController extends Controller
             });
         }
 
+        // Sắp xếp
         if ($request->filled('sort')) {
             [$field, $direction] = explode(':', $request->sort);
             $query->orderBy($field, $direction);
@@ -233,8 +255,17 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
+        return view('Frontend.pages.Products', compact(
+            'products',
+            'brands',
+            'categories',
+            'colors',
+            'sizes',
+            'currentCategory'
+        ));
     }
+
+
 
     public function show($id)
     {
