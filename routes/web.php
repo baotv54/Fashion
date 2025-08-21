@@ -223,7 +223,7 @@ Route::prefix('comparison')->group(function () {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','is_admin'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 
