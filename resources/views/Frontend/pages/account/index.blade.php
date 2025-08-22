@@ -3822,6 +3822,21 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    <style>
+        /* Remove list markers for account sidebar menu items */
+        .acc .acc-sidebar ul,
+        .acc .acc-sidebar ul li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+        }
+        /* Hide marker pseudo-element where supported */
+        .acc .acc-sidebar li::marker {
+            content: '' !important;
+        }
+        /* Fallback for older browsers */
+        .acc .acc-sidebar li { list-style-type: none !important; }
+    </style>
 </head>
 
 <body class="">
@@ -3833,19 +3848,16 @@
             <div class="acc-wrap">
                 <!-- Sidebar -->
                 <div class="acc-sidebar">
-                     <span>
+    <span>
+        @if ($user->avatar)
+            <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="{{ $user->name }}">
+        @else
+            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5" alt="{{ $user->name }}">
+        @endif
+    </span>
+    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
 
-                             @if ($user->avatar)
-                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar"
-                           alt="{{ $user->name }}">
-                    @else
-                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                            alt="{{ $user->name }}">
-                    @endif
-                    </span>
-                    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
-                     <!-- Nút toggle chỉ hiện trên mobile -->
-                        <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
+    <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
                             <ul class="account-menu">
@@ -3917,7 +3929,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #eacb34;
                             color: #fff;
                         }
 
@@ -3976,6 +3988,8 @@
                         }
                     </style>
 
+                    
+                
                 <!-- Main content -->
                 <div class="acc-data acc-data-profile">
                     <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
@@ -4009,9 +4023,10 @@
 
 
 
-
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
+
+   
     <script>
         $("body").removeClass("preload");
         document.addEventListener('lazybeforeunveil', function(e) {

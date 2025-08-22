@@ -3836,6 +3836,7 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    
 </head>
 
 <body class="">
@@ -3926,7 +3927,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #e7eb19;
                             color: #fff;
                         }
 
