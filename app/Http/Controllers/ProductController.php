@@ -57,17 +57,17 @@ class ProductController extends Controller
             ->orWhereHas('variant', fn($q) => $q->whereIn('product_id', $productIds))
             ->get();
 
-        $productSales = $order_details->map(function ($detail) {
-            $mainProductId = $detail->product_variant_id
-                ? $detail->variant->product_id
-                : $detail->product_id;
-            return [
-                'product_id' => $mainProductId,
-                'quantity' => $detail->quantity,
-            ];
-        })
-            ->groupBy('product_id')
-            ->map(fn($items) => $items->sum('quantity'));
+        // Gom nhóm số lượng bán theo product_id
+        $productSales = $order_details
+            ->mapToGroups(function ($detail) {
+                $mainProductId = $detail->product_variant_id
+                    ? $detail->variant->product_id
+                    : $detail->product_id;
+                return [$mainProductId => $detail->quantity];
+            })
+            ->map(function ($quantities) {
+                return $quantities->sum();
+            });
 
         // Gắn sold_count cho từng product
         $products->getCollection()->transform(function ($product) use ($productSales) {
@@ -205,6 +205,15 @@ class ProductController extends Controller
 
         if ($request->filled('color')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->color));
+        }
+
+        // New: text search by name or slug
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%");
+            });
         }
 
         if ($request->filled('price')) {
@@ -711,13 +720,22 @@ class ProductController extends Controller
     // }
     public function search(Request $request)
     {
-        $query = $request->get('q');
+        $query = $request->get('query', $request->get('q', ''));
         $products = Product::where('name', 'like', "%{$query}%")
             ->orWhere('slug', 'like', "%{$query}%")
+            ->select('id', 'name', 'image')
             ->limit(20)
             ->get();
 
-        return response()->json($products);
+        $results = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'image_url' => $p->image ? asset($p->image) : asset('images/default.jpg'),
+            ];
+        });
+
+        return response()->json($results);
     }
 
     public function info(Request $request)

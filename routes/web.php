@@ -270,7 +270,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/close', [ProductLiveChatAdminController::class, 'close'])->name('admin.plc.close');
         });
         // Routes quản lý sản phẩm biến thể
-        Route::get('/product/search', [ProductController::class, 'search2'])->name('product.search');
+        Route::get('/product/search', [ProductController::class, 'search2'])->name('admin.product.search');
 
 
 
