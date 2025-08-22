@@ -3945,12 +3945,22 @@
                                 </b>
                             </b>
                         </div>
-
+                        @php
+                            $statusMap = [
+                                'ordered' => 'Đã đặt hàng',
+                                'processing' => 'Đang xử lý',
+                                'confirmed' => 'Đã xác nhận',
+                                'shipping' => 'Đang giao hàng',
+                                'delivered' => 'Đã giao',
+                                'cancelled' => 'Đã hủy',
+                                'returned' => 'Đã trả hàng',
+                            ];
+                        @endphp
                         <!-- Trạng thái vận chuyển -->
                         <div class="shipping_status">
                             <span class="note">Trạng thái vận chuyển:</span>
                             <b style="color:#212B25" class="span_">
-                                {{ ucfirst($order->status) }}
+                                {{ $statusMap[$order->status] ?? ucfirst($order->status) }}
                             </b>
                         </div>
 
