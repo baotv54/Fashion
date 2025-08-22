@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Events\ProductLiveChatMessageCreated;
 use App\Models\ProductLiveChatMessage;
 use App\Models\ProductLiveChatThread;
 use App\Models\ProductLiveChatAttachment;
@@ -66,6 +67,40 @@ class ProductLiveChatAdminController extends Controller
                 'type' => $type,
                 'mime' => $mime,
                 'size' => $file->getSize(),
+            ]);
+        }
+
+        // Build attachments payload (with public URLs) for broadcasting / JSON
+        $attachments = $msg->attachments()->get()->map(function ($a) {
+            $path = str_starts_with($a->path, 'public/') ? substr($a->path, 7) : $a->path;
+            return [
+                'id' => $a->id,
+                'type' => $a->type,
+                'mime' => $a->mime,
+                'size' => $a->size,
+                'url' => asset('storage/' . ltrim($path, '/')),
+            ];
+        })->toArray();
+
+        // Broadcast realtime event to both admin and user UIs
+        event(new ProductLiveChatMessageCreated(
+            threadId: $thread->id,
+            sender: 'staff',
+            message: $msg->message,
+            attachments: $attachments
+        ));
+
+        // If AJAX/JSON expected, return JSON to avoid page reload
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message' => 'Đã gửi trả lời',
+                'data' => [
+                    'id' => $msg->id,
+                    'sender' => 'staff',
+                    'message' => $msg->message,
+                    'created_at' => $msg->created_at,
+                    'attachments' => $attachments,
+                ],
             ]);
         }
 

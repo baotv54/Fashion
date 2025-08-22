@@ -71,33 +71,33 @@
         </li>
 
 
-        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'products.edit', 'product_variants.index', 'product_variants.create', 'categories.index', 'categories.create', 'brands.index','attributes.index', 'sizes.index']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'products.edit', 'product_variants.index', 'product_variants.create', 'categories.index', 'categories.edit', 'brands.index', 'brands.edit', 'attributes.index', 'attributes.edit', 'attribute_values.index', 'attribute_values.edit','sizes.index', 'sizes.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-box-open me-2"></i>
                 <div data-i18n="Quản Lý Sản Phẩm">Quản Lý Sản Phẩm </div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('products.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['products.index','products.edit','product_variants.index', 'product_variants.create']) ? 'active' : '' }}">
                     <a href="{{ route('products.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Danh Sách Sản Phẩm">Danh Sách Sản Phẩm</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('categories.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['categories.index', 'categories.edit']) ? 'active' : '' }}">
                     <a href="{{ route('categories.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Danh Mục">Danh Mục</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('brands.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['brands.index', 'brands.edit']) ? 'active' : '' }}">
                     <a href="{{ route('brands.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Thương Hiệu"> Thương Hiệu </div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('attributes.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['attributes.index', 'attributes.edit', 'attribute_values.index', 'attribute_values.edit']) ? 'active' : '' }}">
                     <a href="{{ route('attributes.index', ['review' => 1]) }}" class="menu-link">
-                        <div data-i18n="Biến Thể">Biến Thể </div>
+                        <div data-i18n="Thuộc Tính">Thuộc Tính </div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('sizes.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['sizes.index', 'sizes.edit']) ? 'active' : '' }}">
                     <a href="{{ route('sizes.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Bảng Chọn Size">Bảng Chọn Size </div>
                     </a>
@@ -105,7 +105,7 @@
             </ul>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics','reviews.approve']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
@@ -116,8 +116,8 @@
                         <div data-i18n="Thống kê">Thống kê</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('reviews.approve') ? 'active' : '' }}">
-                    <a href="{{ route('reviews.approve', ['review' => 1]) }}" class="menu-link">
+                <li class="menu-item {{ Request::routeIs('admin.reviews.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.reviews.index') }}" class="menu-link">
                         <div data-i18n="Quản lý đánh giá">Quản lý đánh giá</div>
                     </a>
                 </li>
@@ -139,10 +139,44 @@
                         </li>
                     </ul>
                 </li>
+               <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Banner">Banner</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs(['banners.index', 'logo.create']) ? 'active' : '' }}">
+                            <a href="{{ route('banners.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách Banner">Danh sách Banner</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('banners.create') ? 'active' : '' }}">
+                            <a href="{{ route('banners.create') }}" class="menu-link">
+                                <div data-i18n="Thêm Banner">Thêm Banner</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                 <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create','popups.edit']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Popup">Popup</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs(['popups.index','popups.edit']) ? 'active' : '' }}">
+                            <a href="{{ route('popups.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách Popup">Danh sách Popup</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('popups.create') ? 'active' : '' }}">
+                            <a href="{{ route('popups.create') }}" class="menu-link">
+                                <div data-i18n="Thêm Popup">Thêm Popup</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </li>
 
-        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed','returns.list']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-warehouse me-2"></i>
                 <div data-i18n="Quản Lý Kho">Quản Lý Kho</div>
@@ -161,6 +195,11 @@
                 <li class="menu-item {{ Request::routeIs('warehouse.list') ? 'active' : '' }}">
                     <a href="{{ route('warehouse.list', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhập Hàng">Nhập Hàng</div>
+                    </a>
+                </li>
+                 <li class="menu-item {{ Request::routeIs('returns.list') ? 'active' : '' }}">
+                    <a href="{{ route('returns.list', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Trả Hàng">Trả Hàng</div>
                     </a>
                 </li>
                 <li class="menu-item {{ Request::routeIs('suppliers.index') ? 'active' : '' }}">
@@ -188,16 +227,11 @@
                         <div data-i18n="Danh sách">Danh sách</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('users.create') ? 'active' : '' }}">
-                    <a href="{{ route('users.create', ['review' => 1]) }}" class="menu-link">
-                        <div data-i18n="Thêm người dùng">Thêm người dùng</div>
-                    </a>
-                </li>
             </ul>
         </li>
 
         <!-- e-commerce-app menu end -->
-        <li class="menu-item {{ Request::routeIs(['products.trashed']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.trashed','suppliers.trash']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-trash me-2"></i>
                 <div data-i18n="Thùng Rác">Thùng Rác</div>
@@ -206,6 +240,11 @@
                 <li class="menu-item {{ Request::routeIs('products.trashed') ? 'active' : '' }}">
                     <a href="{{ route('products.trashed', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Sản Phẩm">Sản Phẩm</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('suppliers.trash') ? 'active' : '' }}">
+                    <a href="{{ route('suppliers.trash', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Nhà cung cấp">Nhà cung cấp </div>
                     </a>
                 </li>
             </ul>

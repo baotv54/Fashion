@@ -6,16 +6,6 @@
                 <h5 class="mb-1">Báo cáo thu nhập</h5>
                 <p class="card-subtitle">Tổng quan thu nhập tháng {{ \Carbon\Carbon::now()->format('m/Y') }}</p>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-text-secondary rounded-pill text-body-secondary border-0 p-2 me-n1" type="button" id="earningReports" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="icon-base ti tabler-dots-vertical icon-md text-body-secondary"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="earningReports">
-                    <a class="dropdown-item" href="javascript:void(0);">Tải xuống</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Làm mới</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Chia sẻ</a>
-                </div>
-            </div>
         </div>
         <div class="card-body pb-0">
             <ul class="p-0 m-0">

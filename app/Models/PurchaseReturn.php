@@ -19,6 +19,13 @@ class PurchaseReturn extends Model
         'user_id',
         'total_quantity',
         'total_amount',
+        'reason',
+        'payment_method',
+        'payment_date',
+        'payment_reference',
+        'discount',
+        'cost_name',
+        'additional_cost',
     ];
 
     // Quan hệ 1 - nhiều: Một phiếu trả hàng có nhiều chi tiết

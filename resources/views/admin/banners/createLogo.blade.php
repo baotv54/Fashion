@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="my-4 text-center text-primary fw-bold">
-        {{ isset($banners) ? '✏️ Chỉnh sửa images' : '➕ Thêm mới Logo' }}
+        {{ isset($banners) ? ' Chỉnh sửa images' : ' Thêm mới Logo' }}
     </h1>
 
     <form action="{{ isset($banners) ? route('logo.update', $banners->id) : route('logo.store') }}" method="POST"

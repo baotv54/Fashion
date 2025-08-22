@@ -563,6 +563,78 @@
 
 	@include('Frontend.partials.modal')
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script>
+		// Polling tồn kho giỏ hàng: gọi /cart/validate mỗi 10s
+		(function () {
+			const CHECKOUT_SELECTOR = '.main-cart-data-full-total-action a[title="Thanh toán"]';
+			const ITEM_SELECTOR = '.main-cart-data-full-item';
+			const STATUS_CLASS = 'stock-status';
+
+			function setCheckoutDisabled(disabled, message) {
+				const $btn = $(CHECKOUT_SELECTOR);
+				if (!$btn.length) return;
+				if (disabled) {
+					$btn.addClass('disabled').attr('aria-disabled', 'true').on('click.block', function (e) { e.preventDefault(); });
+					if (message) {
+						let $warn = $('#cart-stock-warning');
+						if (!$warn.length) {
+							$warn = $('<div id="cart-stock-warning" class="alert alert-danger" style="margin-top:10px;"></div>');
+							$('.main-cart-data-full-total').prepend($warn);
+						}
+						$warn.text(message).show();
+					}
+				} else {
+					$btn.removeClass('disabled').removeAttr('aria-disabled').off('click.block');
+					$('#cart-stock-warning').hide();
+				}
+			}
+
+			function upsertStatus($row, text, ok) {
+				let $status = $row.find('.' + STATUS_CLASS);
+				if (!$status.length) {
+					$status = $('<div class="' + STATUS_CLASS + '" style="color:#d9534f;font-size:13px;margin-top:6px;"></div>');
+					$row.find('.main-cart-data-full-item-info').append($status);
+				}
+				if (ok) {
+					$status.text('').hide();
+				} else {
+					$status.text(text || 'Hết hàng').show();
+				}
+			}
+
+			function applyValidation(data) {
+				let hasIssue = false;
+				if (!data || !Array.isArray(data.items)) return;
+				data.items.forEach(function (item) {
+					const $row = $(ITEM_SELECTOR + `[data-id="${item.rowId}"]`);
+					if (!$row.length) return;
+					upsertStatus($row, item.message, item.ok);
+					// disable nút tăng số lượng khi không đủ hàng
+					const $plus = $row.find('button[data-type="shop-quantity-plus"]');
+					$plus.prop('disabled', !item.ok);
+					if (!item.ok) hasIssue = true;
+				});
+				setCheckoutDisabled(hasIssue, hasIssue ? 'Một số sản phẩm trong giỏ đã hết hoặc không đủ hàng. Vui lòng cập nhật giỏ hàng.' : '');
+			}
+
+			async function pollValidate() {
+				try {
+					const res = await fetch('/cart/validate', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+					if (!res.ok) return;
+					const json = await res.json();
+					applyValidation(json);
+				} catch (e) {
+					// im lặng, không làm gián đoạn UX
+				}
+			}
+
+			$(document).ready(function () {
+				pollValidate();
+				setInterval(pollValidate, 10000);
+			});
+		})();
+	</script>
 	<script>
 		$(document).ready(function() {
 			// Lưu trữ dữ liệu mặc định của sản phẩm

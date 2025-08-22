@@ -3834,9 +3834,9 @@
                 <!-- Sidebar -->
                 <div class="acc-sidebar">
                      <span>
-                       
+
                              @if ($user->avatar)
-                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar" 
+                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar"
                            alt="{{ $user->name }}">
                     @else
                         <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
@@ -3977,10 +3977,11 @@
                     </style>
 
                 <!-- Main content -->
-                    <div class="acc-data acc-data-profile">
-                        <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
+                <div class="acc-data acc-data-profile">
+                    <h1 class="title-head margin-top-0">Thông tin tài khoản</h1>
 
-                        <div class="profile-info">
+                    <!-- Chi tiết cá nhân -->
+                    <div class="profile-info">
                         <p><strong>Họ tên:</strong> {{ $user->name }}</p>
                         <p><strong>Email:</strong> {{ $user->email }}</p>
                         @if($user->phone)

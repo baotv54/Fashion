@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h1 class="my-4 text-center text-primary fw-bold">
-            {{ isset($banners) ? '✏️ Chỉnh sửa Banner' : '➕ Thêm mới Banner' }}
+            {{ isset($banners) ? ' Chỉnh sửa Banner' : ' Thêm mới Banner' }}
         </h1>
 
         <form action="{{ isset($banners) ? route('banners.update', $banners->id) : route('banners.store') }}" method="POST"
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
 
             {{-- Nút hành động --}}
@@ -104,7 +104,7 @@
     @push('styles')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <style>
-           
+
         </style>
     @endpush
 
@@ -155,6 +155,6 @@
                 });
             }
         </script>
-         
+
     @endpush
 @endsection

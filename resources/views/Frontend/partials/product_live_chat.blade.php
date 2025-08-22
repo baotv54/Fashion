@@ -51,6 +51,52 @@
     const key = (pid)=>`plc_thread_${pid}`;
     let threadId = localStorage.getItem(key(productId));
 
+    let lastId = 0;
+    let pollTimer = null;
+    const renderedIds = new Set();
+
+    async function pollOnce(){
+        if (!threadId) return;
+        try{
+            const url = new URL("{{ route('plc.poll') }}", window.location.origin);
+            url.searchParams.set('thread_id', threadId);
+            url.searchParams.set('since_id', String(lastId||0));
+            const res = await fetch(url);
+            const data = await res.json();
+            if(res.status === 403){
+                localStorage.removeItem(key(productId));
+                threadId = null; lastId = 0; list.innerHTML='';
+                await startThread();
+                return;
+            }
+            if(!res.ok) throw new Error(data.message||'Poll failed');
+            if (Array.isArray(data.messages) && data.messages.length){
+                data.messages.forEach(m => {
+                    if (m && typeof m.id !== 'undefined') {
+                        if (renderedIds.has(m.id)) return; // skip duplicates
+                        renderedIds.add(m.id);
+                    }
+                    if (m.message) addMsg(m.message, m.sender, m.id);
+                    if (m.attachments && m.attachments.length) {
+                        m.attachments.forEach(a => addAttachment(a, m.sender, m.id));
+                    }
+                });
+                list.scrollTop = list.scrollHeight;
+            }
+            if (typeof data.last_id !== 'undefined') lastId = data.last_id;
+        }catch(err){ console.warn('[PLC] poll error', err); }
+    }
+
+    function startPolling(){
+        if (pollTimer) return;
+        // poll ngay để cập nhật tức thì
+        pollOnce();
+        pollTimer = setInterval(pollOnce, 3000);
+    }
+    function stopPolling(){
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
     async function startThread(){
         try{
             const res = await fetch("{{ route('plc.start') }}", {
@@ -72,42 +118,81 @@
             url.searchParams.set('thread_id', threadId);
             const res = await fetch(url);
             const data = await res.json();
+            if(res.status === 403){
+                // session token changed => reset thread and start new
+                localStorage.removeItem(key(productId));
+                threadId = null; lastId = 0; list.innerHTML='';
+                await startThread();
+                return;
+            }
             if(!res.ok) throw new Error(data.message||'History failed');
             list.innerHTML = '';
+            renderedIds.clear();
             data.messages.forEach(m => {
-                if (m.message) addMsg(m.message, m.sender);
+                if (m && typeof m.id !== 'undefined') renderedIds.add(m.id);
+                if (m.message) addMsg(m.message, m.sender, m.id);
                 if (m.attachments && m.attachments.length) {
-                    m.attachments.forEach(a => addAttachment(a, m.sender));
+                    m.attachments.forEach(a => addAttachment(a, m.sender, m.id));
                 }
             });
             list.scrollTop = list.scrollHeight;
+            if (data.messages && data.messages.length){
+                lastId = data.messages[data.messages.length - 1].id;
+            }
         }catch(e){ console.error('[PLC] history error', e); }
     }
 
     async function send(){
         const text = (input.value||'').trim();
         if(!text || !threadId) return;
-        addMsg(text, 'user');
+        const toSend = text;
         input.value='';
         try{
             const res = await fetch("{{ route('plc.send') }}", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
-                body: JSON.stringify({ thread_id: threadId, message: text })
+                body: JSON.stringify({ thread_id: threadId, message: toSend })
             });
-            if(!res.ok){ const data = await res.json(); throw new Error(data.message||'Send failed'); }
+            const data = await res.json().catch(()=>({}));
+            if(res.status === 403){
+                // reset and retry once
+                localStorage.removeItem(key(productId));
+                threadId = null; lastId = 0;
+                await startThread();
+                if (toSend){
+                    const res2 = await fetch("{{ route('plc.send') }}", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+                        body: JSON.stringify({ thread_id: threadId, message: toSend })
+                    });
+                    const data2 = await res2.json().catch(()=>({}));
+                    if (!res2.ok) throw new Error((data2&&data2.message)||'Send failed');
+                    if (data2 && data2.data && typeof data2.data.id !== 'undefined') {
+                        lastId = Math.max(lastId||0, Number(data2.data.id)||0);
+                    }
+                }
+                return;
+            }
+            if(!res.ok){ throw new Error((data&&data.message)||'Send failed'); }
+            // Append once and advance lastId so poll không lặp
+            const newId = (data && data.data && typeof data.data.id !== 'undefined') ? Number(data.data.id) : null;
+            if (newId !== null) { renderedIds.add(newId); }
+            addMsg(toSend, 'user', newId);
+            if (newId !== null) {
+                lastId = Math.max(lastId||0, newId);
+            }
         }catch(e){ console.error('[PLC] send error', e); }
         list.scrollTop = list.scrollHeight;
     }
 
-    function addMsg(text, sender){
+    function addMsg(text, sender, id){
         const el = document.createElement('div');
         el.className = `plc-msg ${sender}`;
         el.textContent = text;
         list.appendChild(el);
     }
 
-    function addAttachment(att, sender){
+    function addAttachment(att, sender, msgId){
         const wrap = document.createElement('div');
         wrap.className = `plc-msg ${sender}`;
         if (att.type === 'image') {
@@ -130,7 +215,12 @@
 
     toggler.addEventListener('click', async ()=>{
         popup.hidden = !popup.hidden;
-        if(!popup.hidden){ if(!threadId) await startThread(); else await loadHistory(); }
+        if(!popup.hidden){
+            if(!threadId) await startThread(); else { await loadHistory(); }
+            startPolling();
+        } else {
+            stopPolling();
+        }
     });
     closeBtn.addEventListener('click', ()=>{ popup.hidden = true; });
     sendBtn.addEventListener('click', send);
@@ -151,8 +241,17 @@
                 body: fd
             });
             const data = await res.json();
+            if(res.status === 403){
+                localStorage.removeItem(key(productId));
+                threadId = null; lastId = 0;
+                await startThread();
+                return;
+            }
             if(!res.ok) throw new Error(data.message||'Attach failed');
             addAttachment(data.data.attachment, 'user');
+            if (data && data.data && typeof data.data.message_id !== 'undefined') {
+                lastId = Math.max(lastId||0, Number(data.data.message_id)||0);
+            }
             list.scrollTop = list.scrollHeight;
         }catch(err){ console.error('[PLC] attach error', err); }
         e.target.value = '';

@@ -266,34 +266,63 @@ class CartController extends Controller
             if (!empty($request->input('variant_id'))) {
                 $variant = ProductVariant::with(['product', 'attributeValues.attribute'])->findOrFail($request->input('variant_id'));
                 if ($variant->stock < $quantity) {
-                    return back()->with('error', 'Sản phẩm không đủ hàng trong kho. Còn lại: ' . $variant->stock);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm không đủ hàng trong kho. Còn lại: ' . $variant->stock,
+                    ], 400);
                 }
                 $this->addVariantToCart($variant, $quantity);
             } elseif ($product->variants->count() > 0) {
                 if (empty($request->input('attributes'))) {
-                    return back()->with('error', 'Vui lòng chọn đầy đủ thuộc tính sản phẩm');
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Vui lòng chọn đầy đủ thuộc tính sản phẩm',
+                    ], 400);
                 }
                 $variant = $this->findVariantByAttributes($product, $request->input('attributes'));
                 if (!$variant) {
-                    return back()->with('error', 'Không tìm thấy biến thể phù hợp với lựa chọn của bạn');
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không tìm thấy biến thể phù hợp với lựa chọn của bạn',
+                    ], 400);
                 }
                 if ($variant->stock < $quantity) {
-                    return back()->with('error', 'Sản phẩm không đủ hàng trong kho. Còn lại: ' . $variant->stock);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm không đủ hàng trong kho.',
+                        'stock' => $variant->stock,
+                    ], 400);
                 }
                 $this->addVariantToCart($variant, $quantity);
             } else {
                 if (($product->quantity ?? 0) < $quantity) {
-                    return back()->with('error', 'Sản phẩm không đủ hàng trong kho. Còn lại: ' . ($product->quantity ?? 0));
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm không đủ hàng trong kho. Còn lại: ' . ($product->quantity ?? 0),
+                    ], 400);
                 }
                 $this->addProductToCart($product, $quantity);
+            }
+
+            // If the request expects JSON (AJAX), return JSON. Otherwise, redirect to the cart page.
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đã thêm sản phẩm vào giỏ hàng',
+                    'redirect' => route('cart.index'),
+                ]);
             }
 
             return redirect()->route('cart.index')->with('success', 'Đã thêm sản phẩm vào giỏ hàng');
         } catch (\Exception $e) {
             Log::error('Error adding product to cart: ' . $e->getMessage());
-            return back()->with('error', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng',
+            ], 500);
         }
     }
+
 
     /**
      * Tìm biến thể dựa trên thuộc tính
@@ -302,8 +331,10 @@ class CartController extends Controller
     {
         foreach ($product->variants as $variant) {
             $variantAttributes = $variant->attributeValues->pluck('id')->toArray();
-            if (count(array_intersect($selectedAttributes, $variantAttributes)) === count($selectedAttributes) &&
-                count($selectedAttributes) === count($variantAttributes)) {
+            if (
+                count(array_intersect($selectedAttributes, $variantAttributes)) === count($selectedAttributes) &&
+                count($selectedAttributes) === count($variantAttributes)
+            ) {
                 return $variant;
             }
         }
@@ -498,6 +529,70 @@ class CartController extends Controller
         } catch (\Exception $e) {
             Log::error('Error loading checkout: ' . $e->getMessage());
             return back()->with('error', 'Có lỗi xảy ra khi tải trang thanh toán');
+        }
+    }
+
+    /**
+     * API: Validate tồn kho toàn bộ giỏ hàng (real-time polling)
+     * GET /cart/validate
+     */
+    public function validateCart()
+    {
+        try {
+            $items = [];
+            $hasIssue = false;
+
+            foreach (Cart::content() as $cartItem) {
+                $type = $cartItem->options['type'] ?? 'product';
+                $requested = (int)($cartItem->qty ?? 0);
+                $available = 0;
+                $ok = true;
+                $message = '';
+
+                if ($type === 'variant' && isset($cartItem->options['variant_id'])) {
+                    $variant = ProductVariant::find($cartItem->options['variant_id']);
+                    $available = (int)($variant->stock ?? 0);
+                    if (!$variant || $available <= 0) {
+                        $ok = false;
+                        $message = 'Hết hàng';
+                    } elseif ($requested > $available) {
+                        $ok = false;
+                        $message = 'Không đủ hàng. Còn lại: ' . $available;
+                    }
+                } else {
+                    $product = Product::find($cartItem->options['product_id'] ?? null);
+                    $available = (int)($product->quantity ?? 0);
+                    if (!$product || $available <= 0) {
+                        $ok = false;
+                        $message = 'Hết hàng';
+                    } elseif ($requested > $available) {
+                        $ok = false;
+                        $message = 'Không đủ hàng. Còn lại: ' . $available;
+                    }
+                }
+
+                if (!$ok) {
+                    $hasIssue = true;
+                }
+
+                $items[] = [
+                    'rowId' => $cartItem->rowId,
+                    'name' => $cartItem->name,
+                    'type' => $type,
+                    'requested' => $requested,
+                    'available' => $available,
+                    'ok' => $ok,
+                    'message' => $message,
+                ];
+            }
+
+            return response()->json([
+                'ok' => !$hasIssue,
+                'items' => $items,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error validating cart stock: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'error' => 'Không thể kiểm tra tồn kho'], 500);
         }
     }
 }

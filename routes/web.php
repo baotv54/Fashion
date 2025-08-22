@@ -171,6 +171,8 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
 Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
+Route::get('/products/{productId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+
 
 // Thêm vào routes/web.php hoặc routes/api.php
 Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
@@ -203,10 +205,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 
     // Routes cho đánh giá sản phẩm
-    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/products/{productId}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     //Yêu thích
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
@@ -255,7 +257,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
         });
 
-         //routes quản lý popup
+        //routes quản lý popup
         Route::prefix('popup')->group(function () {
             Route::get('/index', [PopupController::class, 'index'])->name('popups.index');
             Route::get('/create', [PopupController::class, 'create'])->name('popups.create');
@@ -285,6 +287,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/store_warehouse', [ImportWarehouseController::class, 'store_warehouse'])->name('warehouse.store_warehouse');
             // Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
             Route::delete('/{id}', [ImportWarehouseController::class, 'destroy'])->name('warehouse.destroy');
+            Route::delete('/delete/{id}', [ImportWarehouseController::class, 'delete'])->name('warehouse.delete');
             Route::post('/update-quantity/{id}', [ImportWarehouseController::class, 'updateQuantity'])->name('warehouse.update_quantity');
             Route::get('/ImportWarehouseController', [ImportWarehouseController::class, 'calculateTotal'])->name('warehouse.calculate_total');
             Route::get('/import/{id}', [ImportWarehouseController::class, 'show'])->name('warehouse.show');
@@ -292,12 +295,20 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/payment_confirm/{id}', [ImportWarehouseController::class, 'confirmPayment'])->name('warehouse.confirm_payment');
             Route::post('/update-price', [ImportWarehouseController::class, 'updatePrice'])->name('warehouse.update_price');
             Route::get('/trashed', [ImportWarehouseController::class, 'trashed'])->name('warehouse.trashed');
+            Route::post('/costs', [ImportWarehouseController::class, 'costs'])->name('warehouse.costs');
+            Route::post('/discounts', [ImportWarehouseController::class, 'discounts'])->name('warehouse.discounts');
+            Route::get('/showDeleted/{id}', [ImportWarehouseController::class, 'showDeleted'])->name('warehouse.showDeleted');
+            Route::delete('/import-warehouse/{id}/force-destroy', [ImportWarehouseController::class, 'forceDestroy'])->name('warehouse.forceDestroy');
+            Route::post('/import-warehouse/{id}/restore', [ImportWarehouseController::class, 'restore'])->name('warehouse.restore');
         });
 
         Route::prefix('returns')->group(function () {
             Route::get('/create/{id}', [PurchaseReturnController::class, 'show'])->name('returns.show');
             Route::post('/store', [PurchaseReturnController::class, 'store'])->name('returns.store');
             Route::get('/', [PurchaseReturnController::class, 'index'])->name('returns.list');
+            Route::get('/details/{id}', [PurchaseReturnController::class, 'details'])->name('returns.details');
+            Route::post('/payment_confirm/{id}', [PurchaseReturnController::class, 'confirmPayment'])->name('returns.confirm_payment');
+            Route::delete('/{id}', [PurchaseReturnController::class, 'destroy'])->name('returns.destroy');
         });
 
         Route::prefix('products/{productId}/variants')->group(function () {
@@ -318,6 +329,11 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
             Route::delete('/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
             Route::get('/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
+            Route::get('/suppliers/trash', [SupplierController::class, 'trash'])->name('suppliers.trash');
+            Route::post('/restore/{id}', [SupplierController::class, 'restore'])->name('suppliers.restore');
+            Route::delete('/force-delete/{id}', [SupplierController::class, 'forceDelete'])->name('suppliers.forceDelete');
+            Route::put('/status/{id}', [SupplierController::class, 'update_status'])->name('suppliers.update_status');
+            Route::put('/status_2/{id}', [SupplierController::class, 'update_status_2'])->name('suppliers.update_status_2');
         });
 
         // Routes cho Attribute
@@ -403,10 +419,14 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
         });
 
-        Route::get('/admin/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
+        Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+        Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+        Route::post('/reviews/bulk-approve', [ReviewController::class, 'bulkApprove']);
+        Route::post('/reviews/{id}/hide', [ReviewController::class, 'toggleVisibility']);
+
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
-       //Routes Quản lý Banner
+        //Routes Quản lý Banner
         Route::prefix('banners')->group(function () {
             Route::get('/', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/create', [BannerController::class, 'create'])->name('banners.create');
@@ -414,9 +434,9 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
             Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
-             Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
+            Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
-             Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
+            Route::get('/createLogo', [BannerController::class, 'createLogo'])->name('logo.create');
             Route::post('/', [BannerController::class, 'storeLogo'])->name('logo.store');
             Route::get('/{id}/editLogo', [BannerController::class, 'editLogo'])->name('logo.edit');
             Route::put('/{id}', [BannerController::class, 'updateLogo'])->name('logo.update');
@@ -434,6 +454,14 @@ Route::middleware(['auth'])->group(function () {
         // CRUD Size
         Route::resource('sizes', SizeController::class);
         Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
+        // Route quản lý chat
+        Route::prefix('product-live-chat')->group(function () {
+            Route::post('/start', [ProductLiveChatController::class, 'start'])->name('plc.start');
+            Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
+            Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
+            Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+            Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
+        });
     });
 });
 

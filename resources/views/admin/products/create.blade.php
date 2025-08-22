@@ -240,13 +240,13 @@
     <div class="row align-items-start">
         <div class="col-md-4">
             <label class="form-label">Thuộc tính</label>
-            <select class="form-select attribute-name" required>
+            <select class="form-select attribute-name">
                 <option value="" disabled selected>Chọn thuộc tính</option>
             </select>
         </div>
         <div class="col-md-6">
             <label class="form-label">Giá trị</label>
-            <select id="${selectId}" name="${nameAttr}" class="form-select attribute-values" multiple required></select>
+            <select id="${selectId}" name="${nameAttr}" class="form-select attribute-values" multiple></select>
         </div>
         <div class="col-md-2 d-grid">
             <label class="form-label">&nbsp;</label>
@@ -380,15 +380,15 @@
         <div class="row mb-3">
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Giá Bán</label>
-                <input type="number" name="variants[${index}][price]" class="form-control form-control-sm" placeholder="Giá Bán" required>
+                <input type="number" name="variants[${index}][price]" class="form-control form-control-sm" placeholder="Giá Bán">
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Giá Nhập</label>
-                <input type="number" name="variants[${index}][import_price]" class="form-control form-control-sm" placeholder="Giá Nhập" required>
+                <input type="number" name="variants[${index}][import_price]" class="form-control form-control-sm" placeholder="Giá Nhập">
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
-                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM" required>
+                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM">
             </div>
         </div>
 

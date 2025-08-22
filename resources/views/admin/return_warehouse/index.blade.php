@@ -5,7 +5,7 @@
 
     {{-- Tiêu đề & nút tạo --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">Danh sách đơn nhập hàng</h4>
+        <h4 class="fw-bold mb-0">Danh sách đơn trả hàng</h4>
         <div>
             <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createReturnModal">
                 <i class="fas fa-plus-circle me-1"></i> Tạo đơn trả hàng
@@ -78,7 +78,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr class="text-nowrap">
-                        <th>Mã đơn nhập</th>
+                        <th>Mã đơn trả</th>
                         <th>Ngày tạo</th>
                         <th>Trạng thái</th>
                         <th>Thanh toán</th>
@@ -92,7 +92,7 @@
                     @forelse($returns as $return)
                     <tr>
                         <td class="text-primary fw-semibold text-break" style="max-width: 200px;">
-                            <a href="{{ route('warehouse.show', $return->id) }}" class="text-decoration-none">
+                            <a href="{{ route('returns.details', $return->id) }}" class="text-decoration-none">
                                 {{ $return->return_code }}
                             </a>
                         </td>
@@ -107,7 +107,7 @@
                         <td>{{ $return->user->name ?? '-' }}</td>
                         <td>{{ number_format($return->total_amount) }}₫</td>
                         <td>
-                            <form action="{{ route('warehouse.destroy', $return->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                            <form action="{{ route('returns.destroy', $return->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa">
@@ -231,13 +231,13 @@
                         <tbody id="importList">
                             @foreach($imports as $import)
                             <tr>
-                                <td>{{ $import->import_code }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($import->code, 10) }}</td>
                                 <td>{{ \Carbon\Carbon::parse($import->created_at)->format('d/m/Y H:i') }}</td>
                                 <td>{{ $import->user->name ?? '-' }}</td>
                                 <td>{{ $import->supplier->name ?? '-' }}</td>
-                                <td>{{ number_format($import->total_amount) }}₫</td>
+                                <td>{{ number_format($import->total_price) }}₫</td>
                                 <td>
-                                    <a href="{{ route('returns.create', $import->id) }}" class="btn btn-sm btn-link text-primary">Trả hàng</a>
+                                    <a href="{{ route('returns.show', $import->id) }}" class="btn btn-sm btn-link text-primary">Trả hàng</a>
                                 </td>
                             </tr>
                             @endforeach

@@ -3,7 +3,7 @@
         <ul>
             <li>
                 <a class="" aria-label="F1GENZ Shoes - Trang chủ"
-                    href="index.html" title="Trang chủ">
+                    href="/" title="Trang chủ">
                     <img loading="lazy" decoding="async" width="64" height="64"
                         src="{{asset('images/shop_mobar_item_image_1e889.png')}}" alt="F1GENZ Shoes - Trang chủ" title="Trang chủ">
                     <span>Trang chủ</span>
@@ -11,7 +11,7 @@
             </li>
             <li>
                 <a class="" aria-label="F1GENZ Shoes - Trang sản phẩm"
-                    href="collections/all.html" title="Trang sản phẩm">
+                    href="/products" title="Trang sản phẩm">
                     <img loading="lazy" decoding="async" width="64" height="64"
                         src="{{asset('images/shop_mobar_item_image_2e889.png')}}" alt="F1GENZ Shoes - Trang sản phẩm" title="Trang sản phẩm">
                     <span>Trang sản phẩm</span>
@@ -19,7 +19,7 @@
             </li>
             <li>
                 <a class="" aria-label="F1GENZ Shoes - Trang tin tức"
-                    href="blogs/all.html" title="Trang tin tức">
+                    href="/posts" title="Trang tin tức">
                     <img loading="lazy" decoding="async" width="64" height="64"
                         src="{{asset('images/shop_mobar_item_image_3e889.png')}}" alt="F1GENZ Shoes - Trang tin tức" title="Trang tin tức">
                     <span>Trang tin tức</span>
@@ -27,7 +27,7 @@
             </li>
             <li>
                 <a class="tool-contact-popup" aria-label="F1GENZ Shoes - Đăng ký"
-                    href="account/logina3b1.html" title="Đăng ký">
+                    href="/account" title="Đăng ký">
                     <img loading="lazy" decoding="async" width="64" height="64"
                         src="{{asset('images/shop_mobar_item_image_4e889.png')}}" alt="F1GENZ Shoes - Đăng ký" title="Đăng ký">
                     <span>Đăng ký</span>

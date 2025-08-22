@@ -36,8 +36,29 @@ class StatisticsController extends Controller
         // Đơn hàng mới nhất
         $latestOrders = Order::with('user')->orderByDesc('created_at')->take(8)->get();
 
-        $profitLastMonth = Order::whereMonth('created_at', now()->subMonth()->month)->sum('total') * 0.3; // ví dụ 30% lợi nhuận
-        $expensesLastMonth = Order::whereMonth('created_at', now()->subMonth()->month)->sum('total') * 0.2; // ví dụ 20% chi phí
+        // Lợi nhuận thực tế theo tháng (doanh thu - giá vốn)
+        $profitMonth = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($q) use ($month, $year) {
+                $q->whereMonth('created_at', $month)
+                    ->whereYear('created_at', $year)
+                    ->where('status', 'delivered'); // chỉ tính đơn đã giao
+            })
+            ->get()
+            ->sum(function ($detail) {
+                // Lấy giá vốn
+                if ($detail->variant_id && $detail->variant) {
+                    $cost = $detail->variant->import_price * $detail->quantity;
+                } elseif ($detail->product) {
+                    $cost = $detail->product->import_price * $detail->quantity;
+                } else {
+                    $cost = 0; // phòng trường hợp product bị xóa
+                }
+
+                // Doanh thu
+                $revenue = $detail->price * $detail->quantity;
+
+                return $revenue - $cost;
+            });
 
         // Doanh thu theo từng tháng trong năm hiện tại
         $monthlyRevenue = [];
@@ -62,25 +83,57 @@ class StatisticsController extends Controller
             'returned'   => Order::where('status', 'returned')->count(),
         ];
 
-        $oneWeekAgo = Carbon::now()->subDays(7);
+        $oneWeekAgo = now()->subDays(7);
 
-        $topSellingProducts = OrderDetail::select('product_id')
-            ->selectRaw('SUM(quantity) as total_sold')
+        $topSellingProducts = OrderDetail::with(['product' => function ($q) {
+            $q->withTrashed()->select('id', 'name', 'image');
+        }])
             ->whereHas('order', function ($query) use ($oneWeekAgo) {
-                $query->where('status', 'delivered') // hoặc trạng thái xác nhận đã giao
+                $query->where('status', 'delivered')
                     ->where('created_at', '>=', $oneWeekAgo);
             })
+            ->select('product_id')
+            ->selectRaw('SUM(quantity) as total_sold')
             ->groupBy('product_id')
             ->orderByDesc('total_sold')
-            ->with('product:id,name,image') // relation sản phẩm, lấy tên và ảnh
             ->take(5)
             ->get();
 
-        $revenueMonth = Order::whereMonth('created_at', $month)->sum('total');
+        // Doanh thu tháng này (tổng tiền khách trả)
+        $revenueMonth = Order::whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('total');
 
-        $netProfit = $revenueMonth * 0.3; // 30% lợi nhuận giả định
-        $totalIncome = $revenueMonth;    // Tổng thu nhập = doanh thu tháng
-        $totalExpenses = $revenueMonth * 0.2; // 20% chi phí giả định
+        // Tính giá vốn (cost of goods sold) từ order_details
+        $costOfGoods = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($q) use ($month, $year) {
+                $q->whereMonth('created_at', $month)
+                    ->whereYear('created_at', $year)
+                    ->where('status', 'delivered'); // chỉ tính đơn đã giao
+            })
+            ->get()
+            ->sum(function ($detail) {
+                // Nếu có variant thì lấy import_price từ variant
+                if ($detail->variant) {
+                    return $detail->variant->import_price * $detail->quantity;
+                }
+
+                // Ngược lại lấy import_price từ product
+                if ($detail->product) {
+                    return $detail->product->import_price * $detail->quantity;
+                }
+
+                return 0;
+            });
+
+        // Lợi nhuận thực tế = Doanh thu - Giá vốn
+        $netProfit = $revenueMonth - $costOfGoods;
+
+        // Tổng chi phí = Giá vốn (ở đây coi giá vốn là chi phí chính)
+        $totalExpenses = $costOfGoods;
+
+        // Tổng thu nhập = Doanh thu
+        $totalIncome = $revenueMonth;
 
         return view('admin.statistics.index', compact(
             'orderCountToday',
@@ -94,8 +147,7 @@ class StatisticsController extends Controller
             'latestOrders',
             'monthlyRevenue',
             'orderStatusStats', // truyền thêm cho biểu đồ tròn
-            'profitLastMonth',
-            'expensesLastMonth',
+            'profitMonth',
             'topSellingProducts',
             'netProfit',
             'totalIncome',

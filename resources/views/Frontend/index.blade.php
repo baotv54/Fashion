@@ -15,7 +15,7 @@
         <h1 class="d-none">F1GENZ Shoes</h1>
         <section id="home-slider">
             <div class="home-slider-main">
-                 @foreach ($banners as $banner)
+                @foreach ($banners as $banner)
                     <div class="home-slider-main-item">
                         <a href="{{ $banner->link ?? '#' }}"
                             aria-label="{!! $banner->title !!} <br /> {!! $banner->subtitle !!}">
@@ -106,89 +106,95 @@
                     <div class="home-fSale-body">
                         <div class="home-fSale-body-data">
                             @foreach ($products as $product)
-                            <div class="product-item special" data-id="{{ $product->id }}"
-                                data-handle="{{ Str::slug($product->name) }}">
-                                <div class="product-item-wrap">
-                                    <div class="product-item-image hasThumbs hasThumbsIcon">
-                                        <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
-                                        <span class="product-item-discount">-{{ $product->discount ?? '11' }}%</span>
-                                        <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
-                                            title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                        </a>
-                                        <ul class="product-item-thumbs">
-                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                        src="{{ asset($product->thumb1 ?? 'images/default.jpg') }}"
-                                                        alt=""></a></li>
-                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                        src="{{ asset($product->thumb2 ?? 'images/default.jpg') }}"
-                                                        alt=""></a></li>
-                                            <li><a href="#"><img class="w-auto" loading="lazy" width="50" height="50"
-                                                        src="{{ asset($product->thumb3 ?? 'images/default.jpg') }}"
-                                                        alt=""></a></li>
-                                        </ul>
-                                    </div>
+                                <div class="product-item special" data-id="{{ $product->id }}"
+                                    data-handle="{{ Str::slug($product->name) }}">
+                                    <div class="product-item-wrap">
+                                        <div class="product-item-image hasThumbs hasThumbsIcon">
+                                            <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
+                                            <span
+                                                class="product-item-discount">-{{ $product->discount ?? '11' }}%</span>
+                                            <a class="product-item-link"
+                                                href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            </a>
+                                            <ul class="product-item-thumbs">
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb1 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb2 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                                <li><a href="#"><img class="w-auto" loading="lazy"
+                                                            width="50" height="50"
+                                                            src="{{ asset($product->thumb3 ?? 'images/default.jpg') }}"
+                                                            alt=""></a></li>
+                                            </ul>
+                                        </div>
 
-                                    <div class="product-item-action">
-                                        <form class="favorite-form" method="POST"
-                                            action="{{ route('favorites.toggle') }}">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <button type="submit" class="favorite-btn"
-                                                data-product-id="{{ $product->id }}"
-                                                style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
-                                                ❤
+                                        <div class="product-item-action">
+                                            <form class="favorite-form" method="POST"
+                                                action="{{ route('favorites.toggle') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="favorite-btn"
+                                                    data-product-id="{{ $product->id }}"
+                                                    style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+                                                    ❤
+                                                </button>
+                                            </form>
+                                            <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                                data-type="shop-quickview-button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
+                                                    width="20" height="20">
+                                                    <path
+                                                        d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
+                                                        fill="#000000" />
+                                                </svg>
                                             </button>
-                                        </form>
-                                        <button type="button" title="Xem nhanh" class="shop-quickview-button"
-                                            data-type="shop-quickview-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
-                                                width="20" height="20">
-                                                <path
-                                                    d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
-                                                    fill="#000000" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                        </div>
 
-                                    <div class="product-item-detail">
-                                        <div class="product-item-sold">
-                                            <label class="fSale_chayhang">
-                                                <img loading="lazy" decoding="async"
-                                                    src="{{ asset('images/imager_8176_d244203aa9cf4dfbb410e1377abdac72_compact.gif') }}"
-                                                    alt="pro-loop-sold" />
-                                                <span></span>
-                                            </label>
-                                            <div class="product-item-sold-wrap">
-                                                <span style="--percent: 50%"></span>
+                                        <div class="product-item-detail">
+                                            <div class="product-item-sold">
+                                                <label class="fSale_chayhang">
+                                                    <img loading="lazy" decoding="async"
+                                                        src="{{ asset('images/imager_8176_d244203aa9cf4dfbb410e1377abdac72_compact.gif') }}"
+                                                        alt="pro-loop-sold" />
+                                                    <span></span>
+                                                </label>
+                                                <div class="product-item-sold-wrap">
+                                                    <span style="--percent: 50%"></span>
+                                                </div>
                                             </div>
+                                            <h3 class="product-item-detail-name">
+                                                <a href="{{ route('product.show', $product->id) }}"
+                                                    title="{{ $product->name }}">{{ $product->name }}</a>
+                                            </h3>
+                                            <div class="product-item-detail-price">
+                                                <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            </div>
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data"></div>
+                                                <div class="sapo-product-reviews-badge"
+                                                    data-id="{{ $product->id }}"></div>
+                                            </div>
+                                            <form method="POST" action="{{ route('cart.add') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" title="Thêm vào giỏ"
+                                                    class="shop-addLoop-button cart">Thêm vào giỏ</button>
+                                            </form>
                                         </div>
-                                        <h3 class="product-item-detail-name">
-                                            <a href="{{ route('product.show', $product->id) }}"
-                                                title="{{ $product->name }}">{{ $product->name }}</a>
-                                        </h3>
-                                        <div class="product-item-detail-price">
-                                            <span>{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                        </div>
-                                        <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data"></div>
-                                            <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
-                                        </div>
-                                        <form method="POST" action="{{ route('cart.add') }}">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" title="Thêm vào giỏ"
-                                                class="shop-addLoop-button cart">Thêm vào giỏ</button>
-                                        </form>
                                     </div>
                                 </div>
-                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -273,14 +279,15 @@
         </div>
 
         @php
-        function shortNumber($num) {
-        if ($num >= 1000000) {
-        return number_format($num / 1000000, 2) . 'M';
-        } elseif ($num >= 1000) {
-        return number_format($num / 1000, 1) . 'K';
-        }
-        return $num;
-        }
+            function shortNumber($num)
+            {
+                if ($num >= 1000000) {
+                    return number_format($num / 1000000, 2) . 'M';
+                } elseif ($num >= 1000) {
+                    return number_format($num / 1000, 1) . 'K';
+                }
+                return $num;
+            }
         @endphp
         <section class="home-product-slider">
             <div class="container">
@@ -291,94 +298,102 @@
                                 <span>Converse</span>
                                 <h2>Sản Phẩm Được Yêu Thích Nhiều Nhất</h2>
                             </div>
-                            <a href="/products" aria-label="Xem thêm" data-hover="Xem thêm">Xem thêm <i class="fal fa-arrow-right"></i></a>
+                            <a href="/products" aria-label="Xem thêm" data-hover="Xem thêm">Xem thêm <i
+                                    class="fal fa-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="home-product-slider-wrap-body">
                         @foreach ($topFavorites as $product)
-                        <div class="home-product-slider-wrap-body-item">
-                            <div class="product-item" data-id="102679987" data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
-                                <div class="product-item-wrap">
-                                    <div class="product-item-image hasThumbs hasThumbsIcon">
-                                        <div class="sapo-buyxgety-badge " data-id="33445638"></div>
-                                        <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
-                                            title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                        </a>
-                                        @if($product->images->count())
-                                        <ul class="product-item-thumbs">
-                                            @foreach($product->images->take(3) as $image)
-                                            <li>
-                                                <a href="{{ route('product.show', $product->id) }}" aria-label="{{ $product->name }}">
-                                                    <img class="w-auto" loading="lazy" decoding="async" width="50" height="50"
-                                                        title="{{ $product->name }}"
-                                                        src="{{ asset($image->image_path) }}"
-                                                        alt="{{ $product->name }}">
-                                                </a>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                        @endif
-                                    </div>
-                                    <div class="product-item-action">
-                                        <form class="favorite-form" method="POST"
-                                            action="{{ route('favorites.toggle') }}">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <button type="submit" class="favorite-btn"
-                                                data-product-id="{{ $product->id }}"
-                                                style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
-                                                ❤
+                            <div class="home-product-slider-wrap-body-item">
+                                <div class="product-item" data-id="102679987"
+                                    data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
+                                    <div class="product-item-wrap">
+                                        <div class="product-item-image hasThumbs hasThumbsIcon">
+                                            <div class="sapo-buyxgety-badge " data-id="33445638"></div>
+                                            <a class="product-item-link"
+                                                href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            </a>
+                                            @if ($product->images->count())
+                                                <ul class="product-item-thumbs">
+                                                    @foreach ($product->images->take(3) as $image)
+                                                        <li>
+                                                            <a href="{{ route('product.show', $product->id) }}"
+                                                                aria-label="{{ $product->name }}">
+                                                                <img class="w-auto" loading="lazy" decoding="async"
+                                                                    width="50" height="50"
+                                                                    title="{{ $product->name }}"
+                                                                    src="{{ asset($image->image_path) }}"
+                                                                    alt="{{ $product->name }}">
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </div>
+                                        <div class="product-item-action">
+                                            <form class="favorite-form" method="POST"
+                                                action="{{ route('favorites.toggle') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="favorite-btn"
+                                                    data-product-id="{{ $product->id }}"
+                                                    style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+                                                    ❤
+                                                </button>
+                                            </form>
+                                            <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                                data-type="shop-quickview-button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
+                                                    width="20" height="20">
+                                                    <path
+                                                        d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
+                                                        fill="#000000" />
+                                                </svg>
                                             </button>
-                                        </form>
-                                        <button type="button" title="Xem nhanh" class="shop-quickview-button"
-                                            data-type="shop-quickview-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
-                                                width="20" height="20">
-                                                <path
-                                                    d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
-                                                    fill="#000000" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="product-item-detail">
-                                        <h3 class="product-item-detail-name">
-                                            <a href="{{ route('product.show', $product->id) }}"
-                                                title="{{ $product->name }}">{{ $product->name }}</a>
-                                        </h3>
-                                        <div class="product-item-detail-price">
-                                            <span>Giá Bán: {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                            <!-- <del>2.139.000₫</del> -->
                                         </div>
+                                        <div class="product-item-detail">
+                                            <h3 class="product-item-detail-name">
+                                                <a href="{{ route('product.show', $product->id) }}"
+                                                    title="{{ $product->name }}">{{ $product->name }}</a>
+                                            </h3>
+                                            <div class="product-item-detail-price">
+                                                <span>Giá Bán:
+                                                    {{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                <!-- <del>2.139.000₫</del> -->
+                                            </div>
 
-                                        <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data">
+                                                </div>
+                                                <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                             </div>
-                                            <div class="sapo-product-reviews-badge" data-id="33445638"></div>
-                                        </div>
-                                        <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
-                                                <span class="product-item-detail-info-tag">Đã Bán : {{ shortNumber($product->sold_count) }} </span>
-                                                <span class="product-item-detail-info-tag">Yêu Thích : {{ shortNumber($product->favorites_count) }} </span>
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data">
+                                                    <span class="product-item-detail-info-tag">Đã Bán :
+                                                        {{ shortNumber($product->sold_count) }} </span>
+                                                    <span class="product-item-detail-info-tag">Yêu Thích :
+                                                        {{ shortNumber($product->favorites_count) }} </span>
+                                                </div>
+                                                <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                             </div>
-                                            <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforeach
                         @for ($i = count($topFavorites); $i < 5; $i++)
                             <div class="home-product-slider-wrap-body-item" style="visibility:hidden;">
+                            </div>
+                        @endfor
                     </div>
-                    @endfor
                 </div>
-            </div>
             </div>
         </section>
 
@@ -436,94 +451,102 @@
                                 <span>Converse</span>
                                 <h2>Sản Phẩm Bán Chạy Nhất</h2>
                             </div>
-                            <a href="/products" aria-label="Xem thêm" data-hover="Xem thêm">Xem thêm <i class="fal fa-arrow-right"></i></a>
+                            <a href="/products" aria-label="Xem thêm" data-hover="Xem thêm">Xem thêm <i
+                                    class="fal fa-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="home-product-slider-wrap-body">
                         @foreach ($topSelling as $product)
-                        <div class="home-product-slider-wrap-body-item">
-                            <div class="product-item" data-id="102679987" data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
-                                <div class="product-item-wrap">
-                                    <div class="product-item-image hasThumbs hasThumbsIcon">
-                                        <div class="sapo-buyxgety-badge " data-id="33445638"></div>
-                                        <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
-                                            title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                            <img class="w-auto" loading="lazy" width="480" height="480"
-                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                                alt="{{ $product->name }}" title="{{ $product->name }}">
-                                        </a>
-                                        @if($product->images->count())
-                                        <ul class="product-item-thumbs">
-                                            @foreach($product->images->take(3) as $image)
-                                            <li>
-                                                <a href="{{ route('product.show', $product->id) }}" aria-label="{{ $product->name }}">
-                                                    <img class="w-auto" loading="lazy" decoding="async" width="50" height="50"
-                                                        title="{{ $product->name }}"
-                                                        src="{{ asset($image->image_path) }}"
-                                                        alt="{{ $product->name }}">
-                                                </a>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                        @endif
-                                    </div>
-                                    <div class="product-item-action">
-                                        <form class="favorite-form" method="POST"
-                                            action="{{ route('favorites.toggle') }}">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <button type="submit" class="favorite-btn"
-                                                data-product-id="{{ $product->id }}"
-                                                style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
-                                                ❤
+                            <div class="home-product-slider-wrap-body-item">
+                                <div class="product-item" data-id="102679987"
+                                    data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
+                                    <div class="product-item-wrap">
+                                        <div class="product-item-image hasThumbs hasThumbsIcon">
+                                            <div class="sapo-buyxgety-badge " data-id="33445638"></div>
+                                            <a class="product-item-link"
+                                                href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                                <img class="w-auto" loading="lazy" width="480" height="480"
+                                                    src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                    alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            </a>
+                                            @if ($product->images->count())
+                                                <ul class="product-item-thumbs">
+                                                    @foreach ($product->images->take(3) as $image)
+                                                        <li>
+                                                            <a href="{{ route('product.show', $product->id) }}"
+                                                                aria-label="{{ $product->name }}">
+                                                                <img class="w-auto" loading="lazy" decoding="async"
+                                                                    width="50" height="50"
+                                                                    title="{{ $product->name }}"
+                                                                    src="{{ asset($image->image_path) }}"
+                                                                    alt="{{ $product->name }}">
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </div>
+                                        <div class="product-item-action">
+                                            <form class="favorite-form" method="POST"
+                                                action="{{ route('favorites.toggle') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="favorite-btn"
+                                                    data-product-id="{{ $product->id }}"
+                                                    style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+                                                    ❤
+                                                </button>
+                                            </form>
+                                            <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                                data-type="shop-quickview-button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
+                                                    width="20" height="20">
+                                                    <path
+                                                        d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
+                                                        fill="#000000" />
+                                                </svg>
                                             </button>
-                                        </form>
-                                        <button type="button" title="Xem nhanh" class="shop-quickview-button"
-                                            data-type="shop-quickview-button">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
-                                                width="20" height="20">
-                                                <path
-                                                    d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
-                                                    fill="#000000" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="product-item-detail">
-                                        <h3 class="product-item-detail-name">
-                                            <a href="{{ route('product.show', $product->id) }}"
-                                                title="{{ $product->name }}">{{ $product->name }}</a>
-                                        </h3>
-                                        <div class="product-item-detail-price">
-                                            <span>Giá Bán: {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                            <!-- <del>2.139.000₫</del> -->
                                         </div>
+                                        <div class="product-item-detail">
+                                            <h3 class="product-item-detail-name">
+                                                <a href="{{ route('product.show', $product->id) }}"
+                                                    title="{{ $product->name }}">{{ $product->name }}</a>
+                                            </h3>
+                                            <div class="product-item-detail-price">
+                                                <span>Giá Bán:
+                                                    {{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                <!-- <del>2.139.000₫</del> -->
+                                            </div>
 
-                                        <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data">
+                                                </div>
+                                                <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                             </div>
-                                            <div class="sapo-product-reviews-badge" data-id="33445638"></div>
-                                        </div>
-                                        <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
-                                                <span class="product-item-detail-info-tag">Đã Bán : {{ shortNumber($product->sold_count) }} </span>
-                                                <span class="product-item-detail-info-tag">Yêu Thích : {{ shortNumber($product->favorites_count) }} </span>
+                                            <div class="product-item-detail-info">
+                                                <div class="product-item-detail-info-data">
+                                                    <span class="product-item-detail-info-tag">Đã Bán :
+                                                        {{ shortNumber($product->sold_count) }} </span>
+                                                    <span class="product-item-detail-info-tag">Yêu Thích :
+                                                        {{ shortNumber($product->favorites_count) }} </span>
+                                                </div>
+                                                <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                             </div>
-                                            <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforeach
                         @for ($i = count($topSelling); $i < 5; $i++)
                             <div class="home-product-slider-wrap-body-item" style="visibility:hidden;">
+                            </div>
+                        @endfor
                     </div>
-                    @endfor
                 </div>
-            </div>
             </div>
         </section>
 
@@ -611,67 +634,71 @@
                     </div>
                     <div class="home-product-wrap-body">
                         @foreach ($products as $product)
-                        <div class="product-item" data-id="102679987" data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
-                            <div class="product-item-wrap">
-                                <div class="product-item-image hasThumbs hasThumbsIcon">
-                                    <div class="sapo-buyxgety-badge " data-id="33445638"></div>
-                                    <!-- <span class="product-item-discount">-11%</span> -->
-                                    <a class="product-item-link" href="{{ route('product.show', $product->id) }}"
-                                        title="{{ $product->name }}">
-                                        <img class="w-auto" loading="lazy" width="480" height="480"
-                                            src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                            alt="{{ $product->name }}" title="{{ $product->name }}">
-                                        <img class="w-auto" loading="lazy" width="480" height="480"
-                                            src="{{ asset($product->image ?? 'images/default.jpg') }}"
-                                            alt="{{ $product->name }}" title="{{ $product->name }}">
-                                    </a>
-                                </div>
-                                <div class="product-item-action">
-                                    <form class="favorite-form" method="POST"
-                                        action="{{ route('favorites.toggle') }}">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <button type="submit" class="favorite-btn"
-                                            data-product-id="{{ $product->id }}"
-                                            style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
-                                            ❤
+                            <div class="product-item" data-id="102679987"
+                                data-handle="converse-chuck-taylor-all-star-mono-leather-low-top">
+                                <div class="product-item-wrap">
+                                    <div class="product-item-image hasThumbs hasThumbsIcon">
+                                        <div class="sapo-buyxgety-badge " data-id="33445638"></div>
+                                        <!-- <span class="product-item-discount">-11%</span> -->
+                                        <a class="product-item-link"
+                                            href="{{ route('product.show', $product->id) }}"
+                                            title="{{ $product->name }}">
+                                            <img class="w-auto" loading="lazy" width="480" height="480"
+                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                alt="{{ $product->name }}" title="{{ $product->name }}">
+                                            <img class="w-auto" loading="lazy" width="480" height="480"
+                                                src="{{ asset($product->image ?? 'images/default.jpg') }}"
+                                                alt="{{ $product->name }}" title="{{ $product->name }}">
+                                        </a>
+                                    </div>
+                                    <div class="product-item-action">
+                                        <form class="favorite-form" method="POST"
+                                            action="{{ route('favorites.toggle') }}">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <button type="submit" class="favorite-btn"
+                                                data-product-id="{{ $product->id }}"
+                                                style="color: {{ $favorites->contains('product_id', $product->id) ? 'red' : 'gray' }};">
+                                                ❤
+                                            </button>
+                                        </form>
+                                        <button type="button" title="Xem nhanh" class="shop-quickview-button"
+                                            data-type="shop-quickview-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
+                                                width="20" height="20">
+                                                <path
+                                                    d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
+                                                    fill="#000000" />
+                                            </svg>
                                         </button>
-                                    </form>
-                                    <button type="button" title="Xem nhanh" class="shop-quickview-button"
-                                        data-type="shop-quickview-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.01 612.01"
-                                            width="20" height="20">
-                                            <path
-                                                d="M606.209,578.714L448.198,423.228C489.576,378.272,515,318.817,515,253.393C514.98,113.439,399.704,0,257.493,0 C115.282,0,0.006,113.439,0.006,253.393s115.276,253.393,257.487,253.393c61.445,0,117.801-21.253,162.068-56.586 l158.624,156.099c7.729,7.614,20.277,7.614,28.006,0C613.938,598.686,613.938,586.328,606.209,578.714z M257.493,467.8 c-120.326,0-217.869-95.993-217.869-214.407S137.167,38.986,257.493,38.986c120.327,0,217.869,95.993,217.869,214.407 S377.82,467.8,257.493,467.8z"
-                                                fill="#000000" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div class="product-item-detail">
-                                    <h3 class="product-item-detail-name">
-                                        <a href="{{ route('product.show', $product->id) }}"
-                                            title="{{ $product->name }}">{{ $product->name }}</a>
-                                    </h3>
-                                    <div class="product-item-detail-price">
-                                        <span>Giá Bán: {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                        <!-- <del>2.139.000₫</del> -->
                                     </div>
+                                    <div class="product-item-detail">
+                                        <h3 class="product-item-detail-name">
+                                            <a href="{{ route('product.show', $product->id) }}"
+                                                title="{{ $product->name }}">{{ $product->name }}</a>
+                                        </h3>
+                                        <div class="product-item-detail-price">
+                                            <span>Giá Bán: {{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            <!-- <del>2.139.000₫</del> -->
+                                        </div>
 
-                                    <div class="product-item-detail-info">
-                                        <div class="product-item-detail-info-data">
+                                        <div class="product-item-detail-info">
+                                            <div class="product-item-detail-info-data">
+                                            </div>
+                                            <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                         </div>
-                                        <div class="sapo-product-reviews-badge" data-id="33445638"></div>
-                                    </div>
-                                    <div class="product-item-detail-info">
-                                        <div class="product-item-detail-info-data">
-                                            <span class="product-item-detail-info-tag">Đã Bán : {{ shortNumber($product->sold_count) }} </span>
-                                            <span class="product-item-detail-info-tag">Yêu Thích : {{ shortNumber($product->favorites_count) }} </span>
+                                        <div class="product-item-detail-info">
+                                            <div class="product-item-detail-info-data">
+                                                <span class="product-item-detail-info-tag">Đã Bán :
+                                                    {{ shortNumber($product->sold_count) }} </span>
+                                                <span class="product-item-detail-info-tag">Yêu Thích :
+                                                    {{ shortNumber($product->favorites_count) }} </span>
+                                            </div>
+                                            <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
-                                        <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>
@@ -710,32 +737,33 @@
                 </div>
                 <div class="home-blog-body">
                     @foreach ($posts as $post)
-                    <article class="article-item " data-index="1">
-                        <div class="article-item-top">
-                            <a href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
-                                title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG"
-                                rel="nofollow">
-                                <img loading="lazy" decoding="async" width="600" height="400"
-                                    src="{{ asset($post->image ?? 'images/default.jpg') }}"
-                                    alt="{{ $post->title }}" title="{{ $post->title }}">
-                                <i class="fal fa-search fa-fw"></i>
-                            </a>
-                        </div>
-                        <div class="article-item-bottom">
-                            <h3 class="article-item-bottom-name"><a
-                                    href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
-                                    title="{{ $post->title }}">{{ $post->title }}</a></h3>
-                            <span class="article-item-bottom-date">
-                                <i class="far fa-calendar-alt fa-fw"></i> {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
-                            </span>
-                            <span class="article-item-bottom-author">
-                                <i class="fal fa-newspaper fa-fw"></i> {{ $post->author }}
-                            </span>
-                            <p class="article-item-bottom-des">
-                                {{ Str::limit(html_entity_decode(strip_tags($post->content)), 200, '...') }}
-                            </p>
-                        </div>
-                    </article>
+                        <article class="article-item " data-index="1">
+                            <div class="article-item-top">
+                                <a href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
+                                    title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG"
+                                    rel="nofollow">
+                                    <img loading="lazy" decoding="async" width="600" height="400"
+                                        src="{{ asset($post->image ?? 'images/default.jpg') }}"
+                                        alt="{{ $post->title }}" title="{{ $post->title }}">
+                                    <i class="fal fa-search fa-fw"></i>
+                                </a>
+                            </div>
+                            <div class="article-item-bottom">
+                                <h3 class="article-item-bottom-name"><a
+                                        href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
+                                        title="{{ $post->title }}">{{ $post->title }}</a></h3>
+                                <span class="article-item-bottom-date">
+                                    <i class="far fa-calendar-alt fa-fw"></i>
+                                    {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
+                                </span>
+                                <span class="article-item-bottom-author">
+                                    <i class="fal fa-newspaper fa-fw"></i> {{ $post->author }}
+                                </span>
+                                <p class="article-item-bottom-des">
+                                    {{ Str::limit(html_entity_decode(strip_tags($post->content)), 200, '...') }}
+                                </p>
+                            </div>
+                        </article>
                     @endforeach
                 </div>
             </div>
@@ -820,9 +848,8 @@
                         <p>Chúng tôi cam kết bảo mật không lộ thông tin của bạn.</p>
                         <form id="mc-form10"
                             action="https://gmail.us21.list-manage.com/subscribe/post?u=ddd0880c66f534593afa12e75&amp;id=fe6449bc79&amp;f_id=00cd9be1f0">
-                            <input aria-label="Địa chỉ Email" type="email"
-                                placeholder="Nhập địa chỉ email của bạn" name="EMAIL" required
-                                autocomplete="off">
+                            <input aria-label="Địa chỉ Email" type="email" placeholder="Nhập địa chỉ email của bạn"
+                                name="EMAIL" required autocomplete="off">
                             <button type="submit" aria-label="Đăng ký nhận tin" name="subscribe">Đăng ký</button>
                         </form>
                         <p>Nhận ngay coupon giảm <b>15%</b> khi đăng ký ngay</p>
@@ -836,7 +863,7 @@
                 </div>
             </div>
         </section>
-         @php
+        @php
             $popups = \App\Models\Popup::where('status', 1)
                 ->orderByRaw("CASE WHEN media_type = 'image' THEN 0 ELSE 1 END") // ảnh trước, video sau
                 ->latest()
@@ -851,13 +878,15 @@
                         <div class="row g-0">
                             {{-- Media --}}
                             <div class="col-md-6">
+                                {{-- Nút đóng --}}
                                 @if ($popup->media_type === 'image')
-                                    <img src="{{ asset('storage/' . $popup->media_path) }}" alt="Popup Image"
-                                        class="w-100 h-100" style="object-fit: cover;">
+                                    <a href="{{ url('/products') }}">
+                                        <img src="{{ asset('storage/' . $popup->media_path) }}" alt="Popup Image"
+                                            class="w-100 h-100" style="object-fit: cover; cursor: pointer;">
+                                    </a>
                                 @elseif ($popup->media_type === 'video')
                                     <video autoplay muted controls class="w-100 h-100" style="object-fit: cover;">
-                                        <source src="{{ asset('storage/' . $popup->media_path) }}"
-                                            type="video/mp4">
+                                        <source src="{{ asset('storage/' . $popup->media_path) }}" type="video/mp4">
                                     </video>
                                 @endif
                             </div>
@@ -953,7 +982,7 @@
         @endforeach
 
     </main>
-     <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.btn-save-coupon').forEach(button => {
                 button.addEventListener('click', function() {

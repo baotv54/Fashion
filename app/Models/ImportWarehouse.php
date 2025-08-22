@@ -4,17 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ImportWarehouse extends Model
 {
-    use HasFactory;
-
+   use HasFactory;
+   
     protected $table = 'import_warehouse'; // Tên bảng
 
     protected $fillable = [
         'product_id',
         'variant_id',
         'quantity',
+        'name_cost',        // mới thêm
+        'additional_cost',  // mới thêm
+        'discount',         // mới thêm
     ];
 
     // Quan hệ tới sản phẩm

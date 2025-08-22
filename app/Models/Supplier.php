@@ -1,11 +1,17 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Supplier extends Model
+
 {
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'supplier_code',
         'name',
@@ -18,12 +24,13 @@ class Supplier extends Model
         'district',
         'ward',
         'address_detail',
-        'website', 
+        'website',
+        'status',
+        'delete_at'
     ];
 
     public function user()
-{
-    return $this->belongsTo(User::class);
+    {
+        return $this->belongsTo(User::class);
+    }
 }
-}
-

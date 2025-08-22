@@ -26,18 +26,19 @@
 
 <body data-no-turbolink>
     @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
     @endif
     @if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
     @endif
     @include('Frontend.partials.header')
     <aside>
-        <button class="order-summary-toggle" data-toggle="#order-summary" data-toggle-class="order-summary--is-collapsed">
+        <button class="order-summary-toggle" data-toggle="#order-summary"
+            data-toggle-class="order-summary--is-collapsed">
             <span class="wrap">
                 <span class="order-summary-toggle__inner">
                     <span class="order-summary-toggle__text expandable">
@@ -74,20 +75,21 @@
                                     <div class="section__header">
                                         <div class="layout-flex">
                                             <h2 class="section__title layout-flex__item layout-flex__item--stretch">
-                                                <i class="fa fa-id-card-o fa-lg section__title--icon hide-on-desktop"></i>
+                                                <i
+                                                    class="fa fa-id-card-o fa-lg section__title--icon hide-on-desktop"></i>
                                                 Thông tin nhận hàng
                                             </h2>
 
                                             @if (Auth::check())
-                                            <a href="{{ route('logout') }}">
-                                                <i class="fa fa-user-circle-o fa-lg"></i>
-                                                <span>Đăng xuất</span>
-                                            </a>
+                                                <a href="{{ route('logout') }}">
+                                                    <i class="fa fa-user-circle-o fa-lg"></i>
+                                                    <span>Đăng xuất</span>
+                                                </a>
                                             @else
-                                            <a href="{{ route('login') }}">
-                                                <i class="fa fa-user-circle-o fa-lg"></i>
-                                                <span>Đăng nhập</span>
-                                            </a>
+                                                <a href="{{ route('login') }}">
+                                                    <i class="fa fa-user-circle-o fa-lg"></i>
+                                                    <span>Đăng nhập</span>
+                                                </a>
                                             @endif
                                         </div>
                                     </div>
@@ -96,62 +98,71 @@
                                         <div class="fieldset">
 
                                             {{-- Chọn địa chỉ đã lưu --}}
-                                            @if(isset($addresses) && $addresses->count() > 0)
-                                            <div class="field mb-3">
-                                                <label for="selectSavedAddress">Chọn địa chỉ đã lưu</label>
-                                                <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <select id="selectSavedAddress" class="field__input field__input--select">
-                                                        <option value="">-- Chọn địa chỉ --</option>
-                                                        @foreach($addresses as $address)
-                                                        <option
-                                                            value="{{ $address->id }}"
-                                                            data-name="{{ $address->name }}"
-                                                            data-phone="{{ $address->phone }}"
-                                                            data-address="{{ $address->address }}"
-                                                            data-province="{{ $address->province }}"
-                                                            data-district="{{ $address->district }}"
-                                                            data-ward="{{ $address->ward }}">
-                                                            {{ $address->name }} - {{ $address->address }}, {{ $address->ward }}, {{ $address->district }}, {{ $address->province }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
+                                            @if (isset($addresses) && $addresses->count() > 0)
+                                                <div class="field mb-3">
+                                                    <label for="selectSavedAddress">Chọn địa chỉ đã lưu</label>
+                                                    <div class="field__input-wrapper field__input-wrapper--select2">
+                                                        <select id="selectSavedAddress"
+                                                            class="field__input field__input--select">
+                                                            <option value="">-- Chọn địa chỉ --</option>
+                                                            @foreach ($addresses as $address)
+                                                                <option value="{{ $address->id }}"
+                                                                    data-name="{{ $address->name }}"
+                                                                    data-phone="{{ $address->phone }}"
+                                                                    data-address="{{ $address->address }}"
+                                                                    data-province="{{ $address->province }}"
+                                                                    data-district="{{ $address->district }}"
+                                                                    data-ward="{{ $address->ward }}">
+                                                                    {{ $address->name }} - {{ $address->address }},
+                                                                    {{ $address->ward }}, {{ $address->district }},
+                                                                    {{ $address->province }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             @endif
 
                                             {{-- Form nhập thông tin --}}
                                             <div class="field">
                                                 <div class="field__input-wrapper">
                                                     <label for="email">Email</label>
-                                                    <input name="email" id="email" type="email" class="field__input" value="{{ Auth::user()->email ?? '' }}" required>
+                                                    <input name="email" id="email" type="email"
+                                                        class="field__input" value="{{ Auth::user()->email ?? '' }}"
+                                                        required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <div class="field__input-wrapper">
                                                     <label for="billingName">Họ và tên</label>
-                                                    <input name="billingName" id="billingName" type="text" class="field__input" value="{{ Auth::user()->name ?? '' }}" required>
+                                                    <input name="billingName" id="billingName" type="text"
+                                                        class="field__input" value="{{ Auth::user()->name ?? '' }}"
+                                                        required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <div class="field__input-wrapper">
                                                     <label for="billingPhone">Số điện thoại</label>
-                                                    <input name="billingPhone" id="billingPhone" type="tel" class="field__input" value="" required>
+                                                    <input name="billingPhone" id="billingPhone" type="tel"
+                                                        class="field__input" value="" required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <div class="field__input-wrapper">
                                                     <label for="billingAddress">Địa chỉ chi tiết</label>
-                                                    <input name="billingAddress" id="billingAddress" type="text" class="field__input" value="" required>
+                                                    <input name="billingAddress" id="billingAddress" type="text"
+                                                        class="field__input" value="" required>
                                                 </div>
                                             </div>
 
                                             <div class="field">
                                                 <label for="billingProvince">Tỉnh / Thành phố</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <select name="billingProvince" id="billingProvince" class="field__input field__input--select" required>
+                                                    <select name="billingProvince" id="billingProvince"
+                                                        class="field__input field__input--select" required>
                                                         <option value="">-- Chọn tỉnh / thành phố --</option>
                                                     </select>
                                                 </div>
@@ -160,7 +171,8 @@
                                             <div class="field">
                                                 <label for="billingDistrict">Quận / Huyện</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <select name="billingDistrict" id="billingDistrict" class="field__input field__input--select" required>
+                                                    <select name="billingDistrict" id="billingDistrict"
+                                                        class="field__input field__input--select" required>
                                                         <option value="">-- Chọn quận / huyện --</option>
                                                     </select>
                                                 </div>
@@ -169,7 +181,8 @@
                                             <div class="field">
                                                 <label for="billingWard">Phường / Xã</label>
                                                 <div class="field__input-wrapper field__input-wrapper--select2">
-                                                    <select name="billingWard" id="billingWard" class="field__input field__input--select" required>
+                                                    <select name="billingWard" id="billingWard"
+                                                        class="field__input field__input--select" required>
                                                         <option value="">-- Chọn phường / xã --</option>
                                                     </select>
                                                 </div>
@@ -230,7 +243,8 @@
                                     <div class="section__header">
                                         <div class="layout-flex">
                                             <h2 class="section__title layout-flex__item layout-flex__item--stretch">
-                                                <i class="fa fa-credit-card fa-lg section__title--icon hide-on-desktop"></i>
+                                                <i
+                                                    class="fa fa-credit-card fa-lg section__title--icon hide-on-desktop"></i>
                                                 Thanh toán
                                             </h2>
                                         </div>
@@ -242,8 +256,8 @@
                                                 <div class="radio-wrapper">
                                                     <div class="radio__input">
                                                         <input name="paymentMethod" id="paymentMethod-bank_transfer"
-                                                            type="radio" class="input-radio"
-                                                            value="bank_transfer" required>
+                                                            type="radio" class="input-radio" value="bank_transfer"
+                                                            required>
                                                     </div>
                                                     <label for="paymentMethod-bank_transfer" class="radio__label">
                                                         <span class="radio__label__primary">Chuyển khoản</span>
@@ -261,8 +275,8 @@
                                                 <div class="radio-wrapper">
                                                     <div class="radio__input">
                                                         <input name="paymentMethod" id="paymentMethod-cod"
-                                                            type="radio" class="input-radio"
-                                                            value="cod" required>
+                                                            type="radio" class="input-radio" value="cod"
+                                                            required>
                                                     </div>
                                                     <label for="paymentMethod-cod" class="radio__label">
                                                         <span class="radio__label__primary">Thu hộ (COD)</span>
@@ -279,8 +293,8 @@
                                                 <div class="radio-wrapper">
                                                     <div class="radio__input">
                                                         <input name="paymentMethod" id="paymentMethod-vnpay"
-                                                            type="radio" class="input-radio"
-                                                            value="vnpay" required>
+                                                            type="radio" class="input-radio" value="vnpay"
+                                                            required>
                                                     </div>
                                                     <label for="paymentMethod-vnpay" class="radio__label">
                                                         <span class="radio__label__primary">Thanh toán qua VNPAY</span>
@@ -297,8 +311,8 @@
                                                 <div class="radio-wrapper">
                                                     <div class="radio__input">
                                                         <input name="paymentMethod" id="paymentMethod-momo"
-                                                            type="radio" class="input-radio"
-                                                            value="momo" required>
+                                                            type="radio" class="input-radio" value="momo"
+                                                            required>
                                                     </div>
                                                     <label for="paymentMethod-momo" class="radio__label">
                                                         <span class="radio__label__primary">Thanh toán qua Momo</span>
@@ -350,62 +364,68 @@
                         <div id="order-summary" class="order-summary order-summary--is-collapsed">
                             <div class="order-summary__sections">
                                 @foreach ($carts as $cart)
-                                <div class="order-summary__section order-summary__section--product-list order-summary__section--is-scrollable order-summary--collapse-element">
-                                    <table class="product-table" id="product-table" data-tg-refresh="refreshDiscount">
-                                        <caption class="visually-hidden">Chi tiết đơn hàng</caption>
-                                        <thead class="product-table__header">
-                                            <tr>
-                                                <th>
-                                                    <span class="visually-hidden">Hình ảnh sản phẩm</span>
-                                                </th>
-                                                <th>
-                                                    <span class="visually-hidden">Mô tả</span>
-                                                </th>
-                                                <th>
-                                                    <span class="visually-hidden">Sổ lượng</span>
-                                                </th>
-                                                <th>
-                                                    <span class="visually-hidden">Đơn giá</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                                    <div
+                                        class="order-summary__section order-summary__section--product-list order-summary__section--is-scrollable order-summary--collapse-element">
+                                        <table class="product-table" id="product-table"
+                                            data-tg-refresh="refreshDiscount">
+                                            <caption class="visually-hidden">Chi tiết đơn hàng</caption>
+                                            <thead class="product-table__header">
+                                                <tr>
+                                                    <th>
+                                                        <span class="visually-hidden">Hình ảnh sản phẩm</span>
+                                                    </th>
+                                                    <th>
+                                                        <span class="visually-hidden">Mô tả</span>
+                                                    </th>
+                                                    <th>
+                                                        <span class="visually-hidden">Sổ lượng</span>
+                                                    </th>
+                                                    <th>
+                                                        <span class="visually-hidden">Đơn giá</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
-                                            <tr class="product">
-                                                <td class="product__image">
-                                                    <div class="product-thumbnail">
-                                                        <div class="product-thumbnail__wrapper" data-tg-static>
-                                                            <img src="{{$cart->options->image}}" alt="" class="product-thumbnail__image" />
+                                                <tr class="product">
+                                                    <td class="product__image">
+                                                        <div class="product-thumbnail">
+                                                            <div class="product-thumbnail__wrapper" data-tg-static>
+                                                                <img src="{{ $cart->options->image }}" alt=""
+                                                                    class="product-thumbnail__image" />
+                                                            </div>
+                                                            <span
+                                                                class="product-thumbnail__quantity">{{ $cart->qty }}</span>
                                                         </div>
-                                                        <span class="product-thumbnail__quantity">{{$cart->qty}}</span>
-                                                    </div>
-                                                </td>
-                                                <th class="product__description">
-                                                    <span class="product__description__name">
-                                                        {{$cart->name}}
-                                                    </span>
-
-                                                    @if(isset($cart->variant) && $cart->variant)
-                                                    <div class="product__description__variants">
-                                                        @foreach($cart->variant->attributeValues as $attributeValue)
-                                                        <span class="product__description__property">
-                                                            {{$attributeValue->attribute->name}}: {{$attributeValue->value}}
+                                                    </td>
+                                                    <th class="product__description">
+                                                        <span class="product__description__name">
+                                                            {{ $cart->name }}
                                                         </span>
-                                                        @endforeach
-                                                    </div>
-                                                    @endif
-                                                </th>
-                                                <td class="product__quantity visually-hidden"><em>Số lượng:</em> 1</td>
-                                                <td class="product__price">
 
-                                                    <span>{{ number_format($cart->price * $cart->qty, 0, ',', '.') }}₫</span>
+                                                        @if (isset($cart->variant) && $cart->variant)
+                                                            <div class="product__description__variants">
+                                                                @foreach ($cart->variant->attributeValues as $attributeValue)
+                                                                    <span class="product__description__property">
+                                                                        {{ $attributeValue->attribute->name }}:
+                                                                        {{ $attributeValue->value }}
+                                                                    </span>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </th>
+                                                    <td class="product__quantity visually-hidden"><em>Số lượng:</em> 1
+                                                    </td>
+                                                    <td class="product__price">
 
-                                                </td>
-                                            </tr>
+                                                        <span>{{ number_format($cart->price * $cart->qty, 0, ',', '.') }}₫</span>
 
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 @endforeach
                                 <!-- Modal Hiển thị Danh sách Voucher -->
                                 <div class="order-summary__section order-summary__section--discount-code"
@@ -428,17 +448,35 @@
                                     </div>
 
                                     {{-- Chỗ riêng để hiển thị thông tin coupon --}}
-                                    <div id="appliedCouponWrapper">
-                                        @if (Session::has('coupon'))
-                                            <div class="alert alert-success mt-3">
-                                                <strong>Mã giảm giá:</strong> {{ Session::get('coupon.code') }}<br>
-                                                <strong>Giảm giá:</strong>
-                                                -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
-                                                <button type="button" class="btn btn-danger btn-sm float-end"
-                                                    id="removeCoupon">Xóa mã</button>
-                                            </div>
-                                        @endif
+
+                                    <div id="appliedCouponWrapper"
+                                        class="card border-0 shadow-sm mt-3 coupon-card animate__animated animate__fadeIn"
+                                        style="border-left: 5px solid #28a745; border-radius: 12px; background: linear-gradient(90deg, #f0fff4, #ffffff);">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            @if (Session::has('coupon'))
+                                                <div>
+                                                    <h6 class="mb-1 text-success fw-bold">
+                                                        <i class="fas fa-ticket-alt me-1"></i>
+                                                        Mã giảm giá:
+                                                        <span
+                                                            class="text-dark">{{ Session::get('coupon.code') }}</span>
+                                                    </h6>
+                                                    <p class="mb-0 text-muted">
+                                                        <i class="fas fa-tag me-1"></i> Giảm giá:
+                                                        <span class="fw-bold text-danger">
+                                                            -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <button type="button"
+                                                    class="btn btn-outline-danger btn-sm rounded ms-2"
+                                                    id="removeCoupon" title="Xóa mã">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
+
                                 </div>
 
                                 <!-- Modal Hiển thị Danh sách Voucher -->
@@ -487,6 +525,34 @@
                                 <div id="couponMessage" class="alert d-none mt-3"></div>
 
                                 <style>
+                                    #removeCoupon {
+                                        border-radius: 6px;
+                                        /* bo góc nhẹ, không quá tròn */
+                                        padding: 4px 8px;
+                                        /* chỉnh khoảng cách icon */
+                                        transition: all 0.3s ease;
+                                    }
+
+                                    #removeCoupon:hover {
+                                        background-color: #dc3545;
+                                        color: #fff;
+                                    }
+
+                                    /* Hiệu ứng mượt khi hover nút xóa */
+                                    #removeCoupon {
+                                        transition: all 0.3s ease;
+                                    }
+
+                                    #removeCoupon:hover {
+                                        background-color: #dc3545;
+                                        color: #fff;
+                                    }
+
+                                    /* Nếu dùng Animate.css thì thêm class fadeIn */
+                                    .coupon-card {
+                                        animation-duration: 0.6s;
+                                    }
+
                                     .voucher-row {
                                         display: flex;
                                         gap: 10px;
@@ -747,25 +813,27 @@
                                             {{-- Tạm tính --}}
                                             <tr class="total-line total-line--subtotal">
                                                 <th class="total-line__name">Tạm tính</th>
-                                                <td class="total-line__price" id="checkout_subtotal_price">{{ Cart::subtotal(0, 0, '') }}₫</td>
+                                                <td class="total-line__price" id="checkout_subtotal_price">
+                                                    {{ Cart::subtotal(0, 0, '') }}₫</td>
                                             </tr>
 
                                             {{-- Giảm giá --}}
-                                            @if(Session::has('coupon'))
-                                            <tr class="total-line total-line--discount" id="discountRow">
-                                                <th class="total-line__name">
-                                                    Giảm giá ({{ Session::get('coupon.code') }})
-                                                </th>
-                                                <td class="total-line__price" id="checkout_discount_price">
-                                                    -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
-                                                </td>
-                                            </tr>
+                                            @if (Session::has('coupon'))
+                                                <tr class="total-line total-line--discount" id="discountRow">
+                                                    <th class="total-line__name">
+                                                        Giảm giá ({{ Session::get('coupon.code') }})
+                                                    </th>
+                                                    <td class="total-line__price" id="checkout_discount_price">
+                                                        -{{ number_format(Session::get('coupon.discount', 0), 0, ',', '.') }}₫
+                                                    </td>
+                                                </tr>
                                             @endif
 
                                             {{-- Phí vận chuyển --}}
                                             <tr class="total-line total-line--shipping-fee">
                                                 <th class="total-line__name">Phí vận chuyển</th>
-                                                <td class="total-line__price" id="checkout_shipping_fee">Đang tính...</td>
+                                                <td class="total-line__price" id="checkout_shipping_fee">Đang tính...
+                                                </td>
                                             </tr>
                                         </tbody>
 
@@ -785,10 +853,12 @@
                                     </table>
 
                                     {{-- Input ẩn để lưu phí vận chuyển --}}
-                                    <input type="hidden" name="shipping_fee" id="shipping_fee_hidden" value="0">
+                                    <input type="hidden" name="shipping_fee" id="shipping_fee_hidden"
+                                        value="0">
 
                                 </div>
-                                <div class="order-summary__nav field__input-btn-wrapper hide-on-mobile layout-flex--row-reverse">
+                                <div
+                                    class="order-summary__nav field__input-btn-wrapper hide-on-mobile layout-flex--row-reverse">
                                     <button type="submit" class="btn btn-checkout spinner">
                                         <span class="spinner-label">ĐẶT HÀNG</span>
                                         <!-- <svg xmlns="http://www.w3.org/2000/svg" class="spinner-loader">
@@ -822,14 +892,10 @@
         <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
             <symbol id="spinner">
                 <svg viewBox="0 0 30 30">
-                    <circle stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="85%"
-                        cx="50%" cy="50%" r="40%">
-                        <animateTransform attributeName="transform"
-                            type="rotate"
-                            from="0 15 15"
-                            to="360 15 15"
-                            dur="0.7s"
-                            repeatCount="indefinite" />
+                    <circle stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                        stroke-dasharray="85%" cx="50%" cy="50%" r="40%">
+                        <animateTransform attributeName="transform" type="rotate" from="0 15 15" to="360 15 15"
+                            dur="0.7s" repeatCount="indefinite" />
                     </circle>
                 </svg>
             </symbol>
@@ -853,7 +919,8 @@
                 .then(data => {
                     provinceSelect.innerHTML = '<option value="">-- Chọn tỉnh / thành phố --</option>';
                     data.forEach(p => {
-                        provinceSelect.innerHTML += `<option value="${p.ProvinceID}">${p.ProvinceName}</option>`;
+                        provinceSelect.innerHTML +=
+                            `<option value="${p.ProvinceID}">${p.ProvinceName}</option>`;
                     });
                 });
 
@@ -869,7 +936,8 @@
                         .then(res => res.json())
                         .then(data => {
                             data.forEach(d => {
-                                districtSelect.innerHTML += `<option value="${d.DistrictID}">${d.DistrictName}</option>`;
+                                districtSelect.innerHTML +=
+                                    `<option value="${d.DistrictID}">${d.DistrictName}</option>`;
                             });
                         });
                 }
@@ -886,7 +954,8 @@
                         .then(res => res.json())
                         .then(data => {
                             data.forEach(w => {
-                                wardSelect.innerHTML += `<option value="${w.WardCode}">${w.WardName}</option>`;
+                                wardSelect.innerHTML +=
+                                    `<option value="${w.WardCode}">${w.WardName}</option>`;
                             });
                         });
                 }
@@ -909,7 +978,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
                         },
                         body: JSON.stringify({
                             district_id: districtId,
@@ -939,7 +1009,8 @@
 
             function showLoader() {
                 shippingMethodList.querySelector('.alert--loader').classList.remove('hide');
-                shippingMethodList.querySelectorAll('.alert:not(.alert--loader)').forEach(el => el.classList.add('hide'));
+                shippingMethodList.querySelectorAll('.alert:not(.alert--loader)').forEach(el => el.classList.add(
+                    'hide'));
             }
 
             function hideLoader() {
@@ -1047,13 +1118,22 @@
             function updateCouponDisplay(code, discount) {
                 const wrapper = document.getElementById('appliedCouponWrapper');
                 wrapper.innerHTML = `
-        <div class="alert alert-success mt-3">
-            <strong>Mã giảm giá:</strong> ${code}<br>
-            <strong>Giảm giá:</strong> -${new Intl.NumberFormat('vi-VN').format(discount)}₫
-            <button type="button" class="btn btn-danger btn-sm float-end" id="removeCoupon">
-                <i class="fas fa-times-circle"></i> Xóa mã
-            </button>
+        <div class="card border-0 shadow-sm mt-3" style="border-left: 5px solid #28a745; border-radius: 12px;">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="mb-1 text-success fw-bold">
+                <i class="fas fa-ticket-alt"></i> Mã giảm giá: <span class="text-dark">${code}</span>
+            </h6>
+            <p class="mb-0 text-muted">
+                <i class="fas fa-tag"></i> Giảm giá:
+                <span class="fw-bold text-danger">-${new Intl.NumberFormat('vi-VN').format(discount)}₫</span>
+            </p>
         </div>
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-circle" id="removeCoupon" title="Xóa mã">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
     `;
                 addDiscountRow(code, discount);
             }
@@ -1080,7 +1160,8 @@
             }
 
             function updateOrderTotalDynamic(shippingFee = null, discount = null) {
-                const subtotalText = document.getElementById('checkout_subtotal_price').textContent.replace(/[^\d]/g, '');
+                const subtotalText = document.getElementById('checkout_subtotal_price').textContent.replace(
+                    /[^\d]/g, '');
                 const subtotal = parseInt(subtotalText, 10) || 0;
 
                 let discountVal = discount !== null ? discount : 0;
@@ -1128,21 +1209,24 @@
                 const wardText = selected.dataset.ward.trim();
 
                 // Chọn tỉnh
-                const provinceOption = Array.from(provinceSelect.options).find(opt => opt.text.trim().toLowerCase() === provinceText.toLowerCase());
+                const provinceOption = Array.from(provinceSelect.options).find(opt => opt.text.trim()
+                    .toLowerCase() === provinceText.toLowerCase());
                 if (provinceOption) {
                     provinceOption.selected = true;
                     provinceSelect.dispatchEvent(new Event('change'));
 
                     // Đợi quận load xong rồi chọn quận
                     const waitForDistrictLoad = () => {
-                        const districtOption = Array.from(districtSelect.options).find(opt => opt.text.trim().toLowerCase() === districtText.toLowerCase());
+                        const districtOption = Array.from(districtSelect.options).find(opt => opt.text
+                            .trim().toLowerCase() === districtText.toLowerCase());
                         if (districtOption) {
                             districtOption.selected = true;
                             districtSelect.dispatchEvent(new Event('change'));
 
                             // Đợi phường load xong rồi chọn phường
                             const waitForWardLoad = () => {
-                                const wardOption = Array.from(wardSelect.options).find(opt => opt.text.trim().toLowerCase() === wardText.toLowerCase());
+                                const wardOption = Array.from(wardSelect.options).find(opt => opt
+                                    .text.trim().toLowerCase() === wardText.toLowerCase());
                                 if (wardOption) {
                                     wardOption.selected = true;
                                 } else {
@@ -1203,6 +1287,76 @@
                 msgDiv.classList.add('d-none');
             }, 4000);
         }
+    </script>
+
+    <script>
+        // Polling tồn kho ở trang checkout: gọi /cart/validate mỗi 10s, khóa nút đặt hàng khi có lỗi
+        (function () {
+            const FORM_SELECTOR = '#checkoutForm';
+            const SUBMIT_SELECTOR = '#checkoutForm button[type="submit"]';
+            const WARNING_ID = 'checkout-stock-warning';
+
+            function ensureWarningContainer() {
+                let el = document.getElementById(WARNING_ID);
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = WARNING_ID;
+                    el.className = 'alert alert-danger';
+                    el.style.display = 'none';
+                    const sidebar = document.querySelector('.sidebar__content') || document.querySelector('.main__content') || document.body;
+                    sidebar.prepend(el);
+                }
+                return el;
+            }
+
+            function setSubmitDisabled(disabled, message) {
+                const btn = document.querySelector(SUBMIT_SELECTOR);
+                const form = document.querySelector(FORM_SELECTOR);
+                const warn = ensureWarningContainer();
+                if (!btn || !form) return;
+                if (disabled) {
+                    btn.classList.add('disabled');
+                    btn.setAttribute('aria-disabled', 'true');
+                    btn.addEventListener('click', blockClick, { passive: false });
+                    warn.textContent = message || 'Một số sản phẩm đã hết hoặc không đủ hàng. Vui lòng cập nhật giỏ hàng trước khi đặt.';
+                    warn.style.display = '';
+                } else {
+                    btn.classList.remove('disabled');
+                    btn.removeAttribute('aria-disabled');
+                    btn.removeEventListener('click', blockClick);
+                    const warn = document.getElementById(WARNING_ID);
+                    if (warn) warn.style.display = 'none';
+                }
+            }
+
+            function blockClick(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+
+            function applyValidation(payload) {
+                if (!payload || !Array.isArray(payload.items)) return;
+                const hasIssue = payload.items.some(it => !it.ok);
+                setSubmitDisabled(hasIssue, 'Một số sản phẩm trong đơn không đủ tồn. Vui lòng kiểm tra lại.');
+            }
+
+            async function pollValidate() {
+                try {
+                    const res = await fetch('/cart/validate', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    if (!res.ok) return;
+                    const json = await res.json();
+                    applyValidation(json);
+                } catch (err) {
+                    // im lặng, không hiển thị lỗi mạng
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                pollValidate();
+                setInterval(pollValidate, 10000);
+            });
+        })();
     </script>
 
 </body>

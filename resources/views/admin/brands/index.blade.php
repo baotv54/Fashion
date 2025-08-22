@@ -90,7 +90,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Không có danh mục nào</td>
+                                <td colspan="5" class="text-center text-muted">Không có thương hiệu nào nào</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -177,7 +177,7 @@
             <!-- Tên thương hiệu -->
             <div class="mb-6 form-control-validation fv-plugins-icon-container">
                 <label class="form-label" for="Brand-title">Tên thương hiệu</label>
-                <input type="text" class="form-control" id="Brand-title" name="name" placeholder="Nhập tên thương hiệu" aria-label="Brand title" required>
+                <input type="text" class="form-control" id="Brand-title" name="name" placeholder="Nhập tên thương hiệu" aria-label="Brand title">
                 @error('name')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror

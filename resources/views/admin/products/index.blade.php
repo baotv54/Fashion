@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="card">
-
     <div class="card-header border-bottom">
         @if(session('success'))
         <div class="toast-container position-fixed bottom-0 end-0 p-3">

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -32,19 +35,68 @@ class OrderController extends Controller
 
         return view('admin.orders.index', [
             'orders' => $orders,
-            'currentStatus' => $status          
-        ],compact('ordered', 'delivered', 'returned', 'cancelled'));
+            'currentStatus' => $status
+        ], compact('ordered', 'delivered', 'returned', 'cancelled'));
     }
 
+    /**
+     * Điều chỉnh tồn kho theo chi tiết đơn hàng (tăng/giảm)
+     * direction: 'increase' | 'decrease'
+     */
+    private function adjustStockForOrder(Order $order, string $direction = 'increase'): void
+    {
+        $order->loadMissing('orderDetails');
+        foreach ($order->orderDetails as $detail) {
+            $qty = (int) ($detail->quantity ?? 0);
+            if ($qty <= 0) {
+                continue;
+            }
+
+            if ($detail->variant_id) {
+                $variant = ProductVariant::where('id', $detail->variant_id)->lockForUpdate()->first();
+                if ($variant) {
+                    if ($direction === 'increase') {
+                        $variant->increment('stock', $qty);
+                    } else {
+                        $variant->decrement('stock', $qty);
+                    }
+                }
+            } else if ($detail->product_id) {
+                $product = Product::where('id', $detail->product_id)->lockForUpdate()->first();
+                if ($product) {
+                    if ($direction === 'increase') {
+                        $product->increment('quantity', $qty);
+                    } else {
+                        $product->decrement('quantity', $qty);
+                    }
+                }
+            }
+        }
+    }
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
             'status' => 'required|in:ordered,processing,confirmed,shipping,delivered,cancelled,returned',
         ]);
 
-        $order = Order::findOrFail($id);
-        $order->status = $request->status;
-        $order->save();
+        try {
+            DB::beginTransaction();
+
+            $order = Order::with('orderDetails')->findOrFail($id);
+            $oldStatus = $order->status;
+            $order->status = $request->status;
+            $order->save();
+
+            // Hoàn tồn khi chuyển sang cancelled/returned từ trạng thái chưa hoàn tất
+            if (in_array($order->status, ['cancelled', 'returned']) && !in_array($oldStatus, ['cancelled', 'returned'])) {
+                $this->adjustStockForOrder($order, 'increase');
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể cập nhật trạng thái đơn: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
     }
@@ -138,15 +190,38 @@ class OrderController extends Controller
         return response()->json($data['data'] ?? []);
     }
 
-    public function cancelOrder($id)
+    public function cancelOrder(Request $request, $id)
     {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+            'cancel_reason_other' => 'nullable|string|max:255',
+        ]);
+
         $order = Order::where('id', $id)
             ->where('user_id', Auth::id())
             ->whereIn('status', ['ordered', 'processing', 'confirmed'])
             ->firstOrFail();
 
-        $order->status = 'cancelled';
-        $order->save();
+        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
+        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp'
+            ? $request->cancel_reason_other
+            : $request->cancel_reason;
+
+        try {
+            DB::beginTransaction();
+
+            $order->status = 'cancelled';
+            $order->cancel_reason = $cancelReason;
+            $order->save();
+
+            // Hoàn tồn kho khi người dùng hủy đơn
+            $this->adjustStockForOrder($order, 'increase');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể huỷ đơn hàng: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
     }

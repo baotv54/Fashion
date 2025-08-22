@@ -9,7 +9,7 @@ class PopupController extends Controller
 {
     public function index()
     {
-        $popups = Popup::latest()->get();
+        $popups = Popup::latest()->paginate(5);
         return view('admin.popups.index', compact('popups'));
     }
 
@@ -40,7 +40,7 @@ class PopupController extends Controller
         return redirect()->route('popups.index')->with('success', 'Thêm popup thành công');
     }
 
-       public function edit($id)
+    public function edit($id)
     {
         $popups = Popup::findOrFail($id);
         return view('admin.popups.create', compact('popups'));
@@ -48,37 +48,37 @@ class PopupController extends Controller
 
 
     public function update(Request $request, $id)
-{
-    $popup = Popup::findOrFail($id);
+    {
+        $popup = Popup::findOrFail($id);
 
-    $request->validate([
-        'title'       => 'nullable|string|max:255',
-        'description' => 'nullable|string',
-        'media_type'  => 'required|in:image,video',
-        'media_file'  => 'nullable|file|mimes:jpg,jpeg,png,mp4,webm|max:102400', // 100MB
-        'status'      => 'nullable|in:0,1'
-    ]);
+        $request->validate([
+            'title'       => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'media_type'  => 'required|in:image,video',
+            'media_file'  => 'nullable|file|mimes:jpg,jpeg,png,mp4,webm|max:102400', // 100MB
+            'status'      => 'nullable|in:0,1'
+        ]);
 
-    $data = $request->only(['title', 'description', 'media_type', 'status']);
+        $data = $request->only(['title', 'description', 'media_type', 'status']);
 
-    if ($request->hasFile('media_file')) {
-        $path = $request->file('media_file')->store('popups', 'public');
-        $data['media_path'] = $path;
+        if ($request->hasFile('media_file')) {
+            $path = $request->file('media_file')->store('popups', 'public');
+            $data['media_path'] = $path;
+        }
+
+        $popup->update($data);
+
+        return redirect()->route('popups.index')->with('success', 'Cập nhật popup thành công');
     }
 
-    $popup->update($data);
+    public function destroy(Popup $popup)
+    {
+        if ($popup->media_path && \Storage::disk('public')->exists($popup->media_path)) {
+            \Storage::disk('public')->delete($popup->media_path);
+        }
 
-    return redirect()->route('popups.index')->with('success', 'Cập nhật popup thành công');
-}
+        $popup->delete();
 
-  public function destroy(Popup $popup)
-{
-    if ($popup->media_path && \Storage::disk('public')->exists($popup->media_path)) {
-        \Storage::disk('public')->delete($popup->media_path);
+        return redirect()->route('popups.index')->with('success', 'Xóa popup thành công');
     }
-
-    $popup->delete();
-
-    return redirect()->route('popups.index')->with('success', 'Xóa popup thành công');
-}
 }

@@ -189,7 +189,7 @@
             <!-- Tên danh mục -->
             <div class="mb-6 form-control-validation fv-plugins-icon-container">
                 <label class="form-label" for="category-title">Tên danh mục</label>
-                <input type="text" class="form-control" id="category-title" name="name" placeholder="Nhập tên danh mục" aria-label="category title" required>
+                <input type="text" class="form-control" id="category-title" name="name" placeholder="Nhập tên danh mục" aria-label="category title">
                 @error('name')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror

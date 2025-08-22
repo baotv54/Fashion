@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Mail\OrderConfirmationMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
@@ -26,6 +29,13 @@ class CheckoutController extends Controller
         }
 
         $this->validateRequest($request);
+
+        // Re-validate tồn kho ngay trước khi xử lý thanh toán
+        $validation = $this->validateCartStock();
+        if (!$validation['ok']) {
+            return redirect()->back()->with('error', 'Một số sản phẩm không đủ tồn kho hoặc đã hết hàng. Vui lòng cập nhật giỏ hàng trước khi thanh toán.')
+                ->with('stock_validation', $validation);
+        }
 
         return match ($request->paymentMethod) {
             'momo' => $this->momoPayment($request),
@@ -72,11 +82,11 @@ class CheckoutController extends Controller
         try {
             // Load order details để sử dụng trong email template
             $order->load('orderDetails');
-            
+
             Mail::to($order->email)->send(new OrderConfirmationMail($order));
-            
+
             Log::info('Email xác nhận đơn hàng đã được gửi thành công cho order: ' . $order->order_code);
-            
+
             return true;
         } catch (\Exception $e) {
             Log::error('Lỗi khi gửi email xác nhận đơn hàng: ' . $e->getMessage(), [
@@ -84,7 +94,7 @@ class CheckoutController extends Controller
                 'order_code' => $order->order_code,
                 'email' => $order->email
             ]);
-            
+
             return false;
         }
     }
@@ -95,10 +105,22 @@ class CheckoutController extends Controller
     private function processCODPayment(Request $request)
     {
         $orderData = $this->prepareOrderData($request, 'cod');
-        $order = $this->createOrder($orderData);
 
-        foreach (Cart::content() as $cartItem) {
-            $this->createOrderDetail($order, $cartItem);
+        try {
+            DB::beginTransaction();
+
+            $order = $this->createOrder($orderData);
+            foreach (Cart::content() as $cartItem) {
+                $this->createOrderDetail($order, $cartItem);
+            }
+
+            // Giảm tồn sau khi tạo đơn COD (chặn âm tồn bên trong)
+            $this->adjustStockForOrder($order, 'decrease');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể tạo đơn hàng: ' . $e->getMessage());
         }
 
          // Đánh dấu coupon đã dùng
@@ -149,9 +171,21 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.failed')->with('error', 'Thanh toán không thành công. Mã lỗi: ' . ($inputData['vnp_ResponseCode'] ?? 'Unknown'));
         }
 
-        $order = $this->createOrder($orderData);
-        foreach ($orderData['cart_items'] as $cartItem) {
-            $this->createOrderDetail($order, (object) $cartItem);
+        try {
+            DB::beginTransaction();
+
+            $order = $this->createOrder($orderData);
+            foreach ($orderData['cart_items'] as $cartItem) {
+                $this->createOrderDetail($order, (object) $cartItem);
+            }
+
+            // Giảm tồn khi thanh toán VNPay thành công
+            $this->adjustStockForOrder($order, 'decrease');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán VNPay: ' . $e->getMessage());
         }
 
          // Đánh dấu coupon đã dùng
@@ -201,9 +235,22 @@ class CheckoutController extends Controller
         }
 
         $orderData = Session::get('pending_order');
-        $order = $this->createOrder($orderData);
-        foreach ($orderData['cart_items'] as $cartItem) {
-            $this->createOrderDetail($order, (object) $cartItem);
+
+        try {
+            DB::beginTransaction();
+
+            $order = $this->createOrder($orderData);
+            foreach ($orderData['cart_items'] as $cartItem) {
+                $this->createOrderDetail($order, (object) $cartItem);
+            }
+
+            // Giảm tồn khi thanh toán MoMo thành công
+            $this->adjustStockForOrder($order, 'decrease');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán MoMo: ' . $e->getMessage());
         }
 
            // Đánh dấu coupon đã dùng
@@ -233,13 +280,56 @@ class CheckoutController extends Controller
             $order = Order::where('order_code', $request->orderId)->first();
             if ($order) {
                 $order->update(['status' => 'processing', 'payment_status' => 'paid']);
-                
+
                 // Gửi email xác nhận khi thanh toán thành công qua IPN
                 $this->sendOrderConfirmationEmail($order);
             }
             return response()->json(['message' => 'Success', 'status' => 'ok']);
         }
         return response()->json(['message' => 'Failed', 'status' => 'error']);
+    }
+
+    /**
+     * Điều chỉnh tồn kho theo chi tiết đơn hàng
+     * direction: 'decrease' | 'increase'
+     */
+    private function adjustStockForOrder(Order $order, string $direction = 'decrease'): void
+    {
+        $order->loadMissing('orderDetails');
+        foreach ($order->orderDetails as $detail) {
+            $qty = (int) ($detail->quantity ?? 0);
+            if ($qty <= 0) {
+                continue;
+            }
+
+            if ($detail->variant_id) {
+                // Lock hàng biến thể để tránh race condition
+                $variant = ProductVariant::where('id', $detail->variant_id)->lockForUpdate()->first();
+                if ($variant) {
+                    if ($direction === 'decrease') {
+                        if ($variant->stock < $qty) {
+                            throw new \RuntimeException('Tồn kho biến thể không đủ cho sản phẩm: ' . ($detail->product_name ?? ''));
+                        }
+                        $variant->decrement('stock', $qty);
+                    } else {
+                        $variant->increment('stock', $qty);
+                    }
+                }
+            } else if ($detail->product_id) {
+                // Lock hàng sản phẩm để tránh race condition
+                $product = Product::where('id', $detail->product_id)->lockForUpdate()->first();
+                if ($product) {
+                    if ($direction === 'decrease') {
+                        if ($product->quantity < $qty) {
+                            throw new \RuntimeException('Tồn kho sản phẩm không đủ: ' . ($detail->product_name ?? ''));
+                        }
+                        $product->decrement('quantity', $qty);
+                    } else {
+                        $product->increment('quantity', $qty);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -470,6 +560,65 @@ class CheckoutController extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+
+    /**
+     * Kiểm tra tồn kho toàn bộ giỏ hàng trước khi thanh toán
+     */
+    private function validateCartStock(): array
+    {
+        $items = [];
+        $hasIssue = false;
+
+        foreach (Cart::content() as $cartItem) {
+            $type = $cartItem->options['type'] ?? 'product';
+            $requested = (int)($cartItem->qty ?? 0);
+            $available = 0;
+            $ok = true;
+            $message = '';
+
+            if ($type === 'variant' && isset($cartItem->options['variant_id'])) {
+                $variant = ProductVariant::find($cartItem->options['variant_id']);
+                $available = (int)($variant->stock ?? 0);
+                if (!$variant || $available <= 0) {
+                    $ok = false;
+                    $message = 'Hết hàng';
+                } elseif ($requested > $available) {
+                    $ok = false;
+                    $message = 'Không đủ hàng. Còn lại: ' . $available;
+                }
+            } else {
+                $productId = $cartItem->options['product_id'] ?? null;
+                $product = $productId ? Product::find($productId) : null;
+                $available = (int)($product->quantity ?? 0);
+                if (!$product || $available <= 0) {
+                    $ok = false;
+                    $message = 'Hết hàng';
+                } elseif ($requested > $available) {
+                    $ok = false;
+                    $message = 'Không đủ hàng. Còn lại: ' . $available;
+                }
+            }
+
+            if (!$ok) {
+                $hasIssue = true;
+            }
+
+            $items[] = [
+                'rowId' => $cartItem->rowId,
+                'name' => $cartItem->name,
+                'type' => $type,
+                'requested' => $requested,
+                'available' => $available,
+                'ok' => $ok,
+                'message' => $message,
+            ];
+        }
+
+        return [
+            'ok' => !$hasIssue,
+            'items' => $items,
+        ];
     }
 
      private function handleCouponUsage($couponCode)

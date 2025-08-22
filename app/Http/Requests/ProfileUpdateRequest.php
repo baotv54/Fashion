@@ -29,5 +29,5 @@ class ProfileUpdateRequest extends FormRequest
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ];
-    }   
+    }
 }
