@@ -11,7 +11,7 @@ class UpdatePaymentFieldsInOrderWarehousesTable extends Migration
         Schema::table('order_warehouses', function (Blueprint $table) {
             $table->string('payment_status')->nullable()->change();
             $table->string('payment_method')->nullable()->change();
-            $table->decimal('payment_amount', 15, 2)->nullable()->change();
+            $table->decimal('payment_amount', 10, 0)->nullable()->change();
             $table->date('payment_date')->nullable()->change();
             $table->string('payment_reference')->nullable()->change();
         });
@@ -23,7 +23,7 @@ class UpdatePaymentFieldsInOrderWarehousesTable extends Migration
             // Ví dụ rollback nếu cần – sửa lại đúng kiểu cũ
             $table->string('payment_status')->change();
             $table->string('payment_method')->change();
-            $table->decimal('payment_amount', 8, 2)->change(); // ví dụ trước là 8,2
+            $table->decimal('payment_amount', 10, 0)->change(); // ví dụ trước là 8,0
             $table->date('payment_date')->change();
             $table->string('payment_reference')->change();
         });

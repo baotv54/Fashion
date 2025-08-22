@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('product_id'); // ID sản phẩm
             $table->string('product_name'); // Tên sản phẩm
             $table->integer('quantity'); // Số lượng sản phẩm
-            $table->decimal('price', 10, 2); // Giá sản phẩm
+            $table->decimal('price', 10, 0); // Giá sản phẩm
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade'); // Liên kết với bảng orders

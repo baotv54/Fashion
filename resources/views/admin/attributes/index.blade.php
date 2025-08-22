@@ -1,69 +1,204 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid p-0">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0">Danh Sách Thuộc Tính</h3>
-        <a href="{{ route('attributes.create') }}" class="btn btn-primary">
-            <i data-feather="plus" class="me-1"></i> Thêm Thuộc Tính Mới
-        </a>
-    </div>
+<div class="card">
+    <div class="card-datatable">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+        <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+            <div class="row m-3 my-0 justify-content-between">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
+                    <div class="dt-search mb-0 mb-md-6">
 
-    {{-- Hiển thị thông báo lỗi --}}
-    @if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
+                    </div>
+                </div>
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
+                    <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-6">
+                        <button class="btn add-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEcommerceattributesList"><span><i class="icon-base ti tabler-plus icon-16px me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Thêm Thuộc Tính</span></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="justify-content-between dt-layout-table border-top">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
+                    <table class="datatables-attributes-list table dataTable dtr-column" id="DataTables_Table_0" style="width: 100%;">
+                        <colgroup>
+                            <col style="width: 40px;">
+                            <col>
+                            <col style="width: 200px;">
+                            <col style="width: 150px;">
+                            <col style="width: 120px;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Tên thuộc tính</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($attributes as $attribute)
+                            <tr>
+                                <td>
 
-    {{-- Hiển thị thông báo thành công --}}
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
-    <!-- Bảng danh sách -->
-    <div class="card">
-        <div class="card-body table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-light text-center">
-                    <tr>
-                        <th>Tên Thuộc Tính</th>
-                        <th width="30%">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($attributes as $attribute)
-                    <tr>
-                        <td class="text-center">{{ $attribute->name }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('attribute_values.index', $attribute->id) }}" class="btn btn-sm btn-outline-primary me-1">
-                                <i data-feather="list"></i> Giá trị
-                            </a>
-                            <a href="{{ route('attributes.edit', $attribute->id) }}" class="btn btn-sm btn-outline-warning me-1">
-                                Sửa </a>
-                            <form action="{{ route('attributes.destroy', $attribute->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa thuộc tính này không?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    Xóa
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="2" class="text-muted text-center">Không có thuộc tính nào.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    <strong>{{ $attribute->name }}</strong>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('attribute_values.index', $attribute->id) }}" class="btn btn-sm btn-outline-primary me-1">
+                                            <i data-feather="list"></i> Giá trị
+                                        </a>
+                                        <a href="{{ route('attributes.edit', $attribute->id) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Sửa">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                                <path d="M16 5l3 3" />
+                                            </svg>
+                                        </a>
+
+                                        <form action="{{ route('attributes.destroy', $attribute->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 7l16 0" />
+                                                    <path d="M10 11l0 6" />
+                                                    <path d="M14 11l0 6" />
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Không có thuộc tính nào</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if ($attributes->hasPages())
+            <div class="row mx-3 justify-content-between mt-4">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
+                    <div class="dt-info">
+                        Hiển thị {{ $attributes->firstItem() }} đến {{ $attributes->lastItem() }} trong tổng số {{ $attributes->total() }} danh mục
+                    </div>
+                </div>
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
+                    <div class="dt-paging">
+                        <nav aria-label="pagination">
+                            <ul class="pagination">
+                                {{-- First --}}
+                                <li class="dt-paging-button page-item {{ $attributes->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link first" href="{{ $attributes->url(1) }}">
+                                        <i class="icon-base ti tabler-chevrons-left icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Previous --}}
+                                <li class="dt-paging-button page-item {{ $attributes->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link previous" href="{{ $attributes->previousPageUrl() }}">
+                                        <i class="icon-base ti tabler-chevron-left icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Page numbers --}}
+                                @foreach ($attributes->getUrlRange(
+                                max(1, $attributes->currentPage() - 2),
+                                min($attributes->lastPage(), $attributes->currentPage() + 2)
+                                ) as $page => $url)
+                                <li class="dt-paging-button page-item {{ $attributes->currentPage() == $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                                @endforeach
+
+                                {{-- Dấu 3 chấm nếu có --}}
+                                @if ($attributes->lastPage() > $attributes->currentPage() + 2)
+                                <li class="dt-paging-button page-item disabled">
+                                    <span class="page-link ellipsis">…</span>
+                                </li>
+                                <li class="dt-paging-button page-item">
+                                    <a class="page-link" href="{{ $attributes->url($attributes->lastPage()) }}">{{ $attributes->lastPage() }}</a>
+                                </li>
+                                @endif
+
+                                {{-- Next --}}
+                                <li class="dt-paging-button page-item {{ !$attributes->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link next" href="{{ $attributes->nextPageUrl() }}">
+                                        <i class="icon-base ti tabler-chevron-right icon-18px"></i>
+                                    </a>
+                                </li>
+
+                                {{-- Last --}}
+                                <li class="dt-paging-button page-item {{ !$attributes->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link last" href="{{ $attributes->url($attributes->lastPage()) }}">
+                                        <i class="icon-base ti tabler-chevrons-right icon-18px"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEcommerceattributesList" aria-labelledby="offcanvasEcommerceattributesListLabel" aria-modal="true" role="dialog">
+    <!-- Offcanvas Header -->
+    <div class="offcanvas-header py-6">
+        <h5 id="offcanvasEcommerceattributesListLabel" class="offcanvas-title">Thêm thuộc tính</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <!-- Offcanvas Body -->
+    <div class="offcanvas-body border-top">
+        <form action="{{ route('attributes.store') }}" method="POST" id="eCommerceattributesListForm" class="pt-0 fv-plugins-bootstrap5 fv-plugins-framework">
+            @csrf
+            <!-- Tên thương hiệu -->
+            <div class="mb-6 form-control-validation fv-plugins-icon-container">
+                <label class="form-label" for="attributes-title">Tên thuộc tính</label>
+                <input type="text" class="form-control" id="attributes-title" name="name" placeholder="Nhập tên thuộc tính" aria-label="attributes title" required>
+                @error('name')
+                <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
+            <!-- Submit -->
+            <div class="mb-6">
+                <button type="submit" class="btn btn-primary me-sm-3 me-1 waves-effect waves-light">Thêm thuộc tính</button>
+            </div>
+        </form>
+    </div>
+</div>
 @push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function() {

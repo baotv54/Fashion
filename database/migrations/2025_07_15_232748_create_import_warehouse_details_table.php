@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('variant_id')->nullable();
             $table->integer('quantity')->default(0);
-            $table->decimal('price', 15, 2)->default(0);
+            $table->decimal('price', 10, 0)->default(0);
             $table->timestamps();
 
             $table->foreign('import_warehouse_id')->references('id')->on('order_warehouses')->onDelete('cascade');

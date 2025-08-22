@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="card">
-
     <div class="card-header border-bottom">
         @if(session('success'))
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -84,23 +83,6 @@
                 </div>
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-4">
-                        <!-- Form import sản phẩm -->
-                        <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap align-items-center gap-2">
-                            @csrf
-
-                            <!-- Input chọn file -->
-                            <div>
-                                <input type="file" name="file" class="form-control" required>
-                            </div>
-
-                            <!-- Nút submit -->
-                            <div>
-                                <button type="submit" class="btn buttons-collection btn-label-secondary dropdown-toggle me-3">
-                                    <i class="icon-base ti tabler-upload icon-xs"></i>
-                                    <span class="d-none d-sm-inline-block">Import sản phẩm</span>
-                                </button>
-                            </div>
-                        </form>
                         <a href="{{ route('products.create') }}" class="btn add-new btn-primary">
                             <i class="icon-base ti tabler-plus me-1 icon-16px"></i>
                             <span class="d-none d-sm-inline-block">Thêm sản phẩm</span>
@@ -116,7 +98,7 @@
                                 <th></th>
                                 <th>Tên sản phẩm</th>
                                 <th>Danh mục</th>
-                                <th class="text-center">Giá</th>
+                                <th>Giá</th>
                                 <th class="text-center">Hành động</th>
                             </tr>
                         </thead>
@@ -163,11 +145,7 @@
                                                             <th>Thương hiệu</th>
                                                             <td>{{ $product->brand->name ?? 'N/A' }}</td>
                                                         </tr>
-                                                        <!-- <tr>
-                                                            <th>SKU</th>
-                                                            <td>{{ $product->sku }}</td>
-                                                        </tr> -->
-                                                        <tr>
+                                                        <tr >
                                                             <th>Giá</th>
                                                             <td>{{ number_format($product->price) }} VND</td>
                                                         </tr>
@@ -264,7 +242,7 @@
                                         <span class="d-none">Out_of_Stock</span>
                                     </span>
                                 </td> -->
-                                <td class="text-end">{{ number_format($product->price, 0) }} VND</td>
+                                <td>{{ number_format($product->price, 0) }} VND</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Sửa">

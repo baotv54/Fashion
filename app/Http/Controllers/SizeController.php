@@ -12,7 +12,7 @@ class SizeController extends Controller
      */
     public function index()
     {
-        $sizes = Size::all();
+        $sizes = Size::paginate(5);
         return view('admin.sizes.index', compact('sizes'));
     }
 

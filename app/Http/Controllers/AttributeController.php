@@ -12,13 +12,13 @@ class AttributeController extends Controller
 {
     public function index()
     {
-        $attributes = Attribute::all();  // Lấy tất cả các thuộc tính
+        $attributes = Attribute::paginate(5); 
         return view('admin.attributes.index', compact('attributes'));
     }
 
     public function create()
     {
-        return view('admin.attributes.create');  // Hiển thị form tạo mới
+        return view('admin.attributes.index');  // Hiển thị form tạo mới
     }
 
     public function store(Request $request)

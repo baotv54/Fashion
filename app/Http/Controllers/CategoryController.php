@@ -23,7 +23,7 @@ class CategoryController extends Controller
     public function create()
     {
         $categories = Category::whereNull('parent_id')->get(); // Lấy danh mục cha
-        return view('admin.categories.create', compact('categories'));
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -49,7 +49,7 @@ class CategoryController extends Controller
         Category::create($data);
 
         if ($data['parent_id']) {
-            return redirect()->route('categories.edit', $data['parent_id'])->with('success', 'Danh mục con đã được thêm!');
+            return redirect()->route('categories.index', $data['parent_id'])->with('success', 'Danh mục con đã được thêm!');
         }
 
         return redirect()->route('categories.index')->with('success', 'Danh mục cha đã được thêm!');
@@ -68,33 +68,33 @@ class CategoryController extends Controller
     /**
      * Cập nhật danh mục
      */
-public function update(Request $request, $id)
-{
-    $data = $request->validate([
-        'name' => 'required|string|max:255',
-        'status' => 'nullable|boolean',
-    ]);
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'nullable|boolean',
+        ]);
 
-    $category = Category::findOrFail($id);
+        $category = Category::findOrFail($id);
 
-    $slug = Str::slug($data['name']);
-    $count = Category::where('slug', $slug)->where('id', '!=', $id)->count();
-    if ($count > 0) {
-        $slug .= '-' . ($count + 1);
+        $slug = Str::slug($data['name']);
+        $count = Category::where('slug', $slug)->where('id', '!=', $id)->count();
+        if ($count > 0) {
+            $slug .= '-' . ($count + 1);
+        }
+
+        $category->update([
+            'name' => $data['name'],
+            'slug' => $slug,
+            'status' => $data['status'] ?? $category->status,
+        ]);
+
+        if (is_null($category->parent_id)) {
+            return redirect()->route('categories.edit', $category->id)->with('success', 'Danh mục cha đã được cập nhật!');
+        }
+
+        return redirect()->route('categories.edit', $category->parent_id)->with('success', 'Danh mục con đã được cập nhật!');
     }
-
-    $category->update([
-        'name' => $data['name'],
-        'slug' => $slug,
-        'status' => $data['status'] ?? $category->status,
-    ]);
-
-    if (is_null($category->parent_id)) {
-        return redirect()->route('categories.edit', $category->id)->with('success', 'Danh mục cha đã được cập nhật!');
-    }
-
-    return redirect()->route('categories.edit', $category->parent_id)->with('success', 'Danh mục con đã được cập nhật!');
-}
 
 
     /**

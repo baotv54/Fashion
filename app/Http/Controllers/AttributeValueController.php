@@ -17,7 +17,7 @@ class AttributeValueController extends Controller
         $attribute = Attribute::findOrFail($attributeId);
 
         // Lấy tất cả giá trị thuộc tính của thuộc tính này
-        $attributeValues = $attribute->values;
+        $attributeValues = $attribute->values()->paginate(5);
 
         // Trả về view admin.attribute_values.index và truyền biến $attribute và $attributeValues
         return view('admin.attribute_values.index', compact('attribute', 'attributeValues'));
@@ -30,7 +30,7 @@ class AttributeValueController extends Controller
         $attribute = Attribute::findOrFail($attributeId);
 
         // Trả về view admin.attribute_values.create và truyền biến $attribute
-        return view('admin.attribute_values.create', compact('attribute'));
+        return view('admin.attribute_values.index', compact('attribute'));
     }
 
 

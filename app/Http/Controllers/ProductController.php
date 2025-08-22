@@ -187,22 +187,42 @@ class ProductController extends Controller
         return view('Frontend.pages.gioi-thieu', compact('products'));
     }
 
-    public function allProducts(Request $request)
+    public function allProducts(Request $request, $categorySlug = null)
     {
         $query = Product::with(['images', 'variants.attributeValues']);
 
+        $currentCategory = null; // biến mặc định
+
+        // Lọc theo danh mục nếu truyền slug
+        if ($categorySlug) {
+            $category = Category::with('parent')->where('slug', $categorySlug)->first();
+            if ($category) {
+                $currentCategory = $category; // gán vào để dùng ở breadcrumb
+
+                // Lấy tất cả id danh mục con
+                $categoryIds = $category->children()->pluck('id')->toArray();
+                $categoryIds[] = $category->id;
+
+                $query->whereIn('category_id', $categoryIds);
+            }
+        }
+
+        // Lọc theo brand
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
         }
 
+        // Lọc theo category (checkbox filter)
         if ($request->filled('category')) {
             $query->whereIn('category_id', $request->category);
         }
 
+        // Lọc theo size
         if ($request->filled('size')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->size));
         }
 
+        // Lọc theo color
         if ($request->filled('color')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->color));
         }
@@ -230,6 +250,7 @@ class ProductController extends Controller
             });
         }
 
+        // Sắp xếp
         if ($request->filled('sort')) {
             [$field, $direction] = explode(':', $request->sort);
             $query->orderBy($field, $direction);
@@ -243,8 +264,17 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
+        return view('Frontend.pages.products', compact(
+            'products',
+            'brands',
+            'categories',
+            'colors',
+            'sizes',
+            'currentCategory'
+        ));
     }
+
+
 
     public function show($id)
     {

@@ -37,6 +37,9 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên sản phẩm</label>
                             <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name', $product->name) }}">
+                            @error('name')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
@@ -147,11 +150,6 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="text-end mb-3">
-                    <button type="button" class="btn btn-success btn-sm" id="load-missing-variants">
-                        <i class="fas fa-plus"></i> Thêm biến thể
-                    </button>
-                </div>
 
                 <div id="missing-variants-container"></div>
 
@@ -195,6 +193,9 @@
                             <i class="fas fa-plus fa-2x text-muted"></i>
                         </label>
                         <input type="file" name="image" id="image" accept="image/*" hidden>
+                        @error('image')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <!-- Preview ảnh chính upload mới -->
                     <div class="preview-container-main d-flex flex-wrap gap-2 mt-3"></div>
@@ -240,6 +241,9 @@
                                 <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                                 @endforeach
                             </select>
+                            @error('brand_id')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
@@ -252,6 +256,9 @@
                                 </option>
                                 @endforeach
                             </select>
+                            @error('category_id')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -357,18 +364,22 @@
 
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
-    const container = document.getElementById('missing-variants-container');
-    const productId = {{ $product->id }};
-    fetch(`/admin/products/${productId}/missing-variants`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.length === 0) {
-                container.innerHTML = '<p class="text-muted">Tất cả tổ hợp biến thể đã tồn tại.</p>';
-                return;
+        const container = document.getElementById('missing-variants-container');
+        const productId = {
+            {
+                $product - > id
             }
-            container.innerHTML = '';
-            data.forEach((item, index) => {
-                const variantHtml = `
+        };
+        fetch(`/admin/products/${productId}/missing-variants`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p class="text-muted">Tất cả tổ hợp biến thể đã tồn tại.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                data.forEach((item, index) => {
+                    const variantHtml = `
                     <div class="border rounded-3 p-3 mb-3 variant-item">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div class="fw-semibold">${item.name}</div>
@@ -390,21 +401,20 @@
                             </div>
                         </div>
                     </div>`;
-                container.insertAdjacentHTML('beforeend', variantHtml);
-            });
-
-            // Gắn sự kiện xóa
-            container.querySelectorAll('.remove-variant').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.closest('.variant-item').remove();
+                    container.insertAdjacentHTML('beforeend', variantHtml);
                 });
-            });
-        })
-        .catch(() => {
-            container.innerHTML = '<p class="text-danger">Không tải được tổ hợp biến thể.</p>';
-        });
-});
 
+                // Gắn sự kiện xóa
+                container.querySelectorAll('.remove-variant').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        this.closest('.variant-item').remove();
+                    });
+                });
+            })
+            .catch(() => {
+                container.innerHTML = '<p class="text-danger">Không tải được tổ hợp biến thể.</p>';
+            });
+    });
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
