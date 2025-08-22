@@ -34,6 +34,8 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
+use App\Http\Controllers\NavbarController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -262,6 +264,11 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{popup}', [PopupController::class, 'destroy'])->name('popups.destroy');
         });
 
+
+        //routes quản lý popup
+        Route::prefix('navbars')->group(function () {
+            Route::get('/index', [NavbarController::class, 'index'])->name('navbars.index');
+        });
         // Quản trị Product Live Chat (non-AI)
         Route::prefix('live-chat')->group(function () {
             Route::get('/', [ProductLiveChatAdminController::class, 'index'])->name('admin.plc.index');

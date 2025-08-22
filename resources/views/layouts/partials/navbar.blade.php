@@ -118,6 +118,7 @@
                                     </div>
                                 </div>
                             </li>
+                            @foreach($contacts as $contact)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
@@ -126,8 +127,8 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 small">New Message ✉️</h6>
-                                        <small class="mb-1 d-block text-body">You have new message from Natalie</small>
+                                        <h6 class="mb-1 small">Liên Hệ Mới ✉️</h6>
+                                        <small class="mb-1 d-block text-body">{{$contact->email}}</small>
                                         <small class="text-body-secondary">1h ago</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
@@ -136,24 +137,35 @@
                                     </div>
                                 </div>
                             </li>
+                            @endforeach
+
+                            @foreach($contacts as $order)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded-circle bg-label-success"><i class="icon-base ti tabler-shopping-cart"></i></span>
+                                            <span class="avatar-initial rounded-circle bg-label-success">
+                                                <i class="icon-base ti tabler-shopping-cart"></i>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 small">Whoo! You have new order 🛒</h6>
-                                        <small class="mb-1 d-block text-body">ACME Inc. made new order $1,154</small>
-                                        <small class="text-body-secondary">1 day ago</small>
+                                        <h6 class="mb-1 small">Có Liên Hệ Mới ✉️</h6>
+                                        <small class="mb-1 d-block text-body">{{ $contact->email }}</small>
+                                        <small class="text-body-secondary">1h ago</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
-                                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base ti tabler-x"></span></a>
+                                        <a href="javascript:void(0)" class="dropdown-notifications-read">
+                                            <span class="badge badge-dot"></span>
+                                        </a>
+                                        <a href="javascript:void(0)" class="dropdown-notifications-archive">
+                                            <span class="icon-base ti tabler-x"></span>
+                                        </a>
                                     </div>
                                 </div>
                             </li>
+                            @endforeach
+
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
@@ -172,6 +184,7 @@
                                     </div>
                                 </div>
                             </li>
+
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
