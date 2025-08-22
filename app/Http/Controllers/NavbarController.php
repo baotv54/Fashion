@@ -25,4 +25,4 @@ class NavbarController extends Controller
     return view('layouts.partials.navbar', compact('orders','products','contacts'));
 }
 
-}
+} 

@@ -75,7 +75,7 @@
                         <div class="dropdown-header d-flex align-items-center py-3">
                             <h6 class="mb-0 me-auto">Notification</h6>
                             <div class="d-flex align-items-center h6 mb-0">
-                                <span class="badge bg-label-primary me-2">8 New</span>
+                                <span class="badge bg-label-primary me-2">{{ $pendingContacts->count() + $processingContacts->count() }} Thông báo</span>
                                 <a href="javascript:void(0)" class="dropdown-notifications-all p-2 btn btn-icon waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Mark all as read" data-bs-original-title="Mark all as read"><i class="icon-base ti tabler-mail-opened text-heading"></i></a>
                             </div>
                         </div>
@@ -118,16 +118,21 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
+                            {{-- Pending Contacts (Chờ xử lý) --}}
+                            @foreach($pendingContacts as $contact)
+                            <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar">
-                                            <img src="../../assets/img/avatars/2.png" alt="" class="rounded-circle">
+                                            <span class="avatar-initial rounded-circle bg-label-warning">
+                                                <i class="icon-base ti tabler-clock"></i>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 small">Liên Hệ Mới ✉️</h6>
-                                        <small class="text-body-secondary">1h ago</small>
+                                        <h6 class="mb-1 small">Liên Hệ Mới ✉️ <span class="badge bg-warning text-dark">Chờ xử lý</span></h6>
+                                        <small class="mb-1 d-block text-body">{{ $contact->email }}</small>
+                                        <small class="text-body-secondary">{{ $contact->created_at->diffForHumans() }}</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
                                         <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
@@ -136,30 +141,30 @@
                                 </div>
                             </li>
 
+                            {{-- Processing Contacts (Đang xử lý) --}}
+                            @foreach($processingContacts as $contact)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded-circle bg-label-success">
-                                                <i class="icon-base ti tabler-shopping-cart"></i>
+                                            <span class="avatar-initial rounded-circle bg-label-info">
+                                                <i class="icon-base ti tabler-loader"></i>
                                             </span>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 small">Có Liên Hệ Mới ✉️</h6>
-                                        <small class="mb-1 d-block text-body"></small>
-                                        <small class="text-body-secondary">1h ago</small>
+                                        <h6 class="mb-1 small">Liên Hệ ✉️ <span class="badge bg-info text-white">Đang xử lý</span></h6>
+                                        <small class="mb-1 d-block text-body">{{ $contact->email }}</small>
+                                        <small class="text-body-secondary">{{ $contact->created_at->diffForHumans() }}</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
-                                        <a href="javascript:void(0)" class="dropdown-notifications-read">
-                                            <span class="badge badge-dot"></span>
-                                        </a>
-                                        <a href="javascript:void(0)" class="dropdown-notifications-archive">
-                                            <span class="icon-base ti tabler-x"></span>
-                                        </a>
+                                        <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base ti tabler-x"></span></a>
                                     </div>
                                 </div>
                             </li>
+
+
 
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">

@@ -265,6 +265,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         });
 
 
+
         //routes quản lý popup
         Route::prefix('navbars')->group(function () {
             Route::get('/index', [NavbarController::class, 'index'])->name('navbars.index');
@@ -490,7 +491,7 @@ Route::get('/dashboard', function () {
 // });
 
 // Route::get('/', function () {
-//     return view('Frontend.index');
+//     return view('Frontend.index')
 // });
 // Route::get('/home', function () {
 //     return view('Frontend.index');
