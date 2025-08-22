@@ -75,9 +75,9 @@ Route::get('/faq', function () {
     return view('Frontend.pages.pages.faq');
 });
 
-Route::get('/lien-he', function () {
-    return view('Frontend.pages.pages.lien-he');
-});
+// Route::get('/lien-he', function () {
+//     return view('Frontend.pages.pages.lien-he');
+// });
 
 
 

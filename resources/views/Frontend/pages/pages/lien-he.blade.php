@@ -410,35 +410,50 @@
                         </div>
                     </div>
                     <div class="page-about-new-contact">
-                        <form method="post" action="https://f1genz-shoes.mysapo.net/postcontact" id="contact"
-                            accept-charset="UTF-8"><input name="FormType" type="hidden" value="contact" /><input
-                                name="utf8" type="hidden" value="true" /><input type="hidden"
-                                id="Token-4e696093f6124bfcbe7782ef135b85bf" name="Token" />
-                            <script src="../www.google.com/recaptcha/apif78f.js?render=6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK"></script>
-                            <script>
-                                grecaptcha.ready(function() {
-                                    grecaptcha.execute("6Ldtu4IUAAAAAMQzG1gCw3wFlx_GytlZyLrXcsuK", {
-                                        action: "contact"
-                                    }).then(function(token) {
-                                        document.getElementById("Token-4e696093f6124bfcbe7782ef135b85bf").value = token
-                                    });
-                                });
-                            </script>
+                        <!-- Thông báo success/error -->
+                        @if(session('success'))
+                            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #c3e6cb;">
+                                <strong>✅ Thành công!</strong> {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #f5c6cb;">
+                                <strong>❌ Có lỗi!</strong> {{ session('error') }}
+                            </div>
+                        @endif
+
+                        @if($errors->any())
+                            <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; margin: 15px 0; border-radius: 8px; border: 1px solid #f5c6cb;">
+                                <strong>❌ Lỗi validation:</strong>
+                                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form method="post" action="{{ route('contact.store') }}" id="contact"
+                            accept-charset="UTF-8">
+                            @csrf
                             <div class="section-title-all">
                                 <span>Kết nối ngay với chúng tôi</span>
                                 <h1 hidden>Liên hệ</h1>
                             </div>
                             <input required type="text" id="contactFormName" class="form-control input-lg"
-                                name="contact[name]" placeholder="Tên của bạn" autocapitalize="words"
-                                value="">
-                            <input required type="number" id="contactFormPhone" class="form-control input-lg"
-                                name="contact[phone]" placeholder="Số điện thoại của bạn" autocapitalize="words"
-                                value="">
-                            <input required type="email" name="contact[email]" placeholder="Email của bạn"
+                                name="name" placeholder="Tên của bạn" autocapitalize="words"
+                                value="{{ old('name') }}">
+                            <input required type="text" id="contactFormPhone" class="form-control input-lg"
+                                name="phone" placeholder="Số điện thoại của bạn" autocapitalize="words"
+                                value="{{ old('phone') }}">
+                            <input required type="email" name="email" placeholder="Email của bạn"
                                 id="contactFormEmail" class="form-control input-lg" autocapitalize="off"
-                                value="">
-                            <textarea required rows="6" name="contact[body]" class="form-control" placeholder="Viết bình luận"
-                                id="contactFormMessage"></textarea>
+                                value="{{ old('email') }}">
+                            <input type="text" name="subject" placeholder="Tiêu đề" class="form-control input-lg"
+                                value="{{ old('subject') }}">
+                            <textarea required rows="6" name="message" class="form-control" placeholder="Viết bình luận"
+                                id="contactFormMessage">{{ old('message') }}</textarea>
                             <button type="submit" class="btn btn-outline insButton" title="Gửi thông tin">Gửi thông
                                 tin</button>
                             <ul class="shop-social">
