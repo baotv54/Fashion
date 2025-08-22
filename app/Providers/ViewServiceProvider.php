@@ -8,6 +8,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Favorite;
 use App\Models\Logo;
+use App\Models\SocialLink; // 👈 thêm model social
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,7 @@ class ViewServiceProvider extends ServiceProvider
                 'carts' => $carts,
                 'favorites' => $favorites,
                 'logos' => Logo::all(),
+                'socialLinks' => SocialLink::all(), // 👈 thêm share social links
             ]);
         });
     }

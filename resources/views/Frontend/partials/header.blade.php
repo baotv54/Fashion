@@ -2,12 +2,16 @@
     <div class="container">
         <div class="headers2-wrap">
             @foreach ($logos as $logo)
-
-              <div class="headers2-left">
+                <div class="headers2-left">
                     <a href="/" aria-label="F1GENZ Shoes">
-                        <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
+                        @if (!empty($logo->images))
+                            <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
+                        @else
+                            <img src="/logo/image.png" alt="No Logo" title="No Logo">
+                        @endif
                     </a>
                 </div>
+                 @endforeach
             <div class="headers2-center">
                 <nav class="headers2-center-menu">
                     <ul class="menu0">
@@ -196,7 +200,7 @@
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
             </div>
-             @endforeach
+             
         </div>
     </div>
 </header>

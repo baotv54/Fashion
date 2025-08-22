@@ -34,6 +34,7 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
+use App\Http\Controllers\SocialLinkController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -262,6 +263,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{popup}', [PopupController::class, 'destroy'])->name('popups.destroy');
         });
 
+
         // Quản trị Product Live Chat (non-AI)
         Route::prefix('live-chat')->group(function () {
             Route::get('/', [ProductLiveChatAdminController::class, 'index'])->name('admin.plc.index');
@@ -457,6 +459,15 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
             Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
         });
+        //sociak links
+ Route::prefix('socialLink')->group(function () {
+    Route::get('/', [SocialLinkController::class, 'index'])->name('social-links.index');
+    Route::get('/create', [SocialLinkController::class, 'create'])->name('social-links.create');
+    Route::post('/', [SocialLinkController::class, 'store'])->name('social-links.store');
+    Route::get('/{id}/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
+    Route::put('/{id}', [SocialLinkController::class, 'update'])->name('social-links.update');
+    Route::delete('/{id}', [SocialLinkController::class, 'destroy'])->name('social-links.destroy');
+});
     });
 });
 
