@@ -21,8 +21,8 @@ use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
 use App\Models\Post;
+use App\Models\Size;
 use Illuminate\Support\Facades\Log;
-
 
 class ProductController extends Controller
 {
@@ -323,6 +323,9 @@ class ProductController extends Controller
         // FIX: Tính toán hasVariants chính xác
         $hasVariants = $product->variants->count() > 0;
 
+        // Lấy toàn bộ danh sách size để hiển thị dưới "Thông số kỹ thuật"
+        $sizes = Size::orderBy('size')->get();
+
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
@@ -335,7 +338,8 @@ class ProductController extends Controller
             'hasVariants',
             'ratingStats',
             'canReview',
-            'userReview'
+            'userReview',
+            'sizes'
         ))->with('carts', Cart::content());
     }
 

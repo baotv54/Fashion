@@ -14,7 +14,7 @@ class ProductLiveChatAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ProductLiveChatThread::query();
+        $query = ProductLiveChatThread::query()->with(['user:id,name,avatar']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
@@ -24,12 +24,27 @@ class ProductLiveChatAdminController extends Controller
         }
 
         $threads = $query->latest('updated_at')->paginate(20);
-        return view('Admin.live_chat.index', compact('threads'));
+
+        // Optional: load selected thread (for single-page list + detail view)
+        $selectedThread = null;
+        $selectedMessages = collect();
+        if ($request->filled('id')) {
+            $selectedThread = ProductLiveChatThread::find((int) $request->input('id'));
+            if ($selectedThread) {
+                $selectedMessages = $selectedThread->messages()->with('attachments')->orderBy('created_at')->get();
+            }
+        }
+
+        return view('Admin.live_chat.index', [
+            'threads' => $threads,
+            'selectedThread' => $selectedThread,
+            'selectedMessages' => $selectedMessages,
+        ]);
     }
 
     public function show(int $id)
     {
-        $thread = ProductLiveChatThread::findOrFail($id);
+        $thread = ProductLiveChatThread::with(['user:id,name,avatar'])->findOrFail($id);
         $messages = $thread->messages()->with('attachments')->orderBy('created_at')->get();
         return view('Admin.live_chat.show', compact('thread', 'messages'));
     }

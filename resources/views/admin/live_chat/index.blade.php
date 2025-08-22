@@ -1,84 +1,122 @@
 @extends('layouts.admin')
 
 @section('content')
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản trị Live Chat - Danh sách</title>
-    <link href="{{ asset('adminkit/css/app.css') }}" rel="stylesheet">
-    <style>
-        .container { max-width: 1200px; margin: 24px auto; }
-        .table { width: 100%; }
-        .filters { display: flex; gap: 8px; margin-bottom: 16px; }
-        .badge-open { background: #10b981; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
-        .badge-closed { background: #ef4444; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h2 class="mb-3">Quản trị Live Chat - Danh sách cuộc trò chuyện</h2>
-
-    <form method="get" class="filters">
-        <input type="number" name="product_id" value="{{ request('product_id') }}" class="form-control" placeholder="Lọc theo Product ID">
-        <select name="status" class="form-select" style="max-width: 200px;">
-            <option value="">-- Tất cả trạng thái --</option>
-            <option value="open" {{ request('status')==='open' ? 'selected' : '' }}>Open</option>
-            <option value="closed" {{ request('status')==='closed' ? 'selected' : '' }}>Closed</option>
-        </select>
-        <button class="btn btn-primary">Lọc</button>
-        <a href="{{ route('admin.plc.index') }}" class="btn btn-secondary">Reset</a>
-    </form>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Product ID</th>
-                        <th>User ID</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Updated</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @forelse($threads as $t)
-                        <tr>
-                            <td>#{{ $t->id }}</td>
-                            <td>{{ $t->product_id }}</td>
-                            <td>{{ $t->user_id ?? '-' }}</td>
-                            <td>
-                                @if($t->status==='open')
-                                    <span class="badge-open">open</span>
-                                @else
-                                    <span class="badge-closed">closed</span>
-                                @endif
-                            </td>
-                            <td>{{ $t->created_at }}</td>
-                            <td>{{ $t->updated_at }}</td>
-                            <td>
-                                <a href="{{ route('admin.plc.show', $t->id) }}" class="btn btn-sm btn-outline-primary">Chi tiết</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted">Chưa có thread nào</td>
-                        </tr>
-                    @endforelse
-                    </tbody>
-                </table>
+<div class="row g-3">
+    <div class="col-lg-5">
+        @include('admin.live_chat._list', ['threads' => $threads])
+    </div>
+    <div class="col-lg-7">
+        @if(!empty($selectedThread))
+            @include('admin.live_chat._show', ['thread' => $selectedThread, 'messages' => $selectedMessages])
+        @else
+            <div class="card">
+                <div class="card-body text-muted">Chọn một cuộc trò chuyện ở bảng danh sách để xem chi tiết.</div>
             </div>
-            <div>
-                {{ $threads->withQueryString()->links() }}
-            </div>
-        </div>
+        @endif
+    </div>
+    <div class="col-12">
+        {{-- Pagination under the two-pane layout --}}
+        {{ $threads->withQueryString()->links() }}
     </div>
 </div>
-</body>
-</html>
 @endsection
+@if(!empty($selectedThread))
+@push('scripts')
+    <script>
+        (function(){
+            const threadId = {{ $selectedThread->id }};
+            const box = document.getElementById('chat-box');
+            let lastId = {{ optional($selectedMessages->last())->id ?? 0 }};
+            let pollTimer = null;
+            const replyForm = document.getElementById('plc-admin-reply');
+
+            function appendMessage(payload){
+                const wrap = document.createElement('div');
+                wrap.className = 'msg ' + (payload.sender || 'staff');
+                if (payload.message) {
+                    const t = document.createElement('div');
+                    t.textContent = payload.message;
+                    wrap.appendChild(t);
+                }
+                if (Array.isArray(payload.attachments)){
+                    payload.attachments.forEach(a=>{
+                        if (a.type === 'image'){
+                            const img = document.createElement('img');
+                            img.src = a.url; img.style.maxWidth='240px'; img.style.borderRadius='8px';
+                            wrap.appendChild(img);
+                        } else if (a.type === 'video'){
+                            const vid = document.createElement('video');
+                            vid.src = a.url; vid.controls = true; vid.style.maxWidth='260px'; vid.style.borderRadius='8px';
+                            wrap.appendChild(vid);
+                        }
+                    });
+                }
+                const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = (payload.sender||'') + ' • ' + (payload.timestamp||'');
+                wrap.appendChild(meta);
+                box.appendChild(wrap);
+                box.scrollTop = box.scrollHeight;
+            }
+
+            if (replyForm){
+                replyForm.addEventListener('submit', async (e)=>{
+                    e.preventDefault();
+                    const fd = new FormData(replyForm);
+                    try{
+                        const res = await fetch(replyForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            },
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if(!res.ok) throw new Error(data.message||'Reply failed');
+                        appendMessage({
+                            sender: data.data.sender,
+                            message: data.data.message,
+                            attachments: data.data.attachments || [],
+                            timestamp: data.data.created_at
+                        });
+                        if (typeof data.data.id !== 'undefined') {
+                            lastId = Math.max(lastId||0, Number(data.data.id)||0);
+                        }
+                        replyForm.querySelector('input[name="message"]').value = '';
+                        const fileInput = replyForm.querySelector('input[name="file"]');
+                        if(fileInput) fileInput.value = '';
+                    }catch(err){
+                        console.warn('[PLC][admin] reply error', err);
+                    }
+                });
+            }
+
+            async function pollOnce(){
+                try{
+                    const url = new URL("{{ route('plc.poll') }}", window.location.origin);
+                    url.searchParams.set('thread_id', threadId);
+                    url.searchParams.set('since_id', String(lastId||0));
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    if(!res.ok) throw new Error(data.message||'Poll failed');
+                    if (Array.isArray(data.messages) && data.messages.length){
+                        data.messages.forEach(m => {
+                            appendMessage({ sender: m.sender, message: m.message, attachments: m.attachments||[], timestamp: m.created_at });
+                        });
+                    }
+                    if (typeof data.last_id !== 'undefined') lastId = data.last_id;
+                }catch(err){ console.warn('[PLC][admin] poll error', err); }
+            }
+
+            function startPolling(){
+                if (!pollTimer) {
+                    pollOnce();
+                    pollTimer = setInterval(pollOnce, 3000);
+                }
+            }
+            function stopPolling(){ if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+
+            startPolling();
+        })();
+    </script>
+@endpush
+@endif
