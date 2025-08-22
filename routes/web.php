@@ -265,6 +265,7 @@ Route::middleware(['auth','is_admin'])->group(function () {
         });
 
 
+
         //routes quản lý popup
         Route::prefix('navbars')->group(function () {
             Route::get('/index', [NavbarController::class, 'index'])->name('navbars.index');
