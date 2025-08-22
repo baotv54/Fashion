@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AttributeValue;
 use App\Models\Attribute;
+use App\Models\VariantAttributeValue;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 
 class AttributeValueController extends Controller
 {
@@ -34,9 +36,17 @@ class AttributeValueController extends Controller
 
     public function store(Request $request, $attributeId)
     {
-        // Xử lý form tạo mới giá trị thuộc tính
         $request->validate([
-            'value' => 'required|string|max:255',
+            'value' => [
+                'required',
+                'max:255',
+                Rule::unique('attribute_values')->where(function ($query) use ($request, $attributeId) {
+                    return $query->where('attribute_id', $attributeId)
+                        ->whereRaw('LOWER(value) = ?', [strtolower($request->value)]);
+                }),
+            ],
+        ], [
+            'value.unique' => 'Giá trị thuộc tính đã tồn tại!',
         ]);
 
         $attribute = Attribute::findOrFail($attributeId);
@@ -44,7 +54,8 @@ class AttributeValueController extends Controller
             'value' => $request->input('value'),
         ]);
 
-        return redirect()->route('attribute_values.index', $attributeId)->with('success', 'Giá trị thuộc tính đã được tạo thành công!');
+        return redirect()->route('attribute_values.index', $attributeId)
+            ->with('success', 'Giá trị thuộc tính đã được tạo thành công!');
     }
 
     public function edit($attributeId, $id)
@@ -62,9 +73,17 @@ class AttributeValueController extends Controller
 
     public function update(Request $request, $attributeId, $id)
     {
-        // Xử lý form cập nhật giá trị thuộc tính
         $request->validate([
-            'value' => 'required|string|max:255',
+            'value' => [
+                'required',
+                'max:255',
+                Rule::unique('attribute_values')->ignore($id)->where(function ($query) use ($request, $attributeId) {
+                    return $query->where('attribute_id', $attributeId)
+                        ->whereRaw('LOWER(value) = ?', [strtolower($request->value)]);
+                }),
+            ],
+        ], [
+            'value.unique' => 'Giá trị thuộc tính đã tồn tại!',
         ]);
 
         $attribute = Attribute::findOrFail($attributeId);
@@ -74,15 +93,27 @@ class AttributeValueController extends Controller
             'value' => $request->input('value'),
         ]);
 
-        return redirect()->route('attribute_values.index', $attributeId)->with('success', 'Giá trị thuộc tính đã được cập nhật!');
+        return redirect()->route('attribute_values.index', $attributeId)
+            ->with('success', 'Giá trị thuộc tính đã được cập nhật!');
     }
 
     public function destroy($attributeId, $id)
     {
-        // Xóa giá trị thuộc tính
+        // Tìm giá trị thuộc tính
         $attributeValue = AttributeValue::findOrFail($id);
+
+        // Kiểm tra xem có VariantAttributeValue nào đang sử dụng attribute_value_id này không
+        $isUsed = VariantAttributeValue::where('attribute_value_id', $id)->exists();
+
+        if ($isUsed) {
+            return redirect()->route('attribute_values.index', $attributeId)
+                ->with('error', 'Không thể xóa vì giá trị thuộc tính này đang được sử dụng trong biến thể sản phẩm.');
+        }
+
+        // Nếu không bị ràng buộc thì xóa
         $attributeValue->delete();
 
-        return redirect()->route('attribute_values.index', $attributeId)->with('success', 'Giá trị thuộc tính đã được xóa!');
+        return redirect()->route('attribute_values.index', $attributeId)
+            ->with('success', 'Giá trị thuộc tính đã được xóa!');
     }
 }

@@ -69,51 +69,51 @@ class ProductVariantController extends Controller
     // }
 
     public function store(Request $request, $productId)
-{
-    $product = Product::findOrFail($productId);
+    {
+        $product = Product::findOrFail($productId);
 
-    $variants = $request->input('variants', []);
-    if (empty($variants)) {
-        return back()->withErrors(['error' => 'Chưa có biến thể nào được tạo.']);
-    }
-
-    foreach ($variants as $index => $variantData) {
-        // Kiểm tra dữ liệu cần thiết
-        if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
-            continue;
+        $variants = $request->input('variants', []);
+        if (empty($variants)) {
+            return back()->withErrors(['error' => 'Chưa có biến thể nào được tạo.']);
         }
 
-        // Xử lý ảnh nếu có
-        $imagePath = null;
-        $imageInputName = "variants.$index.image";
+        foreach ($variants as $index => $variantData) {
+            // Kiểm tra dữ liệu cần thiết
+            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['stock'])) {
+                continue;
+            }
 
-        if ($request->hasFile($imageInputName)) {
-            $file = $request->file($imageInputName);
-            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $imagePath = 'variants/' . $imageName;
-            $file->move(public_path('variants'), $imageName);
-        }
+            // Xử lý ảnh nếu có
+            $imagePath = null;
+            $imageInputName = "variants.$index.image";
 
-        // Tạo biến thể
-        $variant = ProductVariant::create([
-            'product_id' => $productId,
-            'price' => $variantData['price'],
-            'stock' => $variantData['stock'],
-            'image' => $imagePath,
-        ]);
+            if ($request->hasFile($imageInputName)) {
+                $file = $request->file($imageInputName);
+                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $imagePath = 'variants/' . $imageName;
+                $file->move(public_path('variants'), $imageName);
+            }
 
-        // Gán các giá trị thuộc tính
-        $valueIds = explode('-', $variantData['value_ids']);
-        foreach ($valueIds as $valueId) {
-            VariantAttributeValue::create([
-                'variant_id' => $variant->id,
-                'attribute_value_id' => $valueId,
+            // Tạo biến thể
+            $variant = ProductVariant::create([
+                'product_id' => $productId,
+                'price' => $variantData['price'],
+                'stock' => $variantData['stock'],
+                'image' => $imagePath,
             ]);
-        }
-    }
 
-    return redirect()->route('products.index')->with('success', 'Tạo biến thể thành công.');
-}
+            // Gán các giá trị thuộc tính
+            $valueIds = explode('-', $variantData['value_ids']);
+            foreach ($valueIds as $valueId) {
+                VariantAttributeValue::create([
+                    'variant_id' => $variant->id,
+                    'attribute_value_id' => $valueId,
+                ]);
+            }
+        }
+
+        return redirect()->route('products.index')->with('success', 'Tạo biến thể thành công.');
+    }
 
 
 
@@ -166,21 +166,67 @@ class ProductVariantController extends Controller
     }
 
 
+    // public function destroy($productId, $variantId)
+    // {
+    //     $variant = ProductVariant::findOrFail($variantId);
+
+    //     if ($variant->image) {
+    //         // Xóa ảnh khỏi thư mục public/variants/
+    //         $imagePath = public_path($variant->image);
+    //         if (file_exists($imagePath)) {
+    //             unlink($imagePath);
+    //         }
+    //     }
+
+    //     $variant->attributeValues()->delete();
+    //     $variant->delete();
+
+    //     return back()->with('success', 'Xóa biến thể thành công');
+    // }
     public function destroy($productId, $variantId)
     {
         $variant = ProductVariant::findOrFail($variantId);
 
-        if ($variant->image) {
-            // Xóa ảnh khỏi thư mục public/variants/
-            $imagePath = public_path($variant->image);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
+        // Kiểm tra tồn kho
+        if ($variant->stock > 0) {
+            return back()->with('error', 'Không thể xóa biến thể vì còn hàng trong kho!');
         }
 
-        $variant->attributeValues()->delete();
+        // Xóa mềm (soft delete)
         $variant->delete();
 
         return back()->with('success', 'Xóa biến thể thành công');
+    }
+
+    public function restore($productId, $variantId)
+    {
+        $variant = ProductVariant::withTrashed()->findOrFail($variantId);
+
+        if ($variant->trashed()) {
+            $variant->restore();
+            return back()->with('success', 'Khôi phục biến thể thành công');
+        }
+
+        return back()->with('info', 'Biến thể này chưa bị xóa');
+    }
+
+    public function forceDelete($productId, $variantId)
+    {
+        $variant = ProductVariant::withTrashed()->findOrFail($variantId);
+
+        if ($variant->trashed()) {
+            // Xóa ảnh nếu có
+            if ($variant->image) {
+                $imagePath = public_path($variant->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            $variant->forceDelete();
+            return back()->with('success', 'Xóa vĩnh viễn biến thể thành công');
+        }
+
+        return back()->with('info', 'Biến thể chưa bị xóa mềm, không thể xóa cứng');
     }
 }

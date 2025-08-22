@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AttributeController extends Controller
 {
@@ -21,9 +23,16 @@ class AttributeController extends Controller
 
     public function store(Request $request)
     {
-        // Xử lý lưu thuộc tính mới
         $request->validate([
-            'name' => 'required|unique:attributes,name|max:255',
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('attributes')->where(function ($query) use ($request) {
+                    return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]);
+                }),
+            ],
+        ], [
+            'name.unique' => 'Thuộc tính đã tồn tại!',
         ]);
 
         $attribute = new Attribute();
@@ -41,9 +50,16 @@ class AttributeController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Xử lý cập nhật thuộc tính
         $request->validate([
-            'name' => 'required|max:255|unique:attributes,name,' . $id,
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('attributes')->ignore($id)->where(function ($query) use ($request) {
+                    return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]);
+                }),
+            ],
+        ], [
+            'name.unique' => 'Thuộc tính đã tồn tại!',
         ]);
 
         $attribute = Attribute::findOrFail($id);
@@ -56,6 +72,15 @@ class AttributeController extends Controller
     public function destroy($id)
     {
         $attribute = Attribute::findOrFail($id);
+
+        // Kiểm tra xem có AttributeValue nào đang dùng attribute_id này không
+        $hasValues = AttributeValue::where('attribute_id', $id)->exists();
+
+        if ($hasValues) {
+            return redirect()->route('attributes.index')
+                ->with('error', 'Không thể xóa thuộc tính vì đang có giá trị thuộc tính liên kết.');
+        }
+
         $attribute->delete();
 
         return redirect()->route('attributes.index')->with('success', 'Thuộc tính đã được xóa!');

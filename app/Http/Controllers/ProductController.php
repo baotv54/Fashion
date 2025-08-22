@@ -21,8 +21,8 @@ use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
 use App\Models\Post;
+use App\Models\Size;
 use Illuminate\Support\Facades\Log;
-
 
 class ProductController extends Controller
 {
@@ -57,17 +57,17 @@ class ProductController extends Controller
             ->orWhereHas('variant', fn($q) => $q->whereIn('product_id', $productIds))
             ->get();
 
-        $productSales = $order_details->map(function ($detail) {
-            $mainProductId = $detail->product_variant_id
-                ? $detail->variant->product_id
-                : $detail->product_id;
-            return [
-                'product_id' => $mainProductId,
-                'quantity' => $detail->quantity,
-            ];
-        })
-            ->groupBy('product_id')
-            ->map(fn($items) => $items->sum('quantity'));
+        // Gom nhóm số lượng bán theo product_id
+        $productSales = $order_details
+            ->mapToGroups(function ($detail) {
+                $mainProductId = $detail->product_variant_id
+                    ? $detail->variant->product_id
+                    : $detail->product_id;
+                return [$mainProductId => $detail->quantity];
+            })
+            ->map(function ($quantities) {
+                return $quantities->sum();
+            });
 
         // Gắn sold_count cho từng product
         $products->getCollection()->transform(function ($product) use ($productSales) {
@@ -227,7 +227,15 @@ class ProductController extends Controller
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->color));
         }
 
-        // Lọc theo price
+        // New: text search by name or slug
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%");
+            });
+        }
+
         if ($request->filled('price')) {
             $query->where(function ($q) use ($request) {
                 foreach ($request->price as $price) {
@@ -354,6 +362,9 @@ class ProductController extends Controller
         // FIX: Tính toán hasVariants chính xác
         $hasVariants = $product->variants->count() > 0;
 
+        // Lấy toàn bộ danh sách size để hiển thị dưới "Thông số kỹ thuật"
+        $sizes = Size::orderBy('size')->get();
+
         return view('Frontend.pages.product_detail', compact(
             'product',
             'images',
@@ -366,7 +377,8 @@ class ProductController extends Controller
             'hasVariants',
             'ratingStats',
             'canReview',
-            'userReview'
+            'userReview',
+            'sizes'
         ))->with('carts', Cart::content());
     }
 
@@ -474,7 +486,7 @@ class ProductController extends Controller
         $variants = $request->variants ?? [];
 
         foreach ($variants as $index => $variantData) {
-            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'], $variantData['discount_price'])) {
+            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'])) {
                 continue;
             }
 
@@ -691,7 +703,7 @@ class ProductController extends Controller
 
         // Kiểm tra số lượng của tất cả biến thể
         foreach ($product->variants as $variant) {
-            if ($variant->quantity > 0) {
+            if ($variant->stock > 0) {
                 return redirect()->route('products.index')
                     ->with('error', 'Một số biến thể còn tồn kho, không thể xóa.');
             }
@@ -742,13 +754,22 @@ class ProductController extends Controller
     // }
     public function search(Request $request)
     {
-        $query = $request->get('q');
+        $query = $request->get('query', $request->get('q', ''));
         $products = Product::where('name', 'like', "%{$query}%")
             ->orWhere('slug', 'like', "%{$query}%")
+            ->select('id', 'name', 'image')
             ->limit(20)
             ->get();
 
-        return response()->json($products);
+        $results = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'image_url' => $p->image ? asset($p->image) : asset('images/default.jpg'),
+            ];
+        });
+
+        return response()->json($results);
     }
 
     public function info(Request $request)

@@ -24,25 +24,18 @@
                         <label for="dt-search-variants"></label>
                     </div>
                 </div>
-                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
+                <!-- <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-6">
                         <a href="{{ route('product_variants.create', $product->id) }}" class="btn btn-primary">
                             <i class="icon-base ti tabler-plus icon-16px me-2"></i> Thêm biến thể
                         </a>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="justify-content-between dt-layout-table border-top">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
                     <table class="datatables-variants-list table dataTable dtr-column" id="DataTables_Variants" style="width: 100%;">
-                        <colgroup>
-                            <col style="width: 40px;">
-                            <col style="width: 80px;">
-                            <col>
-                            <col style="width: 120px;">
-                            <col style="width: 120px;">
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th class="dt-select dt-orderable-none">
@@ -68,7 +61,7 @@
                                     <span class="text-muted">Không có ảnh</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if ($variant->attributeValues->isNotEmpty())
                                     @foreach ($variant->attributeValues as $value)
                                     <span class="badge bg-secondary me-1">
@@ -83,14 +76,6 @@
                                 <td>{{ number_format($variant->price) }} VNĐ</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('product_variants.edit', [$product->id, $variant->id]) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Sửa">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                                <path d="M16 5l3 3" />
-                                            </svg>
-                                        </a>
                                         <form action="{{ route('product_variants.destroy', [$product->id, $variant->id]) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn chắc chắn muốn xóa biến thể này?');">
                                             @csrf
                                             @method('DELETE')

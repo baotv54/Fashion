@@ -4384,11 +4384,35 @@
 					<div class="main-product-description-right">
 						<label><span>Thông số kỹ thuật</span></label>
 						<div class="main-product-description-item-data">
-							<p><em><strong>Chuck Taylor Classic là dòng giày truyền thống của Converse được giữ đúng với nguyên bản ban đầu. Từ lúc xuất hiện cho đến nay dòng Classic vẫn nhận được sự quan tâm của nhiều khách hàng trên thế giới. Vậy đâu là lý do giúp dòng giày này trở nên phổ biến và được yêu thích nhiều như vậy trong nhiều thập kỷ qua?</strong></em></p>
-							<p>Chuck Taylor Classic có thiết kế giống như dòng Converse All Star được cho ra mắt vào 1917 dành riêng cho các vận động viên bóng rổ chuyên nghiệp.</p>
-							<p>Tuy nhiên thời điểm này giày Converse All Star chỉ thế hiện đúng chức năng của mình mà chưa đạt được độ tinh tế về thời trang. Vì vậy, sau khi Chuck Taylor tham gia vào đội ngũ Converse đã mang đến cho sản phẩm một sự thay đổi mới, đảm được tính thời trang cho sản phẩm. Sự thay đổi này đã khiến Converse có những bước chuyển mình và dần khẳng định được vị thế trong lĩnh vực giày thể thao.</p>
-							<p>Mẫu giày Converse CTAS SP OX với màu trắng sáng giúp làm bật tone và tôn thêm vẻ đẹp cho bộ outfit cực chất của bạn. Thiết kế đơn giản dễ dàng phối hợp với nhiều kiểu quần áo cho bạn tự do thay đổi trang phục. Thân giày được làm từ chất vải dệt dày dặn và bền bỉ, để bạn có cảm giác tự tin và an tâm trong mọi hoạt động.</p>
-							<p>
+							{{-- Bảng size hiển thị từ sizes_list --}}
+							@if(isset($sizes) && $sizes->count())
+							<div class="product-size-table" style="margin-top: 16px; overflow-x: auto;">
+								<table class="table table-bordered table-striped" style="min-width: 600px;">
+									<thead>
+										<tr>
+											<th>Size</th><br>
+											<th>Chiều cao</th><br>
+											<th>Cân nặng</th><br>
+											<th>Vòng ngực</th><br>
+											<th>Vòng hông</th><br>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach($sizes as $s)
+										<tr>
+											<td>{{ $s->size }}</td>
+											<td>{{ $s->height_range ?? '-' }}</td>
+											<td>{{ $s->weight_range ?? '-' }}</td>
+											<td>{{ $s->chest_range ?? '-' }}</td>
+											<td>{{ $s->hip_range ?? '-' }}</td>
+										</tr>
+										@endforeach
+									</tbody>
+								</table>
+							</div>
+							@else
+							<p style="margin-top: 8px;">Chưa có bảng size.</p>
+							@endif
 						</div>
 					</div>
 

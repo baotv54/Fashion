@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductLiveChatThread extends Model
 {
@@ -20,5 +21,10 @@ class ProductLiveChatThread extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ProductLiveChatMessage::class, 'thread_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
