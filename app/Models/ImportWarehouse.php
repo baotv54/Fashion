@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ImportWarehouse extends Model
 {
-   use HasFactory, SoftDeletes;
-    protected $dates = ['deleted_at'];
-
+   use HasFactory;
+   
     protected $table = 'import_warehouse'; // Tên bảng
 
     protected $fillable = [

@@ -224,7 +224,7 @@ Route::prefix('comparison')->group(function () {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'is_admin'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 
@@ -264,6 +264,12 @@ Route::middleware(['auth'])->group(function () {
         });
 
 
+
+
+        //routes quản lý popup
+        Route::prefix('navbars')->group(function () {
+            Route::get('/index', [NavbarController::class, 'index'])->name('navbars.index');
+        });
         // Quản trị Product Live Chat (non-AI)
         Route::prefix('live-chat')->group(function () {
             Route::get('/', [ProductLiveChatAdminController::class, 'index'])->name('admin.plc.index');
@@ -272,7 +278,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/close', [ProductLiveChatAdminController::class, 'close'])->name('admin.plc.close');
         });
         // Routes quản lý sản phẩm biến thể
-        Route::get('/product/search', [ProductController::class, 'search2'])->name('product.search');
+        Route::get('/product/search', [ProductController::class, 'search2'])->name('admin.product.search');
 
 
 
@@ -315,6 +321,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
             Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
             Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+            Route::post('{variantId}/restore', [ProductVariantController::class, 'restore'])->name('product_variants.restore'); // Khôi phục
+            Route::delete('{variantId}/force-delete', [ProductVariantController::class, 'forceDelete'])->name('product_variants.forceDelete'); // Xóa cứng
         });
 
         // Routers quản lý nhà cung cấp
@@ -492,7 +500,7 @@ Route::get('/dashboard', function () {
 // });
 
 // Route::get('/', function () {
-//     return view('Frontend.index');
+//     return view('Frontend.index')
 // });
 // Route::get('/home', function () {
 //     return view('Frontend.index');

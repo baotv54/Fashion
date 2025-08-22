@@ -2,6 +2,24 @@
 
 @section('content')
 <div class="container mt-4">
+    {{-- Hiển thị thông báo thành công --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    {{-- Hiển thị lỗi validate --}}
+    @if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <h2>Thêm Thuộc Tính Mới</h2>
 
     <!-- Form tạo mới thuộc tính -->

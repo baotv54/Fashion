@@ -27,6 +27,7 @@ class Order extends Model
         'status',
         'partner_code',
         'shipping_fee',
+        'payment_status', 
 
     ];
 

@@ -123,7 +123,7 @@ class CheckoutController extends Controller
             return redirect()->back()->with('error', 'Không thể tạo đơn hàng: ' . $e->getMessage());
         }
 
-         // Đánh dấu coupon đã dùng
+        // Đánh dấu coupon đã dùng
         if (Session::has('coupon')) {
             try {
                 $this->handleCouponUsage(Session::get('coupon.code'));
@@ -173,6 +173,8 @@ class CheckoutController extends Controller
 
         try {
             DB::beginTransaction();
+            $orderData['status'] = 'processing';
+            $orderData['payment_status'] = 'paid';
 
             $order = $this->createOrder($orderData);
             foreach ($orderData['cart_items'] as $cartItem) {
@@ -188,7 +190,7 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán VNPay: ' . $e->getMessage());
         }
 
-         // Đánh dấu coupon đã dùng
+        // Đánh dấu coupon đã dùng
         if (Session::has('coupon')) {
             try {
                 $this->handleCouponUsage(Session::get('coupon.code'));
@@ -253,14 +255,14 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán MoMo: ' . $e->getMessage());
         }
 
-           // Đánh dấu coupon đã dùng
-    if (Session::has('coupon')) {
-        try {
-            $this->handleCouponUsage(Session::get('coupon.code'));
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+        // Đánh dấu coupon đã dùng
+        if (Session::has('coupon')) {
+            try {
+                $this->handleCouponUsage(Session::get('coupon.code'));
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
         }
-    }
 
         $this->updateCouponUsage();
         $this->clearCartAndSession();
@@ -360,7 +362,7 @@ class CheckoutController extends Controller
             'payment_method' => $paymentMethod,
             'cart_items' => Cart::content()->toArray(),
             'status' => $paymentMethod === 'cod' ? 'ordered' : 'pending',
-            'payment_status' => $paymentMethod === 'cod' ? 'pending' : 'pending',
+            'payment_status' => $paymentMethod === 'cod' ? 'pending' : 'paid',
         ];
     }
 
@@ -621,7 +623,7 @@ class CheckoutController extends Controller
         ];
     }
 
-     private function handleCouponUsage($couponCode)
+    private function handleCouponUsage($couponCode)
     {
         $user = Auth::user();
         if (!$user || !$couponCode) return;
