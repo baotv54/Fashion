@@ -4,6 +4,23 @@
 <div class="container mt-4">
     <h2>Thêm Giá Trị Mới Cho Thuộc Tính: {{ $attribute->name }}</h2>
 
+    {{-- Hiển thị thông báo thành công --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    {{-- Hiển thị lỗi validate --}}
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     <!-- Form tạo mới giá trị thuộc tính -->
     <form action="{{ route('attribute_values.store', $attribute->id) }}" method="POST">
         @csrf

@@ -357,7 +357,7 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
-                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM" required>
+                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM" >
             </div>
         </div>
 

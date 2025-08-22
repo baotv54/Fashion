@@ -118,7 +118,6 @@
                                     </div>
                                 </div>
                             </li>
-                            @foreach($contacts as $contact)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
@@ -128,7 +127,6 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1 small">Liên Hệ Mới ✉️</h6>
-                                        <small class="mb-1 d-block text-body">{{$contact->email}}</small>
                                         <small class="text-body-secondary">1h ago</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
@@ -137,9 +135,7 @@
                                     </div>
                                 </div>
                             </li>
-                            @endforeach
 
-                            @foreach($contacts as $order)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item waves-effect">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
@@ -151,7 +147,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1 small">Có Liên Hệ Mới ✉️</h6>
-                                        <small class="mb-1 d-block text-body">{{ $contact->email }}</small>
+                                        <small class="mb-1 d-block text-body"></small>
                                         <small class="text-body-secondary">1h ago</small>
                                     </div>
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
@@ -164,7 +160,6 @@
                                     </div>
                                 </div>
                             </li>
-                            @endforeach
 
                             <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read waves-effect">
                                 <div class="d-flex">

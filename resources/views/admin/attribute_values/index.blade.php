@@ -9,12 +9,22 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    {{-- Hiển thị thông báo lỗi --}}
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
+
+    {{-- Hiển thị thông báo thành công --}}
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
 
     <div class="card">
         <div class="card-body table-responsive">
@@ -27,25 +37,23 @@
                 </thead>
                 <tbody>
                     @forelse ($attributeValues as $value)
-                        <tr>
-                            <td>{{ $value->value }}</td>
-                            <td class="text-center">
-                                <a href="{{ route('attribute_values.edit', [$attribute->id, $value->id]) }}" class="btn btn-sm btn-outline-warning me-1">
-                                    <i data-feather="edit"></i>
-                                </a>
-                                <form action="{{ route('attribute_values.destroy', [$attribute->id, $value->id]) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa giá trị này?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i data-feather="trash-2"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>{{ $value->value }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('attribute_values.edit', [$attribute->id, $value->id]) }}" class="btn btn-sm btn-outline-warning me-1">
+                                sửa </a>
+                            <form action="{{ route('attribute_values.destroy', [$attribute->id, $value->id]) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa giá trị này?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    Xóa </button>
+                            </form>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="2" class="text-muted text-center">Chưa có giá trị nào cho thuộc tính này.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="2" class="text-muted text-center">Chưa có giá trị nào cho thuộc tính này.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -55,7 +63,7 @@
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         feather.replace();
     });
 </script>

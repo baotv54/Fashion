@@ -225,7 +225,7 @@ Route::prefix('comparison')->group(function () {
 });
 
 
-Route::middleware(['auth','is_admin'])->group(function () {
+Route::middleware(['auth', 'is_admin'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 
@@ -320,6 +320,8 @@ Route::middleware(['auth','is_admin'])->group(function () {
             Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
             Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
             Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+            Route::post('{variantId}/restore', [ProductVariantController::class, 'restore'])->name('product_variants.restore'); // Khôi phục
+            Route::delete('{variantId}/force-delete', [ProductVariantController::class, 'forceDelete'])->name('product_variants.forceDelete'); // Xóa cứng
         });
 
         // Routers quản lý nhà cung cấp

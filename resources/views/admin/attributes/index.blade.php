@@ -9,14 +9,21 @@
         </a>
     </div>
 
-    <!-- Thông báo -->
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    {{-- Hiển thị thông báo lỗi --}}
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
 
+    {{-- Hiển thị thông báo thành công --}}
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
     <!-- Bảng danh sách -->
     <div class="card">
         <div class="card-body table-responsive">
@@ -30,19 +37,18 @@
                 <tbody>
                     @forelse ($attributes as $attribute)
                     <tr>
-                        <td>{{ $attribute->name }}</td>
+                        <td class="text-center">{{ $attribute->name }}</td>
                         <td class="text-center">
                             <a href="{{ route('attribute_values.index', $attribute->id) }}" class="btn btn-sm btn-outline-primary me-1">
                                 <i data-feather="list"></i> Giá trị
                             </a>
                             <a href="{{ route('attributes.edit', $attribute->id) }}" class="btn btn-sm btn-outline-warning me-1">
-                                <i data-feather="edit"></i>
-                            </a>
+                                Sửa </a>
                             <form action="{{ route('attributes.destroy', $attribute->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa thuộc tính này không?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    <i data-feather="trash-2"></i>
+                                    Xóa
                                 </button>
                             </form>
                         </td>
@@ -60,7 +66,7 @@
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         feather.replace();
     });
 </script>

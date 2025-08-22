@@ -452,7 +452,7 @@ class ProductController extends Controller
         $variants = $request->variants ?? [];
 
         foreach ($variants as $index => $variantData) {
-            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'], $variantData['discount_price'])) {
+            if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'])) {
                 continue;
             }
 
@@ -669,7 +669,7 @@ class ProductController extends Controller
 
         // Kiểm tra số lượng của tất cả biến thể
         foreach ($product->variants as $variant) {
-            if ($variant->quantity > 0) {
+            if ($variant->stock > 0) {
                 return redirect()->route('products.index')
                     ->with('error', 'Một số biến thể còn tồn kho, không thể xóa.');
             }
