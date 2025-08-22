@@ -140,6 +140,7 @@
                                     </div>
                                 </div>
                             </li>
+                            @endforeach
 
                             {{-- Processing Contacts (Đang xử lý) --}}
                             @foreach($processingContacts as $contact)
@@ -163,6 +164,7 @@
                                     </div>
                                 </div>
                             </li>
+                            @endforeach
 
 
 
