@@ -52,7 +52,7 @@
             <div class="container">
                 <div class="home-policy-wrap">
 
-                    <a href="collections/all.html" class="home-policy-item"
+                    <a href="#" class="home-policy-item"
                         aria-label="F1GENZ Shoes - Giao hàng nhanh, miễn phí">
                         <span><img loading="lazy" decoding="async" width="64" height="64"
                                 src="{{ asset('images/home_policy_item_image_1e889.png') }}"
@@ -62,7 +62,7 @@
                         <p>Đơn hàng > 900k hoặc đăng ký tài khoản được giao hàng miễn phí</p>
                     </a>
 
-                    <a href="collections/all.html" class="home-policy-item"
+                    <a href="#" class="home-policy-item"
                         aria-label="F1GENZ Shoes - Trả hàng, Bảo hành">
                         <span><img loading="lazy" decoding="async" width="64" height="64"
                                 src="{{ asset('images/home_policy_item_image_2e889.png') }}" title="Trả hàng, Bảo hành"
@@ -71,7 +71,7 @@
                         <p>Không thích? Trả lại hoặc đổi hàng của bạn miễn phí trong vòng 30 ngày.</p>
                     </a>
 
-                    <a href="collections/all.html" class="home-policy-item" aria-label="F1GENZ Shoes - Thành viên">
+                    <a href="#" class="home-policy-item" aria-label="F1GENZ Shoes - Thành viên">
                         <span><img loading="lazy" decoding="async" width="64" height="64"
                                 src="{{ asset('images/home_policy_item_image_3e889.png') }}" title="Thành viên"
                                 alt="F1GENZ Shoes - Thành viên" /></span>
@@ -79,7 +79,7 @@
                         <p>Ưu đãi theo từng cấp bậc hạng thành viên. Sinh nhật quà tặng thành viên</p>
                     </a>
 
-                    <a href="collections/all.html" class="home-policy-item" aria-label="F1GENZ Shoes - Chính hãng">
+                    <a href="#" class="home-policy-item" aria-label="F1GENZ Shoes - Chính hãng">
                         <span><img loading="lazy" decoding="async" width="64" height="64"
                                 src="{{ asset('images/home_policy_item_image_4e889.png') }}" title="Chính hãng"
                                 alt="F1GENZ Shoes - Chính hãng" /></span>
@@ -94,18 +94,21 @@
             <div class="container">
                 <div class="home-fSale-wrap">
                     <div class="home-fSale-head">
-                        <h2>
+                        <!-- <h2>
                             <img loading="lazy" decoding="async" title="F1GENZ Shoes - Flash Sale"
                                 src="{{ asset('images/home_fsale_imagee889.png') }}" alt="F1GENZ Shoes - Flash Sale">
-                        </h2>
+                        </h2> -->
+                        <br>
                         <div class="home-fSale-head-countdown">
-                            <label>Kết thúc sau</label>
+                            <label>Sản Phẩm Hot</label>
                             <div data-time="1/4/2025 24:00:00" class="countdownLoop"></div>
                         </div>
+                        <br>
+
                     </div>
                     <div class="home-fSale-body">
                         <div class="home-fSale-body-data">
-                            @foreach ($products as $product)
+                            @foreach ($topViewed as $product)
                             <div class="product-item special" data-id="{{ $product->id }}"
                                 data-handle="{{ Str::slug($product->name) }}">
                                 <div class="product-item-wrap">
@@ -204,12 +207,19 @@
                                             <span>{{ number_format($product->display_price, 0, ',', '.') }}₫</span>
                                             @endif
                                         </div>
-
                                         <div class="product-item-detail-info">
                                             <div class="product-item-detail-info-data">
-                                                <span class="product-item-detail-info-tag">freeship</span>
-                                                <span class="product-item-detail-info-tag">new</span>
+                                                <span class="product-item-detail-info-tag">Đã Bán :
+                                                    {{ shortNumber($product->sold_count) }} </span>
+                                                <span class="product-item-detail-info-tag">Yêu Thích :
+                                                    {{ shortNumber($product->favorites_count) }} </span>
+                                                <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                    Lượt Xem: {{ shortNumber($product->view_count) }}
+                                                </span>
                                             </div>
+                                        </div>
+                                        <div class="product-item-detail-info">
+
                                             <div class="product-reviews-display">
                                                 @if($product->reviews_count > 0)
                                                 <div class="product-rating-stars" style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
@@ -427,15 +437,46 @@
                                                 title="{{ $product->name }}">{{ $product->name }}</a>
                                         </h3>
                                         <div class="product-item-detail-price">
-                                            <span>Giá Bán:
-                                                {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                            <!-- <del>2.139.000₫</del> -->
+                                            @if($product->has_discount)
+                                            <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 14px;">
+                                                {{ number_format($product->price, 0, ',', '.') }}₫
+                                            </span>
+                                            <span class="discount-price" style="color: #e74c3c; font-weight: bold;">
+                                                {{ number_format($product->discount_price, 0, ',', '.') }}₫
+                                            </span>
+                                            @else
+                                            <span>{{ number_format($product->display_price, 0, ',', '.') }}₫</span>
+                                            @endif
                                         </div>
 
                                         <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
+                                            <div class="product-reviews-display">
+                                                @if($product->reviews_count > 0)
+                                                <div class="product-rating-stars" style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                                    <div class="stars-container" style="display: flex; gap: 1px;">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <=floor($product->average_rating))
+                                                            <span style="color: #ffbe00; font-size: 16px;">★</span>
+                                                            @elseif($i - 0.5 <= $product->average_rating)
+                                                                <span style="color: #ffbe00; font-size: 16px; position: relative; display: inline-block; width: 16px; overflow: hidden;">
+                                                                    <span style="position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffbe00;">★</span>
+                                                                    <span style="color: #ddd;">★</span>
+                                                                </span>
+                                                                @else
+                                                                <span style="color: #ddd; font-size: 16px;">★</span>
+                                                                @endif
+                                                                @endfor
+                                                    </div>
+                                                    <span class="rating-text" style="color: #666; font-size: 12px;">
+                                                        ({{ $product->reviews_count }})
+                                                    </span>
+                                                </div>
+                                                @else
+                                                <div class="no-rating" style="color: #999; font-size: 12px;">
+                                                    Chưa có đánh giá
+                                                </div>
+                                                @endif
                                             </div>
-                                            <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                         </div>
                                         <div class="product-item-detail-info">
                                             <div class="product-item-detail-info-data">
@@ -443,6 +484,9 @@
                                                     {{ shortNumber($product->sold_count) }} </span>
                                                 <span class="product-item-detail-info-tag">Yêu Thích :
                                                     {{ shortNumber($product->favorites_count) }} </span>
+                                                <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                    Lượt Xem: {{ shortNumber($product->view_count) }}
+                                                </span>
                                             </div>
                                             <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
@@ -580,15 +624,46 @@
                                                 title="{{ $product->name }}">{{ $product->name }}</a>
                                         </h3>
                                         <div class="product-item-detail-price">
-                                            <span>Giá Bán:
-                                                {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                            <!-- <del>2.139.000₫</del> -->
+                                            @if($product->has_discount)
+                                            <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 14px;">
+                                                {{ number_format($product->price, 0, ',', '.') }}₫
+                                            </span>
+                                            <span class="discount-price" style="color: #e74c3c; font-weight: bold;">
+                                                {{ number_format($product->discount_price, 0, ',', '.') }}₫
+                                            </span>
+                                            @else
+                                            <span>{{ number_format($product->display_price, 0, ',', '.') }}₫</span>
+                                            @endif
                                         </div>
 
                                         <div class="product-item-detail-info">
-                                            <div class="product-item-detail-info-data">
+                                            <div class="product-reviews-display">
+                                                @if($product->reviews_count > 0)
+                                                <div class="product-rating-stars" style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                                    <div class="stars-container" style="display: flex; gap: 1px;">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <=floor($product->average_rating))
+                                                            <span style="color: #ffbe00; font-size: 16px;">★</span>
+                                                            @elseif($i - 0.5 <= $product->average_rating)
+                                                                <span style="color: #ffbe00; font-size: 16px; position: relative; display: inline-block; width: 16px; overflow: hidden;">
+                                                                    <span style="position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffbe00;">★</span>
+                                                                    <span style="color: #ddd;">★</span>
+                                                                </span>
+                                                                @else
+                                                                <span style="color: #ddd; font-size: 16px;">★</span>
+                                                                @endif
+                                                                @endfor
+                                                    </div>
+                                                    <span class="rating-text" style="color: #666; font-size: 12px;">
+                                                        ({{ $product->reviews_count }})
+                                                    </span>
+                                                </div>
+                                                @else
+                                                <div class="no-rating" style="color: #999; font-size: 12px;">
+                                                    Chưa có đánh giá
+                                                </div>
+                                                @endif
                                             </div>
-                                            <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                         </div>
                                         <div class="product-item-detail-info">
                                             <div class="product-item-detail-info-data">
@@ -596,6 +671,9 @@
                                                     {{ shortNumber($product->sold_count) }} </span>
                                                 <span class="product-item-detail-info-tag">Yêu Thích :
                                                     {{ shortNumber($product->favorites_count) }} </span>
+                                                <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                    Lượt Xem: {{ shortNumber($product->view_count) }}
+                                                </span>
                                             </div>
                                             <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
@@ -741,14 +819,46 @@
                                             title="{{ $product->name }}">{{ $product->name }}</a>
                                     </h3>
                                     <div class="product-item-detail-price">
-                                        <span>Giá Bán: {{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                        <!-- <del>2.139.000₫</del> -->
+                                        @if($product->has_discount)
+                                        <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 14px;">
+                                            {{ number_format($product->price, 0, ',', '.') }}₫
+                                        </span>
+                                        <span class="discount-price" style="color: #e74c3c; font-weight: bold;">
+                                            {{ number_format($product->discount_price, 0, ',', '.') }}₫
+                                        </span>
+                                        @else
+                                        <span>{{ number_format($product->display_price, 0, ',', '.') }}₫</span>
+                                        @endif
                                     </div>
 
                                     <div class="product-item-detail-info">
-                                        <div class="product-item-detail-info-data">
+                                        <div class="product-reviews-display">
+                                            @if($product->reviews_count > 0)
+                                            <div class="product-rating-stars" style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                                                <div class="stars-container" style="display: flex; gap: 1px;">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        @if($i <=floor($product->average_rating))
+                                                        <span style="color: #ffbe00; font-size: 16px;">★</span>
+                                                        @elseif($i - 0.5 <= $product->average_rating)
+                                                            <span style="color: #ffbe00; font-size: 16px; position: relative; display: inline-block; width: 16px; overflow: hidden;">
+                                                                <span style="position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffbe00;">★</span>
+                                                                <span style="color: #ddd;">★</span>
+                                                            </span>
+                                                            @else
+                                                            <span style="color: #ddd; font-size: 16px;">★</span>
+                                                            @endif
+                                                            @endfor
+                                                </div>
+                                                <span class="rating-text" style="color: #666; font-size: 12px;">
+                                                    ({{ $product->reviews_count }})
+                                                </span>
+                                            </div>
+                                            @else
+                                            <div class="no-rating" style="color: #999; font-size: 12px;">
+                                                Chưa có đánh giá
+                                            </div>
+                                            @endif
                                         </div>
-                                        <div class="sapo-product-reviews-badge" data-id="33445638"></div>
                                     </div>
                                     <div class="product-item-detail-info">
                                         <div class="product-item-detail-info-data">
@@ -756,6 +866,9 @@
                                                 {{ shortNumber($product->sold_count) }} </span>
                                             <span class="product-item-detail-info-tag">Yêu Thích :
                                                 {{ shortNumber($product->favorites_count) }} </span>
+                                            <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                Lượt Xem: {{ shortNumber($product->view_count) }}
+                                            </span>
                                         </div>
                                         <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                     </div>
@@ -802,9 +915,7 @@
                     @foreach ($posts as $post)
                     <article class="article-item " data-index="1">
                         <div class="article-item-top">
-                            <a href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
-                                title="CONVERSE RENEW CRATER VÀ SỰ CHUYỂN ĐỔI PHÁT TRIỂN VỚI BỀN VỮNG"
-                                rel="nofollow">
+                            <a href="{{ route('posts.show', $post->id) }}" title="{{ $post->title }}" rel="nofollow">
                                 <img loading="lazy" decoding="async" width="600" height="400"
                                     src="{{ asset($post->image ?? 'images/default.jpg') }}"
                                     alt="{{ $post->title }}" title="{{ $post->title }}">
@@ -812,9 +923,7 @@
                             </a>
                         </div>
                         <div class="article-item-bottom">
-                            <h3 class="article-item-bottom-name"><a
-                                    href="converse-renew-crater-va-su-chuyen-doi-phat-trien-voi-ben-vung.html"
-                                    title="{{ $post->title }}">{{ $post->title }}</a></h3>
+                            <h3 class="article-item-bottom-name"><a href="{{ route('posts.show', $post->id) }}" title="{{ $post->title }}" rel="nofollow">{{ $post->title }}</a></h3>
                             <span class="article-item-bottom-date">
                                 <i class="far fa-calendar-alt fa-fw"></i>
                                 {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}
@@ -831,7 +940,7 @@
                 </div>
             </div>
         </section>
-        <section class="home-insta">
+        <!-- <section class="home-insta">
             <div class="home-insta-top">
                 <div class="container">
                     <i class="fab fa-instagram"></i>
@@ -901,7 +1010,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <section class="home-newletter">
             <div class="container">

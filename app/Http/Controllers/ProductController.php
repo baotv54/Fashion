@@ -99,129 +99,154 @@ class ProductController extends Controller
 
 
     public function homepage()
-    {
-        $products = Product::with(['variants', 'reviews' => function ($query) {
+{
+    $products = Product::with(['variants', 'reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-            ->withCount([
-                'favorites',
-                'reviews as reviews_count' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ])
-            ->withAvg([
-                'reviews as average_rating' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ], 'rating')
-            ->where(function ($query) {
-                $query->where('quantity', '>', 0)
-                    ->orWhereHas('variants', function ($q) {
-                        $q->where('quantity', '>', 0);
-                    });
-            })
-            ->orderBy('created_at', 'desc')
-            ->take(12)
-            ->get();
-
-        $carts = Cart::content();
-        $orders = Order::all();
-        $posts = Post::all();
-        $order_details = OrderDetail::with(['product', 'variant'])
-            ->whereHas('order', function ($query) {
-                $query->where('status', 'delivered'); // Giả sử trường trạng thái là 'status' và giá trị hoàn thành là 'completed'
-            })
-            ->get();
-        $coupons = Coupon::latest()->take(4)->get();
-        $banners = Banner::latest()->take(4)->get();
-        $favorites = collect();
-
-        // Gom nhóm số lượng bán theo product_id
-        $productSales = $order_details->map(function ($detail) {
-            $mainProductId = $detail->product_variant_id
-                ? $detail->variant->product_id
-                : $detail->product_id;
-            return [
-                'product_id' => $mainProductId,
-                'quantity'   => $detail->quantity,
-            ];
+        ->withCount([
+            'favorites',
+            'reviews as reviews_count' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ])
+        ->withAvg([
+            'reviews as average_rating' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ], 'rating')
+        ->where(function ($query) {
+            $query->where('quantity', '>', 0)
+                ->orWhereHas('variants', function ($q) {
+                    $q->where('quantity', '>', 0);
+                });
         })
-            ->groupBy('product_id')
-            ->map(function ($items) {
-                return $items->sum('quantity');
-            });
+        ->orderBy('created_at', 'desc')
+        ->take(12)
+        ->get();
 
-        // Gắn sold_count cho list sản phẩm ở homepage
-        $products = $products->map(function ($product) use ($productSales) {
+    // --- Tạo thêm top 12 sản phẩm nhiều lượt xem ---
+    $topViewed = Product::with(['variants', 'reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+        ->withCount([
+            'favorites',
+            'reviews as reviews_count' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ])
+        ->withAvg([
+            'reviews as average_rating' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ], 'rating')
+        ->where(function ($query) {
+            $query->where('quantity', '>', 0)
+                ->orWhereHas('variants', function ($q) {
+                    $q->where('quantity', '>', 0);
+                });
+        })
+        ->orderByDesc('view_count')
+        ->take(12)
+        ->get();
+
+        
+
+    // --- Phần còn lại giữ nguyên ---
+    $carts = Cart::content();
+    $orders = Order::all();
+    $posts = Post::all();
+    $order_details = OrderDetail::with(['product', 'variant'])
+        ->whereHas('order', function ($query) {
+            $query->where('status', 'delivered');
+        })
+        ->get();
+    $coupons = Coupon::latest()->take(4)->get();
+    $banners = Banner::latest()->take(4)->get();
+    $favorites = collect();
+
+    $productSales = $order_details->map(function ($detail) {
+        $mainProductId = $detail->product_variant_id
+            ? $detail->variant->product_id
+            : $detail->product_id;
+        return [
+            'product_id' => $mainProductId,
+            'quantity'   => $detail->quantity,
+        ];
+    })
+    ->groupBy('product_id')
+    ->map(function ($items) {
+        return $items->sum('quantity');
+    });
+
+    $products = $products->map(function ($product) use ($productSales) {
+        $product->sold_count = $productSales[$product->id] ?? 0;
+        return $product;
+    });
+
+    $topFavorites = Product::with(['reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+        ->withCount([
+            'favorites',
+            'reviews as reviews_count' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ])
+        ->withAvg([
+            'reviews as average_rating' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ], 'rating')
+        ->having('favorites_count', '>', 0)
+        ->orderByDesc('favorites_count')
+        ->take(4)
+        ->get()
+        ->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
             return $product;
         });
 
-        // Top sản phẩm được thích nhiều nhất
-        $topFavorites = Product::with(['reviews' => function ($query) {
+    $topSelling = Product::with(['reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-            ->withCount([
-                'favorites',
-                'reviews as reviews_count' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ])
-            ->withAvg([
-                'reviews as average_rating' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ], 'rating')
-            ->having('favorites_count', '>', 0)
-            ->orderByDesc('favorites_count')
-            ->take(4)
-            ->get()
-            ->map(function ($product) use ($productSales) {
-                $product->sold_count = $productSales[$product->id] ?? 0;
-                return $product;
-            });
-
-        // Top 4 sản phẩm bán chạy
-        $topSelling = Product::with(['reviews' => function ($query) {
-            $query->where('is_approved', true);
-        }])
-            ->withCount([
-                'favorites',
-                'reviews as reviews_count' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ])
-            ->withAvg([
-                'reviews as average_rating' => function ($query) {
-                    $query->where('is_approved', true);
-                }
-            ], 'rating')
-            ->whereIn('id', $productSales->keys())
-            ->get()
-            ->map(function ($product) use ($productSales) {
-                $product->sold_count = $productSales[$product->id] ?? 0;
-                return $product;
-            })
-            ->sortByDesc('sold_count')
-            ->take(4);
-
-        if (Auth::check()) {
-            $favorites = Favorite::with('product')
-                ->where('user_id', Auth::id())
-                ->get();
-        }
-
-        return view('Frontend.index', compact(
-            'products',
-            'carts',
-            'coupons',
+        ->withCount([
             'favorites',
-            'banners',
-            'topFavorites',
-            'topSelling',
-            'posts'
-        ));
+            'reviews as reviews_count' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ])
+        ->withAvg([
+            'reviews as average_rating' => function ($query) {
+                $query->where('is_approved', true);
+            }
+        ], 'rating')
+        ->whereIn('id', $productSales->keys())
+        ->get()
+        ->map(function ($product) use ($productSales) {
+            $product->sold_count = $productSales[$product->id] ?? 0;
+            return $product;
+        })
+        ->sortByDesc('sold_count')
+        ->take(8);
+
+    if (Auth::check()) {
+        $favorites = Favorite::with('product')
+            ->where('user_id', Auth::id())
+            ->get();
     }
+
+    return view('Frontend.index', compact(
+        'products',
+        'topViewed',  // <--- Thêm biến topViewed
+        'carts',
+        'coupons',
+        'favorites',
+        'banners',
+        'topFavorites',
+        'topSelling',
+        'posts'
+    ));
+}
 
 
 

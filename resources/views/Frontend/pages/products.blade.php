@@ -339,6 +339,9 @@
                                             <div class="product-item-detail-info-data">
                                                 <span class="product-item-detail-info-tag">Đã Bán : {{ shortNumber($product->sold_count ?? 0) }}</span>
                                                 <span class="product-item-detail-info-tag">Yêu Thích : {{ shortNumber($product->favorites_count ?? 0) }}</span>
+                                                <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                    Lượt Xem: {{ shortNumber($product->view_count ?? 0) }}
+                                                </span>
                                             </div>
                                             <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
