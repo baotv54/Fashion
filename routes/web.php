@@ -425,6 +425,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('orders.index');
             Route::get('/{id}', [OrderController::class, 'show'])->name('orders.details');
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+            Route::get('/orders/{id}/print', [OrderController::class, 'print'])->name('orders.print');
+            Route::post('/{id}/cancel-admin', [OrderController::class, 'cancelOrder_admin'])->name('orders.canceladmin');
         });
 
         Route::prefix('posts')->group(function () {
@@ -480,14 +482,14 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
         });
         //sociak links
- Route::prefix('socialLink')->group(function () {
-    Route::get('/', [SocialLinkController::class, 'index'])->name('social-links.index');
-    Route::get('/create', [SocialLinkController::class, 'create'])->name('social-links.create');
-    Route::post('/', [SocialLinkController::class, 'store'])->name('social-links.store');
-    Route::get('/{id}/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
-    Route::put('/{id}', [SocialLinkController::class, 'update'])->name('social-links.update');
-    Route::delete('/{id}', [SocialLinkController::class, 'destroy'])->name('social-links.destroy');
-});
+        Route::prefix('socialLink')->group(function () {
+            Route::get('/', [SocialLinkController::class, 'index'])->name('social-links.index');
+            Route::get('/create', [SocialLinkController::class, 'create'])->name('social-links.create');
+            Route::post('/', [SocialLinkController::class, 'store'])->name('social-links.store');
+            Route::get('/{id}/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
+            Route::put('/{id}', [SocialLinkController::class, 'update'])->name('social-links.update');
+            Route::delete('/{id}', [SocialLinkController::class, 'destroy'])->name('social-links.destroy');
+        });
     });
 });
 

@@ -380,24 +380,10 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $product_id
- * @property string $image_path
- * @property string|null $image_type
- * @property array<array-key, mixed> $vector
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Product|null $product
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereImagePath($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereImageType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereProductId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ImageVector whereVector($value)
  */
 	class ImageVector extends \Eloquent {}
 }
@@ -559,6 +545,7 @@ namespace App\Models{
  * @property string $total
  * @property string $payment_method
  * @property string $status
+ * @property string|null $payment_status
  * @property string|null $cancel_reason
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -582,6 +569,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereOrderCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePartnerCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePaymentMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePaymentStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereProvince($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereShippingFee($value)
@@ -719,6 +707,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $quantity
+ * @property int $view_count
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AttributeValue> $attributeValues
  * @property-read int|null $attribute_values_count
@@ -754,6 +743,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereViewCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withoutTrashed()
  */
@@ -823,6 +813,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductLiveChatMessage> $messages
  * @property-read int|null $messages_count
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductLiveChatThread newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductLiveChatThread newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductLiveChatThread query()
@@ -891,7 +882,6 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property string|null $slug
  * @property int $product_id
  * @property string $price
  * @property string|null $import_price
@@ -920,7 +910,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant whereQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductVariant withTrashed(bool $withTrashed = true)
@@ -1028,6 +1017,27 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $platform
+ * @property string|null $url
+ * @property string|null $image
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink whereImage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink wherePlatform($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialLink whereUrl($value)
+ */
+	class SocialLink extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $supplier_code
  * @property string $name
  * @property string|null $phone
@@ -1085,9 +1095,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $role
+ * @property string|null $avatar
  * @property string|null $phone
  * @property string|null $image
- * @property string|null $avatar
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Favorite> $favorites
  * @property-read int|null $favorites_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications

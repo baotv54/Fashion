@@ -4110,6 +4110,7 @@
 
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -4233,7 +4234,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        
+
         .cancel-modal .modal-header {
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             color: white;
@@ -4241,7 +4242,7 @@
             padding: 20px 25px;
             border-bottom: none;
         }
-        
+
         .cancel-modal .modal-title {
             font-weight: 600;
             font-size: 1.3rem;
@@ -4249,17 +4250,17 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .cancel-modal .btn-close {
             filter: brightness(0) invert(1);
             opacity: 0.8;
         }
-        
+
         .cancel-modal .modal-body {
             padding: 25px;
             background: #fafafa;
         }
-        
+
         .cancel-modal .alert-warning {
             background: linear-gradient(135deg, #fff3cd, #ffeaa7);
             border: 1px solid #ffeaa7;
@@ -4269,12 +4270,12 @@
             font-size: 14px;
             line-height: 1.5;
         }
-        
+
         .cancel-modal .alert-warning i {
             color: #856404;
             margin-right: 8px;
         }
-        
+
         .cancel-modal .form-check {
             background: white;
             border-radius: 10px;
@@ -4284,36 +4285,36 @@
             transition: all 0.3s ease;
             cursor: pointer;
         }
-        
+
         .cancel-modal .form-check:hover {
             border-color: #ff6b6b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.1);
         }
-        
+
         .cancel-modal .form-check-input:checked ~ .form-check-label {
             color: #ff6b6b;
             font-weight: 500;
         }
-        
+
         .cancel-modal .form-check-input:checked {
             background-color: #ff6b6b;
             border-color: #ff6b6b;
         }
-        
+
         .cancel-modal .form-check-label {
             font-size: 14px;
             line-height: 1.4;
             cursor: pointer;
             margin-left: 8px;
         }
-        
+
         .cancel-modal .form-check-input {
             width: 18px;
             height: 18px;
             margin-top: 2px;
         }
-        
+
         .cancel-modal #otherReasonDiv {
             background: white;
             border-radius: 10px;
@@ -4321,7 +4322,7 @@
             border: 2px solid #e9ecef;
             margin-top: 15px;
         }
-        
+
         .cancel-modal #cancelReasonOtherInput {
             border-radius: 8px;
             border: 1px solid #ddd;
@@ -4329,12 +4330,12 @@
             font-size: 14px;
             transition: border-color 0.3s ease;
         }
-        
+
         .cancel-modal #cancelReasonOtherInput:focus {
             border-color: #ff6b6b;
             box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
         }
-        
+
         .cancel-modal .modal-footer {
             background: white;
             border-radius: 0 0 15px 15px;
@@ -4342,7 +4343,7 @@
             padding: 20px 25px;
             gap: 15px;
         }
-        
+
         .cancel-modal .btn-secondary {
             background: #6c757d;
             border: none;
@@ -4351,12 +4352,12 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .cancel-modal .btn-secondary:hover {
             background: #5a6268;
             transform: translateY(-1px);
         }
-        
+
         .cancel-modal .btn-danger {
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
             border: none;
@@ -4365,38 +4366,38 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .cancel-modal .btn-danger:hover {
             background: linear-gradient(135deg, #ee5a52, #dc3545);
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
         }
-        
+
         .cancel-modal .modal-dialog {
             max-width: 550px;
         }
-        
+
 
         .cancel-modal.fade .modal-dialog {
             transition: transform 0.3s ease-out;
             transform: translate(0, -50px);
         }
-        
+
         .cancel-modal.show .modal-dialog {
             transform: none;
         }
-        
+
 
         @media (max-width: 576px) {
             .cancel-modal .modal-dialog {
                 margin: 10px;
                 max-width: none;
             }
-            
+
             .cancel-modal .modal-body {
                 padding: 20px;
             }
-            
+
             .cancel-modal .modal-header,
             .cancel-modal .modal-footer {
                 padding: 15px 20px;
@@ -4422,7 +4423,7 @@
                             <i class="fas fa-info-circle"></i>
                             <strong>Lưu ý:</strong> Bạn có thể cập nhật thông tin nhận hàng cho đơn hàng (1 lần duy nhất). Nếu bạn xác nhận hủy, toàn bộ đơn hàng sẽ được hủy. Chọn lý do hủy phù hợp nhất với bạn nhé!
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi muốn cập nhật địa chỉ/sđt nhận hàng" id="reason1" required>
@@ -4431,7 +4432,7 @@
                                     Tôi muốn cập nhật địa chỉ/sđt nhận hàng
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi muốn thêm/thay đổi Mã giảm giá" id="reason2">
                                 <label class="form-check-label" for="reason2">
@@ -4439,7 +4440,7 @@
                                     Tôi muốn thêm/thay đổi Mã giảm giá
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi muốn thay đổi sản phẩm (kích thước, màu sắc, số lượng…)" id="reason3">
                                 <label class="form-check-label" for="reason3">
@@ -4447,7 +4448,7 @@
                                     Tôi muốn thay đổi sản phẩm (kích thước, màu sắc, số lượng…)
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Thủ tục thanh toán rắc rối" id="reason4">
                                 <label class="form-check-label" for="reason4">
@@ -4455,7 +4456,7 @@
                                     Thủ tục thanh toán rắc rối
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi tìm thấy chỗ mua khác tốt hơn (Rẻ hơn, uy tín hơn, giao nhanh hơn…)" id="reason5">
                                 <label class="form-check-label" for="reason5">
@@ -4463,7 +4464,7 @@
                                     Tôi tìm thấy chỗ mua khác tốt hơn (Rẻ hơn, uy tín hơn, giao nhanh hơn…)
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi không có nhu cầu mua nữa" id="reason6">
                                 <label class="form-check-label" for="reason6">
@@ -4471,7 +4472,7 @@
                                     Tôi không có nhu cầu mua nữa
                                 </label>
                             </div>
-                            
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="cancel_reason" value="Tôi không tìm thấy lý do hủy phù hợp" id="reasonOther">
                                 <label class="form-check-label" for="reasonOther">
@@ -4479,7 +4480,7 @@
                                     Tôi không tìm thấy lý do hủy phù hợp
                                 </label>
                             </div>
-                            
+
 
                             <div class="d-none" id="otherReasonDiv">
                                 <input type="text" class="form-control" name="cancel_reason_other" id="cancelReasonOtherInput" placeholder="Vui lòng nhập lý do cụ thể..." maxlength="255">
@@ -4511,7 +4512,7 @@
         const reasonOther = document.getElementById('reasonOther');
         const otherReasonDiv = document.getElementById('otherReasonDiv');
         const otherReasonInput = document.getElementById('cancelReasonOtherInput');
-        
+
 
         document.querySelectorAll('input[name="cancel_reason"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
@@ -4526,17 +4527,17 @@
                 }
             });
         });
-        
+
 
         document.querySelector('#cancelOrderModal form').addEventListener('submit', function(e) {
             const selectedReason = document.querySelector('input[name="cancel_reason"]:checked');
-            
+
             if (!selectedReason) {
                 e.preventDefault();
                 alert('Vui lòng chọn lý do hủy đơn hàng!');
                 return false;
             }
-            
+
             if (selectedReason.value === 'Tôi không tìm thấy lý do hủy phù hợp') {
                 if (!otherReasonInput.value.trim()) {
                     e.preventDefault();
@@ -4545,7 +4546,7 @@
                     return false;
                 }
             }
-            
+
 
             if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
                 e.preventDefault();

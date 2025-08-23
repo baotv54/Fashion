@@ -158,12 +158,6 @@
 
                             <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant->id }}">
                             <input type="hidden" name="variants[{{ $index }}][value_ids]" value="{{ implode('-', $valueIds) }}">
-
-                            <div class="text-end mt-3">
-                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.border').remove(); updateVariantCount()">
-                                    <i class="fas fa-trash-alt me-1"></i> Xoá biến thể
-                                </button>
-                            </div>
                         </div>
                         @endforeach
                     </div>
@@ -297,27 +291,6 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-3">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Tổ hợp biến thể chưa tạo</h5>
-        <button type="button" id="load-missing-variants" class="btn btn-outline-primary btn-sm">
-            <i class="fas fa-sync-alt me-1"></i> Tải biến thể còn thiếu
-        </button>
-    </div>
-    <div class="card-body">
-        <form action="{{ route('products.storeVariants', $product->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div id="missing-variants-container">
-                <p class="text-muted">Nhấn nút trên để kiểm tra tổ hợp biến thể còn thiếu.</p>
-            </div>
-            <div class="mt-3 text-end">
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-1"></i> Thêm biến thể
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 
         <!-- Nút -->
@@ -405,7 +378,11 @@
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
         const container = document.getElementById('missing-variants-container');
-        const productId = {{$product->id}};
+        const productId = {
+            {
+                $product - > id
+            }
+        };
         fetch(`/admin/products/${productId}/missing-variants`)
             .then(res => res.json())
             .then(data => {

@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -73,6 +74,7 @@ class OrderController extends Controller
             }
         }
     }
+    
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -226,6 +228,42 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
     }
 
+    public function cancelOrder_admin(Request $request, $id)
+    {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+            'cancel_reason_other' => 'nullable|string|max:255',
+        ]);
+
+        $order = Order::where('id', $id)
+            ->whereIn('status', ['ordered', 'processing', 'confirmed'])
+            ->firstOrFail();
+
+
+        // Nếu chọn "Tôi không tìm thấy lý do hủy phù hợp" thì lấy lý do khác
+        $cancelReason = $request->cancel_reason === 'Tôi không tìm thấy lý do hủy phù hợp'
+            ? $request->cancel_reason_other
+            : $request->cancel_reason;
+
+        try {
+            DB::beginTransaction();
+
+            $order->status = 'cancelled';
+            $order->cancel_reason = $cancelReason;
+            $order->save();
+
+            // Hoàn tồn kho khi người dùng hủy đơn
+            $this->adjustStockForOrder($order, 'increase');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể huỷ đơn hàng: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Đơn hàng đã được huỷ thành công!');
+    }
+
 
     public function reorder($id)
     {
@@ -250,5 +288,21 @@ class OrderController extends Controller
         }
 
         return redirect()->route('cart.index')->with('success', 'Các sản phẩm đã được thêm lại vào giỏ hàng.');
+    }
+
+    public function print($id)
+    {
+        // Lấy đơn hàng và sản phẩm liên quan
+        $order = Order::with(['orderDetails.product'])->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        // Load view vào PDF
+        $pdf = Pdf::loadView('admin.orders.print', compact('order'))
+            ->setPaper('a4');
+
+        // Xuất file PDF (xem trực tiếp trên trình duyệt)
+        return $pdf->stream('order-' . $order->id . '.pdf');
+
+        // Nếu muốn tải về luôn:
+        // return $pdf->download('order-'.$order->id.'.pdf');
     }
 }
