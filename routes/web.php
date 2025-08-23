@@ -35,6 +35,7 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
 use App\Http\Controllers\SocialLinkController;
+use App\Http\Controllers\NavbarController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -46,6 +47,11 @@ Route::get('/lien-he', function () {
     return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ với giao diện cũ đã sửa validation
 })->name('contact.show');
 Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
+
+// Test route cho contact form đơn giản
+Route::get('/simple-contact', function () {
+    return view('simple-contact');
+})->name('simple.contact');
 
 // ======================= COMMENTED - BACKUP ROUTES =======================
 // Backup route cho trang liên hệ cũ (có lỗi form) - KHÔNG SỬ DỤNG
@@ -75,9 +81,7 @@ Route::get('/faq', function () {
     return view('Frontend.pages.pages.faq');
 });
 
-Route::get('/lien-he', function () {
-    return view('Frontend.pages.pages.lien-he');
-});
+
 
 
 
