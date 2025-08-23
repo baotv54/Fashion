@@ -145,17 +145,32 @@
                                                             <th>Thương hiệu</th>
                                                             <td>{{ $product->brand->name ?? 'N/A' }}</td>
                                                         </tr>
-                                                        <tr >
+                                                        <tr>
                                                             <th>Giá</th>
                                                             <td>{{ number_format($product->price) }} VND</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Tồn kho</th>
-                                                            <td>{{ $product->stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</td>
+                                                            <td>
+                                                                @if($product->variants_count > 0)
+                                                                {{-- Có biến thể thì check theo tổng stock --}}
+                                                                {{ $product->total_stock > 0 ? 'Còn hàng' : 'Hết hàng' }}
+                                                                @else
+                                                                {{-- Không có biến thể thì check theo quantity gốc --}}
+                                                                {{ $product->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}
+                                                                @endif
+                                                            </td>
+
                                                         </tr>
                                                         <tr>
                                                             <th>Số lượng</th>
-                                                            <td>{{ $product->quantity ?? '0' }}</td>
+                                                            <td>
+                                                                @php
+                                                                $totalStock = $product->variants_stock ?? $product->quantity;
+                                                                @endphp
+                                                                {{ $totalStock }}
+                                                                <span class="text-success small">(Có Thể Bán)</span>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <th>Trạng thái</th>
@@ -165,6 +180,20 @@
                                                                 </span>
                                                             </td>
                                                         </tr>
+
+                                                        <tr>
+                                                            {{-- Tồn kho (theo quantity hoặc tổng biến thể) --}}
+                                                            <td class="text-success small"> Tồn Kho: {{ $product->total_stock }}</td>
+
+                                                            {{-- Số lượng đã bán --}}
+                                                            <td class="text-success small"> Đã Bán: {{ $product->sold_count }}</td>
+
+                                                            {{-- Lượt yêu thích --}}
+                                                            <td class="text-success small">Yêu Thích: {{ $product->favorites_count }}</td>
+
+                                                            {{-- Trạng thái còn hàng / hết hàng --}}
+                                                        </tr>
+
                                                         <tr>
                                                             <th>Hành động</th>
                                                             <td>
@@ -192,7 +221,7 @@
                                                                             </svg>
                                                                         </button>
                                                                     </form>
-
+                                                                    @if($product->variants_count > 0)
                                                                     <a href="{{ route('product_variants.index', $product->id) }}" class="btn btn-sm btn-icon btn-outline-primary" title="Biến thể">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-library-plus">
                                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -202,6 +231,7 @@
                                                                             <path d="M14 7v6" />
                                                                         </svg>
                                                                     </a>
+                                                                    @endif
                                                                 </div>
                                                             </td>
                                                         </tr>

@@ -36,6 +36,7 @@ use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\NavbarController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -148,6 +149,7 @@ Route::prefix('product-live-chat')->group(function () {
     Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
     Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
     Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+    Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
 });
 
 // Chatbot Demo routes
@@ -260,6 +262,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
             Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
+            Route::post('/{id}/store-variants', [ProductController::class, 'storeAjax'])->name('products.storeVariants');
         });
 
         //routes quản lý popup

@@ -214,7 +214,10 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    {{ $product->quantity }}
+                                    @php
+                                    $totalStock = $product->variants_stock ?? $product->quantity;
+                                    @endphp
+                                    {{ $totalStock }}
                                     <span class="text-success small">(Có Thể Bán)</span>
                                 </td>
                                 <td class="text-center">{{ number_format($product->import_price, 0) }} VND</td>
