@@ -248,7 +248,21 @@ class ProductController extends Controller
                 }
             ], 'rating');
 
-        // Filters
+        $currentCategory = null; // biến mặc định
+
+        // Lọc theo danh mục nếu truyền slug
+        if ($categorySlug) {
+            $category = Category::with('parent')->where('slug', $categorySlug)->first();
+            if ($category) {
+                $currentCategory = $category; // gán vào để dùng ở breadcrumb
+
+                // Lấy tất cả id danh mục con
+                $categoryIds = $category->children()->pluck('id')->toArray();
+                $categoryIds[] = $category->id;
+
+                $query->whereIn('category_id', $categoryIds);
+            }
+        }
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
         }
@@ -299,7 +313,7 @@ class ProductController extends Controller
         // Get order details to calculate sold count
         $order_details = OrderDetail::with(['product', 'variant'])
             ->whereHas('order', function ($query) {
-                $query->where('status', 'delivered'); // Giả sử trường trạng thái là 'status' và giá trị hoàn thành là 'completed'
+                $query->where('status', 'delivered');
             })
             ->get();
         // Group sales quantity by product_id
@@ -336,7 +350,7 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes', 'favorites'));
+        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes', 'favorites','currentCategory'));
     }
 
 
