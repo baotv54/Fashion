@@ -105,7 +105,7 @@
             </ul>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit','social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
@@ -156,6 +156,23 @@
                         </li>
                     </ul>
                 </li>
+                   <li class="menu-item {{ Request::routeIs(['social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Mạng xã hội">Mạng xã hội</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs(['social-links.index', 'logo.create']) ? 'active' : '' }}">
+                            <a href="{{ route('social-links.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách social links">Danh sách mạng xã hội</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('social-links.create') ? 'active' : '' }}">
+                            <a href="{{ route('social-links.create') }}" class="menu-link">
+                                <div data-i18n="Thêm social links">Thêm mạng xã hội</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                  <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create','popups.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Popup">Popup</div>
@@ -173,6 +190,7 @@
                         </li>
                     </ul>
                 </li>
+                
             </ul>
         </li>
 
