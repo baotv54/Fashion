@@ -126,15 +126,33 @@
                             <div class="row">
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Bán</label>
-                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $variant->price }}" class="form-control" placeholder="Giá Bán" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][price]"
+                                        value="{{ old('variants.' . $index . '.price', $variant->price) }}"
+                                        class="form-control"
+                                        placeholder="Giá Bán"
+                                        min="0"
+                                        step="1000">
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Nhập</label>
-                                    <input type="number" name="variants[{{ $index }}][import_price]" value="{{ $variant->import_price }}" class="form-control" placeholder="Giá Nhập" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][import_price]"
+                                        value="{{ old('variants.' . $index . '.import_price', $variant->import_price) }}"
+                                        class="form-control"
+                                        placeholder="Giá Nhập"
+                                        min="0"
+                                        step="1000">
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Khuyến Mãi</label>
-                                    <input type="number" name="variants[{{ $index }}][discount_price]" value="{{ $variant->discount_price }}" class="form-control" placeholder="Giá KM" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][discount_price]"
+                                        value="{{ old('variants.' . $index . '.discount_price', $variant->discount_price) }}"
+                                        class="form-control"
+                                        placeholder="Giá KM"
+                                        min="0"
+                                        step="1000">
                                 </div>
                             </div>
 
@@ -279,6 +297,28 @@
                 </div>
             </div>
         </div>
+        <div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Tổ hợp biến thể chưa tạo</h5>
+        <button type="button" id="load-missing-variants" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-sync-alt me-1"></i> Tải biến thể còn thiếu
+        </button>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('products.storeVariants', $product->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div id="missing-variants-container">
+                <p class="text-muted">Nhấn nút trên để kiểm tra tổ hợp biến thể còn thiếu.</p>
+            </div>
+            <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-1"></i> Thêm biến thể
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
         <!-- Nút -->
         <div class="mt-3">
@@ -365,11 +405,7 @@
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
         const container = document.getElementById('missing-variants-container');
-        const productId = {
-            {
-                $product - > id
-            }
-        };
+        const productId = {{$product->id}};
         fetch(`/admin/products/${productId}/missing-variants`)
             .then(res => res.json())
             .then(data => {
@@ -385,7 +421,7 @@
                             <div class="fw-semibold">${item.name}</div>
                             <button type="button" class="btn btn-sm btn-danger remove-variant">Xóa</button>
                         </div>
-                        <input type="hidden" name="variants[${index}][value_ids]" value="${item.ids.join('-')}">
+                        <input type="number" name="variants[${index}][value_ids]" value="${item.ids.join('-')}">
                         <div class="row">
                             <div class="col-md-3 mb-2">
                                 <input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá bán">

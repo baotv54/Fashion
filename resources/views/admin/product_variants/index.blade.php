@@ -15,6 +15,18 @@
             </div>
         </div>
         @endif
+        @if(session('error'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div id="DataTables_Variants_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
@@ -95,7 +107,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Chưa có biến thể nào cho sản phẩm này.</td>
+                                <td colspan="5" class="text-center text-muted">Sản Phẩm Này Không Có Biến Thể.</td>
                             </tr>
                             @endforelse
                         </tbody>
