@@ -8,11 +8,6 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<style>
-		button svg {
-			display: inline-block;
-			vertical-align: middle;
-		}
-
 		.star-rating {
 			display: flex;
 			gap: 2px;
@@ -4234,9 +4229,18 @@
 
 										@php
 										$uniqueValues = $values->unique('id');
+										// Nếu là thuộc tính "Kích Thước" thì hiển thị toàn bộ size từ hệ thống
+										$renderValues = ($attributeName === 'Kích Thước' && isset($allSizeAttributeValues))
+											? $allSizeAttributeValues
+											: $uniqueValues;
 										@endphp
 
-										@foreach ($uniqueValues as $value)
+										@foreach ($renderValues as $value)
+										@php
+										    $isAvailable = !isset($availableSizeValueIds) || ($attributeName !== 'Kích Thước')
+										        ? true
+										        : $availableSizeValueIds->contains($value->id);
+										@endphp
 										<span class="product-sw-select-item">
 											<input type="radio"
 												name="attributes[{{ $attributeName }}]"
@@ -4244,13 +4248,18 @@
 												class="trigger-option-sw d-none attribute-option"
 												value="{{ $value->id }}"
 												data-attribute-name="{{ $attributeName }}"
-												data-value-id="{{ $value->id }}">
+												data-value-id="{{ $value->id }}"
+												@unless($isAvailable) disabled @endunless>
 
 											<label for="attribute-{{ \Str::slug($attributeName) }}-{{ $value->id }}"
-												class="product-sw-select-item-span"
+												class="product-sw-select-item-span{{ $isAvailable ? '' : ' out-of-stock' }}"
 												data-attribute-name="{{ $attributeName }}"
-												data-value-id="{{ $value->id }}">
+												data-value-id="{{ $value->id }}"
+												title="{{ $isAvailable ? $value->value : ($value->value . ' - Hết hàng') }}">
 												{{ $value->value }}
+												@unless($isAvailable)
+													<span class="badge-out-of-stock">Hết hàng</span>
+												@endunless
 											</label>
 										</span>
 										@endforeach
@@ -4288,7 +4297,7 @@
 								</span>
 							</div>
 							</div>
-							
+
 							{{-- Thông báo lỗi thêm giỏ hàng (hiển thị ngay tại trang) --}}
 							<div id="add-to-cart-error" style="display:none; color:#b91c1c; background:#fde8e8; border:1px solid #f5c2c7; padding:10px; border-radius:6px; margin-top:10px;">
 							</div>
@@ -4331,7 +4340,7 @@
 							<li data-type="des" class="active"><span>Mô tả sản phẩm</span></li>
 							<li data-type="page1"><span>Chính sách bảo mật</span></li>
 							<li data-type="page2"><span>Chính sách đổi trả</span></li>
-							<li data-type="page3"><span>Điều khoản dịch vụ</span></li>
+							<li data-type="page3"><span>Thông tin kỹ thuật</span></li>
 						</ul>
 						<div class="main-product-description-left-item" data-type="des">
 							<div class="main-product-description-item-data">
@@ -4370,24 +4379,6 @@
 							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
 						</div>
 						<div class="main-product-description-left-item" data-type="page3">
-							<div class="main-product-description-item-data">
-								<p><span class="wysiwyg-font-size-medium"><strong>1. Giới thiệu</strong></span></p>
-								<p><span class="wysiwyg-font-size-medium">Chào mừng quý khách hàng đến với website chúng tôi.</span></p>
-								<p><span class="wysiwyg-font-size-medium">Khi quý khách hàng truy cập vào trang website của chúng tôi có nghĩa là quý khách đồng ý với các điều khoản này. Trang web có quyền thay đổi, chỉnh sửa, thêm hoặc lược bỏ bất kỳ phần nào trong Điều khoản mua bán hàng hóa này, vào bất cứ lúc nào. Các thay đổi có hiệu lực ngay khi được đăng trên trang web mà không cần thông báo trước. Và khi quý khách tiếp tục sử dụng trang web, sau khi các thay đổi về Điều khoản này được đăng tải, có nghĩa là quý khách chấp nhận với những thay đổi đó.</span></p>
-								<p><span class="wysiwyg-font-size-medium">Quý khách hàng vui lòng kiểm tra thường xuyên để cập nhật những thay đổi của chúng tôi.</span></p>
-								<p><span class="wysiwyg-font-size-medium"><strong>2. Hướng dẫn sử dụng website</strong></span></p>
-								<p><span class="wysiwyg-font-size-medium">Khi vào web của chúng tôi, khách hàng phải đảm bảo đủ 18 tuổi, hoặc truy cập dưới sự giám sát của cha mẹ hay người giám hộ hợp pháp. Khách hàng đảm bảo có đầy đủ hành vi dân sự để thực hiện các giao dịch mua bán hàng hóa theo quy định hiện hành của pháp luật Việt Nam.</span></p>
-								<p><span class="wysiwyg-font-size-medium">Trong suốt quá trình đăng ký, quý khách đồng ý nhận email quảng cáo từ website. Nếu không muốn tiếp tục nhận mail, quý khách có thể từ chối bằng cách nhấp vào đường link ở dưới cùng trong mọi email quảng cáo.</span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"><strong></strong></span><span class="wysiwyg-font-size-medium"></span></p>
-								<p><span class="wysiwyg-font-size-medium"></span><span class="wysiwyg-font-size-medium"></span><br></p>
-								<p><span class="wysiwyg-font-size-medium"><strong>3. Thanh toán an toàn và tiện lợi</strong></span></p>
-								<p><span class="wysiwyg-font-size-medium">Người mua có thể tham khảo các phương thức thanh toán sau đây và lựa chọn áp dụng phương thức phù hợp:</span></p>
-								<p><span class="wysiwyg-font-size-medium"><strong><u>Cách 1</u></strong>: Thanh toán trực tiếp (người mua nhận hàng tại địa chỉ người bán)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 2</u></strong><strong>:</strong>&nbsp;Thanh toán sau (COD – giao hàng và thu tiền tận nơi)<br></span><span class="wysiwyg-font-size-medium"><strong><u>Cách 3</u></strong><strong>:</strong>&nbsp;Thanh toán online qua thẻ tín dụng, chuyển khoản</span></p>
-							</div>
-							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
-						</div>
-					</div>
-					<div class="main-product-description-right">
-						<label><span>Thông số kỹ thuật</span></label>
 						<div class="main-product-description-item-data">
 							{{-- Bảng size hiển thị từ sizes_list --}}
 							@if(isset($sizes) && $sizes->count())
@@ -4395,11 +4386,11 @@
 								<table class="table table-bordered table-striped" style="min-width: 600px;">
 									<thead>
 										<tr>
-											<th>Size</th><br>
-											<th>Chiều cao</th><br>
-											<th>Cân nặng</th><br>
-											<th>Vòng ngực</th><br>
-											<th>Vòng hông</th><br>
+											<th>Size</th>
+											<th>Chiều cao</th>
+											<th>Cân nặng</th>
+											<th>Vòng ngực</th>
+											<th>Vòng hông</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -4419,7 +4410,10 @@
 							<p style="margin-top: 8px;">Chưa có bảng size.</p>
 							@endif
 						</div>
+							<a href="javascript:void(0);" class="main-product-description-item-readmore" aria-label="Xem đầy đủ Chính sách đổi trả" title="Xem đầy đủ Chính sách đổi trả">Xem thêm</a>
+						</div>
 					</div>
+
 
 				</div>
 
@@ -4703,64 +4697,69 @@
 		});
 	</script>
 	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			const readMoreLinks = document.querySelectorAll('.main-product-description-item-readmore');
-
-			readMoreLinks.forEach(link => {
-				const dataContainer = link.previousElementSibling;
-
-				// Tạo một clone để đo chiều cao thật
-				const clone = dataContainer.cloneNode(true);
-				clone.style.position = "absolute";
-				clone.style.visibility = "hidden";
-				clone.style.maxHeight = "none";
-				clone.style.height = "auto";
-				document.body.appendChild(clone);
-
-				const fullHeight = clone.offsetHeight;
-				document.body.removeChild(clone);
-
-				if (fullHeight <= 200) {
-					link.style.display = 'none'; // Ẩn nút nếu nội dung không vượt quá
-				}
-
-				link.addEventListener('click', function() {
-					if (dataContainer.classList.contains('expanded')) {
-						dataContainer.classList.remove('expanded');
-						this.textContent = 'Xem thêm';
+		function initReadMoreAndTabs() {
+			try {
+				// Event delegation cho tất cả nút Xem thêm
+				document.addEventListener('click', function(e) {
+					const link = e.target.closest('.main-product-description-item-readmore');
+					if (!link) return;
+					e.preventDefault();
+					const item = link.closest('.main-product-description-left-item');
+					if (!item) return;
+					const dataContainer = item.querySelector('.main-product-description-item-data');
+					if (!dataContainer) return;
+					// Toggle bằng inline style để tránh xung đột CSS
+					const isExpanded = dataContainer.dataset.expanded === 'true';
+					if (isExpanded) {
+						dataContainer.style.maxHeight = '200px';
+						dataContainer.style.overflow = 'hidden';
+						dataContainer.dataset.expanded = 'false';
+						link.textContent = 'Xem thêm';
 					} else {
-						dataContainer.classList.add('expanded');
-						this.textContent = 'Thu gọn';
+						dataContainer.style.maxHeight = 'none';
+						dataContainer.style.overflow = 'visible';
+						dataContainer.dataset.expanded = 'true';
+						link.textContent = 'Thu gọn';
 					}
 				});
-			});
 
-			// Tabs switching
-			const tabs = document.querySelectorAll('.main-product-description-left-head li');
-			const contentItems = document.querySelectorAll('.main-product-description-left-item');
-
-			tabs.forEach(tab => {
-				tab.addEventListener('click', function() {
-					const type = this.getAttribute('data-type');
-
-					tabs.forEach(t => t.classList.remove('active'));
-					this.classList.add('active');
-
-					contentItems.forEach(item => {
-						if (item.getAttribute('data-type') === type) {
-							item.style.display = 'block';
-						} else {
-							item.style.display = 'none';
-						}
+				// Tabs switching (giữ nguyên hành vi)
+				const tabs = document.querySelectorAll('.main-product-description-left-head li');
+				const contentItems = document.querySelectorAll('.main-product-description-left-item');
+				tabs.forEach(tab => {
+					tab.addEventListener('click', function() {
+						const type = this.getAttribute('data-type');
+						tabs.forEach(t => t.classList.remove('active'));
+						this.classList.add('active');
+						contentItems.forEach(item => {
+							const isActive = (item.getAttribute('data-type') === type);
+							item.style.display = isActive ? 'block' : 'none';
+							if (isActive) {
+								// Reset trạng thái xem thêm khi chuyển tab
+								const dataContainer = item.querySelector('.main-product-description-item-data');
+								const link = item.querySelector('.main-product-description-item-readmore');
+								if (dataContainer && link) {
+									dataContainer.classList.remove('expanded');
+									link.textContent = 'Xem thêm';
+								}
+							}
+						});
 					});
 				});
-			});
+				contentItems.forEach((item, index) => {
+					item.style.display = index === 0 ? 'block' : 'none';
+				});
+			} catch (err) {
+				console.error('Init ReadMore/Tabs error:', err);
+			}
+		}
 
-			// Hiển thị tab đầu tiên
-			contentItems.forEach((item, index) => {
-				item.style.display = index === 0 ? 'block' : 'none';
-			});
-		});
+		// Đảm bảo chạy cả khi DOM đã sẵn sàng từ trước
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initReadMoreAndTabs);
+		} else {
+			initReadMoreAndTabs();
+		}
 	</script>
 	<script>
 		// Variant mapping từ PHP
@@ -4775,14 +4774,14 @@
 			// Chuyển đổi sang string để tránh vấn đề parseInt, sau đó sort
 			const attributeIds = Object.values(selectedAttributes).map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
 			const key = attributeIds.join('-');
-			
+
 			console.log('Looking for key:', key);
 			console.log('Available keys:', Object.keys(variantMapping));
 			console.log('Selected attributes raw:', selectedAttributes);
 			console.log('Attribute IDs processed:', attributeIds);
-			
+
 			const variant = variantMapping[key] || null;
-			
+
 			if (!variant) {
 				// Thử debug từng variant để xem có match không
 				console.log('Debugging variants:');
@@ -4790,7 +4789,7 @@
 					console.log(`Variant key ${mapKey} vs looking for ${key}`);
 					console.log('Exact match:', mapKey === key);
 				});
-				
+
 				// Thử cách khác: tìm theo attribute_value_ids nếu có
 				console.log('Trying alternative matching...');
 				Object.entries(variantMapping).forEach(([mapKey, mapVariant]) => {
@@ -4804,7 +4803,7 @@
 					}
 				});
 			}
-			
+
 			return variant;
 		}
 
@@ -4877,12 +4876,12 @@
 			function markOutOfStockVariants() {
 				// Thay vì disable ngay, ta sẽ kiểm tra từng attribute value
 				// xem nó có thể kết hợp thành variant còn hàng không
-				
+
 				const attributeOptions = document.querySelectorAll('.attribute-option');
-				
+
 				attributeOptions.forEach(option => {
 					const shouldDisable = checkIfAttributeValueShouldBeDisabled(option.value);
-					
+
 					if (shouldDisable) {
 						const label = option.nextElementSibling;
 						if (label) {
@@ -4898,20 +4897,20 @@
 			function checkIfAttributeValueShouldBeDisabled(attributeValueId) {
 				// Tìm tất cả variants có chứa attribute value này
 				const variantsWithThisValue = Object.values(variantMapping).filter(variant => {
-					return variant.attribute_value_ids && 
+					return variant.attribute_value_ids &&
 						variant.attribute_value_ids.includes(parseInt(attributeValueId));
 				});
-				
+
 				// Nếu không có variant nào chứa attribute value này, disable nó
 				if (variantsWithThisValue.length === 0) {
 					return true;
 				}
-				
+
 				// Kiểm tra xem có ít nhất một variant còn hàng không
 				const hasAvailableVariant = variantsWithThisValue.some(variant => {
 					return variant.stock && variant.stock > 0;
 				});
-				
+
 				// Chỉ disable nếu TẤT CẢ variants chứa attribute value này đều hết hàng
 				return !hasAvailableVariant;
 			}
@@ -4929,9 +4928,9 @@
 
 				if (allAttributesSelected) {
 					const variant = findMatchingVariant(selectedAttributes);
-					
+
 					console.log('Found variant:', variant);
-					
+
 					if (variant) {
 						window.selectedVariantData = variant;
 						selectedVariantId.value = variant.id || '';
@@ -4968,23 +4967,23 @@
 			}
 			function updateAvailableOptions(selectedAttributes) {
 				const attributeLines = document.querySelectorAll('.product-sw-line');
-				
+
 				attributeLines.forEach(line => {
 					const attributeName = line.querySelector('.product-sw-title').textContent.trim();
 					const options = line.querySelectorAll('.attribute-option');
-					
+
 					// Nếu thuộc tính này đã được chọn, skip
 					if (selectedAttributes[attributeName]) {
 						return;
 					}
-					
+
 					options.forEach(option => {
 						const shouldDisable = checkIfOptionShouldBeDisabled(
-							option.value, 
-							attributeName, 
+							option.value,
+							attributeName,
 							selectedAttributes
 						);
-						
+
 						const label = option.nextElementSibling;
 						if (shouldDisable) {
 							label.classList.add('temp-disabled');
@@ -5004,22 +5003,22 @@
 			function checkIfOptionShouldBeDisabled(optionValue, attributeName, currentSelections) {
 				// Tạo selection mới bao gồm option này
 				const testSelection = { ...currentSelections, [attributeName]: optionValue };
-				
+
 				// Tìm các variants có thể match với selection này
 				const possibleVariants = Object.values(variantMapping).filter(variant => {
 					if (!variant.attribute_value_ids) return false;
-					
+
 					// Kiểm tra xem variant này có chứa tất cả attribute values đã chọn không
 					return Object.values(testSelection).every(selectedValueId => {
 						return variant.attribute_value_ids.includes(parseInt(selectedValueId));
 					});
 				});
-				
+
 				// Nếu không có variant nào có thể match, hoặc tất cả đều hết hàng
 				if (possibleVariants.length === 0) {
 					return true;
 				}
-				
+
 				const hasStockVariant = possibleVariants.some(variant => variant.stock > 0);
 				return !hasStockVariant;
 			}
@@ -5033,13 +5032,13 @@
 					pointer-events: none !important;
 					background-color: #f5f5f5 !important;
 				}
-				
+
 				.product-sw-select-item-span.temp-disabled {
 					opacity: 0.6 !important;
 					background-color: #fafafa !important;
 					cursor: not-allowed !important;
 				}
-				
+
 				.product-sw-select-item-span.temp-disabled:hover {
 					background-color: #fafafa !important;
 				}
@@ -5061,23 +5060,23 @@
 				const totalAttributeGroups = document.querySelectorAll('.product-sw-line').length;
 				return Object.keys(selectedAttributes).length === totalAttributeGroups;
 			}
-			
+
 		// Thay thế function findMatchingVariant bằng cách này:
 		function findMatchingVariant(selectedAttributes) {
 			console.log('Finding variant for:', selectedAttributes);
-			
+
 			// Lấy tất cả attribute value IDs đã chọn
 			const selectedIds = Object.values(selectedAttributes).map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
 			console.log('Selected IDs sorted:', selectedIds);
-			
+
 			// Tìm variant có attribute_value_ids khớp
 			for (const [key, variant] of Object.entries(variantMapping)) {
 				console.log(`Checking variant ${key}:`, variant);
-				
+
 				if (variant.attribute_value_ids) {
 					const variantIds = variant.attribute_value_ids.map(id => String(id)).sort((a, b) => parseInt(a) - parseInt(b));
 					console.log(`Variant ${key} IDs:`, variantIds);
-					
+
 					// So sánh arrays
 					if (arraysEqual(selectedIds, variantIds)) {
 						console.log(`Found matching variant: ${key}`);
@@ -5092,11 +5091,11 @@
 					}
 				}
 			}
-			
+
 			console.log('No matching variant found');
 			return null;
 		}
-		
+
 		// Helper function để so sánh arrays
 		function arraysEqual(arr1, arr2) {
 			if (arr1.length !== arr2.length) return false;
@@ -5129,11 +5128,11 @@
 				if (stockElement) {
 					if (variant.stock !== undefined && variant.stock !== null) {
 						stockElement.textContent = `${variant.stock} sản phẩm`;
-						
+
 						// Reset màu sắc trước khi áp dụng logic mới
 						stockElement.classList.remove('low-stock');
 						stockElement.style.color = '';
-						
+
 						// Thêm class cảnh báo nếu tồn kho thấp hoặc hết hàng
 						if (variant.stock <= 0) {
 							stockElement.textContent = 'Hết hàng';
@@ -5150,7 +5149,7 @@
 				// FIX: Cập nhật max quantity - đảm bảo không vượt quá tồn kho
 				if (variant.stock !== undefined && variant.stock !== null) {
 					quantityInput.setAttribute('max', variant.stock);
-					
+
 					// Nếu số lượng hiện tại vượt quá tồn kho mới, điều chỉnh lại
 					const currentQuantity = parseInt(quantityInput.value);
 					if (currentQuantity > variant.stock) {
