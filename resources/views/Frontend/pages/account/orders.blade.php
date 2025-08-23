@@ -4007,7 +4007,6 @@
                                 </li>
                                 @endforeach
                             </ul>
-
                             <table>
                                 <thead>
                                     <tr>

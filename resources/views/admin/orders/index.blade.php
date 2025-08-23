@@ -77,7 +77,7 @@
             <div class="row mx-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto">
                     <div class="dt-search">
-         
+
                     </div>
                 </div>
             </div>
@@ -101,12 +101,14 @@
                         @endphp
                         @foreach ($statuses as $key => $label)
                         <li class="nav-item">
-                            <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}" href="{{ route('orders.index', ['status' => $key]) }}">
-                                {{ $label }}
+                            <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}"
+                                href="{{ route('orders.index', ['status' => $key]) }}">
+                                {{ $label }} (<small style="color: red;">{{ $counts[$key] ?? 0 }}</small>)
                             </a>
                         </li>
                         @endforeach
                     </ul>
+
                     <table class="datatables-order table border-top dataTable dtr-column collapsed" id="DataTables_Table_0" style="width: 100%;">
                         <thead>
                             <tr>

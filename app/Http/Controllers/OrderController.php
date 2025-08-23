@@ -32,11 +32,17 @@ class OrderController extends Controller
 
         $orders = $query->paginate(10)->appends(['status' => $status]);
 
+        $counts = [
+            'ordered' => $ordered,
+            'delivered' => $delivered,
+            'returned' => $returned,
+            'cancelled' => $cancelled,
+        ];
 
         return view('admin.orders.index', [
             'orders' => $orders,
             'currentStatus' => $status
-        ], compact('ordered', 'delivered', 'returned', 'cancelled'));
+        ], compact('ordered', 'delivered', 'returned', 'cancelled', 'counts'));
     }
 
     /**
