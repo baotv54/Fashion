@@ -471,15 +471,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         // CRUD Size
         Route::resource('sizes', SizeController::class);
         Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
-        // Route quản lý chat
-        Route::prefix('product-live-chat')->group(function () {
-            Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
-            Route::post('/start', [ProductLiveChatController::class, 'start'])->name('plc.start');
-            Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
-            Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
-            Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
-            Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
-        });
+
         //sociak links
         Route::prefix('socialLink')->group(function () {
             Route::get('/', [SocialLinkController::class, 'index'])->name('social-links.index');
