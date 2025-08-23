@@ -167,109 +167,111 @@
             document.head.appendChild(mainFont);
         }
     </script>
-    	<style>
-		.chat-bubble.bot-bubble.typing {
-			font-style: italic;
-			opacity: 0.7;
-		}
+    <style>
+        .chat-bubble.bot-bubble.typing {
+            font-style: italic;
+            opacity: 0.7;
+        }
 
-		.chat-toggle-btn {
-			position: fixed;
-			bottom: 20px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 50px;
-			height: 50px;
-			border-radius: 50%;
-			background: #007bff;
-			color: white;
-			font-size: 24px;
-			border: none;
-			cursor: pointer;
-			z-index: 9999;
-		}
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
 
-		.chatbot-container {
-			position: fixed;
-			bottom: 80px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 360px;
-			max-height: 500px;
-			background: #fff;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0,0,0,0.2);
-			display: none;
-			flex-direction: column;
-			overflow: hidden;
-			z-index: 9999;
-		}
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 360px;
+            max-height: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
 
-		.chatbot-header {
-			background: #007bff;
-			color: #fff;
-			padding: 12px;
-			font-weight: bold;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+        .chatbot-header {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-		.chatbot-body {
-			flex: 1;
-			padding: 15px;
-			overflow-y: auto;
-			background: #f7f7f7;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-		.chatbot-footer {
-			display: flex;
-			padding: 10px;
-			border-top: 1px solid #ddd;
-			background: #fff;
-		}
+        .chatbot-footer {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
 
-		.chatbot-footer input {
-			flex: 1;
-			padding: 8px 10px;
-			border-radius: 6px;
-			border: 1px solid #ccc;
-		}
+        .chatbot-footer input {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
 
-		.chatbot-footer button {
-			margin-left: 5px;
-			padding: 8px 12px;
-			background: #007bff;
-			color: #fff;
-			border: none;
-			border-radius: 6px;
-		}
+        .chatbot-footer button {
+            margin-left: 5px;
+            padding: 8px 12px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+        }
 
-		.chat-bubble {
-			max-width: 80%;
-			padding: 10px 14px;
-			margin: 5px 0;
-			border-radius: 20px;
-			word-wrap: break-word;
-			font-size: 14px;
-			line-height: 1.4;
-		}
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            margin: 5px 0;
+            border-radius: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-		.user-bubble {
-			align-self: flex-end;
-			background-color: #007bff;
-			color: #fff;
-			border-bottom-right-radius: 0;
-		}
+        .user-bubble {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
 
-		.bot-bubble {
-			align-self: flex-start;
-			background-color: #e9ecef;
-			color: #000;
-			border-bottom-left-radius: 0;
-		}
-	</style>
+        .bot-bubble {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            color: #000;
+            border-bottom-left-radius: 0;
+        }
+    </style>
 
 
     <style>
@@ -3829,23 +3831,45 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    <style>
+        /* Remove list markers for account sidebar menu items */
+        .acc .acc-sidebar ul,
+        .acc .acc-sidebar ul li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        /* Hide marker pseudo-element where supported */
+        .acc .acc-sidebar li::marker {
+            content: '' !important;
+        }
+
+        /* Fallback for older browsers */
+        .acc .acc-sidebar li {
+            list-style-type: none !important;
+        }
+    </style>
 </head>
 
 <body class="">
     @include('Frontend.partials.header')
     <main class="main-layout">
-    @php $user = Auth::user(); @endphp
-    <div class="acc">
-        <div class="container-fluid">
-            <div class="acc-wrap">
-            <div class="acc-sidebar">
-                    <span>
-                        <img width="64" height="64"
-                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                             alt="{{ $user->name }}" />
-                    </span>
-                    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
-                     <!-- Nút toggle chỉ hiện trên mobile -->
+        @php $user = Auth::user(); @endphp
+        <div class="acc">
+            <div class="container-fluid">
+                <div class="acc-wrap">
+                    <!-- Sidebar -->
+                    <div class="acc-sidebar">
+                        <span>
+                            @if ($user->avatar)
+                            <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="{{ $user->name }}">
+                            @else
+                            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5" alt="{{ $user->name }}">
+                            @endif
+                        </span>
+                        <h3>Xin chào, <b>{{ $user->name }}</b></h3>
+
                         <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
@@ -3918,7 +3942,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #eacb34;
                             color: #fff;
                         }
 
@@ -3977,53 +4001,53 @@
                         }
                     </style>
 
-                <!-- Change Password -->
-                <div class="acc-data acc-data-password">
-                    <h1 class="title-head margin-top-0">Đổi mật khẩu</h1>
+                    <!-- Change Password -->
+                    <div class="acc-data acc-data-password">
+                        <h1 class="title-head margin-top-0">Đổi mật khẩu</h1>
 
-                    @if (session('status') === 'password-updated')
+                        @if (session('status') === 'password-updated')
                         <div class="alert alert-success">
                             Mật khẩu đã được thay đổi thành công.
                         </div>
-                    @endif
+                        @endif
 
-                    <p class="text-muted mb-4">Vui lòng nhập mật khẩu cũ và mật khẩu mới để thay đổi. Mật khẩu nên có ít nhất 8 ký tự để đảm bảo bảo mật.</p>
+                        <p class="text-muted mb-4">Vui lòng nhập mật khẩu cũ và mật khẩu mới để thay đổi. Mật khẩu nên có ít nhất 8 ký tự để đảm bảo bảo mật.</p>
 
-                    <form method="POST" action="{{ route('password.update') }}">
-                        @csrf
-                        @method('PUT')
+                        <form method="POST" action="{{ route('password.update') }}">
+                            @csrf
+                            @method('PUT')
 
-                        <div class="form-group mb-3">
-                            <label for="current_password">Mật khẩu cũ <span class="text-danger">*</span></label>
-                            <input type="password" name="current_password" id="current_password" required class="form-control">
-                            @error('current_password')
+                            <div class="form-group mb-3">
+                                <label for="current_password">Mật khẩu cũ <span class="text-danger">*</span></label>
+                                <input type="password" name="current_password" id="current_password" required class="form-control">
+                                @error('current_password')
                                 <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group mb-3">
-                            <label for="password">Mật khẩu mới <span class="text-danger">*</span></label>
-                            <input type="password" name="password" id="password" required class="form-control">
-                            @error('password')
+                            <div class="form-group mb-3">
+                                <label for="password">Mật khẩu mới <span class="text-danger">*</span></label>
+                                <input type="password" name="password" id="password" required class="form-control">
+                                @error('password')
                                 <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <div class="form-group mb-4">
-                            <label for="password_confirmation">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" required class="form-control">
-                            @error('password_confirmation')
+                            <div class="form-group mb-4">
+                                <label for="password_confirmation">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                                <input type="password" name="password_confirmation" id="password_confirmation" required class="form-control">
+                                @error('password_confirmation')
                                 <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                @enderror
+                            </div>
 
-                        <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
-                    </form>
+                            <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
 
     @include('Frontend.partials.footer')

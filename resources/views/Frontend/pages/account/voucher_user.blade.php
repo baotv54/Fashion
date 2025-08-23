@@ -3823,31 +3823,42 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    <style>
+        /* Remove list markers for account sidebar menu items */
+        .acc .acc-sidebar ul,
+        .acc .acc-sidebar ul li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+        }
+        /* Hide marker pseudo-element where supported */
+        .acc .acc-sidebar li::marker {
+            content: '' !important;
+        }
+        /* Fallback for older browsers */
+        .acc .acc-sidebar li { list-style-type: none !important; }
+    </style>
 </head>
 
 <body class="">
-  @include('Frontend.partials.header')
- <main class="main-layout">
-        @php $user = Auth::user(); @endphp
-        <div class="acc">
-            <div class="container-fluid">
-                <div class="acc-wrap">
-                    <!-- Sidebar -->
-                    <div class="acc-sidebar">
-                        <span>
-                       
-                             @if ($user->avatar)
-                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar" 
-                           alt="{{ $user->name }}">
-                    @else
-                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                            alt="{{ $user->name }}">
-                    @endif
-                    </span>
-                        <h3>Xin chào, <b>{{ $user->name }}</b></h3>
+    @include('Frontend.partials.header')
+    <main class="main-layout">
+    @php $user = Auth::user(); @endphp
+    <div class="acc">
+        <div class="container-fluid">
+            <div class="acc-wrap">
+                <!-- Sidebar -->
+                <div class="acc-sidebar">
+    <span>
+        @if ($user->avatar)
+            <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="{{ $user->name }}">
+        @else
+            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5" alt="{{ $user->name }}">
+        @endif
+    </span>
+    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
 
-                        <!-- Nút toggle chỉ hiện trên mobile -->
-                        <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
+    <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
                             <ul class="account-menu">
@@ -3877,7 +3888,7 @@
                                 });
                             }
                         });
-                    </script>
+</script>
                     <style>
                         /* ===== Sidebar layout trên PC ===== */
                         .acc-wrap {
@@ -3919,7 +3930,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #eacb34;
                             color: #fff;
                         }
 
@@ -3958,8 +3969,7 @@
                             .acc-sidebar {
                                 width: 100%;
                             }
-
-                            .menu-toggle {
+.menu-toggle {
                                 display: block;
                                 /* hiện nút toggle trên mobile */
                             }

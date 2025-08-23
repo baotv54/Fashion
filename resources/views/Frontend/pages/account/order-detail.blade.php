@@ -3782,24 +3782,45 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    <style>
+        /* Remove list markers for account sidebar menu items */
+        .acc .acc-sidebar ul,
+        .acc .acc-sidebar ul li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        /* Hide marker pseudo-element where supported */
+        .acc .acc-sidebar li::marker {
+            content: '' !important;
+        }
+
+        /* Fallback for older browsers */
+        .acc .acc-sidebar li {
+            list-style-type: none !important;
+        }
+    </style>
 </head>
 
 <body class="">
     @include('Frontend.partials.header')
-    @php $user = Auth::user(); @endphp
-
     <main class="main-layout">
+        @php $user = Auth::user(); @endphp
         <div class="acc">
             <div class="container-fluid">
                 <div class="acc-wrap">
+                    <!-- Sidebar -->
                     <div class="acc-sidebar">
                         <span>
-                            <img width="64" height="64"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                                alt="{{ $user->name }}" />
+                            @if ($user->avatar)
+                            <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="{{ $user->name }}">
+                            @else
+                            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5" alt="{{ $user->name }}">
+                            @endif
                         </span>
                         <h3>Xin chào, <b>{{ $user->name }}</b></h3>
-                         <!-- Nút toggle chỉ hiện trên mobile -->
+
                         <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
@@ -3872,7 +3893,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #eacb34;
                             color: #fff;
                         }
 
@@ -3946,15 +3967,15 @@
                             </b>
                         </div>
                         @php
-                            $statusMap = [
-                                'ordered' => 'Đã đặt hàng',
-                                'processing' => 'Đang xử lý',
-                                'confirmed' => 'Đã xác nhận',
-                                'shipping' => 'Đang giao hàng',
-                                'delivered' => 'Đã giao',
-                                'cancelled' => 'Đã hủy',
-                                'returned' => 'Đã trả hàng',
-                            ];
+                        $statusMap = [
+                        'ordered' => 'Đã đặt hàng',
+                        'processing' => 'Đang xử lý',
+                        'confirmed' => 'Đã xác nhận',
+                        'shipping' => 'Đang giao hàng',
+                        'delivered' => 'Đã giao',
+                        'cancelled' => 'Đã hủy',
+                        'returned' => 'Đã trả hàng',
+                        ];
                         @endphp
                         <!-- Trạng thái vận chuyển -->
                         <div class="shipping_status">
@@ -4110,7 +4131,7 @@
 
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -4232,7 +4253,7 @@
         .cancel-modal .modal-content {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .cancel-modal .modal-header {
@@ -4292,7 +4313,7 @@
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.1);
         }
 
-        .cancel-modal .form-check-input:checked ~ .form-check-label {
+        .cancel-modal .form-check-input:checked~.form-check-label {
             color: #ff6b6b;
             font-weight: 500;
         }
@@ -4508,52 +4529,52 @@
 
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const reasonOther = document.getElementById('reasonOther');
-        const otherReasonDiv = document.getElementById('otherReasonDiv');
-        const otherReasonInput = document.getElementById('cancelReasonOtherInput');
+        document.addEventListener('DOMContentLoaded', function() {
+            const reasonOther = document.getElementById('reasonOther');
+            const otherReasonDiv = document.getElementById('otherReasonDiv');
+            const otherReasonInput = document.getElementById('cancelReasonOtherInput');
 
 
-        document.querySelectorAll('input[name="cancel_reason"]').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                if (reasonOther.checked) {
-                    otherReasonDiv.classList.remove('d-none');
-                    otherReasonInput.required = true;
-                    otherReasonInput.focus();
-                } else {
-                    otherReasonDiv.classList.add('d-none');
-                    otherReasonInput.required = false;
-                    otherReasonInput.value = '';
+            document.querySelectorAll('input[name="cancel_reason"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    if (reasonOther.checked) {
+                        otherReasonDiv.classList.remove('d-none');
+                        otherReasonInput.required = true;
+                        otherReasonInput.focus();
+                    } else {
+                        otherReasonDiv.classList.add('d-none');
+                        otherReasonInput.required = false;
+                        otherReasonInput.value = '';
+                    }
+                });
+            });
+
+
+            document.querySelector('#cancelOrderModal form').addEventListener('submit', function(e) {
+                const selectedReason = document.querySelector('input[name="cancel_reason"]:checked');
+
+                if (!selectedReason) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn lý do hủy đơn hàng!');
+                    return false;
+                }
+
+                if (selectedReason.value === 'Tôi không tìm thấy lý do hủy phù hợp') {
+                    if (!otherReasonInput.value.trim()) {
+                        e.preventDefault();
+                        alert('Vui lòng nhập lý do hủy đơn hàng!');
+                        otherReasonInput.focus();
+                        return false;
+                    }
+                }
+
+
+                if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+                    e.preventDefault();
+                    return false;
                 }
             });
         });
-
-
-        document.querySelector('#cancelOrderModal form').addEventListener('submit', function(e) {
-            const selectedReason = document.querySelector('input[name="cancel_reason"]:checked');
-
-            if (!selectedReason) {
-                e.preventDefault();
-                alert('Vui lòng chọn lý do hủy đơn hàng!');
-                return false;
-            }
-
-            if (selectedReason.value === 'Tôi không tìm thấy lý do hủy phù hợp') {
-                if (!otherReasonInput.value.trim()) {
-                    e.preventDefault();
-                    alert('Vui lòng nhập lý do hủy đơn hàng!');
-                    otherReasonInput.focus();
-                    return false;
-                }
-            }
-
-
-            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    });
     </script>
 
 
