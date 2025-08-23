@@ -33,6 +33,7 @@ class OrderController extends Controller
         $orders = $query->paginate(10)->appends(['status' => $status]);
 
         $counts = [
+            'all'        => Order::count(),
             'ordered' => $ordered,
             'delivered' => $delivered,
             'returned' => $returned,
