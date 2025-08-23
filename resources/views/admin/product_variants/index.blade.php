@@ -3,11 +3,36 @@
 @section('content')
 <div class="card">
     <div class="card-datatable">
+        @if(session('success'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div id="DataTables_Variants_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
                     <div class="dt-search mb-0 mb-md-6">
-                        <input type="search" class="form-control ms-0" id="dt-search-variants" placeholder="Tìm kiếm biến thể" aria-controls="DataTables_Variants">
+
                         <label for="dt-search-variants"></label>
                     </div>
                 </div>
@@ -25,16 +50,22 @@
                     <table class="datatables-variants-list table dataTable dtr-column" id="DataTables_Variants" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th class="text-center">Ảnh</th>
-                                <th class="text-center">Thuộc tính</th>
-                                <th class="text-center">Tồn kho</th>
-                                <th class="text-center">Giá</th>
-                                <th class="text-center">Hành động</th>
+                                <th class="dt-select dt-orderable-none">
+
+                                </th>
+                                <th>Ảnh</th>
+                                <th>Thuộc tính</th>
+                                <th>Tồn kho</th>
+                                <th>Giá</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($variants as $variant)
                             <tr>
+                                <td>
+
+                                </td>
                                 <td class="text-center">
                                     @if ($variant->image && file_exists(public_path($variant->image)))
                                     <img src="{{ asset($variant->image) }}" alt="Ảnh biến thể" class="rounded border shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
@@ -46,7 +77,7 @@
                                     @if ($variant->attributeValues->isNotEmpty())
                                     @foreach ($variant->attributeValues as $value)
                                     <span class="badge bg-secondary me-1">
-                                        {{ $value->attributeValue->value ?? 'N/A' }}
+                                        {{ $value->value ?? 'N/A' }}
                                     </span>
                                     @endforeach
                                     @else
@@ -54,8 +85,8 @@
                                     @endif
                                 </td>
                                 <td class="text-center">{{ $variant->stock }}</td>
-                                <td class="text-center">{{ number_format($variant->price) }} VNĐ</td>
-                                <td class="text-center">
+                                <td>{{ number_format($variant->price) }} VNĐ</td>
+                                <td>
                                     <div class="btn-group" role="group">
                                         <form action="{{ route('product_variants.destroy', [$product->id, $variant->id]) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn chắc chắn muốn xóa biến thể này?');">
                                             @csrf
@@ -76,7 +107,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Chưa có biến thể nào cho sản phẩm này.</td>
+                                <td colspan="5" class="text-center text-muted">Sản Phẩm Này Không Có Biến Thể.</td>
                             </tr>
                             @endforelse
                         </tbody>

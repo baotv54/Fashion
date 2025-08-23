@@ -15,13 +15,28 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $status = $request->get('status', 'all');
 
-        return view('admin.orders.index', compact('orders'));
+        $query = Order::with('user')->orderBy('created_at', 'desc');
+        $ordered = Order::where('status', 'ordered')->count();
+        $delivered      = Order::where('status', 'delivered')->count();
+        $returned       = Order::where('status', 'returned')->count();
+        $cancelled         = Order::where('status', 'cancelled')->count();
+
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->paginate(10)->appends(['status' => $status]);
+
+
+        return view('admin.orders.index', [
+            'orders' => $orders,
+            'currentStatus' => $status
+        ], compact('ordered', 'delivered', 'returned', 'cancelled'));
     }
 
     /**

@@ -36,14 +36,30 @@
             <div title="CONVERSE ALL" class="main-collection-breadcrumb lazyload" data-bg="//bizweb.dktcdn.net/100/493/370/themes/940719/assets/main_collection_breadcrumb_bg.jpg?1713464283843">
                 <div class="container">
                     <div class="section-title-all">
-                        <h1>Tất cả sản phẩm</h1>
+                        <h1>
+                            @if(request()->routeIs('products'))
+                                Tất cả sản phẩm
+                            @elseif(request()->routeIs('products.category') && $currentCategory)
+                                {{ $currentCategory->name }}
+                            @endif
+                        </h1>
                     </div>
                     <div class="breadcrumb-wrap">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html" aria-label="Trang chủ" title="Trang chủ">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url('/') }}">Trang chủ</a></li>
 
-
-                            <li class="breadcrumb-item active"><span>Tất cả sản phẩm</span></li>
+                            @if(request()->routeIs('products'))
+                                <li class="breadcrumb-item active"><span>Tất cả sản phẩm</span></li>
+                            @elseif(request()->routeIs('products.category') && $currentCategory)
+                                @if($currentCategory->parent)
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ route('products.category', $currentCategory->parent->slug) }}">
+                                            {{ $currentCategory->parent->name }}
+                                        </a>
+                                    </li>
+                                @endif
+                                <li class="breadcrumb-item active"><span>{{ $currentCategory->name }}</span></li>
+                            @endif
                         </ol>
                     </div>
                 </div>

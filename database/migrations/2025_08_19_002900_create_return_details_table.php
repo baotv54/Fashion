@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade'); // sản phẩm
             $table->foreignId('variant_id')->constrained('product_variants')->onDelete('cascade'); // biến thể sản phẩm
             $table->integer('quantity'); // số lượng trả
-            $table->decimal('price', 15, 2); // đơn giá
+            $table->decimal('price', 10, 0); // đơn giá
             $table->timestamps();
         });
     }

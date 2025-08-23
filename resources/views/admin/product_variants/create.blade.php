@@ -2,10 +2,12 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Thêm biến thể cho: {{ $product->name }}</h2>
+    <h2 class="mb-4">Thêm biến thể cho: {{ $product->name }}</h2>
+
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+
     <form action="{{ route('product_variants.store', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <!-- Thuộc tính và biến thể -->
@@ -16,10 +18,18 @@
                         <h6 class="card-title mb-1">Thuộc tính</h6>
                         <small class="text-muted">Sản phẩm có nhiều thuộc tính khác nhau. Ví dụ: kích thước, màu sắc.</small>
                     </div>
-                    <a href="#" class="text-primary" onclick="addAttributeSelector(); return false;">+ Thêm thuộc tính</a>
+                    <button type="button" class="btn btn-primary waves-effect waves-light" data-repeater-create="" onclick="addAttributeSelector()">
+                        <i class="icon-base ti tabler-plus icon-xs me-2"></i>
+                        Thêm Thuộc Tính
+                    </button>
                 </div>
+
+                <!-- Vùng chứa các selector thuộc tính -->
                 <div id="attribute-select-area" class="mb-3"></div>
-                <button type="button" class="btn btn-sm btn-success mb-2" onclick="generateCombinations()">+ Sinh tổ hợp phiên bản</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light" data-repeater-create="" onclick="generateCombinations()">
+                    <i class="icon-base ti tabler-plus icon-xs me-2"></i>
+                    Kết Hợp
+                </button>
             </div>
         </div>
 
@@ -41,8 +51,10 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-success mt-3">Thêm Sản Phẩm</button>
-        <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Thêm Biến Thể</button>
+            <a href="{{ route('products.index') }}" class="btn btn-outline-primary">Quay lại</a>
+        </div>
     </form>
 </div>
 
@@ -57,17 +69,6 @@
     function addAttributeSelector() {
         const wrapper = document.getElementById('attribute-select-area');
 
-        const selectedAttributeIds = Array.from(document.querySelectorAll('.attribute-name'))
-            .map(select => select.value)
-            .filter(v => v !== '');
-
-        const availableAttributes = allAttributes.filter(attr => !selectedAttributeIds.includes(attr.id.toString()));
-
-        if (availableAttributes.length === 0) {
-            alert('Tất cả thuộc tính đã được chọn.');
-            return;
-        }
-
         const container = document.createElement('div');
         container.className = 'attribute-group mb-3';
 
@@ -75,30 +76,29 @@
         const nameAttr = `attributes[${attributeSelectorIndex}][]`;
 
         container.innerHTML = `
-        <div class="row align-items-start">
-            <div class="col-md-4">
-                <label class="form-label">Thuộc tính</label>
-                <select class="form-select attribute-name" required>
-                    <option value="" disabled selected>Chọn thuộc tính</option>
-                    ${availableAttributes.map(attr => `<option value="${attr.id}">${attr.name}</option>`).join('')}
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Giá trị</label>
-                <select id="${selectId}" name="${nameAttr}" class="form-select attribute-values" multiple required></select>
-            </div>
-            <div class="col-md-2 d-grid">
-                <label class="form-label">&nbsp;</label>
-                <button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="removeAttributeGroup(this)">X</button>
-            </div>
+    <div class="row align-items-start">
+        <div class="col-md-4">
+            <label class="form-label">Thuộc tính</label>
+            <select class="form-select attribute-name" required>
+                <option value="" disabled selected>Chọn thuộc tính</option>
+            </select>
         </div>
+        <div class="col-md-6">
+            <label class="form-label">Giá trị</label>
+            <select id="${selectId}" name="${nameAttr}" class="form-select attribute-values" multiple required></select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <label class="form-label">&nbsp;</label>
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="removeAttributeGroup(this)">X</button>
+        </div>
+    </div>
     `;
 
         wrapper.appendChild(container);
 
-        const attrSelect = container.querySelector('.attribute-name');
-        const valueSelect = container.querySelector('.attribute-values');
+        updateAttributeDropdowns(); // cập nhật tất cả dropdown hiện có
 
+        const attrSelect = container.querySelector('.attribute-name');
         attrSelect.addEventListener('change', function() {
             updateValues(this).then(() => {
                 new Choices(`#${selectId}`, {
@@ -108,9 +108,34 @@
                     searchEnabled: true
                 });
             });
+
+            // Cập nhật lại các dropdown khác để loại bỏ thuộc tính vừa chọn
+            updateAttributeDropdowns();
         });
 
         attributeSelectorIndex++;
+    }
+
+    function updateAttributeDropdowns() {
+        const selectedAttributeIds = Array.from(document.querySelectorAll('.attribute-name'))
+            .map(select => select.value)
+            .filter(v => v !== '');
+
+        document.querySelectorAll('.attribute-name').forEach(select => {
+            const currentValue = select.value;
+            select.innerHTML = `<option value="" disabled ${currentValue === "" ? 'selected' : ''}>Chọn thuộc tính</option>`;
+
+            allAttributes.forEach(attr => {
+                // Hiển thị nếu chưa được chọn hoặc là chính giá trị hiện tại của select này
+                if (!selectedAttributeIds.includes(attr.id.toString()) || attr.id.toString() === currentValue) {
+                    const option = document.createElement('option');
+                    option.value = attr.id;
+                    option.textContent = attr.name;
+                    if (attr.id.toString() === currentValue) option.selected = true;
+                    select.appendChild(option);
+                }
+            });
+        });
     }
 
     function updateValues(select) {
@@ -220,7 +245,6 @@
             });
         }, 100);
     }
-
 </script>
 
 <style>
@@ -234,6 +258,7 @@
         margin: 3px 5px 3px 0;
         border: 1px solid #1CC89B;
     }
+
     .choices__list--multiple .choices__item .choices__button {
         color: #007bff !important;
         margin-left: 6px;

@@ -11,7 +11,7 @@ class BannerController extends Controller
     // Danh sách banner
     public function index()
     {
-       $banners = Banner::all();
+       $banners = Banner::paginate(5);
         $logos = Logo::all();
         return view('admin.banners.index', compact( 'logos', 'banners'));
     }
@@ -37,6 +37,7 @@ class BannerController extends Controller
 
         return redirect()->route('banners.index')->with('success', 'Logo đã được thêm thành công!');
     }
+    
     public function editLogo($id)
     {
         $banners = Banner::findOrFail($id);
