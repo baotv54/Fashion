@@ -95,8 +95,20 @@ class ProductController extends Controller
 
     public function homepage()
     {
-        $products = Product::with('variants')
-            ->withCount('favorites') // thêm số lượt thích
+        $products = Product::with(['variants', 'reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
             ->where(function ($query) {
                 $query->where('quantity', '>', 0)
                     ->orWhereHas('variants', function ($q) {
@@ -110,7 +122,11 @@ class ProductController extends Controller
         $carts = Cart::content();
         $orders = Order::all();
         $posts = Post::all();
-        $order_details = OrderDetail::with(['product', 'variant'])->get();
+        $order_details = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered'); // Giả sử trường trạng thái là 'status' và giá trị hoàn thành là 'completed'
+            })
+            ->get();
         $coupons = Coupon::latest()->take(4)->get();
         $banners = Banner::latest()->take(4)->get();
         $favorites = collect();
@@ -120,7 +136,6 @@ class ProductController extends Controller
             $mainProductId = $detail->product_variant_id
                 ? $detail->variant->product_id
                 : $detail->product_id;
-
             return [
                 'product_id' => $mainProductId,
                 'quantity'   => $detail->quantity,
@@ -131,15 +146,27 @@ class ProductController extends Controller
                 return $items->sum('quantity');
             });
 
-        // Gắn sold_count và favorites_count cho list sản phẩm ở homepage
+        // Gắn sold_count cho list sản phẩm ở homepage
         $products = $products->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
-            // $product->favorites_count đã có nhờ withCount('favorites')
             return $product;
         });
 
         // Top sản phẩm được thích nhiều nhất
-        $topFavorites = Product::withCount('favorites')
+        $topFavorites = Product::with(['reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
             ->having('favorites_count', '>', 0)
             ->orderByDesc('favorites_count')
             ->take(4)
@@ -150,7 +177,20 @@ class ProductController extends Controller
             });
 
         // Top 4 sản phẩm bán chạy
-        $topSelling = Product::withCount('favorites')
+        $topSelling = Product::with(['reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
             ->whereIn('id', $productSales->keys())
             ->get()
             ->map(function ($product) use ($productSales) {
@@ -180,7 +220,6 @@ class ProductController extends Controller
 
 
 
-
     public function aboutPage()
     {
         $products = Product::latest()->take(8)->get();
@@ -189,25 +228,36 @@ class ProductController extends Controller
 
     public function allProducts(Request $request)
     {
-        $query = Product::with(['images', 'variants.attributeValues']);
+        $query = Product::with(['images', 'variants.attributeValues', 'reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating');
 
+        // Filters
         if ($request->filled('brand')) {
             $query->whereIn('brand_id', $request->brand);
         }
-
         if ($request->filled('category')) {
             $query->whereIn('category_id', $request->category);
         }
-
         if ($request->filled('size')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->size));
         }
-
         if ($request->filled('color')) {
             $query->whereHas('variants.attributeValues', fn($q) => $q->whereIn('value', $request->color));
         }
 
-        // New: text search by name or slug
+        // Text search by name or slug
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
@@ -216,6 +266,7 @@ class ProductController extends Controller
             });
         }
 
+        // Price filter
         if ($request->filled('price')) {
             $query->where(function ($q) use ($request) {
                 foreach ($request->price as $price) {
@@ -230,6 +281,7 @@ class ProductController extends Controller
             });
         }
 
+        // Sorting
         if ($request->filled('sort')) {
             [$field, $direction] = explode(':', $request->sort);
             $query->orderBy($field, $direction);
@@ -238,12 +290,48 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(12)->withQueryString();
+
+        // Get order details to calculate sold count
+        $order_details = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered'); // Giả sử trường trạng thái là 'status' và giá trị hoàn thành là 'completed'
+            })
+            ->get();
+        // Group sales quantity by product_id
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+            return [
+                'product_id' => $mainProductId,
+                'quantity'   => $detail->quantity,
+            ];
+        })
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return $items->sum('quantity');
+            });
+
+        // Add sold_count to products
+        $products->getCollection()->transform(function ($product) use ($productSales) {
+            $product->sold_count = $productSales[$product->id] ?? 0;
+            return $product;
+        });
+
+        // Get user favorites if authenticated
+        $favorites = collect();
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
         $brands = Brand::all();
         $categories = Category::all();
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes'));
+        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes', 'favorites'));
     }
 
     public function show($id)
