@@ -37,10 +37,37 @@ class ProfileController extends Controller
                 Storage::delete('public/avatars/' . $user->avatar);
             }
 
-            // Lưu avatar mới
-            $avatarName = time() . '.' . $request->file('avatar')->extension();
-            $request->file('avatar')->move(public_path('avatars'), $avatarName);
-            $user->avatar = $avatarName;
+            // Lưu avatar mới giữ tên gốc (sanitize và tránh trùng tên)
+            $uploadedFile = $request->file('avatar');
+
+            // Lấy tên gốc và phần mở rộng
+            $originalName = $uploadedFile->getClientOriginalName();
+            $extension = $uploadedFile->getClientOriginalExtension();
+
+            // Lấy phần tên (không chứa extension) và sanitize cơ bản
+            $baseName = pathinfo($originalName, PATHINFO_FILENAME);
+            // Loại bỏ ký tự không an toàn, thay khoảng trắng bằng gạch dưới
+            $baseName = preg_replace('/[^A-Za-z0-9_\- ]+/', '', $baseName);
+            $baseName = preg_replace('/\s+/', '_', $baseName);
+            $baseName = trim($baseName);
+
+            if (empty($baseName)) {
+                // Fallback nếu tên gốc rỗng
+                $baseName = (string) time();
+            }
+
+            $targetPath = public_path('avatars');
+            $uniqueName = $baseName . '.' . $extension;
+            $counter = 0;
+
+            // Nếu đã tồn tại, thêm hậu tố -1, -2, ... trước extension
+            while (file_exists($targetPath . DIRECTORY_SEPARATOR . $uniqueName)) {
+                $counter++;
+                $uniqueName = $baseName . '-' . $counter . '.' . $extension;
+            }
+
+            $uploadedFile->move($targetPath, $uniqueName);
+            $user->avatar = $uniqueName;
         }
 
         $user->fill($request->except('avatar'));

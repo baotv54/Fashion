@@ -26,28 +26,6 @@
                     <hr class="d-none d-sm-block d-lg-none me-6">
                 </div>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                        <div>
-                            <p class="mb-1">Chờ duyệt</p>
-                            <h4 class="mb-1">{{ number_format($pendingReviews ?? 0) }}</h4>
-                            <p class="mb-0">
-                                <span class="me-2">Cần xử lý</span>
-                                @if(($pendingReviews ?? 0) > 0)
-                                <span class="badge bg-label-warning">Cần duyệt</span>
-                                @else
-                                <span class="badge bg-label-success">Đã xử lý</span>
-                                @endif
-                            </p>
-                        </div>
-                        <span class="avatar p-2 me-lg-6">
-                            <span class="avatar-initial rounded">
-                                <i class="icon-base ti tabler-clock icon-28px text-heading"></i>
-                            </span>
-                        </span>
-                    </div>
-                    <hr class="d-none d-sm-block d-lg-none">
-                </div>
-                <div class="col-sm-6 col-lg-3">
                     <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
                         <div>
                             <p class="mb-1">Điểm trung bình</p>
@@ -104,7 +82,6 @@
                 <select id="ReviewStatus" class="form-select text-capitalize">
                     <option value="">Trạng thái duyệt</option>
                     <option value="approved">Đã duyệt</option>
-                    <option value="pending">Chờ duyệt</option>
                     <option value="rejected">Từ chối</option>
                 </select>
             </div>

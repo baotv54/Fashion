@@ -35,31 +35,33 @@ class CouponController extends Controller
             'code' => 'required|string|unique:coupons,code',
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
-            'min_cart_value' => 'nullable|numeric|min:0',
-            'start_date' => 'nullable|date|after_or_equal:today',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'usage_limit' => 'nullable|integer|min:1',
-            'status' => 'nullable|in:active,inactive',
-            'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'min_cart_value' => 'required|numeric|min:0',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'usage_limit' => 'required|integer|min:1',
+            'status' => 'required|in:active,inactive',
+            'description' => 'required|string|max:1000',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-
 
         $data = $request->all();
 
+        // Nếu min_cart_value null, đặt mặc định là 0
+        $data['min_cart_value'] = $data['min_cart_value'] ?? 0;
+
         // Xử lý upload hình ảnh
         if ($request->hasFile('image')) {
-            // Lưu ảnh vào thư mục public/coupons/
             $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
             $imagePath = 'coupons/' . $imageName;
             $request->file('image')->move(public_path('coupons'), $imageName);
-            $data['image'] = $imagePath; // Đường dẫn ảnh lưu trực tiếp vào public/coupons/
+            $data['image'] = $imagePath;
         }
 
         Coupon::create($data);
 
         return redirect()->route('coupons.index')->with('success', 'Tạo mã giảm giá thành công!');
     }
+
 
 
 

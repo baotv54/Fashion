@@ -34,6 +34,7 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
+use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\NavbarController;
 
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,11 @@ Route::get('/lien-he', function () {
     return view('Frontend.pages.pages.lien-he-clean'); // Trang liên hệ với giao diện cũ đã sửa validation
 })->name('contact.show');
 Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
+
+// Test route cho contact form đơn giản
+Route::get('/simple-contact', function () {
+    return view('simple-contact');
+})->name('simple.contact');
 
 // ======================= COMMENTED - BACKUP ROUTES =======================
 // Backup route cho trang liên hệ cũ (có lỗi form) - KHÔNG SỬ DỤNG
@@ -76,14 +82,17 @@ Route::get('/faq', function () {
     return view('Frontend.pages.pages.faq');
 });
 
-Route::get('/lien-he', function () {
-    return view('Frontend.pages.pages.lien-he');
-});
+
 
 
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+// Trang tất cả sản phẩm
 Route::get('/products', [ProductController::class, 'allProducts'])->name('products.all');
+
+// Trang danh mục
+Route::get('/category/{slug}', [ProductController::class, 'allProducts'])->name('products.category');
+
 Route::get('/search', [ProductController::class, 'search'])->name('product.search');
 
 
@@ -140,6 +149,7 @@ Route::prefix('product-live-chat')->group(function () {
     Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
     Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
     Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
+    Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
 });
 
 // Chatbot Demo routes
@@ -225,7 +235,7 @@ Route::prefix('comparison')->group(function () {
 });
 
 
-Route::middleware(['auth','is_admin'])->group(function () {
+Route::middleware(['auth', 'is_admin'])->group(function () {
     //group routes
     Route::prefix('admin')->group(function () {
 
@@ -252,6 +262,7 @@ Route::middleware(['auth','is_admin'])->group(function () {
             Route::post('/{product}/variants', [ProductController::class, 'storeVariant'])->name('products.variants.store');
             Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
+            Route::post('/{id}/store-variants', [ProductController::class, 'storeAjax'])->name('products.storeVariants');
         });
 
         //routes quản lý popup
@@ -263,6 +274,7 @@ Route::middleware(['auth','is_admin'])->group(function () {
             Route::put('/{id}', [PopupController::class, 'update'])->name('popups.update');
             Route::delete('/{popup}', [PopupController::class, 'destroy'])->name('popups.destroy');
         });
+
 
 
 
@@ -321,6 +333,8 @@ Route::middleware(['auth','is_admin'])->group(function () {
             Route::get('{variantId}/edit', [ProductVariantController::class, 'edit'])->name('product_variants.edit');
             Route::put('{variantId}', [ProductVariantController::class, 'update'])->name('product_variants.update');
             Route::delete('{variantId}', [ProductVariantController::class, 'destroy'])->name('product_variants.destroy');
+            Route::post('{variantId}/restore', [ProductVariantController::class, 'restore'])->name('product_variants.restore'); // Khôi phục
+            Route::delete('{variantId}/force-delete', [ProductVariantController::class, 'forceDelete'])->name('product_variants.forceDelete'); // Xóa cứng
         });
 
         // Routers quản lý nhà cung cấp
@@ -457,13 +471,15 @@ Route::middleware(['auth','is_admin'])->group(function () {
         // CRUD Size
         Route::resource('sizes', SizeController::class);
         Route::get('sizes_list', [SizeController::class, 'index'])->name('sizes.index');
-        // Route quản lý chat
-        Route::prefix('product-live-chat')->group(function () {
-            Route::post('/start', [ProductLiveChatController::class, 'start'])->name('plc.start');
-            Route::post('/send', [ProductLiveChatController::class, 'send'])->name('plc.send');
-            Route::post('/attach', [ProductLiveChatController::class, 'sendAttachment'])->name('plc.attach');
-            Route::get('/history', [ProductLiveChatController::class, 'history'])->name('plc.history');
-            Route::get('/poll', [ProductLiveChatController::class, 'poll'])->name('plc.poll');
+
+        //sociak links
+        Route::prefix('socialLink')->group(function () {
+            Route::get('/', [SocialLinkController::class, 'index'])->name('social-links.index');
+            Route::get('/create', [SocialLinkController::class, 'create'])->name('social-links.create');
+            Route::post('/', [SocialLinkController::class, 'store'])->name('social-links.store');
+            Route::get('/{id}/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
+            Route::put('/{id}', [SocialLinkController::class, 'update'])->name('social-links.update');
+            Route::delete('/{id}', [SocialLinkController::class, 'destroy'])->name('social-links.destroy');
         });
     });
 });

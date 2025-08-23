@@ -37,6 +37,9 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên sản phẩm</label>
                             <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name', $product->name) }}">
+                            @error('name')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
@@ -123,15 +126,33 @@
                             <div class="row">
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Bán</label>
-                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $variant->price }}" class="form-control" placeholder="Giá Bán" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][price]"
+                                        value="{{ old('variants.' . $index . '.price', $variant->price) }}"
+                                        class="form-control"
+                                        placeholder="Giá Bán"
+                                        min="0"
+                                        step="1000">
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Nhập</label>
-                                    <input type="number" name="variants[{{ $index }}][import_price]" value="{{ $variant->import_price }}" class="form-control" placeholder="Giá Nhập" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][import_price]"
+                                        value="{{ old('variants.' . $index . '.import_price', $variant->import_price) }}"
+                                        class="form-control"
+                                        placeholder="Giá Nhập"
+                                        min="0"
+                                        step="1000">
                                 </div>
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Giá Khuyến Mãi</label>
-                                    <input type="number" name="variants[{{ $index }}][discount_price]" value="{{ $variant->discount_price }}" class="form-control" placeholder="Giá KM" min="0" step="1000">
+                                    <input type="number"
+                                        name="variants[{{ $index }}][discount_price]"
+                                        value="{{ old('variants.' . $index . '.discount_price', $variant->discount_price) }}"
+                                        class="form-control"
+                                        placeholder="Giá KM"
+                                        min="0"
+                                        step="1000">
                                 </div>
                             </div>
 
@@ -146,11 +167,6 @@
                         </div>
                         @endforeach
                     </div>
-                </div>
-                <div class="text-end mb-3">
-                    <button type="button" class="btn btn-success btn-sm" id="load-missing-variants">
-                        <i class="fas fa-plus"></i> Thêm biến thể
-                    </button>
                 </div>
 
                 <div id="missing-variants-container"></div>
@@ -195,6 +211,9 @@
                             <i class="fas fa-plus fa-2x text-muted"></i>
                         </label>
                         <input type="file" name="image" id="image" accept="image/*" hidden>
+                        @error('image')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <!-- Preview ảnh chính upload mới -->
                     <div class="preview-container-main d-flex flex-wrap gap-2 mt-3"></div>
@@ -240,6 +259,9 @@
                                 <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                                 @endforeach
                             </select>
+                            @error('brand_id')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
@@ -252,6 +274,9 @@
                                 </option>
                                 @endforeach
                             </select>
+                            @error('category_id')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -272,6 +297,28 @@
                 </div>
             </div>
         </div>
+        <div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Tổ hợp biến thể chưa tạo</h5>
+        <button type="button" id="load-missing-variants" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-sync-alt me-1"></i> Tải biến thể còn thiếu
+        </button>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('products.storeVariants', $product->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div id="missing-variants-container">
+                <p class="text-muted">Nhấn nút trên để kiểm tra tổ hợp biến thể còn thiếu.</p>
+            </div>
+            <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-1"></i> Thêm biến thể
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
         <!-- Nút -->
         <div class="mt-3">
@@ -357,24 +404,24 @@
 
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
-    const container = document.getElementById('missing-variants-container');
-    const productId = {{ $product->id }};
-    fetch(`/admin/products/${productId}/missing-variants`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.length === 0) {
-                container.innerHTML = '<p class="text-muted">Tất cả tổ hợp biến thể đã tồn tại.</p>';
-                return;
-            }
-            container.innerHTML = '';
-            data.forEach((item, index) => {
-                const variantHtml = `
+        const container = document.getElementById('missing-variants-container');
+        const productId = {{$product->id}};
+        fetch(`/admin/products/${productId}/missing-variants`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length === 0) {
+                    container.innerHTML = '<p class="text-muted">Tất cả tổ hợp biến thể đã tồn tại.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                data.forEach((item, index) => {
+                    const variantHtml = `
                     <div class="border rounded-3 p-3 mb-3 variant-item">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div class="fw-semibold">${item.name}</div>
                             <button type="button" class="btn btn-sm btn-danger remove-variant">Xóa</button>
                         </div>
-                        <input type="hidden" name="variants[${index}][value_ids]" value="${item.ids.join('-')}">
+                        <input type="number" name="variants[${index}][value_ids]" value="${item.ids.join('-')}">
                         <div class="row">
                             <div class="col-md-3 mb-2">
                                 <input type="number" name="variants[${index}][price]" class="form-control" placeholder="Giá bán">
@@ -390,21 +437,20 @@
                             </div>
                         </div>
                     </div>`;
-                container.insertAdjacentHTML('beforeend', variantHtml);
-            });
-
-            // Gắn sự kiện xóa
-            container.querySelectorAll('.remove-variant').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.closest('.variant-item').remove();
+                    container.insertAdjacentHTML('beforeend', variantHtml);
                 });
-            });
-        })
-        .catch(() => {
-            container.innerHTML = '<p class="text-danger">Không tải được tổ hợp biến thể.</p>';
-        });
-});
 
+                // Gắn sự kiện xóa
+                container.querySelectorAll('.remove-variant').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        this.closest('.variant-item').remove();
+                    });
+                });
+            })
+            .catch(() => {
+                container.innerHTML = '<p class="text-danger">Không tải được tổ hợp biến thể.</p>';
+            });
+    });
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

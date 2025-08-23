@@ -71,33 +71,33 @@
         </li>
 
 
-        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'categories.index', 'categories.create', 'brands.index','attributes.index', 'sizes.index']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'products.edit', 'product_variants.index', 'product_variants.create', 'categories.index', 'categories.edit', 'brands.index', 'brands.edit', 'attributes.index', 'attributes.edit', 'attribute_values.index', 'attribute_values.edit','sizes.index', 'sizes.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-box-open me-2"></i>
                 <div data-i18n="Quản Lý Sản Phẩm">Quản Lý Sản Phẩm </div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('products.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['products.index','products.edit','product_variants.index', 'product_variants.create']) ? 'active' : '' }}">
                     <a href="{{ route('products.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Danh Sách Sản Phẩm">Danh Sách Sản Phẩm</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('categories.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['categories.index', 'categories.edit']) ? 'active' : '' }}">
                     <a href="{{ route('categories.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Danh Mục">Danh Mục</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('brands.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['brands.index', 'brands.edit']) ? 'active' : '' }}">
                     <a href="{{ route('brands.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Thương Hiệu"> Thương Hiệu </div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('attributes.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['attributes.index', 'attributes.edit', 'attribute_values.index', 'attribute_values.edit']) ? 'active' : '' }}">
                     <a href="{{ route('attributes.index', ['review' => 1]) }}" class="menu-link">
-                        <div data-i18n="Biến Thể">Biến Thể </div>
+                        <div data-i18n="Thuộc Tính">Thuộc Tính </div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('sizes.index') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['sizes.index', 'sizes.edit']) ? 'active' : '' }}">
                     <a href="{{ route('sizes.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Bảng Chọn Size">Bảng Chọn Size </div>
                     </a>
@@ -105,7 +105,7 @@
             </ul>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics', 'products.index', 'products.create', 'categories.index', 'categories.create', 'post-categories.create', 'brands.index', 'brands.create', 'posts.index', 'posts.create', 'coupons.index', 'coupons.create', 'banners.create']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit','social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
@@ -139,12 +139,12 @@
                         </li>
                     </ul>
                 </li>
-               <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create']) ? 'active open' : '' }}">
+               <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Banner">Banner</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs(['banners.index', 'logo.create']) ? 'active' : '' }}">
                             <a href="{{ route('banners.index') }}" class="menu-link">
                                 <div data-i18n="Danh sách Banner">Danh sách Banner</div>
                             </a>
@@ -156,12 +156,29 @@
                         </li>
                     </ul>
                 </li>
-                 <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create']) ? 'active open' : '' }}">
+                   <li class="menu-item {{ Request::routeIs(['social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Mạng xã hội">Mạng xã hội</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ Request::routeIs(['social-links.index', 'logo.create']) ? 'active' : '' }}">
+                            <a href="{{ route('social-links.index') }}" class="menu-link">
+                                <div data-i18n="Danh sách social links">Danh sách mạng xã hội</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('social-links.create') ? 'active' : '' }}">
+                            <a href="{{ route('social-links.create') }}" class="menu-link">
+                                <div data-i18n="Thêm social links">Thêm mạng xã hội</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                 <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create','popups.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Popup">Popup</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item {{ Request::routeIs('popups.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs(['popups.index','popups.edit']) ? 'active' : '' }}">
                             <a href="{{ route('popups.index') }}" class="menu-link">
                                 <div data-i18n="Danh sách Popup">Danh sách Popup</div>
                             </a>
@@ -173,6 +190,7 @@
                         </li>
                     </ul>
                 </li>
+                
             </ul>
         </li>
 
@@ -225,11 +243,6 @@
                 <li class="menu-item {{ Request::routeIs('users.index') ? 'active' : '' }}">
                     <a href="{{ route('users.index', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Danh sách">Danh sách</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ Request::routeIs('users.create') ? 'active' : '' }}">
-                    <a href="{{ route('users.create', ['review' => 1]) }}" class="menu-link">
-                        <div data-i18n="Thêm người dùng">Thêm người dùng</div>
                     </a>
                 </li>
             </ul>

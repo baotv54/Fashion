@@ -2,12 +2,16 @@
     <div class="container">
         <div class="headers2-wrap">
             @foreach ($logos as $logo)
-
-              <div class="headers2-left">
+                <div class="headers2-left">
                     <a href="/" aria-label="F1GENZ Shoes">
-                        <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
+                        @if (!empty($logo->images))
+                            <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
+                        @else
+                            <img src="/logo/image.png" alt="No Logo" title="No Logo">
+                        @endif
                     </a>
                 </div>
+                 @endforeach
             <div class="headers2-center">
                 <nav class="headers2-center-menu">
                     <ul class="menu0">
@@ -24,13 +28,8 @@
                         <li class="{{ Request::is('/') ? 'active' : '' }}">
                             <a href="/" title="Trang chủ" aria-label="Trang chính">Trang chủ</a>
                         </li>
-                        <li class="hasChild {{ Request::is('products') || Request::is('product/*') ? 'active' : '' }}">
-                            <a href="/products" title="Converse All" aria-label="Converse All">Tất cả sản phẩm<span></span></a>
-                            <!-- <ul class="menu1">
-                                <li><a href="converse-allfc2c.html?view=vertical" title="Converse All Style 1" aria-label="Converse All Style 1">Converse All Style 1</a></li>
-                                <li><a href="converse-allc267.html?view=horizontal" title="Converse All Style 2" aria-label="Converse All Style 2">Converse All Style 2</a></li>
-                            </ul> -->
-                        </li>
+                        @include('components.menu-category', ['categories' => $headerCategories])
+
                         <!-- <li class="hasChild">
                             <a href="collections/allfc2c.html?view=vertical" title="Classic" aria-label="Classic">Classic<span>›</span></a>
                             <ul class="menu1">
@@ -109,7 +108,9 @@
                         @auth
                         {{-- Nút Trang Quản Trị nếu là admin --}}
                         @if(Auth::user()->role === 'admin')
-                        <li><a href="admin/statistics">Quản Trị</a></li>
+                        <li class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.statistics') }}">Quản Trị</a>
+                        </li>
                         @endif
                         @endauth
                         <li class="headers2-center-menu-mob-foot">
@@ -196,7 +197,7 @@
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
             </div>
-             @endforeach
+             
         </div>
     </div>
 </header>
@@ -247,23 +248,23 @@
     });
 </script>
 <style>
-   #search-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    /* Bỏ border */
-    border: none;
-    border-radius: 6px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 0;
-    z-index: 999;
+    #search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        /* Bỏ border */
+        border: none;
+        border-radius: 6px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0;
+        z-index: 999;
 
-    /* Thêm hiệu ứng bóng */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+        /* Thêm hiệu ứng bóng */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
     .search-title {
         padding: 10px 15px;

@@ -127,95 +127,32 @@
         </div>
     </div>
 </div>
-
 <div class="shop-social-sidebar">
+      @foreach($socialLinks as $link)
+        <a class="hiddenMob"
+           style="background-color: #ffffff;"
+           href="{{ $link->url }}"
+           title="{{ $link->platform }}"
+           aria-label="Social - {{ $link->platform }}"
+           target="_blank">
+            <img width="32" height="32" 
+                 src="{{ asset('storage/' . $link->image) }}" 
+                 alt="{{ $link->platform }}">
+            {{ $link->platform }}
+        </a>
+    @endforeach
 
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Zalo" aria-label="F1GENZ Shoes - Zalo" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_1e889.png')}}" alt="Social Zalo" title="Social Zalo">
-        Zalo
-    </a>
-
-
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Snapchat" aria-label="F1GENZ Shoes - Snapchat" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_2e889.png')}}" alt="Social Snapchat" title="Social Snapchat">
-        Snapchat
-    </a>
-
-
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Tiktok" aria-label="F1GENZ Shoes - Tiktok" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_3e889.png')}}" alt="Social Tiktok" title="Social Tiktok">
-        Tiktok
-    </a>
-
-
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Instagram" aria-label="F1GENZ Shoes - Instagram" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_4e889.png')}}" alt="Social Instagram" title="Social Instagram">
-        Instagram
-    </a>
-
-
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Youtube" aria-label="F1GENZ Shoes - Youtube" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_5e889.png')}}" alt="Social Youtube" title="Social Youtube">
-        Youtube
-    </a>
-
-
-
-
-
-
-
-
-    <a class="hiddenMob" style="background-color: #ffffff;" href="collections/all.html" title="Youtube" aria-label="F1GENZ Shoes - Youtube" target="_blank">
-        <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_6e889.png')}}" alt="Social Youtube" title="Social Youtube">
-        Youtube
-    </a>
-
-
+    {{-- Nút hỗ trợ --}}
     <button class="hiddenMob" data-fancybox data-src="#shop-modal-phone" style="background-color: #ffffff;" title="F1GENZ Shoes - Support">
         <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{ asset('images/shop_social_sidebar_item_image_7e889.png')}}" alt="F1GENZ Shoes - Hổ trợ 24/7" title="Hổ trợ 24/7">
+             src="{{ asset('images/shop_social_sidebar_item_image_7e889.png')}}" alt="F1GENZ Shoes - Hổ trợ 24/7" title="Hổ trợ 24/7">
         Hổ trợ 24/7
     </button>
+
+    {{-- Nút lên đầu trang --}}
     <button class="back-to-top" title="Back to top">
         <img width="32" height="32" loading="lazy" decoding="async"
-            src="{{asset('images/arrow-up_eb1426bb7fc647eab89f9279695752cd.png')}}" alt="Back to top" title="Back to top">
+             src="{{asset('images/arrow-up_eb1426bb7fc647eab89f9279695752cd.png')}}" alt="Back to top" title="Back to top">
         Lên đầu trang
     </button>
 </div>

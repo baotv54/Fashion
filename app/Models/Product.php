@@ -28,6 +28,7 @@ class Product extends Model
         'image', // Ảnh chính (nếu có)
         'status',
         'delete_at',
+        'view_count',
     ];
 
     /**
