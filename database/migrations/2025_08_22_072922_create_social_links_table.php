@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable(); // Lưu icon (path ảnh hoặc tên icon)
             $table->timestamps();
 
-
+           
         });
     }
 

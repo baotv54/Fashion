@@ -8,6 +8,11 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<style>
+		button svg {
+			display: inline-block;
+			vertical-align: middle;
+		}
+
 		.star-rating {
 			display: flex;
 			gap: 2px;
