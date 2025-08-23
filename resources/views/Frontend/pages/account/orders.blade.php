@@ -23,109 +23,111 @@
     <meta property="og:site_name" content="">
 
 
-	<style>
-		.chat-bubble.bot-bubble.typing {
-			font-style: italic;
-			opacity: 0.7;
-		}
+    <style>
+        .chat-bubble.bot-bubble.typing {
+            font-style: italic;
+            opacity: 0.7;
+        }
 
-		.chat-toggle-btn {
-			position: fixed;
-			bottom: 20px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 50px;
-			height: 50px;
-			border-radius: 50%;
-			background: #007bff;
-			color: white;
-			font-size: 24px;
-			border: none;
-			cursor: pointer;
-			z-index: 9999;
-		}
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
 
-		.chatbot-container {
-			position: fixed;
-			bottom: 80px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 360px;
-			max-height: 500px;
-			background: #fff;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0,0,0,0.2);
-			display: none;
-			flex-direction: column;
-			overflow: hidden;
-			z-index: 9999;
-		}
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 360px;
+            max-height: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
 
-		.chatbot-header {
-			background: #007bff;
-			color: #fff;
-			padding: 12px;
-			font-weight: bold;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+        .chatbot-header {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-		.chatbot-body {
-			flex: 1;
-			padding: 15px;
-			overflow-y: auto;
-			background: #f7f7f7;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-		.chatbot-footer {
-			display: flex;
-			padding: 10px;
-			border-top: 1px solid #ddd;
-			background: #fff;
-		}
+        .chatbot-footer {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
 
-		.chatbot-footer input {
-			flex: 1;
-			padding: 8px 10px;
-			border-radius: 6px;
-			border: 1px solid #ccc;
-		}
+        .chatbot-footer input {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
 
-		.chatbot-footer button {
-			margin-left: 5px;
-			padding: 8px 12px;
-			background: #007bff;
-			color: #fff;
-			border: none;
-			border-radius: 6px;
-		}
+        .chatbot-footer button {
+            margin-left: 5px;
+            padding: 8px 12px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+        }
 
-		.chat-bubble {
-			max-width: 80%;
-			padding: 10px 14px;
-			margin: 5px 0;
-			border-radius: 20px;
-			word-wrap: break-word;
-			font-size: 14px;
-			line-height: 1.4;
-		}
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            margin: 5px 0;
+            border-radius: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-		.user-bubble {
-			align-self: flex-end;
-			background-color: #007bff;
-			color: #fff;
-			border-bottom-right-radius: 0;
-		}
+        .user-bubble {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
 
-		.bot-bubble {
-			align-self: flex-start;
-			background-color: #e9ecef;
-			color: #000;
-			border-bottom-left-radius: 0;
-		}
-	</style>
+        .bot-bubble {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            color: #000;
+            border-bottom-left-radius: 0;
+        }
+    </style>
 
 
 
@@ -3826,21 +3828,21 @@
 </head>
 
 <body class="">
-  @include('Frontend.partials.header')
-  @php $user = Auth::user(); @endphp
+    @include('Frontend.partials.header')
+    @php $user = Auth::user(); @endphp
 
     <main class="main-layout">
         <div class="acc">
             <div class="container-fluid">
                 <div class="acc-wrap">
-                <div class="acc-sidebar">
-                    <span>
-                        <img width="64" height="64"
-                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                             alt="{{ $user->name }}" />
-                    </span>
-                    <h3>Xin chào, <b>{{ $user->name }}</b></h3>
-                   <!-- Nút toggle chỉ hiện trên mobile -->
+                    <div class="acc-sidebar">
+                        <span>
+                            <img width="64" height="64"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
+                                alt="{{ $user->name }}" />
+                        </span>
+                        <h3>Xin chào, <b>{{ $user->name }}</b></h3>
+                        <!-- Nút toggle chỉ hiện trên mobile -->
                         <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
@@ -3970,74 +3972,106 @@
                                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
                             }
                         }
+
+                        .link-hover {
+                            color: blue;
+                            text-decoration: none;
+                        }
+
+                        .link-hover:hover {
+                            color: grey;
+                        }
                     </style>
-                 <div class="acc-data acc-data-orders">
-                <h1 class="title-head margin-top-0">Đơn hàng của bạn</h1>
-                <div class="table-responsive-block table_mobile">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Đơn hàng</th>
-                                <th>Ngày</th>
-                                <th>Địa chỉ</th>
-                                <th>Giá trị đơn hàng</th>
-                                <th>TT thanh toán</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($orders as $order)
-                            <tr>
-                                <td><a href="{{ route('user.orders.details', $order->id) }}" title="">#{{ $order->order_code }}</a></td>
-                                <td>{{ $order->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    {{ $order->address }},
-                                    {{ $order->ward }},
-                                    {{ $order->district }},
-                                    {{ $order->province }}
-                                </td>
-                                <td>
-                                    <span class="price">{{ number_format($order->total, 0, ',', '.') }}₫</span>
-                                </td>
-                                <td>
-                                    @switch($order->status)
-                                        @case('ordered')
+                    <div class="acc-data acc-data-orders">
+                        <h1 class="title-head margin-top-0">Đơn hàng của bạn</h1>
+                        <div class="table-responsive-block table_mobile">
+                            <ul class="nav nav-tabs mb-3">
+                                @php
+                                $statuses = [
+                                'all' => 'Tất cả',
+                                'ordered' => 'Đã đặt',
+                                'processing' => 'Đang xử lý',
+                                'confirmed' => 'Đã xác nhận',
+                                'shipping' => 'Đang giao',
+                                'delivered' => 'Đã giao',
+                                'cancelled' => 'Đã hủy',
+                                'returned' => 'Trả hàng',
+                                ];
+                                @endphp
+                                @foreach ($statuses as $key => $label)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}"
+                                        href="{{ route('user.orders.history', ['status' => $key]) }}">
+                                        {{ $label }} (<small style="color: red;">{{ $statusCounts[$key] ?? 0 }}</small>)
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Đơn hàng</th>
+                                        <th>Ngày</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Giá trị đơn hàng</th>
+                                        <th>TT thanh toán</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($orders as $order)
+                                    <tr>
+                                        <td><a class="link-hover" href="{{ route('user.orders.details', $order->id) }}" title="">#{{ $order->order_code }}</a></td>
+                                        <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                                        <td>
+                                            {{ $order->address }},
+                                            {{ $order->ward }},
+                                            {{ $order->district }},
+                                            {{ $order->province }}
+                                        </td>
+                                        <td>
+                                            <span class="price">{{ number_format($order->total, 0, ',', '.') }}₫</span>
+                                        </td>
+                                        <td>
+                                            @switch($order->status)
+                                            @case('ordered')
                                             <b class="span_pending" style="color: #E49C06; font-weight: 600;">Đặt hàng</b>
                                             @break
-                                        @case('processing')
+                                            @case('processing')
                                             <b class="span_processing" style="color: #007bff; font-weight: 600;">Đang xử lý</b>
                                             @break
-                                        @case('confirmed')
+                                            @case('confirmed')
                                             <b class="span_confirmed" style="color: #28a745; font-weight: 600;">Đã xác nhận</b>
                                             @break
-                                        @case('shipping')
+                                            @case('shipping')
                                             <b class="span_shipping" style="color: #17a2b8; font-weight: 600;">Đang giao hàng</b>
                                             @break
-                                        @case('delivered')
+                                            @case('delivered')
                                             <b class="span_delivered" style="color: #28a745; font-weight: 600;">Đã giao</b>
                                             @break
-                                        @case('cancelled')
+                                            @case('cancelled')
                                             <b class="span_cancelled" style="color: #dc3545; font-weight: 600;">Đã hủy</b>
                                             @break
-                                        @case('returned')
+                                            @case('returned')
                                             <b class="span_returned" style="color: #ffc107; font-weight: 600;">Trả hàng</b>
                                             @break
-                                        @default
+                                            @default
                                             <b class="span_unknown" style="color: #6c757d; font-weight: 600;">Không xác định</b>
-                                    @endswitch
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" style="text-align: center;">Bạn chưa có đơn hàng nào.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $orders->links('pagination::bootstrap-4') }}
-                </div>
-            </div>
+                                            @endswitch
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" style="text-align: center;">Bạn chưa có đơn hàng nào.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $orders->links('pagination::bootstrap-4') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

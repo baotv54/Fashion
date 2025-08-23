@@ -100,11 +100,37 @@ class OrderController extends Controller
 
         return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công!');
     }
-    public function userOrderHistory()
+    public function userOrderHistory(Request $request)
     {
-        $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(10);
-        return view('Frontend.pages.account.orders', compact('orders')); // Truyền $orders sang view
+        $status = $request->get('status', 'all');
+
+        $query = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->paginate(10)->appends(['status' => $status]);
+
+        // Đếm số lượng từng trạng thái
+        $statusCounts = [
+            'all'        => Order::where('user_id', Auth::id())->count(),
+            'ordered'    => Order::where('user_id', Auth::id())->where('status', 'ordered')->count(),
+            'processing' => Order::where('user_id', Auth::id())->where('status', 'processing')->count(),
+            'confirmed'  => Order::where('user_id', Auth::id())->where('status', 'confirmed')->count(),
+            'shipping'   => Order::where('user_id', Auth::id())->where('status', 'shipping')->count(),
+            'delivered'  => Order::where('user_id', Auth::id())->where('status', 'delivered')->count(),
+            'cancelled'  => Order::where('user_id', Auth::id())->where('status', 'cancelled')->count(),
+            'returned'   => Order::where('user_id', Auth::id())->where('status', 'returned')->count(),
+        ];
+
+        return view('Frontend.pages.account.orders', [
+            'orders'        => $orders,
+            'currentStatus' => $status,
+            'statusCounts'  => $statusCounts,
+        ]);
     }
+
     public function userOrderDetails($id)
     {
         // Lấy thông tin đơn hàng của người dùng hiện tại
