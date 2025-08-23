@@ -35,7 +35,6 @@
             {{ session('error') }}
         </div>
     @endif
-    @include('Frontend.partials.header')
     <aside>
         <button class="order-summary-toggle" data-toggle="#order-summary"
             data-toggle-class="order-summary--is-collapsed">

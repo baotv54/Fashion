@@ -23,109 +23,111 @@
     <meta property="og:site_name" content="">
 
 
-	<style>
-		.chat-bubble.bot-bubble.typing {
-			font-style: italic;
-			opacity: 0.7;
-		}
+    <style>
+        .chat-bubble.bot-bubble.typing {
+            font-style: italic;
+            opacity: 0.7;
+        }
 
-		.chat-toggle-btn {
-			position: fixed;
-			bottom: 20px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 50px;
-			height: 50px;
-			border-radius: 50%;
-			background: #007bff;
-			color: white;
-			font-size: 24px;
-			border: none;
-			cursor: pointer;
-			z-index: 9999;
-		}
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
 
-		.chatbot-container {
-			position: fixed;
-			bottom: 80px;
-			left: 20px; /* đổi từ right: 20px */
-			width: 360px;
-			max-height: 500px;
-			background: #fff;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0,0,0,0.2);
-			display: none;
-			flex-direction: column;
-			overflow: hidden;
-			z-index: 9999;
-		}
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            /* đổi từ right: 20px */
+            width: 360px;
+            max-height: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
 
-		.chatbot-header {
-			background: #007bff;
-			color: #fff;
-			padding: 12px;
-			font-weight: bold;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+        .chatbot-header {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-		.chatbot-body {
-			flex: 1;
-			padding: 15px;
-			overflow-y: auto;
-			background: #f7f7f7;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-		.chatbot-footer {
-			display: flex;
-			padding: 10px;
-			border-top: 1px solid #ddd;
-			background: #fff;
-		}
+        .chatbot-footer {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
 
-		.chatbot-footer input {
-			flex: 1;
-			padding: 8px 10px;
-			border-radius: 6px;
-			border: 1px solid #ccc;
-		}
+        .chatbot-footer input {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
 
-		.chatbot-footer button {
-			margin-left: 5px;
-			padding: 8px 12px;
-			background: #007bff;
-			color: #fff;
-			border: none;
-			border-radius: 6px;
-		}
+        .chatbot-footer button {
+            margin-left: 5px;
+            padding: 8px 12px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+        }
 
-		.chat-bubble {
-			max-width: 80%;
-			padding: 10px 14px;
-			margin: 5px 0;
-			border-radius: 20px;
-			word-wrap: break-word;
-			font-size: 14px;
-			line-height: 1.4;
-		}
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            margin: 5px 0;
+            border-radius: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-		.user-bubble {
-			align-self: flex-end;
-			background-color: #007bff;
-			color: #fff;
-			border-bottom-right-radius: 0;
-		}
+        .user-bubble {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+            border-bottom-right-radius: 0;
+        }
 
-		.bot-bubble {
-			align-self: flex-start;
-			background-color: #e9ecef;
-			color: #000;
-			border-bottom-left-radius: 0;
-		}
-	</style>
+        .bot-bubble {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            color: #000;
+            border-bottom-left-radius: 0;
+        }
+    </style>
 
 
 
@@ -3823,12 +3825,29 @@
             name: 'F1GENZ Shoes'
         };
     </script>
+    <style>
+        /* Remove list markers for account sidebar menu items */
+        .acc .acc-sidebar ul,
+        .acc .acc-sidebar ul li {
+            list-style: none !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        /* Hide marker pseudo-element where supported */
+        .acc .acc-sidebar li::marker {
+            content: '' !important;
+        }
+
+        /* Fallback for older browsers */
+        .acc .acc-sidebar li {
+            list-style-type: none !important;
+        }
+    </style>
 </head>
 
 <body class="">
-  @include('Frontend.partials.header')
-
-
+    @include('Frontend.partials.header')
     <main class="main-layout">
         @php $user = Auth::user(); @endphp
         <div class="acc">
@@ -3837,18 +3856,14 @@
                     <!-- Sidebar -->
                     <div class="acc-sidebar">
                         <span>
-                       
-                             @if ($user->avatar)
-                        <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="Avatar" 
-                           alt="{{ $user->name }}">
-                    @else
-                        <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5"
-                            alt="{{ $user->name }}">
-                    @endif
-                    </span>
+                            @if ($user->avatar)
+                            <img width="64" height="64" src="{{ asset('avatars/' . $user->avatar) }}" alt="{{ $user->name }}">
+                            @else
+                            <img width="64" height="64" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&font-size=.5" alt="{{ $user->name }}">
+                            @endif
+                        </span>
                         <h3>Xin chào, <b>{{ $user->name }}</b></h3>
 
-                        <!-- Nút toggle chỉ hiện trên mobile -->
                         <button class="menu-toggle d-md-none" aria-label="Toggle menu">☰</button>
 
                         <div class="menu-content">
@@ -3921,7 +3936,7 @@
                         }
 
                         .account-menu a:hover {
-                            background: #007bff;
+                            background: #eacb34;
                             color: #fff;
                         }
 
@@ -3979,110 +3994,118 @@
                             }
                         }
                     </style>
-                 <div class="acc-data acc-data-orders">
-                <h1 class="title-head margin-top-0">Voucher bạn đã sử dụng</h1>
-                
-               <style>
-        .main-collection-breadcrumb *,
-        .main-collection-breadcrumb *:after,
-        .main-collection-breadcrumb *:before {
-            color: #333333 !important;
-        }
-        .coupon-tabs .nav-link {
-            color: #555;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            position: relative;
-            border: none;
-        }
-        .coupon-tabs .nav-link.active {
-            color: #ee4d2d;
-            font-weight: bold;
-        }
-        .coupon-tabs .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #ee4d2d;
-        }
-        .coupon-tabs .nav-tabs {
-            gap: 10px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .coupon-tabs .nav-link {
-            padding: 0.5rem 1rem;
-            margin: 0 !important;
-            border-radius: 4px;
-        }
-        .hidden-coupons {
-            display: none;
-        }
-        .show-all-coupons .hidden-coupons {
-            display: block;
-        }
-    </style>
-    
-</head>
-<body class="">
-    
-    
-    <section class="home-coupon">
-        <div class="container">
-            <div class="home-coupon-wrap">
-                @foreach ($coupons as $index => $coupon)
-                    <div class="home-coupon-item {{ $index > 3 ? 'hidden-coupons' : '' }}">
-                        <img loading="lazy" decoding="async"
-                            src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
-                            alt="Mã : {{ $coupon->code }}">
-                        <div class="home-coupon-content">
-                            <div class="home-coupon-content-head">
-                                <h3>Mã : {{ $coupon->code }}</h3>
-                                <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
-                                    title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
-                                <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
-                            </div>
-                            <div class="home-coupon-content-foot">
-                                <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}"
-                                    title="Điều kiện áp dụng">
-                                    Điều kiện áp dụng
-                                    <span class="home-coupon-content-info">
-                                        - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
-                                        - Giá trị giảm:
-                                        {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }}
-                                        <br>
-                                        - Áp dụng cho đơn hàng tối thiểu:
-                                        {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }}
-                                        <br>
-                                        - Hạn sử dụng:
-                                        {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
-                                    </span>
-                                </button>
-                                @if ($coupon->pivot->used)
-                        <span class="badge bg-secondary" style="color: #ffffff">Đã sử dụng</span>
-                    @else
-                        <a href="/products" class="text-primary" style="text-decoration: none; margin-right: 10px;">
-                            Dùng ngay
-                        </a>
-                    @endif
-                            </div>
-                        </div>
+                    <div class="acc-data acc-data-orders">
+                        <h1 class="title-head margin-top-0">Voucher bạn đã sử dụng</h1>
+
+                        <style>
+                            .main-collection-breadcrumb *,
+                            .main-collection-breadcrumb *:after,
+                            .main-collection-breadcrumb *:before {
+                                color: #333333 !important;
+                            }
+
+                            .coupon-tabs .nav-link {
+                                color: #555;
+                                font-weight: 500;
+                                padding: 0.5rem 1rem;
+                                position: relative;
+                                border: none;
+                            }
+
+                            .coupon-tabs .nav-link.active {
+                                color: #ee4d2d;
+                                font-weight: bold;
+                            }
+
+                            .coupon-tabs .nav-link.active::after {
+                                content: '';
+                                position: absolute;
+                                bottom: -6px;
+                                left: 0;
+                                right: 0;
+                                height: 2px;
+                                background-color: #ee4d2d;
+                            }
+
+                            .coupon-tabs .nav-tabs {
+                                gap: 10px;
+                                display: flex;
+                                flex-wrap: wrap;
+                            }
+
+                            .coupon-tabs .nav-link {
+                                padding: 0.5rem 1rem;
+                                margin: 0 !important;
+                                border-radius: 4px;
+                            }
+
+                            .hidden-coupons {
+                                display: none;
+                            }
+
+                            .show-all-coupons .hidden-coupons {
+                                display: block;
+                            }
+                        </style>
+
+                        </head>
+
+                        <body class="">
+
+
+                            <section class="home-coupon">
+                                <div class="container">
+                                    <div class="home-coupon-wrap">
+                                        @foreach ($coupons as $index => $coupon)
+                                        <div class="home-coupon-item {{ $index > 3 ? 'hidden-coupons' : '' }}">
+                                            <img loading="lazy" decoding="async"
+                                                src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
+                                                alt="Mã : {{ $coupon->code }}">
+                                            <div class="home-coupon-content">
+                                                <div class="home-coupon-content-head">
+                                                    <h3>Mã : {{ $coupon->code }}</h3>
+                                                    <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
+                                                        title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
+                                                    <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
+                                                </div>
+                                                <div class="home-coupon-content-foot">
+                                                    <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}"
+                                                        title="Điều kiện áp dụng">
+                                                        Điều kiện áp dụng
+                                                        <span class="home-coupon-content-info">
+                                                            - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
+                                                            - Giá trị giảm:
+                                                            {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }}
+                                                            <br>
+                                                            - Áp dụng cho đơn hàng tối thiểu:
+                                                            {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }}
+                                                            <br>
+                                                            - Hạn sử dụng:
+                                                            {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
+                                                        </span>
+                                                    </button>
+                                                    @if ($coupon->pivot->used)
+                                                    <span class="badge bg-secondary" style="color: #ffffff">Đã sử dụng</span>
+                                                    @else
+                                                    <a href="/products" class="text-primary" style="text-decoration: none; margin-right: 10px;">
+                                                        Dùng ngay
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button id="showMoreCoupons" class="btn btn-primary">Xem thêm mã giảm giá</button>
+                                    </div>
+                                </div>
+                            </section>
+
+
+
+
                     </div>
-                @endforeach
-            </div>
-            <div class="text-center mt-4">
-                <button id="showMoreCoupons" class="btn btn-primary">Xem thêm mã giảm giá</button>
-            </div>
-        </div>
-    </section>
-     
-   
-   
-                
-            </div>
                 </div>
             </div>
         </div>
@@ -4134,7 +4157,8 @@
                 }
             };
         }
-          function copyCode(button) {
+
+        function copyCode(button) {
             const couponCode = button.closest('.coupon').querySelector('.coupon-code-text').innerText;
             navigator.clipboard.writeText(couponCode).then(function() {
                 alert('Đã sao chép mã: ' + couponCode);
