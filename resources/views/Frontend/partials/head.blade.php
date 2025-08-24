@@ -6,14 +6,14 @@
 	<meta name="HandheldFriendly" content="true">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<link rel="shortcut icon" href="{{ asset('images/favicone889.png') }}" type="image/png">
-	<title>F1GENZ Shoes</title>
+	<title>S7 STUDIO</title>
 	<link rel="canonical" href="index.html">
 	<link rel="alternate" href="index.html" hreflang="vi-vn">
 	<meta name="keywords" content="F1GENZ - BABIE,  Quần áo, Trẻ sơ sinh, Babie.">
-	<meta name="description" content="F1GENZ Shoes">
+	<meta name="description" content="S7 STUDIO">
 	<meta name="robots" content="index,follow,noodp">
 	<meta property="og:type" content="website">
-	<meta property="og:title" content="F1GENZ Shoes">
+	<meta property="og:title" content="S7 STUDIO">
 	<meta property="og:image" content="{{ asset('images/share_fb_homee889.png') }}">
 	<meta property="og:image:secure_url" content="{{ asset('images/share_fb_homee889.png') }}">
 	<meta property="og:url" content="index.html">
@@ -92,7 +92,7 @@
 			},
 			shop: {
 				url: "//f1genz-shoes.mysapo.net",
-				name: "F1GENZ Shoes",
+				name: "S7 STUDIO",
 				phone: "",
 				featured: {
 					super_fs: {
@@ -490,7 +490,7 @@
 	<script fetchpriority="low" defer
 		src="{{asset('js/indexe889.js')}}"></script>
 	<script fetchpriority="low" defer src="{{ asset('js/search.js') }}"></script>
-	<script>var ProductReviewsAppUtil = ProductReviewsAppUtil || {}; ProductReviewsAppUtil.store = { name: 'F1GENZ Shoes' };</script>
+	<script>var ProductReviewsAppUtil = ProductReviewsAppUtil || {}; ProductReviewsAppUtil.store = { name: 'S7 STUDIO' };</script>
 
 	<script>
 		// Initialize F1GENZ when page loads

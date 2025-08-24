@@ -482,7 +482,7 @@
 										Bạn cũng có thể nhập mã giảm giá ở trang thanh toán.</div>
 								</div>
 								<div class="main-cart-data-full-total-action">
-				   <a href="/home" title="Tiếp tục mua hàng">Tiếp tục mua hàng</a>
+				   <a href="/products" title="Tiếp tục mua hàng">Tiếp tục mua hàng</a>
 				   @auth
 					   <a href="{{ route('cart.checkout') }}" title="Thanh toán">Thanh toán</a>
 				   @else

@@ -5,8 +5,8 @@
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-	<meta name="description" content="F1GENZ Shoes - Cảm ơn" />
-	<title>F1GENZ Shoes - Cảm ơn</title>
+	<meta name="description" content="S7 STUDIO" />
+	<title>S7 STUDIO</title>
 
 	<script>
 		(function() {
@@ -242,7 +242,7 @@
                 <header class="main__header">
                     <div class="logo logo--left">
                         <h1 class="shop__name">
-                            <a href="/">F1GENZ Shoes</a>
+                            <a href="/">S7 STUDIO</a>
                         </h1>
                     </div>
                 </header>
