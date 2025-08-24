@@ -15,6 +15,18 @@
             </div>
         </div>
         @endif
+         @if(session('error'))
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        @endif
         <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
@@ -30,6 +42,24 @@
             </div>
             <div class="justify-content-between dt-layout-table border-top">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
+                    <ul class="nav nav-tabs mb-3">
+                        @php
+                        $roles = [
+                        'all' => 'Tất cả',
+                        'admin' => 'Admin',
+                        'manage' => 'Manage',
+                        'user' => 'User',
+                        ];
+                        @endphp
+                        @foreach ($roles as $key => $label)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $currentStatus === $key ? 'active' : '' }}"
+                                href="{{ route('users.index', ['status' => $key]) }}">
+                                {{ $label }} (<small style="color: red;">{{ $counts [$key] ?? 0 }}</small>)
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
                     <table class="datatables-brand-list table dataTable dtr-column" id="DataTables_Table_0" style="width: 100%;">
                         <colgroup>
                             <col style="width: 40px;">
