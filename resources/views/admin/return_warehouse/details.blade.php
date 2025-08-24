@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container">
     <h4 class="mb-4">CHI TIẾT ĐƠN TRẢ: {{ $main->return_code }}</h4>
 

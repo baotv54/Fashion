@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\ResetPasswordVi;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use SoftDeletes; // 👈 thêm trait này
+
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +30,7 @@ class User extends Authenticatable
         'role',
         'google_id',
         'facebook_id',
+        'deleted_at',
     ];
 
     /**
@@ -56,17 +60,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
+
     public function savedCoupons()
     {
         return $this->belongsToMany(Coupon::class, 'coupon_user')->withPivot('used')->withTimestamps();
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
     }
 
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordVi($token));
     }
+
     public function orderReviews()
     {
         return $this->hasMany(OrderReview::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id');
     }
 }

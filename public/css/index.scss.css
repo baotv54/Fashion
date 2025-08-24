@@ -1472,7 +1472,9 @@ section:not(#home-slider) {
 }
 
 #modal-coupon .modal-content {
-    padding: 10px 0
+    padding: 6px 0;
+    max-width: 720px; /* cap overall modal width */
+    margin: 0 auto;
 }
 
 #modal-coupon .modal-content>a {
@@ -1484,15 +1486,15 @@ section:not(#home-slider) {
 
 #modal-coupon .modal-content .coupon-title {
     text-align: center;
-    font-weight: bold;
+    font-weight: 700;
     color: #F30;
-    font-size: 1.5rem;
-    margin-bottom: 10px
+    font-size: 1.25rem;
+    margin: 6px 0 8px;
 }
 
 #modal-coupon .modal-content .coupon-label {
-    background: #f3f3f3;
-    padding: 10px
+    background: #f7f9fc;
+    padding: 8px;
 }
 
 #modal-coupon .modal-content .coupon-label span {
@@ -1501,15 +1503,18 @@ section:not(#home-slider) {
 }
 
 #modal-coupon .modal-content .coupon-content {
-    padding: 10px
+    padding: 8px 12px;
+    font-size: 13px;
+    max-height: 220px;
+    overflow-y: auto;
 }
 
 #modal-coupon .modal-content .coupon-action {
-    padding: 0 10px;
+    padding: 6px 10px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
 }
 
 #modal-coupon .modal-content .coupon-action button:hover {

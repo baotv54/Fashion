@@ -2,16 +2,16 @@
     <div class="container">
         <div class="headers2-wrap">
             @foreach ($logos as $logo)
-                <div class="headers2-left">
-                    <a href="/" aria-label="F1GENZ Shoes">
-                        @if (!empty($logo->images))
-                            <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
-                        @else
-                            <img src="/logo/image.png" alt="No Logo" title="No Logo">
-                        @endif
-                    </a>
-                </div>
-                 @endforeach
+            <div class="headers2-left">
+                <a href="/" aria-label="S7 STUDIO">
+                    @if (!empty($logo->images))
+                    <img src="/logo/{{ $logo->images }}" alt="S7 STUDIO" title="S7 STUDIO">
+                    @else
+                    <img src="/logo/image.png" alt="No Logo" title="No Logo">
+                    @endif
+                </a>
+            </div>
+            @endforeach
             <div class="headers2-center">
                 <nav class="headers2-center-menu">
                     <ul class="menu0">
@@ -113,6 +113,14 @@
                         </li>
                         @endif
                         @endauth
+                        @auth
+                        {{-- Nút Trang Nhân Viên  --}}
+                        @if(Auth::user()->role === 'manage')
+                        <li class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.statistics') }}">Nhân Viên</a>
+                        </li>
+                        @endif
+                        @endauth
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>
@@ -124,28 +132,28 @@
                             </form>
                             <ul class="shop-social">
                                 <li>
-                                    <a href="https://www.facebook.com/" target="_blank" aria-label="F1GENZ Shoes - Facebook" title="F1GENZ Shoes - Facebook">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Facebook" src="{{ asset('images/facebook__6__53aaa8d352524d3eb025af5203eaa437_icon.png') }}" alt="F1GENZ Shoes - Facebook">
+                                    <a href="https://www.facebook.com/" target="_blank" aria-label="S7 STUDIO - Facebook" title="S7 STUDIO - Facebook">
+                                        <img width="30" height="30" loading="lazy" title="S7 STUDIO - Facebook" src="{{ asset('images/facebook__6__53aaa8d352524d3eb025af5203eaa437_icon.png') }}" alt="S7 STUDIO - Facebook">
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.youtube.com/" target="_blank" aria-label="F1GENZ Shoes - Youtube" title="F1GENZ Shoes - Youtube">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Youtube" src="{{ asset('images/youtube__5__4f04522e10494557a651f53a33ad4d76_icon.png') }}" alt="F1GENZ Shoes - Youtube">
+                                    <a href="https://www.youtube.com/" target="_blank" aria-label="S7 STUDIO - Youtube" title="S7 STUDIO - Youtube">
+                                        <img width="30" height="30" loading="lazy" title="S7 STUDIO - Youtube" src="{{ asset('images/youtube__5__4f04522e10494557a651f53a33ad4d76_icon.png') }}" alt="S7 STUDIO - Youtube">
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.pinterest.com/" target="_blank" aria-label="F1GENZ Shoes - Pinterest" title="F1GENZ Shoes - Pinterest">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Pinterest" src="{{ asset('images/pinterest_a1a15995132a4275845412deba5f1193_icon.png') }}" alt="F1GENZ Shoes - Pinterest">
+                                    <a href="https://www.pinterest.com/" target="_blank" aria-label="S7 STUDIO - Pinterest" title="S7 STUDIO - Pinterest">
+                                        <img width="30" height="30" loading="lazy" title="S7 STUDIO - Pinterest" src="{{ asset('images/pinterest_a1a15995132a4275845412deba5f1193_icon.png') }}" alt="S7 STUDIO - Pinterest">
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.tiktok.com/" target="_blank" aria-label="F1GENZ Shoes - TikTok" title="F1GENZ Shoes - TikTok">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - TikTok" src="{{ asset('images/tik-tok_d85bb4e7468c43ac9ed5437649b7405c_icon.png') }}" alt="F1GENZ Shoes - TikTok">
+                                    <a href="https://www.tiktok.com/" target="_blank" aria-label="S7 STUDIO - TikTok" title="S7 STUDIO - TikTok">
+                                        <img width="30" height="30" loading="lazy" title="S7 STUDIO - TikTok" src="{{ asset('images/tik-tok_d85bb4e7468c43ac9ed5437649b7405c_icon.png') }}" alt="S7 STUDIO - TikTok">
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.instagram.com/" target="_blank" aria-label="F1GENZ Shoes - Instagram" title="F1GENZ Shoes - Instagram">
-                                        <img width="30" height="30" loading="lazy" title="F1GENZ Shoes - Instagram" src="{{ asset('images/instagram__3__7de3ebbce1f24003b516ca6c1d7c24d5_icon.png') }}" alt="F1GENZ Shoes - Instagram">
+                                    <a href="https://www.instagram.com/" target="_blank" aria-label="S7 STUDIO - Instagram" title="S7 STUDIO - Instagram">
+                                        <img width="30" height="30" loading="lazy" title="S7 STUDIO - Instagram" src="{{ asset('images/instagram__3__7de3ebbce1f24003b516ca6c1d7c24d5_icon.png') }}" alt="S7 STUDIO - Instagram">
                                     </a>
                                 </li>
                             </ul>
@@ -197,7 +205,7 @@
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
             </div>
-             
+
         </div>
     </div>
 </header>

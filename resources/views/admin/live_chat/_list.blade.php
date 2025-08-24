@@ -54,7 +54,7 @@
                 <tr>
                     <th>Người dùng</th>
                     <th>Trạng thái</th>
-                    <th></th>
+                    <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -79,7 +79,9 @@
                                 @else
                                     <img src="https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=E5E7EB&color=374151&size=64" alt="avatar">
                                 @endif
-                                <span>{{ $name }}</span>
+                                <a href="{{ route('admin.plc.index', array_merge(request()->query(), ['id' => $t->id])) }}" style="text-decoration: none; color: inherit;">
+                                    <span>{{ $name }}</span>
+                                </a>
                             </div>
                         </td>
                         <td>
@@ -90,19 +92,24 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.plc.index', array_merge(request()->query(), ['id' => $t->id])) }}" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                            <form action="{{ route('admin.plc.destroy', $t->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa cuộc trò chuyện này không?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                            </form>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có cuộc trò chuyện nào</td>  
+                        <td colspan="3" class="text-center text-muted">Chưa có cuộc trò chuyện nào</td>  
                     </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
         <div>
-            {{ $threads->withQueryString()->links() }}
+            {{-- Pagination under the two-pane layout --}}<br>
+            {{ $threads->withQueryString()->links('pagination::bootstrap-4') }}
         </div>
     </div>
 </div>

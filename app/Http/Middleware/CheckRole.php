@@ -15,10 +15,13 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->role !== 'admin') {
-            abort(403);
+        // Các role được phép truy cập
+        $allowedRoles = ['admin', 'manage'];
+
+        if (!in_array($request->user()->role, $allowedRoles)) {
+            abort(403, 'Bạn không có quyền truy cập.');
         }
-        
+
         return $next($request);
     }
 }

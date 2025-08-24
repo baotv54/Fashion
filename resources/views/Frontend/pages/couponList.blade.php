@@ -64,7 +64,7 @@
             data-bg="//bizweb.dktcdn.net/100/493/370/themes/940719/assets/main_collection_breadcrumb_bg.jpg?1713464283843">
             <div class="container">
                 <div class="section-title-all">
-                    <h1>Tất cả sản phẩm</h1>
+                    <h1>Mã giảm giá</h1>
                 </div>
                 <div class="breadcrumb-wrap">
                     <ol class="breadcrumb">
@@ -150,6 +150,69 @@
                 <button id="showMoreCoupons" class="btn btn-primary">Xem thêm mã giảm giá</button>
             </div>
         </div>
+    </section>
+    <section class="home-coupon">
+        
+        <div class="container">
+            
+            <div>
+                <h2>Mã mã giảm giá sự kiện </h2>
+            </div>
+            <br>
+            <div class="home-coupon-wrap">
+               
+                 @forEach($couponsEvent as $coupon)
+
+                
+                    <div class="home-coupon-item">
+                        <img loading="lazy" decoding="async"
+                            src="{{ asset('images/background-coupon_d5a81f5bc7ea49_ec6d59fdd17c4a718809792590ed9455.png') }}"
+                            alt="Mã : {{ $coupon->code }}">
+                        <div class="home-coupon-content">
+                            <div class="home-coupon-content-head">
+                                <h3>Mã : {{ $coupon->code }}</h3>
+                                <img loading="lazy" decoding="async" src="{{ asset($coupon->image) }}"
+                                    title="Mã : {{ $coupon->code }}" alt="Mã : {{ $coupon->code }}">
+                                <p>{{ Str::limit($coupon->description ?? 'Không có mô tả', 50, '...') }}</p>
+                            </div>
+                            <div class="home-coupon-content-foot">
+                                <button data-type="coupon-policy" data-coupon="{{ $coupon->code }}"
+                                    title="Điều kiện áp dụng">
+                                    Điều kiện áp dụng
+                                    <span class="home-coupon-content-info">
+                                        - {{ $coupon->description ?? 'Không có điều kiện cụ thể' }} <br>
+                                        - Giá trị giảm:
+                                        {{ $coupon->type === 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . '₫' }}
+                                        <br>
+                                        - Áp dụng cho đơn hàng tối thiểu:
+                                        {{ $coupon->min_cart_value ? number_format($coupon->min_cart_value, 0, ',', '.') . '₫' : 'Không yêu cầu' }}
+                                        <br>
+                                        - Hạn sử dụng:
+                                        {{ $coupon->end_date ? $coupon->end_date->format('d/m/Y') : 'Không giới hạn' }}
+                                    </span>
+                                </button>
+                                @auth
+                                    @php $isSaved = Auth::user()->savedCoupons->contains($coupon->id); @endphp
+                                    <button
+                                        class="btn {{ $isSaved ? 'btn-danger' : 'btn-outline-primary' }} btn-save-coupon"
+                                        data-coupon-id="{{ $coupon->id }}" {{ $isSaved ? 'disabled' : '' }}
+                                        style="margin-left: 10px;">
+                                        {{ $isSaved ? 'Đã lưu' : 'Lưu mã giảm giá' }}
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-outline-secondary"
+                                        style="margin-left: 10px;">Đăng nhập để lưu mã</a>
+                                @endauth
+                            </div>
+                        </div>
+                    </div>
+                  @endforEach
+            </div>
+         
+            
+        </div>
+        
+       
     </section>
     <section class="home-fSale">
         <div class="container">
@@ -289,6 +352,36 @@
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('showMoreCoupons');
+            var wrap = document.querySelector('.home-coupon-wrap');
+            if (!btn || !wrap) return;
+
+            var hiddenCount = wrap.querySelectorAll('.hidden-coupons').length;
+            if (hiddenCount === 0) {
+                btn.style.display = 'none';
+                return;
+            }
+
+            btn.addEventListener('click', function () {
+                if (wrap.classList.contains('show-all-coupons')) {
+                    wrap.classList.remove('show-all-coupons');
+                    btn.innerText = 'Xem thêm mã giảm giá';
+                    // scroll back to top of coupon section
+                    wrap.closest('section')?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    wrap.classList.add('show-all-coupons');
+                    btn.innerText = 'Thu gọn';
+                    // scroll to reveal newly shown coupons
+                    setTimeout(function () {
+                        var last = wrap.querySelector('.home-coupon-item:last-child');
+                        if (last) last.scrollIntoView({ behavior: 'smooth' });
+                    }, 120);
+                }
+            });
         });
     </script>
     @include('Frontend.partials.footer')

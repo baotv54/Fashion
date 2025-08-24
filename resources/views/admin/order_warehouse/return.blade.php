@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
 <div class="container">
     @if(session('success'))
     <div class="toast-container position-fixed bottom-0 end-0 p-3">

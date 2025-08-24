@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container-fluid p-0">
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">

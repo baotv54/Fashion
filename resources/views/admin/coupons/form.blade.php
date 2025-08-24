@@ -1,3 +1,5 @@
+@include('admin.check_admin.check')
+
 <div class="row g-4">
     <!-- Cột trái -->
     <div class="col-lg-6">
@@ -11,6 +13,13 @@
                     <input type="text" name="code" class="form-control @error('code') is-invalid @enderror"
                         value="{{ old('code', $coupon->code ?? '') }}">
                     @error('code') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Sự Kiện <span class="text-danger">*</span></label>
+                    <input type="text" name="event" min="0" class="form-control"
+                        event="{{ old('event', $coupon->event ?? '') }}">
+                    @error('event') <div class="text-danger small">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="mb-3">

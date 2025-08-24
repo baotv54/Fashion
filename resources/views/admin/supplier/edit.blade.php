@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
     <div class="container mt-4">
         <h4 class="mb-4">
             <a href="{{ route('suppliers.index') }}" class="text-decoration-none me-2">←</a>

@@ -14,12 +14,12 @@
     @include('Frontend.partials.head')
 
     <link rel="shortcut icon" href="//bizweb.dktcdn.net/assets/sapo_favicon.png" type="image/x-icon" />
-    <!-- <link rel="stylesheet" href="{{asset('css/flag-icons.min.css')}}" />
+    <!-- <link rel="stylesheet" href="{{ asset('css/flag-icons.min.css') }}" />
 
-    <link rel="stylesheet" href="{{asset('css/checkout.vendor.min.css')}}"> -->
+    <link rel="stylesheet" href="{{ asset('css/checkout.vendor.min.css') }}"> -->
 
 
-    <link rel="stylesheet" href="{{asset('css/checkout.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/checkout.min.css') }}">
 
 
 </head>
@@ -275,7 +275,7 @@
                                                     <div class="radio__input">
                                                         <input name="paymentMethod" id="paymentMethod-cod"
                                                             type="radio" class="input-radio" value="cod"
-                                                            required>
+                                                            required checked>
                                                     </div>
                                                     <label for="paymentMethod-cod" class="radio__label">
                                                         <span class="radio__label__primary">Thu hộ (COD)</span>
@@ -290,10 +290,13 @@
                                             <!-- Phương thức thanh toán: VNPAY -->
                                             <div class="content-box__row">
                                                 <div class="radio-wrapper">
+                                                    
                                                     <div class="radio__input">
+                                                       
                                                         <input name="paymentMethod" id="paymentMethod-vnpay"
-                                                            type="radio" class="input-radio" value="vnpay"
+                                                            type="radio" class="input-radio" value="vnpay" 
                                                             required>
+                                                            
                                                     </div>
                                                     <label for="paymentMethod-vnpay" class="radio__label">
                                                         <span class="radio__label__primary">Thanh toán qua VNPAY</span>
@@ -450,7 +453,7 @@
 
                                     <div id="appliedCouponWrapper"
                                         class="card border-0 shadow-sm mt-3 coupon-card animate__animated animate__fadeIn"
-                                        style="border-left: 5px solid #28a745; border-radius: 12px; background: linear-gradient(90deg, #f0fff4, #ffffff);">
+                                        style="border-left: 5px solid #28a745; background: linear-gradient(90deg, #ffffff, #ffffff);">
                                         <div class="card-body d-flex justify-content-between align-items-center">
                                             @if (Session::has('coupon'))
                                                 <div>
@@ -510,7 +513,11 @@
                                                         </div>
                                                     </div>
                                                     <input type="radio" name="selected_coupon"
-                                                        class="voucher-radio" value="{{ $coupon->code }}">
+                                                        class="voucher-radio" value="{{ $coupon->code }}"
+                                                        data-min-cart-value="{{ $coupon->min_cart_value ?? 0 }}"
+                                                        data-expiry="{{ \Carbon\Carbon::parse($coupon->expiry_date)->toDateString() }}"
+                                                        data-type="{{ $coupon->type }}"
+                                                        data-value="{{ $coupon->value }}">
                                                 </label>
                                             @endforeach
                                         </section>
@@ -1091,7 +1098,11 @@
             });
 
             document.addEventListener('click', function(e) {
-                if (e.target && e.target.id === 'removeCoupon') {
+                // Support clicks on the button or its child elements (like the <i> icon)
+                const target = e.target;
+                const removeBtn = target && (target.id === 'removeCoupon' ? target : (target.closest ?
+                    target.closest('#removeCoupon') : null));
+                if (removeBtn) {
                     fetch('/remove-coupon', {
                             method: 'POST',
                             headers: {
@@ -1289,8 +1300,85 @@
     </script>
 
     <script>
+        // Auto-apply best eligible coupon on page load
+        (function() {
+            function parseDate(d) {
+                return new Date(d + 'T23:59:59');
+            }
+
+            function getNumericSubtotal() {
+                const el = document.getElementById('checkout_subtotal_price');
+                if (!el) return 0;
+                const digits = el.textContent.replace(/[^\d]/g, '');
+                return parseInt(digits, 10) || 0;
+            }
+
+            function computeCouponValue(type, value, subtotal) {
+                if (type === 'percent') {
+                    return Math.floor(subtotal * (parseFloat(value) / 100));
+                }
+                return parseInt(value, 10) || 0;
+            }
+
+            function findBestCoupon() {
+                const radios = Array.from(document.querySelectorAll('.voucher-radio'));
+                if (!radios.length) return null;
+                const subtotal = getNumericSubtotal();
+                const now = new Date();
+                let best = null;
+
+                radios.forEach(r => {
+                    const minCart = parseInt(r.dataset.minCartValue || r.getAttribute('data-min-cart-value') ||
+                        0, 10);
+                    const expiry = r.dataset.expiry || r.getAttribute('data-expiry');
+                    const type = r.dataset.type || r.getAttribute('data-type');
+                    const value = r.dataset.value || r.getAttribute('data-value');
+
+                    if (expiry && parseDate(expiry) < now) return; // expired
+                    if (subtotal < (minCart || 0)) return; // not meet min
+
+                    const saving = computeCouponValue(type, value, subtotal);
+
+                    if (!best || saving > best.saving) {
+                        best = {
+                            radio: r,
+                            saving
+                        };
+                    }
+                });
+
+                return best;
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const best = findBestCoupon();
+                    if (best && best.radio) {
+                        // select radio visually
+                        best.radio.checked = true;
+                        const item = best.radio.closest('.voucher-item');
+                        if (item) item.classList.add('active');
+
+                        // Fill reduction input and trigger apply
+                        const code = best.radio.value;
+                        if (code) {
+                            const reductionInput = document.getElementById('reductionCode');
+                            if (reductionInput) reductionInput.value = code;
+                            // call apply coupon flow
+                            document.getElementById('applyCoupon').click();
+                        }
+                    }
+                } catch (e) {
+                    // fail silently
+                    console.error('Auto-apply coupon error', e);
+                }
+            });
+        })();
+    </script>
+
+    <script>
         // Polling tồn kho ở trang checkout: gọi /cart/validate mỗi 10s, khóa nút đặt hàng khi có lỗi
-        (function () {
+        (function() {
             const FORM_SELECTOR = '#checkoutForm';
             const SUBMIT_SELECTOR = '#checkoutForm button[type="submit"]';
             const WARNING_ID = 'checkout-stock-warning';
@@ -1302,7 +1390,8 @@
                     el.id = WARNING_ID;
                     el.className = 'alert alert-danger';
                     el.style.display = 'none';
-                    const sidebar = document.querySelector('.sidebar__content') || document.querySelector('.main__content') || document.body;
+                    const sidebar = document.querySelector('.sidebar__content') || document.querySelector(
+                        '.main__content') || document.body;
                     sidebar.prepend(el);
                 }
                 return el;
@@ -1316,8 +1405,11 @@
                 if (disabled) {
                     btn.classList.add('disabled');
                     btn.setAttribute('aria-disabled', 'true');
-                    btn.addEventListener('click', blockClick, { passive: false });
-                    warn.textContent = message || 'Một số sản phẩm đã hết hoặc không đủ hàng. Vui lòng cập nhật giỏ hàng trước khi đặt.';
+                    btn.addEventListener('click', blockClick, {
+                        passive: false
+                    });
+                    warn.textContent = message ||
+                        'Một số sản phẩm đã hết hoặc không đủ hàng. Vui lòng cập nhật giỏ hàng trước khi đặt.';
                     warn.style.display = '';
                 } else {
                     btn.classList.remove('disabled');
@@ -1342,7 +1434,11 @@
 
             async function pollValidate() {
                 try {
-                    const res = await fetch('/cart/validate', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    const res = await fetch('/cart/validate', {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
                     if (!res.ok) return;
                     const json = await res.json();
                     applyValidation(json);
@@ -1351,7 +1447,7 @@
                 }
             }
 
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 pollValidate();
                 setInterval(pollValidate, 10000);
             });

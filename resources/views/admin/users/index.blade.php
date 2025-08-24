@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card">
     <div class="card-datatable">
         @if(session('success'))
@@ -15,7 +17,7 @@
             </div>
         </div>
         @endif
-         @if(session('error'))
+        @if(session('error'))
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
                 <div class="d-flex">
@@ -46,9 +48,9 @@
                         @php
                         $roles = [
                         'all' => 'Tất cả',
-                        'admin' => 'Admin',
-                        'manage' => 'Manage',
-                        'user' => 'User',
+                        'admin' => 'Quản Trị Viên',
+                        'manage' => 'Nhân Viên',
+                        'user' => 'Khách Hàng',
                         ];
                         @endphp
                         @foreach ($roles as $key => $label)
@@ -85,7 +87,11 @@
 
                                 </td>
                                 <td>{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
+                                <td>
+                                    <a href="{{ route('users.show', $user->id) }}" class="text-primary fw-bold" style="text-decoration: none;">
+                                        {{ $user->name }}
+                                    </a>
+                                </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->role }}</td>
                                 <td class="text-center">
@@ -104,11 +110,64 @@
                                                 <path d="M16 5l3 3" />
                                             </svg>
                                         </button>
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                                        @if($user->role === 'admin')
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-sm btn-icon btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAdminModal{{ $user->id }}" title="Xóa Admin">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-trash">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M4 7l16 0" />
+                                                <path d="M10 11l0 6" />
+                                                <path d="M14 11l0 6" />
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                            </svg>
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="deleteAdminModal{{ $user->id }}" tabindex="-1" aria-labelledby="deleteAdminModalLabel{{ $user->id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteAdminModalLabel{{ $user->id }}">Xác nhận xóa Admin</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            <p>Bạn đang xóa admin <strong>{{ $user->name }}</strong>. Vui lòng nhập mật khẩu để xác nhận:</p>
+                                                            <div class="mb-3">
+                                                                <label for="password{{ $user->id }}" class="form-label">Mật khẩu:</label>
+                                                                <input type="password" name="password" id="password{{ $user->id }}" class="form-control" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-trash">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                                    <path d="M4 7l16 0" />
+                                                                    <path d="M10 11l0 6" />
+                                                                    <path d="M14 11l0 6" />
+                                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @else
+                                        <!-- Xóa user bình thường bằng icon -->
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa user này không?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Xóa User">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-trash">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path d="M4 7l16 0" />
                                                     <path d="M10 11l0 6" />
@@ -118,6 +177,7 @@
                                                 </svg>
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -236,9 +296,9 @@
                 <label class="form-label" for="Brand-status">Quyền</label>
                 <select id="Brand-status" name="role" class="form-select">
                     <option value="#" selected disabled>{{ old('role', $users->role ?? '') }}</option>
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                    <option value="manage">manage</option>
+                    <option value="admin">Quản Trị Viên</option>
+                    <option value="user">Người Dùng</option>
+                    <option value="manage">Nhân viên</option>
                 </select>
             </div>
             <!-- Submit -->
@@ -261,13 +321,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" name="current_role" id="currentRole">
                 <div class="mb-3">
                     <label for="role" class="form-label">Vai Trò</label>
                     <select name="role" id="role" class="form-select" required>
                         <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                        <option value="manage">Manage</option>
+                        <option value="manage">Nhân viên</option>
+                        <option value="user">Người dùng</option>
                     </select>
+                </div>
+                <div class="mb-3" id="passwordField" style="display:none;">
+                    <label for="password" class="form-label">Nhập mật khẩu để xác nhận</label>
+                    <input type="password" name="password" id="passwordInput" class="form-control">
                 </div>
             </div>
             <div class="modal-footer">
@@ -278,30 +343,43 @@
     </div>
 </div>
 
-{{-- Script --}}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
         const roleModal = document.getElementById('roleModal');
         roleModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const userId = button.getAttribute('data-id');
-            const userRole = button.getAttribute('data-role');
+            const currentRole = button.getAttribute('data-role');
 
             const form = document.getElementById('roleForm');
-            form.action = `/admin/users/${userId}`; // Cập nhật action đúng user
+            form.action = `/admin/users/${userId}`;
+            document.getElementById('currentRole').value = currentRole;
 
             const roleSelect = form.querySelector('#role');
-            roleSelect.value = userRole;
+            roleSelect.value = currentRole;
+
+            const passwordField = document.getElementById('passwordField');
+
+            // Hiển thị ô nhập mật khẩu nếu đổi từ admin sang role khác
+            roleSelect.addEventListener('change', function() {
+                if (currentRole === 'admin' && roleSelect.value !== 'admin') {
+                    passwordField.style.display = 'block';
+                    document.getElementById('passwordInput').required = true;
+                } else {
+                    passwordField.style.display = 'none';
+                    document.getElementById('passwordInput').required = false;
+                }
+            });
+
+            // Trigger lần đầu khi modal mở
+            if (currentRole === 'admin' && roleSelect.value !== 'admin') {
+                passwordField.style.display = 'block';
+                document.getElementById('passwordInput').required = true;
+            } else {
+                passwordField.style.display = 'none';
+                document.getElementById('passwordInput').required = false;
+            }
         });
     });
-
-    function confirmDelete(id) {
-        if (confirm("Bạn có chắc chắn muốn xóa Người dùng này không?")) {
-            document.getElementById('delete-form-' + id).submit();
-        }
-    }
 </script>
 @endsection

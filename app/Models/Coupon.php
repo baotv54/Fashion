@@ -8,6 +8,7 @@ class Coupon extends Model
 {
     protected $fillable = [
         'code',
+        'event',
         'type',
         'value',
         'min_cart_value',
