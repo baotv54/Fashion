@@ -182,11 +182,6 @@
 						<div class="favorite-card-body">
 							<h3>{{ $product->name }}</h3>
 							<p class="price">{{ number_format($product->price, 0, ',', '.') }}₫</p>
-							<div class="options">
-								Size: 42 |
-								Màu: Đen Tím |
-								Phân loại: Giày thể thao
-							</div>
 							<div class="actions">
 								<form action="{{ route('cart.add') }}" method="POST">
 									@csrf
@@ -266,7 +261,7 @@
 				let allChecked = $('.favorite-checkbox').length === $('.favorite-checkbox:checked').length;
 				$('#select-all-favorites').prop('checked', allChecked);
 				toggleDeleteSelectedBtn();
-			});	
+			});
 
 			$('.favorite-delete-form').on('submit', function(e) {
 				e.preventDefault(); // Chặn reload trang

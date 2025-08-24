@@ -47,7 +47,13 @@
                                 $variant = $item['variant'] ?? null;
                                 $attributes = collect($item['attributes'] ?? []);
                                 $quantity = $item['quantity'] ?? 0;
-                                $importPrice = $variant ? $variant->import_price : ($product->import_price ?? 0);
+
+                                // Nếu có variant thì lấy import_price từ variant
+                                // Ngược lại dùng giá sản phẩm chính
+                                $importPrice = $variant && $variant->id
+                                ? $variant->import_price
+                                : ($product->import_price ?? 0);
+
                                 $lineTotal = $importPrice * $quantity;
                                 @endphp
 
@@ -59,10 +65,19 @@
                                                 style="width: 60px; height: 60px; object-fit: cover;"
                                                 class="rounded border">
                                             <div>
-                                                <strong>{{ $product->name ?? 'Sản phẩm không tên' }}</strong>
-                                                @if($variant)
+                                                <strong>
+                                                    {{ \Illuminate\Support\Str::limit($product->name ?? 'Sản phẩm không tên', 20) }}
+                                                </strong>
+
+                                                {{-- Nếu có variant id thì hiển thị tên biến thể --}}
+                                                @if($variant && $variant->id)
                                                 - {{ $variant->name ?? '' }}
                                                 @endif
+
+                                                {{-- Nếu không có variant -> hiển thị "Sản phẩm chính" --}}
+                                                @if(!$variant || !$variant->id)
+                                                @endif
+
                                                 <br>
                                                 @if($attributes->count())
                                                 <small>
@@ -75,6 +90,7 @@
                                                 @endif
                                             </div>
                                         </div>
+
                                         <!-- Hidden inputs -->
                                         <input type="hidden" name="product_id[]" value="{{ $product->id ?? '' }}">
                                         <input type="hidden" name="variant_id[]" value="{{ $variant->id ?? '' }}">
@@ -116,6 +132,7 @@
                                     <td colspan="5" class="text-center text-muted">Không có sản phẩm nào</td>
                                 </tr>
                                 @endforelse
+
                             </tbody>
 
                         </table>

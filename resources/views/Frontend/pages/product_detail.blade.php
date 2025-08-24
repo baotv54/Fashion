@@ -4015,9 +4015,6 @@
 		<div class="main-product">
 			<div class="main-product-breadcrumb" title="{{$product->name}}">
 				<div class="container">
-					<div class="section-title-all">
-                        <h1>{{ $product->name }}</h1>
-                    </div>
                     <div class="breadcrumb-wrap">
                         <ol class="breadcrumb">
                             {{-- Trang chủ --}}
@@ -4170,15 +4167,21 @@
 
 						<div class="main-product-price">
 							<div class="main-product-price-wrap">
-								<span class="main-product-price-this" id="product-price">
-									@if($product->discount_price && $product->discount_price < $product->price)
-										<del class="main-product-price-compare">{{ number_format($product->price, 0, ',', '.') }}₫</del>
-										{{ number_format($product->discount_price, 0, ',', '.') }}₫
-										@else
-										{{ number_format($product->price, 0, ',', '.') }}₫
-										@endif
-								</span>
-							</div>
+    <span class="main-product-price-this" id="product-price">
+        @if(!empty($product->variants) && count($product->variants) > 0)
+            {{-- Nếu có biến thể, ẩn giá chính --}}
+            <span>Vui Lòng Chọn Thuộc Tính</span>
+        @else
+            @if($product->discount_price && $product->discount_price < $product->price)
+                <del class="main-product-price-compare">{{ number_format($product->price, 0, ',', '.') }}₫</del>
+                {{ number_format($product->discount_price, 0, ',', '.') }}₫
+            @else
+                {{ number_format($product->price, 0, ',', '.') }}₫
+            @endif
+        @endif
+    </span>
+</div>
+
 
 							{{-- Rating and sold info --}}
 							<div class="product-rating-summary">
@@ -4209,10 +4212,13 @@
 						</div>
 
 						<!-- Flash Sale -->
-						<div class="productFSale">
-							<img src="https://file.hstatic.net/200000306687/file/ezgif.com-gif-maker_40e5c36d115b4904babbebc78c90c34e.gif" alt="productFSale" />
-							<div data-time="30/7/2025 24:00:00" class="countdownLoop"></div>
-						</div>
+						@if($product->discount_price != null)
+                        <div class="productFSale">
+                        <img src="https://file.hstatic.net/200000306687/file/ezgif.com-gif-maker_40e5c36d115b4904babbebc78c90c34e.gif" alt="productFSale" />
+                        <div data-time="30/7/2025 24:00:00" class="countdownLoop"></div>
+                        </div>
+                        @endif
+
 
 						<form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
 							@csrf
@@ -5226,7 +5232,7 @@
 			// 		variantImage.querySelector('img').style.display = 'block';
 			// 		variantThumb.style.display = 'block';
 			// 		variantThumb.querySelector('img').style.display = 'block';
-					
+
 			// 	}
 			// }
 			function updateProductImage(variant) {

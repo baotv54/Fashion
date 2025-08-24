@@ -34,8 +34,11 @@
                                         <div class="d-flex align-items-center">
                                             <img src="/{{ $detail->product->image ?? 'https://via.placeholder.com/40' }}" class="rounded me-2" width="40" height="40" alt="">
                                             <div>
-                                                <div class="fw-bold">{{ $detail->product->name }}</div>
-                                                <small class="text-muted">SKU: {{ $detail->product->slug ?? '---' }}</small><br>
+                                                <div class="fw-bold">
+                                                    {{ \Illuminate\Support\Str::limit($detail->product->name, 20) }}
+                                                </div>
+
+                                                <small class="text-muted">SKU: {{ \Illuminate\Support\Str::limit($detail->product->slug ?? '---') }}</small><br>
                                             </div>
                                         </div>
                                     </td>
@@ -131,20 +134,20 @@
             <br>
             @if($main->payment_status === 'Thanh toán sau' ||$main->import_type === 'Đã Nhập Kho' )
             <div class="text-end">
-            <form action="{{ route('warehouse.destroy', $main->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn hủy đơn này?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Hủy Đơn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M4 7l16 0" />
-                        <path d="M10 11l0 6" />
-                        <path d="M14 11l0 6" />
-                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                    </svg>
-                </button>
-            </form>
+                <form action="{{ route('warehouse.destroy', $main->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc muốn hủy đơn này?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Hủy Đơn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M4 7l16 0" />
+                            <path d="M10 11l0 6" />
+                            <path d="M14 11l0 6" />
+                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                        </svg>
+                    </button>
+                </form>
             </div>
             @endif
         </div>

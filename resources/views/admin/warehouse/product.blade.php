@@ -44,7 +44,7 @@
                             <td>
                                 <strong>{{ $item['product']->name }}</strong>
                                 @if($item['is_variant'] && $item['variant'])
-                                    - {{ $item['variant']->name }}
+                                - {{ $item['variant']->name }}
                                 @endif
                                 <br>
                                 <small class="text-muted">
@@ -56,14 +56,14 @@
                                 <input type="hidden" name="items[{{ $index }}][variant_id]" value="{{ $item['variant']->id ?? '' }}">
 
                                 @if($item['attributes']->count())
-                                    <br>
-                                    <small>
-                                        @foreach($item['attributes'] as $attrVal)
-                                            <span class="badge bg-success">
-                                                {{ $attrVal->attributeValue->attribute->name ?? '' }}: {{ $attrVal->attributeValue->value ?? '' }}
-                                            </span>
-                                        @endforeach
-                                    </small>
+                                <br>
+                                <small>
+                                    @foreach($item['attributes'] as $attrVal)
+                                    <span class="badge bg-success">
+                                        {{ $attrVal->attributeValue->attribute->name ?? '' }}: {{ $attrVal->attributeValue->value ?? '' }}
+                                    </span>
+                                    @endforeach
+                                </small>
                                 @endif
                             </td>
                             <td class="text-end text-muted" style="white-space: nowrap;">
@@ -71,7 +71,8 @@
                                 <br>
                                 <small>
                                     Có thể bán:
-                                    {{ $item['is_variant'] && $item['variant'] ? ($item['variant']->quantity ?? 0) : ($item['product']->quantity ?? 0) }}
+                                    {{ (!empty($item['is_variant']) && !empty($item['variant']))? ($item['variant']['stock'] ?? 0): ($item['product']['quantity'] ?? 0) }}
+
                                 </small>
                             </td>
                         </tr>
