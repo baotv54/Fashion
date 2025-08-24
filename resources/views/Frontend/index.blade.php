@@ -1229,7 +1229,7 @@
     </script>
     @include('Frontend.partials.footer')
     @include('Frontend.partials.modal')
-    @include('Frontend.partials.Chatbot')
+    @include('Frontend.partials.chatbot')
 
 
     <style>

@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card">
     <div class="card-datatable">
         @if(session('success'))
@@ -50,7 +52,7 @@
                             @forelse ($brands as $brand)
                             <tr>
                                 <td>
-                                
+
                                 </td>
                                 <td>
                                     <strong>{{ $brand->name }}</strong>

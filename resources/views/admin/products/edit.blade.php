@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container mt-4">
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -378,11 +380,7 @@
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
         const container = document.getElementById('missing-variants-container');
-        const productId = {
-            {
-                $product - > id
-            }
-        };
+        const productId = {{$product->id}};
         fetch(`/admin/products/${productId}/missing-variants`)
             .then(res => res.json())
             .then(data => {

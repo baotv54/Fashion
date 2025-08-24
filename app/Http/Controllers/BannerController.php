@@ -11,15 +11,16 @@ class BannerController extends Controller
     // Danh sách banner
     public function index()
     {
-       $banners = Banner::paginate(5);
+        $banners = Banner::paginate(5);
         $logos = Logo::all();
-        return view('admin.banners.index', compact( 'logos', 'banners'));
+        return view('admin.banners.index', compact('logos', 'banners'));
     }
     public function createLogo()
     {
         return view('admin.banners.createLogo');
     }
     // Lưu logo mới
+    // Lưu logo mới (chỉ cho phép 1 logo tồn tại)
     public function storeLogo(Request $request)
     {
         $validatedData = $request->validate([
@@ -27,17 +28,28 @@ class BannerController extends Controller
         ]);
 
         if ($request->hasFile('images')) {
+            // Xóa logo cũ nếu có
+            $oldLogo = Logo::first();
+            if ($oldLogo) {
+                $oldPath = public_path('logo/' . $oldLogo->images);
+                if ($oldLogo->images && file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+                $oldLogo->delete();
+            }
+
+            // Lưu logo mới
             $imageFile = $request->file('images');
-            $fileName = 'img_' . time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+            $fileName = 'logo_' . time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
             $imageFile->move(public_path('logo'), $fileName);
             $validatedData['images'] = $fileName;
-        }
 
-        Logo::create($validatedData);
+            Logo::create($validatedData);
+        }
 
         return redirect()->route('banners.index')->with('success', 'Logo đã được thêm thành công!');
     }
-    
+
     public function editLogo($id)
     {
         $banners = Banner::findOrFail($id);
@@ -47,24 +59,30 @@ class BannerController extends Controller
     public function updateLogo(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        $banners = Banner::findOrFail($id);
-        // Xử lý ảnh
 
-        if ($request->hasFile('logo')) {
-            $logo = $request->file('logo');
-            $logoName = 'logo_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+        $logo = Logo::findOrFail($id);
 
-            // Di chuyển ảnh vào thư mục public/imgBanner
-            $logo->move(public_path('imgBannerr'), $logoName);
-            $validatedData['logo'] = $logoName;
+        if ($request->hasFile('images')) {
+            // Xóa file cũ
+            $oldPath = public_path('logo/' . $logo->images);
+            if ($logo->images && file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+
+            // Lưu file mới
+            $imageFile = $request->file('images');
+            $fileName = 'logo_' . time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+            $imageFile->move(public_path('logo'), $fileName);
+            $validatedData['images'] = $fileName;
         }
 
-        // Tạo banner
-        Banner::create($validatedData);
+        $logo->update($validatedData);
+
         return redirect()->route('banners.index')->with('success', 'Logo đã được cập nhật thành công!');
     }
+
     // Xóa logo
     public function deleteLogo($id)
     {
@@ -167,6 +185,4 @@ class BannerController extends Controller
 
         return redirect()->route('banners.index')->with('success', 'Banner đã được xóa thành công!');
     }
-
-
 }

@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card">
     <div class="card-datatable">
         @if(session('success'))
@@ -46,9 +48,9 @@
                         @php
                         $roles = [
                         'all' => 'Tất cả',
-                        'admin' => 'Admin',
-                        'manage' => 'Manage',
-                        'user' => 'User',
+                        'admin' => 'Quản Trị Viên',
+                        'manage' => 'Nhân Viên',
+                        'user' => 'Khách Hàng',
                         ];
                         @endphp
                         @foreach ($roles as $key => $label)

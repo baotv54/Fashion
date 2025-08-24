@@ -450,7 +450,7 @@
 
                                     <div id="appliedCouponWrapper"
                                         class="card border-0 shadow-sm mt-3 coupon-card animate__animated animate__fadeIn"
-                                        style="border-left: 5px solid #28a745; border-radius: 12px; background: linear-gradient(90deg, #f0fff4, #ffffff);">
+                                        style="border-left: 5px solid #28a745; background: linear-gradient(90deg, #ffffffff, #ffffff);">
                                         <div class="card-body d-flex justify-content-between align-items-center">
                                             @if (Session::has('coupon'))
                                                 <div>

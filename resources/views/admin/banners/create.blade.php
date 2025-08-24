@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+
     <div class="container">
         <h1 class="my-4 text-center text-primary fw-bold">
             {{ isset($banners) ? ' Chỉnh sửa Banner' : ' Thêm mới Banner' }}
