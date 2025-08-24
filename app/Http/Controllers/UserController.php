@@ -110,4 +110,28 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User đã bị xóa thành công.');
     }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Lấy tất cả đơn hàng của user
+        $orders = $user->orders()->orderBy('created_at', 'desc')->get();
+        
+        // Lọc đơn hàng theo trạng thái thực tế trong database
+        $completedOrders = $orders->where('status', 'delivered'); // Đơn thành công = delivered
+        $pendingOrders = $orders->whereIn('status', ['ordered', 'processing', 'confirmed', 'shipping']); // Đơn chờ xử lý
+        $cancelledOrders = $orders->where('status', 'cancelled'); // Đơn đã hủy
+        
+        // Thống kê
+        $stats = [
+            'total_orders' => $orders->count(),
+            'completed_orders' => $completedOrders->count(),
+            'pending_orders' => $pendingOrders->count(),
+            'cancelled_orders' => $cancelledOrders->count(),
+            'total_spent' => $completedOrders->sum('total_amount'),
+        ];
+        
+        return view('admin.users.show', compact('user', 'orders', 'completedOrders', 'pendingOrders', 'cancelledOrders', 'stats'));
+    }
 }

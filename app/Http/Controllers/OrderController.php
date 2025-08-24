@@ -338,4 +338,11 @@ class OrderController extends Controller
         // Nếu muốn tải về luôn:
         // return $pdf->download('order-'.$order->id.'.pdf');
     }
+
+    public function show($id)
+    {
+        $order = Order::with(['orderDetails.product', 'user'])->findOrFail($id);
+        
+        return view('admin.orders.show', compact('order'));
+    }
 }
