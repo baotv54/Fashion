@@ -67,6 +67,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Coupon::class, 'coupon_user')->withPivot('used')->withTimestamps();
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordVi($token));

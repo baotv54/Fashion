@@ -14,10 +14,10 @@
             </div>
         @endif
     </div>
-    <div class="col-12">
+    <!-- <div class="col-12">
         {{-- Pagination under the two-pane layout --}}
         {{ $threads->withQueryString()->links() }}
-    </div>
+    </div> -->
 </div>
 @endsection
 @if(!empty($selectedThread))

@@ -87,7 +87,11 @@
 
                                 </td>
                                 <td>{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
+                                <td>
+                                    <a href="{{ route('users.show', $user->id) }}" class="text-primary fw-bold" style="text-decoration: none;">
+                                        {{ $user->name }}
+                                    </a>
+                                </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->role }}</td>
                                 <td class="text-center">
