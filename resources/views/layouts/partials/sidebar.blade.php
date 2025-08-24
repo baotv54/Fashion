@@ -276,7 +276,7 @@
         @auth
         {{-- Trang Quản Trị nếu là admin --}}
         @if(Auth::user()->role === 'admin')
-        <li class="menu-item {{ Request::routeIs(['products.trashed','suppliers.trash']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['products.trashed','suppliers.trash','users.trashed']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-trash me-2"></i>
                 <div data-i18n="Thùng Rác">Thùng Rác</div>
@@ -290,6 +290,11 @@
                 <li class="menu-item {{ Request::routeIs('suppliers.trash') ? 'active' : '' }}">
                     <a href="{{ route('suppliers.trash', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Nhà cung cấp">Nhà cung cấp </div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Request::routeIs('users.trashed') ? 'active' : '' }}">
+                    <a href="{{ route('users.trashed', ['review' => 1]) }}" class="menu-link">
+                        <div data-i18n="Người Dùng">Người Dùng</div>
                     </a>
                 </li>
             </ul>

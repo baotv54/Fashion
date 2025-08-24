@@ -17,14 +17,16 @@
         @endif
 
         @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra',
+                html: `{!! implode('<br>', $errors->all()) !!}`
+            });
+        </script>
         @endif
+
     </div>
     <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -380,7 +382,11 @@
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
         const container = document.getElementById('missing-variants-container');
-        const productId = {{$product->id}};
+        const productId = {
+            {
+                $product - > id
+            }
+        };
         fetch(`/admin/products/${productId}/missing-variants`)
             .then(res => res.json())
             .then(data => {

@@ -263,6 +263,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
             Route::post('/{id}/store-variants', [ProductController::class, 'storeAjax'])->name('products.storeVariants');
+            Route::delete('/force-delete/{id}', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+
         });
 
         //routes quản lý popup
@@ -410,6 +412,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+            Route::get('/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+            Route::post('/restore/{id}', [UserController::class, 'restore'])->name('users.restore');
+            Route::delete('/force-delete/{id}', [UserController::class, 'forceDelete'])->name('users.forceDelete');
         });
         // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {

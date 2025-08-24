@@ -2,6 +2,16 @@
 
 @section('content')
 @include('admin.check_admin.check')
+@if ($errors->any())
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Có lỗi xảy ra',
+            html: `{!! implode('<br>', $errors->all()) !!}`
+        });
+    </script>
+@endif
 
 <div class="container mt-4">
     <h2 class="mb-4">Thêm Sản Phẩm</h2>
@@ -25,12 +35,6 @@
                             <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên sản phẩm" value="{{ old('name') }}">
                             @error('name')<small class="text-danger">{{ $message }}</small>@enderror
                         </div>
-
-                        <div class="mb-3">
-                            <label for="slug" class="form-label">Slug</label>
-                            <input type="text" name="slug" class="form-control" id="slug" placeholder="Nhập slug" value="{{ old('slug') }}">
-                            @error('slug')<small class="text-danger">{{ $message }}</small>@enderror
-                        </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
                             <textarea name="description" class="form-control" id="description" rows="4" placeholder="Nhập mô tả sản phẩm">{{ old('description') }}</textarea>
@@ -47,7 +51,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Giá bán</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Nhập giá bán sản phẩm" name="price" id="price">
+                                    <input type="number" class="form-control" placeholder="Nhập giá bán sản phẩm" name="price" id="price" value="{{ old('price') }}">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                                 @error('price')<small class="text-danger">{{ $message }}</small>@enderror
@@ -61,7 +65,7 @@
                                     <span class="text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Giá nhập sản phẩm"></span>
                                 </label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Nhập giá vốn sản phẩm" name="import_price" id="import_price">
+                                    <input type="number" class="form-control" placeholder="Nhập giá vốn sản phẩm" name="import_price" id="import_price" value="{{ old('import_price') }}">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                                 @error('import_price')<small class="text-danger">{{ $message }}</small>@enderror
@@ -75,7 +79,7 @@
                                 <span class="text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Giá Khuyến Mãi"></span>
                             </label>
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="Giá Khuyến Mãi" name="discount_price" id="discount_price">
+                                <input type="number" class="form-control" placeholder="Giá Khuyến Mãi" name="discount_price" id="discount_price" value="{{ old('discount_price') }}">
                                 <span class="input-group-text">VNĐ</span>
                             </div>
                         </div>
@@ -122,6 +126,75 @@
                                 </thead>
                                 <tbody id="variant-list">
                                     <!-- JS sẽ sinh ra các hàng tại đây -->
+                                      @if(old('variants'))
+        @foreach(old('variants') as $i => $variant)
+            <tr>
+                <td colspan="7" class="rounded-2 p-3">
+                    <!-- Tên biến thể -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-8">
+                            <div class="fw-bold fs-6">Phiên Bản : {{ $variant['name'] ?? '' }}</div>
+                            <input type="hidden" name="variants[{{ $i }}][value_ids]" value="{{ $variant['value_ids'] ?? '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Ảnh -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">Ảnh sản phẩm:</label>
+                            <input type="file" name="variants[{{ $i }}][image]"
+                                class="form-control form-control-sm border-secondary"
+                                accept="image/*"
+                                onchange="previewVariantImage(this, {{ $i }})"/>
+                            <div class="mt-2">
+                                <img id="preview-variant-{{ $i }}" src="" alt="Preview"
+                                    style="max-width: 120px; display:none; border:1px solid #ddd; border-radius:8px; padding:3px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Giá -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Giá Bán</label>
+                            <input type="number" name="variants[{{ $i }}][price]"
+                                class="form-control form-control-sm"
+                                value="{{ $variant['price'] ?? '' }}"
+                                placeholder="Giá Bán">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Giá Nhập</label>
+                            <input type="number" name="variants[{{ $i }}][import_price]"
+                                class="form-control form-control-sm"
+                                value="{{ $variant['import_price'] ?? '' }}"
+                                placeholder="Giá Nhập">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
+                            <input type="number" name="variants[{{ $i }}][discount_price]"
+                                class="form-control form-control-sm"
+                                value="{{ $variant['discount_price'] ?? '' }}"
+                                placeholder="Giá KM">
+                        </div>
+                    </div>
+
+                    <!-- Xoá -->
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateVariantCount()">
+                                <i class="fas fa-trash-alt"></i> Xoá biến thể
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+
+        <script>
+            document.getElementById('variants-container').style.display = 'block';
+            document.getElementById('variant-count').innerText = {{ count(old('variants')) }};
+        </script>
+    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -361,49 +434,66 @@
             const valueIds = combo.map(v => v.id).join('-');
             const row = document.createElement('tr');
             row.innerHTML = `
-    <td colspan="7" class=" rounded-2 p-3">
-        <!-- Tên biến thể -->
-        <div class="row align-items-center mb-3">
-            <div class="col-md-8">
-                <div class="fw-bold fs-6">Phiên Bản : ${name}</div>
-                <input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">
-            </div>
+<td colspan="7" class="rounded-2 p-3">
+    <!-- Tên biến thể -->
+    <div class="row align-items-center mb-3">
+        <div class="col-md-8">
+            <div class="fw-bold fs-6">Phiên Bản : ${name}</div>
+            <input type="hidden" name="variants[${index}][value_ids]" value="${valueIds}">
         </div>
+    </div>
 
-        <!-- Ảnh -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label fw-semibold text-dark">Ảnh sản phẩm:</label>
-                <input type="file" name="variants[${index}][image]" class="form-control form-control-sm border-secondary" />
+    <!-- Ảnh -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-dark">Ảnh sản phẩm:</label>
+            <input type="file" name="variants[${index}][image]"
+                   class="form-control form-control-sm border-secondary"
+                   accept="image/*"
+                   onchange="previewVariantImage(this, ${index})"/>
+            <div class="mt-2">
+                <img id="preview-variant-${index}" src="" alt="Preview"
+                     style="max-width: 120px; display:none; border:1px solid #ddd; border-radius:8px; padding:3px;">
             </div>
         </div>
+    </div>
 
-        <!-- Các input giá -->
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Giá Bán</label>
-                <input type="number" name="variants[${index}][price]" class="form-control form-control-sm" placeholder="Giá Bán">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Giá Nhập</label>
-                <input type="number" name="variants[${index}][import_price]" class="form-control form-control-sm" placeholder="Giá Nhập">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
-                <input type="number" name="variants[${index}][discount_price]" class="form-control form-control-sm" placeholder="Giá KM">
-            </div>
+    <!-- Các input giá -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Giá Bán</label>
+            <input type="number" name="variants[${index}][price]"
+                   class="form-control form-control-sm" placeholder="Giá Bán"
+                   oninput="validateVariantPrices(${index})">
         </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Giá Nhập</label>
+            <input type="number" name="variants[${index}][import_price]"
+                   class="form-control form-control-sm" placeholder="Giá Nhập"
+                   oninput="validateVariantPrices(${index})">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Giá Khuyến Mãi</label>
+            <input type="number" name="variants[${index}][discount_price]"
+                   class="form-control form-control-sm" placeholder="Giá KM"
+                   oninput="validateVariantPrices(${index})">
+        </div>
+        <div class="col-md-12 mt-2">
+            <small id="error-variant-${index}" class="text-danger fw-bold"></small>
+        </div>
+    </div>
 
-        <!-- Nút xoá -->
-        <div class="row">
-            <div class="col-md-12 text-end">
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateVariantCount()">
-                    <i class="fas fa-trash-alt"></i> Xoá biến thể
-                </button>
-            </div>
+    <!-- Nút xoá -->
+    <div class="row">
+        <div class="col-md-12 text-end">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateVariantCount()">
+                <i class="fas fa-trash-alt"></i> Xoá biến thể
+            </button>
         </div>
-    </td>
+    </div>
+</td>
 `;
+
 
             tbody.appendChild(row);
         });
@@ -453,6 +543,44 @@
             });
         }, 100);
     }
+
+    function previewVariantImage(input, index) {
+    const file = input.files[0];
+    const preview = document.getElementById(`preview-variant-${index}`);
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+}
+
+function validateVariantPrices(index) {
+    const price = parseFloat(document.querySelector(`[name="variants[${index}][price]"]`)?.value) || 0;
+    const importPrice = parseFloat(document.querySelector(`[name="variants[${index}][import_price]"]`)?.value) || 0;
+    const discountPrice = parseFloat(document.querySelector(`[name="variants[${index}][discount_price]"]`)?.value) || 0;
+    const errorEl = document.getElementById(`error-variant-${index}`);
+
+    let error = "";
+
+    if (importPrice > price) {
+        error = "❌ Giá nhập không được lớn hơn Giá bán.";
+    } else if (discountPrice > price) {
+        error = "❌ Giá khuyến mãi không được lớn hơn Giá bán.";
+    } else if (discountPrice < importPrice && discountPrice > 0) {
+        error = "❌ Giá khuyến mãi không được nhỏ hơn Giá nhập.";
+    }
+
+    errorEl.innerText = error;
+
+    return error === "";
+}
+
 
 
     let subImageIndex = 0;

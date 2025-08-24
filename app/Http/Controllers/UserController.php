@@ -106,8 +106,63 @@ class UserController extends Controller
             }
         }
 
+        // ✅ Kiểm tra đơn hàng của user
+        $hasActiveOrders = $user->orders()
+            ->whereNotIn('status', ['delivered', 'cancelled'])
+            ->exists();
+
+        if ($hasActiveOrders) {
+            return redirect()->route('users.index')->with('error', 'User còn đơn hàng đang hoạt động, không thể xóa.');
+        }
+
+        // 👉 Xóa mềm
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User đã bị xóa thành công.');
+        return redirect()->route('users.index')->with('success', 'User đã bị xóa (soft delete).');
+    }
+
+    public function trashed()
+    {
+        $users = User::onlyTrashed()->paginate(10); // chỉ lấy user đã soft delete
+        return view('admin.users.trashed', compact('users'));
+    }
+
+    // Khôi phục user
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+
+        if (!$user) {
+            return redirect()->route('users.trashed')->with('error', 'User không tồn tại trong thùng rác.');
+        }
+
+        $user->restore();
+
+        return redirect()->route('users.trashed')->with('success', 'User đã được khôi phục thành công.');
+    }
+
+    // Xóa vĩnh viễn user
+    public function forceDelete($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+
+        if (!$user) {
+            return redirect()->route('users.trashed')
+                ->with('error', 'User không tồn tại trong thùng rác.');
+        }
+
+        foreach ($user->orders as $order) {
+            // Xóa order details
+            $order->orderDetails()->delete();
+
+            // Xóa order
+            $order->delete();
+        }
+
+        // Xóa user
+        $user->forceDelete();
+
+        return redirect()->route('users.trashed')
+            ->with('success', 'User và các đơn hàng đã bị xóa vĩnh viễn.');
     }
 }

@@ -7,29 +7,29 @@
     <h4 class="mb-4">DANH SÁCH SẢN PHẨM BỊ XÓA</h4>
 
     @if(session('success'))
-        <div class="toast-container position-fixed top-0 end-0 p-3">
-            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') }}
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
+    </div>
     @endif
 
     @if(session('error'))
-        <div class="toast-container position-fixed top-0 end-0 p-3">
-            <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('error') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast align-items-center text-bg-danger border-0 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('error') }}
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
+    </div>
     @endif
 
     <div class="card shadow-sm border-0">
@@ -51,9 +51,9 @@
                         <td class="fw-bold">{{ $product->id }}</td>
                         <td>
                             <img src="{{ asset($product->image ?? 'images/no-image.png') }}"
-                                 alt="{{ $product->name }}"
-                                 class="rounded"
-                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                alt="{{ $product->name }}"
+                                class="rounded"
+                                style="width: 60px; height: 60px; object-fit: cover;">
                         </td>
                         <td>
                             <div>
@@ -67,7 +67,16 @@
                             <form action="{{ route('products.restore', $product->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-success">
-                                 Khôi phục
+                                    Khôi phục
+                                </button>
+                            </form>
+                            <!-- Form xóa vĩnh viễn -->
+                            <form action="{{ route('products.forceDelete', $product->id) }}" method="POST" style="display:inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('⚠️ Bạn có chắc muốn xóa VĨNH VIỄN sản phẩm này? Tất cả dữ liệu liên quan (biến thể, đơn hàng) cũng sẽ bị xóa!')">
+                                    Xóa vĩnh viễn
                                 </button>
                             </form>
                         </td>
