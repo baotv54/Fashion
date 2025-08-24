@@ -161,14 +161,14 @@ class CheckoutController extends Controller
     public function vnpay_return(Request $request)
     {
         if (!$this->verifyVnpaySignature($request) || !Session::has('pending_order')) {
-            return redirect()->route('checkout.failed')->with('error', 'Dữ liệu không hợp lệ!');
+            return redirect()->route('checkout.store')->with('error', 'Dữ liệu không hợp lệ!');
         }
 
         $orderData = Session::get('pending_order');
         $inputData = $this->getVnpayInputData($request);
 
         if ($inputData['vnp_TxnRef'] !== $orderData['order_code'] || $inputData['vnp_ResponseCode'] !== '00') {
-            return redirect()->route('checkout.failed')->with('error', 'Thanh toán không thành công. Mã lỗi: ' . ($inputData['vnp_ResponseCode'] ?? 'Unknown'));
+            return redirect()->route('checkout.store')->with('error', 'Thanh toán không thành công. Mã lỗi: ' . ($inputData['vnp_ResponseCode'] ?? 'Unknown'));
         }
 
         try {
@@ -187,7 +187,7 @@ class CheckoutController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán VNPay: ' . $e->getMessage());
+            return redirect()->route('checkout.store')->with('error', 'Không thể tạo đơn sau thanh toán VNPay: ' . $e->getMessage());
         }
 
         // Đánh dấu coupon đã dùng
@@ -224,7 +224,7 @@ class CheckoutController extends Controller
             return redirect()->to($jsonResult['payUrl']);
         }
 
-        return redirect()->route('checkout.failed')->with('error', 'Không thể kết nối với cổng thanh toán MoMo.');
+        return redirect()->route('checkout.store')->with('error', 'Không thể kết nối với cổng thanh toán MoMo.');
     }
 
     /**
@@ -233,7 +233,7 @@ class CheckoutController extends Controller
     public function momo_return(Request $request)
     {
         if (!Session::has('pending_order') || !$request->has('resultCode') || $request->resultCode !== '0') {
-            return redirect()->route('checkout.failed')->with('error', 'Thanh toán không thành công. Mã lỗi: ' . ($request->resultCode ?? 'Unknown'));
+            return redirect()->route('checkout.store')->with('error', 'Thanh toán không thành công. Mã lỗi: ' . ($request->resultCode ?? 'Unknown'));
         }
 
         $orderData = Session::get('pending_order');
@@ -252,7 +252,7 @@ class CheckoutController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->route('checkout.failed')->with('error', 'Không thể tạo đơn sau thanh toán MoMo: ' . $e->getMessage());
+            return redirect()->route('checkout.store')->with('error', 'Không thể tạo đơn sau thanh toán MoMo: ' . $e->getMessage());
         }
 
         // Đánh dấu coupon đã dùng

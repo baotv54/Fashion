@@ -14,6 +14,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Sự Kiện <span class="text-danger">*</span></label>
+                    <input type="text" name="event" min="0" class="form-control"
+                        event="{{ old('event', $coupon->event ?? '') }}">
+                    @error('event') <div class="text-danger small">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Loại mã <span class="text-danger">*</span></label>
                     <select name="type" class="form-select">
                         <option value="percent" {{ old('type', $coupon->type ?? '') == 'percent' ? 'selected' : '' }}>Phần trăm (%)</option>

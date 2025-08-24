@@ -350,6 +350,7 @@
                 <div class="modal-content "></div>
             </div>
         </div>
+        
 
         @php
         function shortNumber($num)
@@ -1106,6 +1107,38 @@
                 </div>
             </div>
         </div>
+       
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll("button[data-type='coupon-policy']");
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const infoBox = btn.querySelector(".home-coupon-content-info");
+
+            // Ẩn tất cả box khác trước
+            document.querySelectorAll(".home-coupon-content-info").forEach(box => {
+                if (box !== infoBox) box.style.display = "none";
+            });
+
+            // Toggle box hiện tại
+            infoBox.style.display = infoBox.style.display === "block" ? "none" : "block";
+        });
+    });
+
+    // Click ra ngoài thì đóng
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest("button[data-type='coupon-policy']")) {
+            document.querySelectorAll(".home-coupon-content-info").forEach(box => {
+                box.style.display = "none";
+            });
+        }
+    });
+});
+</script>
 
         {{-- CSS & Animation --}}
         <style>
