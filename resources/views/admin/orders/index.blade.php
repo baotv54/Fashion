@@ -306,13 +306,20 @@
                                         <span class="ms-1">{{ ucfirst($order->payment_method) }}</span>
                                     </div>
                                 </td>
-                                <td>
-                                    @if($order->status !== 'processing' && $order->status !== 'ordered')
-                                    <a href="{{ route('orders.print', $order->id) }}" target="_blank" class="btn btn-success">
+                                <td class="d-flex gap-1">
+                                    @if($order->status === 'cancelled')
+                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                    </form>
+                                    @endif
+
+                                    @if(!in_array($order->status, ['processing', 'ordered']))
+                                    <a href="{{ route('orders.print', $order->id) }}" target="_blank" class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-print"></i>
                                     </a>
                                     @endif
-
                                 </td>
                             </tr>
                             @endforeach
