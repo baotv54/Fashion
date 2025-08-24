@@ -936,7 +936,7 @@
 }
 
 .main-product .main-product-description .main-product-description-left {
-    width: 65%
+    width: 100%
 }
 
 @media (max-width: 1024px) {

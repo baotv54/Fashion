@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->unsignedBigInteger('view_count')
-                  ->nullable() // cho phép null
+                  ->default(0) // giá trị mặc định là 0
                   ->after('quantity');
         });
     }
@@ -22,4 +22,3 @@ return new class extends Migration
         });
     }
 };
-

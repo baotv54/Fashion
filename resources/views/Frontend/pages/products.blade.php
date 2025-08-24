@@ -228,6 +228,9 @@
                             <div class="product-item" data-id="{{ $product->id }}" data-handle="{{ $product->slug }}">
                                 <div class="product-item-wrap">
                                     <div class="product-item-image hasThumbs hasThumbsIcon">
+                                        @if($product->discount_percentage > 0)
+                                        <span class="product-item-discount">-{{ $product->discount_percentage }}%</span>
+                                        @endif
                                         <div class="sapo-buyxgety-badge" data-id="{{ $product->id }}"></div>
                                         @if($product->discount_percent)
                                         <span class="product-item-discount">-{{ $product->discount_percent }}%</span>
@@ -288,17 +291,59 @@
                                             </a>
                                         </h3>
                                         <div class="product-item-detail-price">
-                                            <span>{{ number_format($product->price) }}₫</span>
-                                            @if($product->original_price && $product->original_price > $product->price)
-                                            <del>{{ number_format($product->original_price) }}₫</del>
+                                            @if($product->has_discount)
+                                            <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 14px;">
+                                                {{ number_format($product->price, 0, ',', '.') }}₫
+                                            </span>
+                                            <span class="discount-price" style="color: #e74c3c; font-weight: bold;">
+                                                {{ number_format($product->discount_price, 0, ',', '.') }}₫
+                                            </span>
+                                            @else
+                                            <span>{{ number_format($product->display_price, 0, ',', '.') }}₫</span>
                                             @endif
                                         </div>
+                                        <div class="product-reviews-display"
+                                            style="display: flex; justify-content: center; align-items: center; text-align: center; margin-top: 10px;">
+
+                                            @if($product->reviews_count > 0)
+                                            <div class="product-rating-stars"
+                                                style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+
+                                                <div class="stars-container" style="display: flex; gap: 1px;">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        @if($i <=floor($product->average_rating))
+                                                        <span style="color: #ffbe00; font-size: 16px;">★</span>
+                                                        @elseif($i - 0.5 <= $product->average_rating)
+                                                            <span style="color: #ffbe00; font-size: 16px; position: relative; display: inline-block; width: 16px; overflow: hidden;">
+                                                                <span style="position: absolute; left: 0; width: 50%; overflow: hidden; color: #ffbe00;">★</span>
+                                                                <span style="color: #ddd;">★</span>
+                                                            </span>
+                                                            @else
+                                                            <span style="color: #ddd; font-size: 16px;">★</span>
+                                                            @endif
+                                                            @endfor
+                                                </div>
+
+                                                <span class="rating-text" style="color: #666; font-size: 12px;">
+                                                    ({{ $product->reviews_count }})
+                                                </span>
+                                            </div>
+                                            @else
+                                            <div class="no-rating" style="color: #999; font-size: 12px;">
+                                                Chưa có đánh giá
+                                            </div>
+                                            @endif
+                                        </div>
+
                                         <div class="product-item-detail-info">
                                             <div class="product-item-detail-info-data">
                                                 <span class="product-item-detail-info-tag">Đã Bán : {{ shortNumber($product->sold_count ?? 0) }}</span>
                                                 <span class="product-item-detail-info-tag">Yêu Thích : {{ shortNumber($product->favorites_count ?? 0) }}</span>
+                                                <span class="product-item-detail-info-tag" style="color: #555555; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                                                    Lượt Xem: {{ shortNumber($product->view_count ?? 0) }}
+                                                </span>
                                             </div>
-                                            <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div>
+                                            <!-- <div class="sapo-product-reviews-badge" data-id="{{ $product->id }}"></div> -->
                                         </div>
                                     </div>
                                 </div>

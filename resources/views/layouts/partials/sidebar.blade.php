@@ -27,19 +27,19 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
-        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <li class="menu-item {{ Request::routeIs('admin.statistics') ? 'active' : '' }}">
+            <a href="{{ route('admin.statistics') }}" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-smart-home"></i>
-                <div data-i18n="Bảng điều khiển">Bảng điều khiển</div>
-                <div class="badge text-bg-danger rounded-pill ms-auto">3</div>
+                <div data-i18n="Thống Kê">Thống Kê</div>
+                <!-- <div class="badge text-bg-danger rounded-pill ms-auto">3</div> -->
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Phân tích">Phân tích</div>
+                <li class="menu-item {{ Request::routeIs('admin.statistics') ? 'active' : '' }}">
+                    <a href="{{ route('admin.statistics') }}" class="menu-link">
+                        <div data-i18n="Thống Kê">Thống Kê</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+                <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
                     <a href="#" class="menu-link">
                         <div data-i18n="Quản lý khách hàng">Quản lý khách hàng</div>
                     </a>
@@ -48,7 +48,7 @@
                     <a href="#" class="menu-link">
                         <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </li>
 
@@ -190,7 +190,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
             </ul>
         </li>
 

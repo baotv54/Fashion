@@ -236,7 +236,6 @@
 
 <body data-no-turbolink>
 
-	@include('Frontend.partials.header')
 	<div class="content">
         <div class="wrap wrap--mobile-fluid">
             <main class="main main--nosidebar">

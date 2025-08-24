@@ -425,6 +425,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('orders.index');
             Route::get('/{id}', [OrderController::class, 'show'])->name('orders.details');
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+            Route::get('/orders/{id}/print', [OrderController::class, 'print'])->name('orders.print');
+            Route::post('/{id}/cancel-admin', [OrderController::class, 'cancelOrder_admin'])->name('orders.canceladmin');
         });
 
         Route::prefix('posts')->group(function () {

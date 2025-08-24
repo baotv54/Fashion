@@ -220,6 +220,18 @@
                                                                     <span class="badge bg-label-secondary">Không xác định</span>
                                                                     @endif
                                                                 </form>
+
+                                                                @if($order->status === 'shipping')
+                                                                <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    <input type="hidden" name="status" value="cancelled">
+                                                                    <input type="hidden" name="cancel_reason" value="Giao Hàng Thất Bại">
+                                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                                        Giao Thất Bại
+                                                                    </button>
+                                                                </form>
+                                                                @endif
+
                                                             </td>
                                                     </table>
 
@@ -293,6 +305,14 @@
                                     <div class="d-flex align-items-center text-nowrap">
                                         <span class="ms-1">{{ ucfirst($order->payment_method) }}</span>
                                     </div>
+                                </td>
+                                <td>
+                                    @if($order->status !== 'processing' && $order->status !== 'ordered')
+                                    <a href="{{ route('orders.print', $order->id) }}" target="_blank" class="btn btn-success">
+                                        <i class="fa-solid fa-print"></i>
+                                    </a>
+                                    @endif
+
                                 </td>
                             </tr>
                             @endforeach
