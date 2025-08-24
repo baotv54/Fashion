@@ -211,6 +211,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
     Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 
+
     // Routes cho đánh giá sản phẩm
     Route::post('/products/{productId}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
@@ -264,7 +265,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
             Route::post('/{id}/store-variants', [ProductController::class, 'storeAjax'])->name('products.storeVariants');
             Route::delete('/force-delete/{id}', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
-
         });
 
         //routes quản lý popup
@@ -434,6 +434,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/{id}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
             Route::get('/orders/{id}/print', [OrderController::class, 'print'])->name('orders.print');
             Route::post('/{id}/cancel-admin', [OrderController::class, 'cancelOrder_admin'])->name('orders.canceladmin');
+            Route::delete('/delete/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
         });
 
         Route::prefix('posts')->group(function () {

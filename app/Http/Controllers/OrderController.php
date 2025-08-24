@@ -348,4 +348,32 @@ class OrderController extends Controller
 
         return view('admin.orders.show', compact('order'));
     }
+
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Lấy đơn hàng theo ID
+            $order = Order::with('orderDetails')->findOrFail($id);
+
+            // Chỉ cho xóa nếu đơn hàng đã bị hủy
+            if ($order->status !== 'cancelled') {
+                return redirect()->back()->with('error', 'Chỉ có thể xóa đơn hàng đã hủy.');
+            }
+
+            // Xóa chi tiết đơn hàng trước
+            $order->orderDetails()->delete();
+
+            // Xóa đơn hàng
+            $order->delete();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Đơn hàng đã được xóa thành công!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Không thể xóa đơn hàng: ' . $e->getMessage());
+        }
+    }
 }
