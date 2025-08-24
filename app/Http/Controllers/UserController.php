@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -10,20 +11,28 @@ class UserController extends Controller
 {
     //
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->select(
-            'id',
-            'name',
-            'phone',
-            'avatar',
-            'password',
-            'email',
-            'role'
-        )->paginate(5);
+        $currentStatus = $request->input('status', 'all');
 
-        return view('admin.users.index', compact('users'));
+        $query = User::latest()->select('id', 'name', 'phone', 'avatar', 'password', 'email', 'role');
+
+        if ($currentStatus !== 'all') {
+            $query->where('role', $currentStatus);
+        }
+
+        $users = $query->paginate(10)->appends(['status' => $currentStatus]);
+
+        $counts = [
+            'all'    => User::count(),
+            'admin'  => User::where('role', 'admin')->count(),
+            'manage' => User::where('role', 'manage')->count(),
+            'user'   => User::where('role', 'user')->count(),
+        ];
+
+        return view('admin.users.index', compact('users', 'counts', 'currentStatus'));
     }
+
     public function detail($id)
     {
         $users = DB::table('users')->where('id', $id)->first();
@@ -50,15 +59,15 @@ class UserController extends Controller
         User::create($validatedDate);
         return redirect()->route('users.index')->with('success', 'Tạo mới thành công');
     }
-//     public function edit($id)
-//     {
-//         $users = User::find($id);
-// <<<<<<< Hung
-//         return view('admin.users.edit', compact('users'));
-// =======
-//         return view('admin.users.create', compact('users'));
-// >>>>>>> main
-//     }
+    //     public function edit($id)
+    //     {
+    //         $users = User::find($id);
+    // <<<<<<< Hung
+    //         return view('admin.users.edit', compact('users'));
+    // =======
+    //         return view('admin.users.create', compact('users'));
+    // >>>>>>> main
+    //     }
 
     public function update(Request $request, $id)
     {
@@ -71,25 +80,34 @@ class UserController extends Controller
         ]);
         $users = User::findOrFail($id);
 
-       $users->update([
-        // 'name' => $validatedData['name'],
-        // 'email' => $validatedData['email'],
-        // 'password' => $validatedData['password'] ?? $users-> password,
-        'role' => $validatedData['role'],
+        $users->update([
+            // 'name' => $validatedData['name'],
+            // 'email' => $validatedData['email'],
+            // 'password' => $validatedData['password'] ?? $users-> password,
+            'role' => $validatedData['role'],
 
-       ]);
+        ]);
         return redirect()->route('users.index')->with('success', 'User đã được cập nhật!');
     }
     public function destroy($id)
     {
-        $users = User::find($id);
-        if (!$users) {
+        $user = User::find($id);
+
+        if (!$user) {
             return redirect()->route('users.index')->with('error', 'User không tồn tại.');
         }
 
-        $users->delete();
+        // Nếu là admin → kiểm tra còn bao nhiêu admin
+        if ($user->role === 'admin') {
+            $adminCount = User::where('role', 'admin')->count();
+
+            if ($adminCount <= 1) {
+                return redirect()->route('users.index')->with('error', 'Không thể xóa admin cuối cùng.');
+            }
+        }
+
+        $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User đã bị xóa thành công.');
     }
-
 }
