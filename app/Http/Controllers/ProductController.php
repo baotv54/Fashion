@@ -421,12 +421,18 @@ class ProductController extends Controller
         // Kiểm tra đã mua và trạng thái đơn hàng hoàn thành
         $canReview = false;
         $userReview = null;
+        $order = null; // <-- thêm biến order
         if (Auth::check()) {
-            $hasCompletedOrder = OrderDetail::where('product_id', $id)
-                ->whereHas('order', function ($q) {
-                    $q->where('user_id', Auth::id())
-                        ->where('status', 'delivered');
-                })->exists();
+            $order = Order::with('orderDetails')
+                ->where('user_id', Auth::id())
+                ->whereHas('orderDetails', function ($q) use ($id) {
+                    $q->where('product_id', $id);
+                })
+                ->where('status', 'delivered')
+                ->latest()
+                ->first();
+
+            $hasCompletedOrder = !is_null($order);
 
             // Kiểm tra đã đánh giá chưa
             $userReview = $product->reviews->where('user_id', Auth::id())->first();
@@ -452,10 +458,9 @@ class ProductController extends Controller
             ];
         }
 
-        // FIX: Tạo mapping variants với cách sắp xếp nhất quán
+        // Mapping variants
         $variantMapping = [];
         foreach ($product->variants as $variant) {
-            // Sắp xếp theo ID attribute value để đảm bảo consistency
             $attributeIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
             $key = implode('-', $attributeIds);
 
@@ -465,14 +470,12 @@ class ProductController extends Controller
                 'stock' => $variant->stock,
                 'image' => $variant->image,
                 'sku' => $variant->sku,
-                'attribute_value_ids' => $attributeIds, // Thêm dòng này
+                'attribute_value_ids' => $attributeIds,
             ];
 
-            // Debug: Log ra để kiểm tra
             Log::info("Variant {$variant->id}: key={$key}, attributes=" . json_encode($attributeIds));
         }
 
-        // FIX: Tính toán hasVariants chính xác
         $hasVariants = $product->variants->count() > 0;
 
         // Cộng dồn lượt xem
@@ -494,9 +497,11 @@ class ProductController extends Controller
             'ratingStats',
             'canReview',
             'userReview',
-            'sizes'
+            'sizes',
+            'order' // <-- truyền ra view
         ))->with('carts', Cart::content());
     }
+
 
     public function getVariantInfo($id)
     {

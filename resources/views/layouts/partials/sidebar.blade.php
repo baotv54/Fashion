@@ -116,7 +116,7 @@
         @endauth
 
         <!-- e-commerce-app menu start -->
-        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit','social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
+        <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.order-reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit','social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-shopping-cart"></i>
                 <div data-i18n="Thương mại điện tử">Thương mại điện tử</div>
@@ -127,8 +127,8 @@
                         <div data-i18n="Thống kê">Thống kê</div>
                     </a>
                 </li>
-                <li class="menu-item {{ Request::routeIs('admin.reviews.index') ? 'active' : '' }}">
-                    <a href="{{ route('admin.reviews.index') }}" class="menu-link">
+                <li class="menu-item {{ Request::routeIs('admin.order-reviews.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.order-reviews.index') }}" class="menu-link">
                         <div data-i18n="Quản lý đánh giá">Quản lý đánh giá</div>
                     </a>
                 </li>

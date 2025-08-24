@@ -36,6 +36,8 @@ use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\PopupController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\NavbarController;
+use App\Http\Controllers\OrderReviewController;
+use App\Http\Controllers\ProductReviewController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -178,13 +180,15 @@ Route::get('/gioi-thieu', [ProductController::class, 'aboutPage'])->name('about'
 Route::get('/posts', [PostController::class, 'postpage'])->name('posts.postpage');
 Route::get('/post/{id}', [PostController::class, 'show'])->name('posts.show');
 Route::get('/products/{id}/quickview', [ProductController::class, 'quickview'])->name('products.quickview');
-Route::get('/products/{productId}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
-
+Route::get('/products/{productId}/reviews', [ProductReviewController::class, 'index'])->name('reviews.index');
 // Thêm vào routes/web.php hoặc routes/api.php
 Route::get('/cart/product-variants/{productId}', [CartController::class, 'getProductVariants'])->name('cart.product-variants');
 Route::post('/cart/update-variant', [CartController::class, 'updateVariant'])->name('cart.update-variant');
 Route::middleware(['auth'])->group(function () {
+
+
+
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -211,12 +215,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
     Route::post('/orders/{id}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
 
+    // Route cho đánh giá sản phẩm
+    Route::get('/orders/{order}/reviews', [OrderReviewController::class, 'index'])->name('orders.reviews.index');
+    Route::post('/orders/{order}/reviews', [OrderReviewController::class, 'store'])->name('orders.reviews.store');
+    Route::get('/orders/{order}/review', [OrderReviewController::class, 'getUserOrderReviews'])->name('orders.review.user');
 
-    // Routes cho đánh giá sản phẩm
-    Route::post('/products/{productId}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
-    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::get('/order-reviews/{review}/edit', [OrderReviewController::class, 'edit'])->name('order-reviews.edit');
+    Route::put('/order-reviews/{review}', [OrderReviewController::class, 'update'])->name('order-reviews.update');
+    Route::delete('/order-reviews/{review}', [OrderReviewController::class, 'destroy'])->name('order-reviews.destroy');
+    Route::get('/orders/{order}/products', [OrderReviewController::class, 'getOrderProducts'])->name('orders.products.index');
 
     //Yêu thích
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
@@ -446,11 +453,10 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
         });
 
-        Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
-        Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
-        Route::post('/reviews/bulk-approve', [ReviewController::class, 'bulkApprove']);
-        Route::post('/reviews/{id}/hide', [ReviewController::class, 'toggleVisibility']);
 
+        Route::get('/order-reviews', [OrderReviewController::class, 'index'])->name('admin.order-reviews.index');
+        Route::post('/order-reviews/{review}/toggle-visibility', [OrderReviewController::class, 'toggleVisibility'])->name('admin.order-reviews.toggle-visibility');
+        Route::post('/order-reviews/bulk-approve', [OrderReviewController::class, 'bulkApprove'])->name('admin.order-reviews.bulk-approve');
         Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 
         //Routes Quản lý Banner

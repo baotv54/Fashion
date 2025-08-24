@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\OrderReview;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -143,11 +144,58 @@ class OrderController extends Controller
     public function userOrderDetails($id)
     {
         // Lấy thông tin đơn hàng của người dùng hiện tại
-        $order = Order::with(['orderDetails.product'])->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $order = Order::with(['orderDetails.product.reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Tính avgRating và totalReviews cho từng product
+        foreach ($order->orderDetails as $detail) {
+            $product = $detail->product;
+            if ($product) {
+                $product->avgRating = $product->reviews->avg('rating') ?? 0;
+                $product->totalReviews = $product->reviews->count();
+            }
+        }
+
+        // ==== TÍNH REVIEW CHO TOÀN ĐƠN HÀNG ====
+        $reviews = OrderReview::where('order_id', $id)->where('is_approved', true);
+
+        $totalReviews = $reviews->count();
+        $avgRating = $reviews->avg('rating') ?? 0;
+
+        // Rating distribution
+        $ratingStats = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $count = (clone $reviews)->where('rating', $i)->count();
+            $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
+            $ratingStats[$i] = [
+                'count' => $count,
+                'percentage' => $percentage
+            ];
+        }
+
+        // Check if current user can review
+        $canReview = false;
+        $userReview = null;
+        if (Auth::check()) {
+            $canReview = $order->canBeReviewedBy(Auth::id());
+            $userReview = $order->getUserReview(Auth::id());
+        }
 
         // Trả về view chi tiết đơn hàng
-        return view('Frontend.pages.account.order-detail', compact('order'));
+        return view('Frontend.pages.account.order-detail', compact(
+            'order',
+            'totalReviews',
+            'avgRating',
+            'ratingStats',
+            'canReview',
+            'userReview',
+        ));
     }
+
+
     public function updateAddress(Request $request, $id)
     {
         // Validate dữ liệu đầu vào

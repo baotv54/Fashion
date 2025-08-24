@@ -2,6 +2,8 @@
 <html class="no-js" lang="vi">
 
 <head>
+    <!-- Thêm vào <head> của file layout chính (app.blade.php hoặc master.blade.php) -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta name="revisit-after" content="1 day">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -21,7 +23,8 @@
     <meta property="og:image:secure_url" content="https://bizweb.dktcdn.net/100/493/370/themes/940719/assets/share_fb_home.png?1713464283843">
     <meta property="og:url" content="https://f1genz-shoes.mysapo.net/account/orders/21014257">
     <meta property="og:site_name" content="">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .chat-bubble.bot-bubble.typing {
             font-style: italic;
@@ -3805,6 +3808,7 @@
 
 <body class="">
     @include('Frontend.partials.header')
+
     <main class="main-layout">
         @php $user = Auth::user(); @endphp
         <div class="acc">
@@ -3858,7 +3862,6 @@
                             display: flex;
                             gap: 20px;
                             align-items: flex-start;
-                            /* tránh bị lệch dọc */
                         }
 
                         .acc-sidebar {
@@ -3935,7 +3938,6 @@
 
                             .menu-toggle {
                                 display: block;
-                                /* hiện nút toggle trên mobile */
                             }
 
                             .acc-sidebar .menu-content {
@@ -3976,6 +3978,9 @@
                         'cancelled' => 'Đã hủy',
                         'returned' => 'Đã trả hàng',
                         ];
+                        $hasReview = $order->orderDetails->contains(function ($detail) {
+                        return $detail->has_review;
+                        });
                         @endphp
                         <!-- Trạng thái vận chuyển -->
                         <div class="shipping_status">
@@ -4098,7 +4103,6 @@
                                                         @endphp
                                                     </p>
                                                     @endif
-                                                </div>
                                             </td>
                                             <td data-title="Giá" class="numeric">{{ number_format($detail->price, 0, ',', '.') }}₫</td>
                                             <td data-title="Số lượng" class="numeric">{{ $detail->quantity }}</td>
@@ -4127,17 +4131,27 @@
                                         <i class="fas fa-redo-alt"></i> Mua lại đơn này
                                     </button>
                                 </form>
-                            </div>
 
+                                @if ($order->status === 'delivered')
+                                @if ($hasReview)
+                                <button id="editUserReviewBtn" class="btn btn-primary">
+                                    <i class="fas fa-star"></i> Xem/Sửa đánh giá
+                                </button>
+                                @else
+                                <button id="writeReviewBtn" class="btn btn-success">
+                                    <i class="fas fa-star"></i> Đánh giá đơn hàng
+                                </button>
+                                @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
+            @include('Frontend.pages.order-review')
         </div>
     </main>
     @include('Frontend.partials.footer')
-    <!-- @include('Frontend.partials.modal') -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const provinceSelect = document.getElementById('billingProvince');
