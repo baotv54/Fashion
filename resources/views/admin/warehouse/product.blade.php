@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card shadow">
     <div class="card-body p-4">
 

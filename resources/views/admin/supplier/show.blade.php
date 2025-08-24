@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-3">
         <a href="{{ route('suppliers.index') }}" class="btn btn-light me-3">←</a>

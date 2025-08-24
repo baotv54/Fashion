@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card">
     <div class="card-datatable">
         <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">

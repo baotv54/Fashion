@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container py-4">
 
     {{-- Tiêu đề & nút tạo --}}

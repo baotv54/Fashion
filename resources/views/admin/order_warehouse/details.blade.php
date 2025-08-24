@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container">
     <h3 class="mb-4">Chi tiết đơn nhập: {{ $main->code }}</h3>
 

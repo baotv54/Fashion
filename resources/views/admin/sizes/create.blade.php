@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container mt-4">
     <h2>Thêm Size Mới</h2>
     <form action="{{ route('sizes.store') }}" method="POST">
@@ -34,4 +36,4 @@
         <a href="{{ route('sizes.index') }}" class="btn btn-secondary">Hủy</a>
     </form>
 </div>
-@endsection 
+@endsection

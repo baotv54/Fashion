@@ -12,7 +12,13 @@
                     </svg>
                 </span>
             </span>
+            @auth
+            @if(Auth::user()->role === 'admin')
             <span class="app-brand-text demo menu-text fw-bold ms-3">QUẢN TRỊ</span>
+            @elseif(Auth::user()->role === 'manage')
+            <span class="app-brand-text demo menu-text fw-bold ms-3">NHÂN VIÊN</span>
+            @endif
+            @endauth
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -53,7 +59,7 @@
         </li>
 
         <!-- Apps & Pages -->
-         <li class="menu-header small">
+        <li class="menu-header small">
             <span class="menu-header-text" data-i18n="Tổng Quan">Tổng Quan</span>
         </li>
         <li class="menu-item {{ Request::routeIs(['orders.index']) ? 'active open' : '' }}">
@@ -70,7 +76,9 @@
             </ul>
         </li>
 
-
+        @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
         <li class="menu-item {{ Request::routeIs(['products.index', 'products.create', 'products.edit', 'product_variants.index', 'product_variants.create', 'categories.index', 'categories.edit', 'brands.index', 'brands.edit', 'attributes.index', 'attributes.edit', 'attribute_values.index', 'attribute_values.edit','sizes.index', 'sizes.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-box-open me-2"></i>
@@ -104,6 +112,9 @@
                 </li>
             </ul>
         </li>
+        @endif
+        @endauth
+
         <!-- e-commerce-app menu start -->
         <li class="menu-item {{ Request::routeIs(['admin.statistics','admin.reviews.index', 'coupons.index', 'coupons.create','banners.index', 'banners.create', 'banners.edit','social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit','popups.index', 'popups.create', 'popups.edit']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -121,7 +132,9 @@
                         <div data-i18n="Quản lý đánh giá">Quản lý đánh giá</div>
                     </a>
                 </li>
-
+                @auth
+                {{-- Trang Quản Trị nếu là admin --}}
+                @if(Auth::user()->role === 'admin')
                 <li class="menu-item {{ Request::routeIs(['coupons.index', 'coupons.create']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Mã giảm giá">Mã giảm giá</div>
@@ -139,7 +152,10 @@
                         </li>
                     </ul>
                 </li>
-               <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
+                @endif
+                @endauth
+
+                <li class="menu-item {{ Request::routeIs(['banners.index', 'banners.create', 'banners.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Banner">Banner</div>
                     </a>
@@ -156,7 +172,7 @@
                         </li>
                     </ul>
                 </li>
-                   <li class="menu-item {{ Request::routeIs(['social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['social-links.index', 'social-links.create', 'social-links.edit', 'logo.create', 'logo.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Mạng xã hội">Mạng xã hội</div>
                     </a>
@@ -173,7 +189,7 @@
                         </li>
                     </ul>
                 </li>
-                 <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create','popups.edit']) ? 'active open' : '' }}">
+                <li class="menu-item {{ Request::routeIs(['popups.index', 'popups.create','popups.edit']) ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <div data-i18n="Popup">Popup</div>
                     </a>
@@ -193,7 +209,9 @@
 
             </ul>
         </li>
-
+        @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
         <li class="menu-item {{ Request::routeIs(['warehouse.index', 'warehouse.import_creater', 'warehouse.supplier', 'suppliers.index','warehouse.trashed','returns.list']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-warehouse me-2"></i>
@@ -215,7 +233,7 @@
                         <div data-i18n="Nhập Hàng">Nhập Hàng</div>
                     </a>
                 </li>
-                 <li class="menu-item {{ Request::routeIs('returns.list') ? 'active' : '' }}">
+                <li class="menu-item {{ Request::routeIs('returns.list') ? 'active' : '' }}">
                     <a href="{{ route('returns.list', ['review' => 1]) }}" class="menu-link">
                         <div data-i18n="Trả Hàng">Trả Hàng</div>
                     </a>
@@ -232,7 +250,12 @@
                 </li>
             </ul>
         </li>
+        @endif
+        @endauth
 
+        @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
         <!-- e-commerce-app menu end -->
         <li class="menu-item {{ Request::routeIs(['users.index', 'users.create']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -247,8 +270,12 @@
                 </li>
             </ul>
         </li>
+        @endif
+        @endauth
 
-        <!-- e-commerce-app menu end -->
+        @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
         <li class="menu-item {{ Request::routeIs(['products.trashed','suppliers.trash']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-trash me-2"></i>
@@ -267,6 +294,28 @@
                 </li>
             </ul>
         </li>
+        @endif
+        @endauth
+
+
+        <!-- @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
+
+        @endif
+        @endauth
+
+
+         @auth
+        {{-- Trang Quản Trị nếu là admin --}}
+        @if(Auth::user()->role === 'admin')
+
+        @endif
+        @endauth -->
+
+
+        <!-- e-commerce-app menu end -->
+
         <!-- Giao Tiếp  -->
         <li class="menu-header small">
             <span class="menu-header-text" data-i18n="Giao Tiếp"> Giao Tiếp</span>
@@ -308,7 +357,7 @@
             </a>
         </li>
         <!-- Hệ Thống -->
-         <li class="menu-header small">
+        <li class="menu-header small">
             <span class="menu-header-text" data-i18n="Hệ Thống">Hệ Thống</span>
         </li>
         <li class="menu-item {{ Request::routeIs('banners.index') ? 'active' : '' }}">

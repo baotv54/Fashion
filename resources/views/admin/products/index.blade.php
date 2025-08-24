@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
 <div class="card">
     <div class="card-header border-bottom">
         @if(session('success'))
