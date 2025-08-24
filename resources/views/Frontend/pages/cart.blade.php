@@ -1542,24 +1542,85 @@
 					success: function(res) {
 						console.log('Cart update response:', res); // Debug log
 						
-						// Cập nhật số lượng trong input
-						$row.find('input[type="number"]').val(res.qty);
+						// Debug response data để tìm nguyên nhân NaN₫
+						debugResponseData(res);
 						
-						// Cập nhật thành tiền của sản phẩm
-						$row.find('.main-cart-data-full-item-info-total span').text(formatPrice(res.subtotal));
-						
-						// Cập nhật tổng tiền giỏ hàng
-						if (res.total_price !== undefined) {
-							$('#cart-total-price').text(formatPrice(res.total_price));
+						// Validate response data
+						if (!res || typeof res !== 'object') {
+							console.error('Invalid response format:', res);
+							showErrorMessage('Dữ liệu phản hồi không hợp lệ');
+							return;
 						}
 						
-						// Cập nhật số lượng sản phẩm trong giỏ hàng (nếu có)
-						if (res.total_items !== undefined) {
-							$('.main-cart-data-head p strong').text(res.total_items);
+						// Cập nhật số lượng trong input
+						if (res.qty !== undefined && !isNaN(res.qty)) {
+							$row.find('input[type="number"]').val(res.qty);
+						} else {
+							console.warn('Invalid quantity in response:', res.qty);
+						}
+						
+						// Cập nhật thành tiền của sản phẩm - SELECTOR ĐÚNG + VALIDATION + FALLBACK
+						const $subtotalElement = $row.find('.main-cart-data-full-item-info-total span');
+						if ($subtotalElement.length) {
+							if (res.subtotal !== undefined && !isNaN(res.subtotal)) {
+								$subtotalElement.text(formatPrice(res.subtotal));
+							} else {
+								console.warn('Invalid subtotal in response:', res.subtotal);
+								// Fallback: Tính lại thành tiền từ giá và số lượng hiện tại
+								const currentPrice = parseFloat($row.find('.main-cart-data-full-item-info-price').text().replace(/[^\d]/g, ''));
+								const currentQty = parseInt($row.find('input[type="number"]').val()) || 1;
+								if (!isNaN(currentPrice) && !isNaN(currentQty)) {
+									const fallbackSubtotal = currentPrice * currentQty;
+									$subtotalElement.text(formatPrice(fallbackSubtotal));
+									console.log('Applied fallback subtotal:', fallbackSubtotal);
+								} else {
+									console.error('Cannot calculate fallback subtotal');
+								}
+							}
+						} else {
+							console.warn('Không tìm thấy element thành tiền sản phẩm');
+						}
+						
+						// Cập nhật tổng tiền giỏ hàng - SELECTOR ĐÚNG + VALIDATION + FALLBACK
+						const $totalPriceElement = $('#cart-total-price');
+						if ($totalPriceElement.length) {
+							if (res.total_price !== undefined && !isNaN(res.total_price)) {
+								// Sử dụng total_price từ server
+								$totalPriceElement.text(formatPrice(res.total_price));
+								console.log('Updated total price from server:', res.total_price);
+								
+								// Để đảm bảo tính nhất quán, cũng tính lại từ items
+								setTimeout(() => {
+									updateTotalPriceFromItems();
+								}, 100);
+							} else {
+								console.warn('Invalid total_price in response:', res.total_price);
+								// Fallback: Tự động tính lại tổng tiền từ tất cả sản phẩm
+								updateTotalPriceFromItems();
+							}
+						} else {
+							console.warn('Không tìm thấy element tổng tiền giỏ hàng');
+						}
+						
+						// Cập nhật số lượng sản phẩm trong giỏ hàng - SELECTOR ĐÚNG + VALIDATION
+						if (res.total_items !== undefined && !isNaN(res.total_items)) {
+							const $totalItemsElement = $('.section-title-all p strong');
+							if ($totalItemsElement.length) {
+								$totalItemsElement.text(res.total_items);
+							} else {
+								console.warn('Không tìm thấy element số lượng tổng');
+							}
+						} else {
+							console.warn('Invalid total_items in response:', res.total_items);
 						}
 						
 						// Cập nhật số lượng sản phẩm trong header (nếu có)
-						$('.cart-count').text(res.total_items || res.qty);
+						const $cartCountElement = $('.cart-count');
+						if ($cartCountElement.length) {
+							const countValue = (res.total_items !== undefined && !isNaN(res.total_items)) ? res.total_items : 
+											 (res.qty !== undefined && !isNaN(res.qty)) ? res.qty : 0;
+							$cartCountElement.text(countValue);
+						}
 						
 						// Hiển thị thông báo thành công (optional)
 						showSuccessMessage('Đã cập nhật số lượng sản phẩm');
@@ -1581,9 +1642,83 @@
 				});
 			}
 			
-			// Hàm format giá tiền
+			// Hàm format giá tiền - SỬA LỖI NaN₫
 			function formatPrice(price) {
-				return new Intl.NumberFormat('vi-VN').format(price) + '₫';
+				// Kiểm tra giá trị đầu vào
+				if (price === null || price === undefined || isNaN(price) || price < 0) {
+					console.warn('Invalid price value:', price);
+					return '0₫';
+				}
+				
+				// Đảm bảo price là số
+				const numericPrice = parseFloat(price);
+				if (isNaN(numericPrice)) {
+					console.warn('Cannot parse price to number:', price);
+					return '0₫';
+				}
+				
+				try {
+					return new Intl.NumberFormat('vi-VN').format(numericPrice) + '₫';
+				} catch (error) {
+					console.error('Error formatting price:', error, 'Price:', price);
+					return '0₫';
+				}
+			}
+			
+			// Hàm debug response data
+			function debugResponseData(res) {
+				console.group('=== DEBUG RESPONSE DATA ===');
+				console.log('Response type:', typeof res);
+				console.log('Response keys:', Object.keys(res || {}));
+				console.log('Quantity (qty):', res?.qty, 'Type:', typeof res?.qty, 'Valid:', !isNaN(res?.qty));
+				console.log('Subtotal:', res?.subtotal, 'Type:', typeof res?.subtotal, 'Valid:', !isNaN(res?.subtotal));
+				console.log('Total price:', res?.total_price, 'Type:', typeof res?.total_price, 'Valid:', !isNaN(res?.total_price));
+				console.log('Total items:', res?.total_items, 'Type:', typeof res?.total_items, 'Valid:', !isNaN(res?.total_items));
+				console.groupEnd();
+			}
+			
+			// Hàm tự động tính lại tổng tiền từ tất cả sản phẩm
+			function updateTotalPriceFromItems() {
+				const $totalPriceElement = $('#cart-total-price');
+				if (!$totalPriceElement.length) {
+					console.warn('Không tìm thấy element tổng tiền');
+					return;
+				}
+				
+				let totalPrice = 0;
+				let totalItems = 0;
+				
+				// Tính tổng từ tất cả sản phẩm trong giỏ hàng
+				$('.main-cart-data-full-item').each(function() {
+					const $item = $(this);
+					const $subtotalElement = $item.find('.main-cart-data-full-item-info-total span');
+					const $quantityElement = $item.find('input[type="number"]');
+					
+					if ($subtotalElement.length && $quantityElement.length) {
+						// Lấy thành tiền từ text (đã format)
+						const subtotalText = $subtotalElement.text();
+						const subtotal = parseFloat(subtotalText.replace(/[^\d]/g, ''));
+						
+						if (!isNaN(subtotal)) {
+							totalPrice += subtotal;
+							totalItems += parseInt($quantityElement.val()) || 0;
+						}
+					}
+				});
+				
+				// Cập nhật tổng tiền
+				if (totalPrice > 0) {
+					$totalPriceElement.text(formatPrice(totalPrice));
+					console.log('Recalculated total price:', totalPrice, 'Total items:', totalItems);
+					
+					// Cập nhật số lượng tổng nếu cần
+					const $totalItemsElement = $('.section-title-all p strong');
+					if ($totalItemsElement.length) {
+						$totalItemsElement.text(totalItems);
+					}
+				} else {
+					console.warn('Could not calculate total price from items');
+				}
 			}
 			
 			// Hàm hiển thị thông báo thành công

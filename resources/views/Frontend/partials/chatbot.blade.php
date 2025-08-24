@@ -592,8 +592,8 @@ body.show-emoji-picker em-emoji-picker {
     <div class="chatbot-popup">
         <div class="chat-header">
             <div class="header-info">
-                <!-- <img class="chatbot-logo" src="nick.jpg" alt="Chatbot Logo" width="50" height="50"> -->
-            <h2 class="logo-text">S7 STUDIO</h2>
+                <img class="chatbot-logo" src="nick.jpg" alt="Chatbot Logo" width="50" height="50">
+            <h2 class="logo-text">NICK FINAL</h2>
             </div>
             <button id="close-chatbot" class="material-symbols-rounded">keyboard_arrow_down</button>
         </div>
