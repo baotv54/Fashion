@@ -378,11 +378,7 @@
 
     document.getElementById('load-missing-variants').addEventListener('click', function() {
         const container = document.getElementById('missing-variants-container');
-        const productId = {
-            {
-                $product - > id
-            }
-        };
+        const productId = {{$product->id}};
         fetch(`/admin/products/${productId}/missing-variants`)
             .then(res => res.json())
             .then(data => {
