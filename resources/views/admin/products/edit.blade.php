@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container mt-4">
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -15,14 +17,16 @@
         @endif
 
         @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra',
+                html: `{!! implode('<br>', $errors->all()) !!}`
+            });
+        </script>
         @endif
+
     </div>
     <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
         @csrf

@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container mt-4">
     <h4 class="mb-4">Danh sách đơn nhập hàng</h4>
 

@@ -216,21 +216,35 @@ F1GENZ.Product = {
 			new Bizweb.OptionSelectors("main-product-select", { product: window.F1GENZ_vars.product.data, onVariantSelected: this.variants });
 		}
 	},
-	variants: function(variant, selector){
-		if(variant){
-			// Change Image
-			if(variant.image){
-				var items = $('.main-product .main-product-feature .main-product-feature-thumbs img[src="' + variant.image.src + '"]').first().parents('a');
-				if(window.F1GENZ_vars.product.featured.style_gallery == "style3"){
-					$('body, html').animate({ scrollTop: items.offset().top - 10 }, 500, 'swing');
-				}else{
-					if($('.main-product .main-product-feature .main-product-feature-thumbs.slick-slider').length > 0){
-						$('.main-product .main-product-feature .main-product-feature-thumbs .slick-slide[data-slick-index="' + (parseInt(items.attr('data-index')) - 1) + '"]').trigger('click');
-						if($('.main-product .main-product-feature .main-product-feature-thumbs .slick-slide').length > 4) $('.main-product .main-product-feature .main-product-feature-thumbs').slick('slickGoTo', parseInt(items.attr('data-index')) - 1);
-					}
-				}
-			}
-			// End Change Image
+       variants: function(variant, selector){
+	       if(variant){
+		       // Hiển thị ảnh biến thể khi chọn thuộc tính
+		       // 1. Ẩn tất cả ảnh chính và thumbnail
+		       $('.main-product .main-product-feature .main-image-link').removeClass('active').find('img').hide();
+		       $('.main-product .main-product-feature .main-product-feature-thumbs .thumb-link').removeClass('active').hide();
+
+		       // 2. Nếu variant có ảnh, hiển thị đúng ảnh đó
+		       if(variant.image){
+			       // Hiện ảnh chính của biến thể
+			       var $mainImgLink = $('.main-product .main-product-feature .main-image-link.variant-image[data-variant="'+variant.id+'"]').addClass('active');
+			       $mainImgLink.find('img').show();
+			       // Hiện thumbnail của biến thể
+			       var $thumb = $('.main-product .main-product-feature .main-product-feature-thumbs .thumb-link.variant-thumb[data-variant="'+variant.id+'"]').addClass('active').show();
+			       // Nếu có slick slider thì chuyển slide
+			       if($('.main-product .main-product-feature .main-product-feature-thumbs.slick-slider').length > 0 && $thumb.length > 0){
+				       var idx = $thumb.index();
+				       $('.main-product .main-product-feature .main-product-feature-thumbs').slick('slickGoTo', idx);
+			       }
+		       }else{
+			       // Nếu không có ảnh biến thể, hiển thị ảnh chính sản phẩm
+			       var $mainImgLink = $('.main-product .main-product-feature .main-image-link').not('.variant-image').first().addClass('active');
+			       $mainImgLink.find('img').show();
+			       var $thumb = $('.main-product .main-product-feature .main-product-feature-thumbs .thumb-link').not('.variant-thumb').first().addClass('active').show();
+			       if($('.main-product .main-product-feature .main-product-feature-thumbs.slick-slider').length > 0 && $thumb.length > 0){
+				       var idx = $thumb.index();
+				       $('.main-product .main-product-feature .main-product-feature-thumbs').slick('slickGoTo', idx);
+			       }
+		       }
 
 			window.F1GENZ_vars.product.availableOption = variant.available;
 			var saleChange = Math.round(100 - (variant.price / (variant.compare_at_price / 100)));

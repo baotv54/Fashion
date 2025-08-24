@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
     <div class="container">
         <h1 class="my-4 text-center">{{ isset($users) ? '✏️ Chỉnh Sửa Người Dùng' : '➕ Thêm Mới Tài Khoản' }}</h1>
         <form action="{{ isset($users) ? route('users.update', $users->id) : route('users.store') }}" method="POST"

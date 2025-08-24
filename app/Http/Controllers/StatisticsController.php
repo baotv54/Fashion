@@ -27,6 +27,31 @@ class StatisticsController extends Controller
         $revenueMonth = Order::whereMonth('created_at', $month)->sum('total');
         $revenueYear  = Order::whereYear('created_at', $year)->sum('total');
 
+        // Doanh thu theo ngày trong tháng hiện tại
+        $dailyRevenue = [];
+        $daysInMonth = Carbon::now()->daysInMonth;
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $revenue = Order::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->whereDay('created_at', $i)
+                ->sum('total');
+
+            $dailyRevenue[] = [
+                'day' => $i,
+                'revenue' => (float)$revenue
+            ];
+        }
+
+        // Doanh thu theo năm (5 năm gần nhất)
+        $yearlyRevenue = [];
+        for ($i = $year - 4; $i <= $year; $i++) {
+            $revenue = Order::whereYear('created_at', $i)->sum('total');
+            $yearlyRevenue[] = [
+                'year' => $i,
+                'revenue' => (float)$revenue
+            ];
+        }
+
         // Tổng tồn kho
         $totalInventory = ProductVariant::sum('stock');
 
@@ -139,6 +164,9 @@ class StatisticsController extends Controller
             'orderCountToday',
             'orderCountMonth',
             'orderCountYear',
+            'monthlyRevenue',
+            'dailyRevenue',
+            'yearlyRevenue',
             'revenueToday',
             'revenueMonth',
             'revenueYear',

@@ -319,6 +319,56 @@
 				transform: rotate(360deg);
 			}
 		}
+
+		/* Cart update loading styles */
+		.main-cart-data-full-item.updating {
+			opacity: 0.7;
+			pointer-events: none;
+		}
+
+		.main-cart-data-full-item.updating .shop-quantity {
+			position: relative;
+		}
+
+		.main-cart-data-full-item.updating .shop-quantity::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 16px;
+			height: 16px;
+			margin: -8px 0 0 -8px;
+			border: 2px solid #f3f3f3;
+			border-top: 2px solid #333;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		/* Toast notification styles */
+		.cart-toast {
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			font-weight: 500;
+			font-size: 14px;
+		}
+
+		.cart-toast.success {
+			background: #28a745 !important;
+		}
+
+		.cart-toast.error {
+			background: #dc3545 !important;
+		}
+
+		/* Quantity input focus styles */
+		.quantity-input:focus {
+			outline: none;
+			border-color: #333;
+			box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.2);
+		}
+
+		.quantity-input.updating {
+			background-color: #f8f9fa;
+		}
 	</style>
 	<link rel="preload stylesheet" as="style"
 		href="{{asset('css/cart.scsse889.css')}}">
@@ -385,7 +435,7 @@
 											<label>Số lượng</label>
 											<div class="shop-quantity">
 												<button type="button" data-type="shop-quantity-minus" title="Giảm">-</button>
-												<input type="number" name="quantity_{{ $cart->rowId }}" value="{{ $cart->qty }}" min="1" readonly>
+												<input type="number" name="quantity_{{ $cart->rowId }}" value="{{ $cart->qty }}" min="1" class="quantity-input" title="Nhập số lượng">
 												<button type="button" data-type="shop-quantity-plus" title="Tăng">+</button>
 											</div>
 										</div>
@@ -1430,7 +1480,57 @@
 				}
 			});
 
+			// Xử lý nhập trực tiếp vào input số lượng
+			$(document).on('change', '.quantity-input', function() {
+				let $row = $(this).closest('.main-cart-data-full-item');
+				let quantity = parseInt($(this).val());
+				let oldValue = parseInt($(this).data('old-value')) || 1;
+				
+				// Kiểm tra giá trị hợp lệ
+				if (isNaN(quantity) || quantity < 1) {
+					// Reset về giá trị cũ nếu không hợp lệ
+					$(this).val(oldValue);
+					showErrorMessage('Số lượng phải là số và lớn hơn 0');
+					return;
+				}
+				
+				// Kiểm tra nếu số lượng không thay đổi
+				if (quantity === oldValue) {
+					return;
+				}
+				
+				// Cập nhật giỏ hàng
+				updateCart($row.data('id'), quantity, $row);
+			});
+
+			// Xử lý khi input mất focus (blur)
+			$(document).on('blur', '.quantity-input', function() {
+				let $row = $(this).closest('.main-cart-data-full-item');
+				let quantity = parseInt($(this).val());
+				let oldValue = parseInt($(this).data('old-value')) || 1;
+				
+				// Nếu giá trị không hợp lệ, reset về giá trị cũ
+				if (isNaN(quantity) || quantity < 1) {
+					$(this).val(oldValue);
+				}
+			});
+
+			// Lưu giá trị cũ khi focus vào input
+			$(document).on('focus', '.quantity-input', function() {
+				$(this).data('old-value', $(this).val());
+			});
+
+			// Xử lý khi nhấn Enter trong input
+			$(document).on('keypress', '.quantity-input', function(e) {
+				if (e.which === 13) { // Enter key
+					$(this).blur(); // Trigger change event
+				}
+			});
+
 			function updateCart(rowId, quantity, $row) {
+				// Hiển thị loading nếu cần
+				$row.addClass('updating');
+				
 				$.ajax({
 					url: '{{ route("cart.update") }}',
 					type: 'POST',
@@ -1440,14 +1540,69 @@
 						quantity: quantity
 					},
 					success: function(res) {
+						console.log('Cart update response:', res); // Debug log
+						
+						// Cập nhật số lượng trong input
 						$row.find('input[type="number"]').val(res.qty);
-						$row.find('.main-cart-data-full-item-info-total span').text(res.subtotal + '₫');
-						$('.main-cart-data-head p strong').text(res.total_items);
-						$('#cart-total-price').text(res.total_price + '₫'); // nếu bạn có tổng tiền hiển thị
+						
+						// Cập nhật thành tiền của sản phẩm
+						$row.find('.main-cart-data-full-item-info-total span').text(formatPrice(res.subtotal));
+						
+						// Cập nhật tổng tiền giỏ hàng
+						if (res.total_price !== undefined) {
+							$('#cart-total-price').text(formatPrice(res.total_price));
+						}
+						
+						// Cập nhật số lượng sản phẩm trong giỏ hàng (nếu có)
+						if (res.total_items !== undefined) {
+							$('.main-cart-data-head p strong').text(res.total_items);
+						}
+						
+						// Cập nhật số lượng sản phẩm trong header (nếu có)
+						$('.cart-count').text(res.total_items || res.qty);
+						
+						// Hiển thị thông báo thành công (optional)
+						showSuccessMessage('Đã cập nhật số lượng sản phẩm');
 					},
-					error: function() {
-						alert('Cập nhật giỏ hàng thất bại!');
+					error: function(xhr, status, error) {
+						console.error('Cart update error:', {xhr, status, error}); // Debug log
+						
+						// Khôi phục giá trị cũ
+						let $input = $row.find('input[type="number"]');
+						$input.val($input.data('old-value') || 1);
+						
+						// Hiển thị thông báo lỗi
+						showErrorMessage('Cập nhật giỏ hàng thất bại! Vui lòng thử lại.');
+					},
+					complete: function() {
+						// Ẩn loading
+						$row.removeClass('updating');
 					}
+				});
+			}
+			
+			// Hàm format giá tiền
+			function formatPrice(price) {
+				return new Intl.NumberFormat('vi-VN').format(price) + '₫';
+			}
+			
+			// Hàm hiển thị thông báo thành công
+			function showSuccessMessage(message) {
+				// Tạo toast notification đơn giản
+				let $toast = $('<div class="cart-toast success" style="position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 10px 20px; border-radius: 5px; z-index: 9999; display: none;">' + message + '</div>');
+				$('body').append($toast);
+				$toast.fadeIn(300).delay(2000).fadeOut(300, function() {
+					$(this).remove();
+				});
+			}
+			
+			// Hàm hiển thị thông báo lỗi
+			function showErrorMessage(message) {
+				// Tạo toast notification đơn giản
+				let $toast = $('<div class="cart-toast error" style="position: fixed; top: 20px; right: 20px; background: #dc3545; color: white; padding: 10px 20px; border-radius: 5px; z-index: 9999; display: none;">' + message + '</div>');
+				$('body').append($toast);
+				$toast.fadeIn(300).delay(3000).fadeOut(300, function() {
+					$(this).remove();
 				});
 			}
 		});

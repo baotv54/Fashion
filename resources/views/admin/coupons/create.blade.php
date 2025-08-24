@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container">
     <h2>Thêm mã giảm giá mới</h2>
 

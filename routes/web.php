@@ -263,6 +263,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
             Route::get('/trashed', [ProductController::class, 'trashed'])->name('products.trashed');
             Route::post('/{id}/store-variants', [ProductController::class, 'storeAjax'])->name('products.storeVariants');
+            Route::delete('/force-delete/{id}', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+
         });
 
         //routes quản lý popup
@@ -288,6 +290,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}', [ProductLiveChatAdminController::class, 'show'])->name('admin.plc.show');
             Route::post('/reply', [ProductLiveChatAdminController::class, 'reply'])->name('admin.plc.reply');
             Route::post('/{id}/close', [ProductLiveChatAdminController::class, 'close'])->name('admin.plc.close');
+            Route::delete('/{id}', [ProductLiveChatAdminController::class, 'destroy'])->name('admin.plc.destroy');
         });
         // Routes quản lý sản phẩm biến thể
         Route::get('/product/search', [ProductController::class, 'search2'])->name('admin.product.search');
@@ -407,9 +410,13 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
             Route::get('/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/', [UserController::class, 'store'])->name('users.store');
+            Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+            Route::get('/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+            Route::post('/restore/{id}', [UserController::class, 'restore'])->name('users.restore');
+            Route::delete('/force-delete/{id}', [UserController::class, 'forceDelete'])->name('users.forceDelete');
         });
         // Routes quản mã giảm giá
         Route::prefix('coupons')->group(function () {

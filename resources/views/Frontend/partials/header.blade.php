@@ -2,16 +2,16 @@
     <div class="container">
         <div class="headers2-wrap">
             @foreach ($logos as $logo)
-                <div class="headers2-left">
-                    <a href="/" aria-label="F1GENZ Shoes">
-                        @if (!empty($logo->images))
-                            <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
-                        @else
-                            <img src="/logo/image.png" alt="No Logo" title="No Logo">
-                        @endif
-                    </a>
-                </div>
-                 @endforeach
+            <div class="headers2-left">
+                <a href="/" aria-label="F1GENZ Shoes">
+                    @if (!empty($logo->images))
+                    <img src="/logo/{{ $logo->images }}" alt="F1GENZ Shoes" title="F1GENZ Shoes">
+                    @else
+                    <img src="/logo/image.png" alt="No Logo" title="No Logo">
+                    @endif
+                </a>
+            </div>
+            @endforeach
             <div class="headers2-center">
                 <nav class="headers2-center-menu">
                     <ul class="menu0">
@@ -113,6 +113,14 @@
                         </li>
                         @endif
                         @endauth
+                        @auth
+                        {{-- Nút Trang Nhân Viên  --}}
+                        @if(Auth::user()->role === 'manage')
+                        <li class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.statistics') }}">Nhân Viên</a>
+                        </li>
+                        @endif
+                        @endauth
                         <li class="headers2-center-menu-mob-foot">
                             <div class="section-title-all">
                                 <span>Hổ trợ 24/7</span>
@@ -197,7 +205,7 @@
                     <span class="shop-cart-count">{{ $carts->count() }}</span>
                 </button>
             </div>
-             
+
         </div>
     </div>
 </header>

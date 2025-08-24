@@ -20,9 +20,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
 use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
+use App\Models\ImportWarehouseMain;
+use App\Models\ImportWarehouseDetail;
+
+
 use App\Models\Post;
 use App\Models\Size;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -99,154 +104,154 @@ class ProductController extends Controller
 
 
     public function homepage()
-{
-    $products = Product::with(['variants', 'reviews' => function ($query) {
+    {
+        $products = Product::with(['variants', 'reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                ->orWhereHas('variants', function ($q) {
-                    $q->where('quantity', '>', 0);
-                });
-        })
-        ->orderBy('created_at', 'desc')
-        ->take(12)
-        ->get();
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(12)
+            ->get();
 
-    // --- Tạo thêm top 12 sản phẩm nhiều lượt xem ---
-    $topViewed = Product::with(['variants', 'reviews' => function ($query) {
+        // --- Tạo thêm top 12 sản phẩm nhiều lượt xem ---
+        $topViewed = Product::with(['variants', 'reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                ->orWhereHas('variants', function ($q) {
-                    $q->where('quantity', '>', 0);
-                });
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderByDesc('view_count')
+            ->take(12)
+            ->get();
+
+
+
+        // --- Phần còn lại giữ nguyên ---
+        $carts = Cart::content();
+        $orders = Order::all();
+        $posts = Post::all();
+        $order_details = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered');
+            })
+            ->get();
+        $coupons = Coupon::latest()->take(4)->get();
+        $banners = Banner::latest()->take(4)->get();
+        $favorites = collect();
+
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+            return [
+                'product_id' => $mainProductId,
+                'quantity'   => $detail->quantity,
+            ];
         })
-        ->orderByDesc('view_count')
-        ->take(12)
-        ->get();
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return $items->sum('quantity');
+            });
 
-        
-
-    // --- Phần còn lại giữ nguyên ---
-    $carts = Cart::content();
-    $orders = Order::all();
-    $posts = Post::all();
-    $order_details = OrderDetail::with(['product', 'variant'])
-        ->whereHas('order', function ($query) {
-            $query->where('status', 'delivered');
-        })
-        ->get();
-    $coupons = Coupon::latest()->take(4)->get();
-    $banners = Banner::latest()->take(4)->get();
-    $favorites = collect();
-
-    $productSales = $order_details->map(function ($detail) {
-        $mainProductId = $detail->product_variant_id
-            ? $detail->variant->product_id
-            : $detail->product_id;
-        return [
-            'product_id' => $mainProductId,
-            'quantity'   => $detail->quantity,
-        ];
-    })
-    ->groupBy('product_id')
-    ->map(function ($items) {
-        return $items->sum('quantity');
-    });
-
-    $products = $products->map(function ($product) use ($productSales) {
-        $product->sold_count = $productSales[$product->id] ?? 0;
-        return $product;
-    });
-
-    $topFavorites = Product::with(['reviews' => function ($query) {
-            $query->where('is_approved', true);
-        }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->having('favorites_count', '>', 0)
-        ->orderByDesc('favorites_count')
-        ->take(4)
-        ->get()
-        ->map(function ($product) use ($productSales) {
+        $products = $products->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
             return $product;
         });
 
-    $topSelling = Product::with(['reviews' => function ($query) {
+        $topFavorites = Product::with(['reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->having('favorites_count', '>', 0)
+            ->orderByDesc('favorites_count')
+            ->take(4)
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            });
+
+        $topSelling = Product::with(['reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->whereIn('id', $productSales->keys())
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            })
+            ->sortByDesc('sold_count')
+            ->take(8);
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
+        return view('Frontend.index', compact(
+            'products',
+            'topViewed',  // <--- Thêm biến topViewed
+            'carts',
+            'coupons',
             'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->whereIn('id', $productSales->keys())
-        ->get()
-        ->map(function ($product) use ($productSales) {
-            $product->sold_count = $productSales[$product->id] ?? 0;
-            return $product;
-        })
-        ->sortByDesc('sold_count')
-        ->take(8);
-
-    if (Auth::check()) {
-        $favorites = Favorite::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+            'banners',
+            'topFavorites',
+            'topSelling',
+            'posts'
+        ));
     }
-
-    return view('Frontend.index', compact(
-        'products',
-        'topViewed',  // <--- Thêm biến topViewed
-        'carts',
-        'coupons',
-        'favorites',
-        'banners',
-        'topFavorites',
-        'topSelling',
-        'posts'
-    ));
-}
 
 
 
@@ -375,7 +380,7 @@ class ProductController extends Controller
         $colors = Attribute::where('name', 'Màu')->first()?->values ?? [];
         $sizes = Attribute::where('name', 'Kích Thước')->first()?->values ?? [];
 
-        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes', 'favorites','currentCategory'));
+        return view('Frontend.pages.Products', compact('products', 'brands', 'categories', 'colors', 'sizes', 'favorites', 'currentCategory'));
     }
 
 
@@ -519,59 +524,96 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'slug' => 'required|unique:products,slug',
-            'import_price' => 'required|numeric|min:0',
+            'import_price' => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->price !== null && $value > $request->price) {
+                        $fail('Giá nhập không được lớn hơn giá bán.');
+                    }
+                }
+            ],
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
+            'discount_price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->price !== null && $value > $request->price) {
+                        $fail('Giá giảm không được lớn hơn giá bán.');
+                    }
+                    if ($request->import_price !== null && $value < $request->import_price) {
+                        $fail('Giá giảm không được nhỏ hơn giá nhập.');
+                    }
+                }
+            ],
             'brand_id' => 'required|exists:brands,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|boolean',
             'description' => 'nullable',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'variants' => 'nullable|array'
+            'variants' => 'nullable|array',
+            'variants.*.price' => 'required_with:variants.*.import_price|numeric|min:0',
+            'variants.*.import_price' => [
+                'required_with:variants.*.price',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1]; // ví dụ: variants.0.import_price
+                    $price = $request->variants[$index]['price'] ?? null;
+                    if ($price !== null && $value > $price) {
+                        $fail("Giá nhập của biến thể #" . ($index + 1) . " không được lớn hơn giá bán.");
+                    }
+                }
+            ],
+            'variants.*.discount_price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $index = explode('.', $attribute)[1];
+                    $price = $request->variants[$index]['price'] ?? null;
+                    $importPrice = $request->variants[$index]['import_price'] ?? null;
+
+                    if ($price !== null && $value > $price) {
+                        $fail("Giá KM của biến thể #" . ($index + 1) . " không được lớn hơn giá bán.");
+                    }
+                    if ($importPrice !== null && $value < $importPrice) {
+                        $fail("Giá KM của biến thể #" . ($index + 1) . " không được nhỏ hơn giá nhập.");
+                    }
+                }
+            ],
         ], [
+            // thông báo lỗi cho sản phẩm chính
             'name.required' => 'Vui lòng nhập tên sản phẩm.',
-            'name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
-
-            'slug.required' => 'Vui lòng nhập đường dẫn (slug) cho sản phẩm.',
-            'slug.unique' => 'Slug này đã tồn tại. Vui lòng chọn slug khác.',
-            'slug.max' => 'Slug không được vượt quá 255 ký tự.',
-
-            'import_price.required' => 'Vui lòng nhập giá nhập.',
-            'import_price.numeric' => 'Giá nhập phải là một số.',
-            'import_price.min' => 'Giá nhập phải lớn hơn hoặc bằng 0.',
-
             'price.required' => 'Vui lòng nhập giá bán.',
-            'price.numeric' => 'Giá bán phải là một số.',
-            'price.min' => 'Giá bán phải lớn hơn hoặc bằng 0.',
-
-            'discount_price.numeric' => 'Giá giảm phải là một số.',
-            'discount_price.min' => 'Giá giảm phải lớn hơn hoặc bằng 0.',
-
-            'brand_id.required' => 'Vui lòng chọn thương hiệu.',
-            'brand_id.exists' => 'Thương hiệu không tồn tại.',
-
-            'category_id.required' => 'Vui lòng chọn danh mục.',
-            'category_id.exists' => 'Danh mục không tồn tại.',
-
-            'status.required' => 'Vui lòng chọn trạng thái hiển thị.',
-            'status.boolean' => 'Trạng thái phải là đúng hoặc sai.',
-
-            'image.required' => 'Vui lòng chọn ảnh đại diện.',
-            'image.image' => 'Tệp tải lên phải là hình ảnh.',
-            'image.mimes' => 'Ảnh đại diện chỉ chấp nhận các định dạng: jpeg, png, jpg, webp.',
-            'image.max' => 'Ảnh đại diện không được vượt quá 2MB.',
-
-            'images.*.image' => 'Mỗi ảnh phụ phải là một tệp hình ảnh.',
-            'images.*.mimes' => 'Ảnh phụ chỉ chấp nhận các định dạng: jpeg, png, jpg, webp.',
-            'images.*.max' => 'Mỗi ảnh phụ không được vượt quá 2MB.',
-
-            'variants.array' => 'Dữ liệu biến thể phải là dạng danh sách.'
+            'import_price.required' => 'Vui lòng nhập giá nhập.',
+            // thông báo lỗi cho biến thể
+            'variants.*.price.required_with' => 'Vui lòng nhập giá bán cho tất cả biến thể.',
+            'variants.*.price.numeric' => 'Giá bán của biến thể phải là số.',
+            'variants.*.import_price.required_with' => 'Vui lòng nhập giá nhập cho biến thể.',
+            'variants.*.import_price.numeric' => 'Giá nhập của biến thể phải là số.',
+            'variants.*.discount_price.numeric' => 'Giá KM của biến thể phải là số.',
         ]);
 
+        // ✅ Tạo slug tự động từ tên sản phẩm
+        $slug = Str::slug($request->name);
+
+        // Kiểm tra nếu slug đã tồn tại → thêm hậu tố để tránh trùng
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
         // Tạo sản phẩm
-        $product = Product::create($request->except(['image', 'images', 'variants']));
+        $product = Product::create(array_merge(
+            $request->except(['image', 'images', 'variants']),
+            ['slug' => $slug]
+        ));
 
         // Ảnh đại diện
         if ($request->hasFile('image')) {
@@ -591,8 +633,7 @@ class ProductController extends Controller
 
         // Thêm biến thể nếu có
         $variants = $request->variants ?? [];
-
-        foreach ($variants as $index => $variantData) {
+        foreach ($variants as $variantData) {
             if (!isset($variantData['value_ids'], $variantData['price'], $variantData['import_price'])) {
                 continue;
             }
@@ -622,10 +663,8 @@ class ProductController extends Controller
             }
         }
 
-
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm và biến thể thành công.');
     }
-
     // ProductVariantController.php
     public function storeAjax(Request $request, $productId)
     {
@@ -758,12 +797,30 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // ✅ Validate
+        // ✅ Validate sản phẩm chính
         $request->validate([
             'name'          => 'required|max:255',
-            'import_price'  => 'required|numeric|min:0',
+            'import_price'  => [
+                'required',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->price !== null && $value > $request->price) {
+                        $fail('Giá nhập không được lớn hơn giá bán.');
+                    }
+                }
+            ],
             'price'         => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
+            'discount_price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->price !== null && $value > $request->price) {
+                        $fail('Giá khuyến mãi không được lớn hơn giá bán.');
+                    }
+                }
+            ],
             'brand_id'      => 'required|exists:brands,id',
             'category_id'   => 'required|exists:categories,id',
             'status'        => 'required|boolean',
@@ -772,6 +829,25 @@ class ProductController extends Controller
             'images.*'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'variants'      => 'nullable|array',
         ]);
+
+        // ✅ Kiểm tra validate cho biến thể
+        $variants = $request->input('variants', []);
+        foreach ($variants as $i => $variant) {
+            if (isset($variant['price'], $variant['import_price'])) {
+                if ($variant['import_price'] > $variant['price']) {
+                    return back()
+                        ->withErrors(["variants.$i.import_price" => "Giá nhập biến thể không được lớn hơn giá bán."])
+                        ->withInput();
+                }
+            }
+            if (isset($variant['discount_price'], $variant['price'])) {
+                if ($variant['discount_price'] > $variant['price']) {
+                    return back()
+                        ->withErrors(["variants.$i.discount_price" => "Giá khuyến mãi biến thể không được lớn hơn giá bán."])
+                        ->withInput();
+                }
+            }
+        }
 
         // ✅ Update sản phẩm (trừ image & variants)
         $product->update($request->except(['image', 'images', 'variants']));
@@ -795,21 +871,19 @@ class ProductController extends Controller
             }
         }
 
-        // ✅ Chỉ CẬP NHẬT biến thể
-        $variants = $request->input('variants', []);
+        // ✅ Cập nhật biến thể
         if (!empty($variants)) {
             foreach ($variants as $index => $variantData) {
                 if (!isset($variantData['id'], $variantData['value_ids'], $variantData['price'], $variantData['import_price'])) {
                     continue;
                 }
 
-                // Lấy đúng variant trong DB
                 $variant = ProductVariant::where('product_id', $product->id)
                     ->where('id', $variantData['id'])
                     ->first();
 
                 if (!$variant) {
-                    continue; // Nếu không tồn tại thì bỏ qua, KHÔNG tạo mới
+                    continue;
                 }
 
                 // Xử lý ảnh biến thể
@@ -847,13 +921,13 @@ class ProductController extends Controller
     {
         $product = Product::with('variants')->findOrFail($id);
 
-        // Kiểm tra số lượng sản phẩm chính
+        // 🔎 Kiểm tra số lượng sản phẩm chính
         if ($product->quantity > 0) {
             return redirect()->route('products.index')
                 ->with('error', 'Sản phẩm còn tồn kho, không thể xóa.');
         }
 
-        // Kiểm tra số lượng của tất cả biến thể
+        // 🔎 Kiểm tra tồn kho biến thể
         foreach ($product->variants as $variant) {
             if ($variant->stock > 0) {
                 return redirect()->route('products.index')
@@ -861,15 +935,55 @@ class ProductController extends Controller
             }
         }
 
-        // Nếu tất cả số lượng đều nhỏ hơn 1 thì cho phép xóa mềm
+        // 🔎 Kiểm tra phiếu nhập kho liên quan
+        $importDetails = ImportWarehouseDetail::where('product_id', $product->id)
+            ->with('importWarehouseMain') // phải có quan hệ trong model
+            ->get();
+
+        foreach ($importDetails as $detail) {
+            if ($detail->importWarehouseMain && $detail->importWarehouseMain->import_type !== 'Đã Nhập Kho') {
+                return redirect()->route('products.index')
+                    ->with('error', 'Sản phẩm thuộc phiếu nhập kho chưa hoàn tất, không thể xóa.');
+            }
+        }
+
+        // ✅ Nếu tất cả điều kiện ok thì xóa mềm
         foreach ($product->variants as $variant) {
             $variant->delete(); // soft delete
         }
 
         $product->delete(); // soft delete product
 
-        return redirect()->route('products.index')->with('success', 'Đã xóa mềm sản phẩm thành công.');
+        return redirect()->route('products.index')
+            ->with('success', 'Đã xóa mềm sản phẩm thành công.');
     }
+
+    public function forceDelete($id)
+    {
+        $product = Product::withTrashed()->with('variants')->findOrFail($id);
+
+        // 🔎 Lấy tất cả OrderDetail liên quan đến product hoặc variant
+        $orderDetails = OrderDetail::where('product_id', $product->id)
+            ->orWhereIn('variant_id', $product->variants->pluck('id'))
+            ->get();
+
+        // 🔎 Xóa OrderDetail (KHÔNG xóa Order)
+        foreach ($orderDetails as $detail) {
+            $detail->forceDelete(); // xóa cứng chi tiết đơn hàng
+        }
+
+        // 🔎 Xóa tất cả biến thể
+        foreach ($product->variants as $variant) {
+            $variant->forceDelete();
+        }
+
+        // 🔎 Xóa sản phẩm
+        $product->forceDelete();
+
+        return redirect()->route('products.restore')
+            ->with('success', 'Đã xóa vĩnh viễn sản phẩm, biến thể và các chi tiết đơn hàng liên quan.');
+    }
+
 
     public function restore($id)
     {

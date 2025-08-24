@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="card">
     <div class="card-datatable">
         @if(session('success'))
@@ -46,9 +48,9 @@
                         @php
                         $roles = [
                         'all' => 'Tất cả',
-                        'admin' => 'Admin',
-                        'manage' => 'Manage',
-                        'user' => 'User',
+                        'admin' => 'Quản Trị Viên',
+                        'manage' => 'Nhân Viên',
+                        'user' => 'Khách Hàng',
                         ];
                         @endphp
                         @foreach ($roles as $key => $label)
@@ -85,7 +87,11 @@
 
                                 </td>
                                 <td>{{ $user->id }}</td>
-                                <td>{{ $user->name }}</td>
+                                <td>
+                                    <a href="{{ route('users.show', $user->id) }}" class="text-primary fw-bold" style="text-decoration: none;">
+                                        {{ $user->name }}
+                                    </a>
+                                </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->role }}</td>
                                 <td class="text-center">

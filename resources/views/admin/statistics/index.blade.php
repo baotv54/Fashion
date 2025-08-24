@@ -92,17 +92,24 @@
 @endsection
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const primaryColor = "#3B7DDD";
-        const infoColor    = "#0dcaf0";
+        const infoColor = "#0dcaf0";
         const successColor = "#28a745";
         const warningColor = "#ffc107";
-        const dangerColor  = "#dc3545";
-        const darkColor    = "#343a40";
-        const tealColor    = "#20c997";
+        const dangerColor = "#dc3545";
+        const darkColor = "#343a40";
+        const tealColor = "#20c997";
 
-        const monthlyData = {!! json_encode($monthlyRevenue) !!};
-        const orderStatusData = {!! json_encode($orderStatusStats) !!};
+        const monthlyData = @json($monthlyRevenue);
+        const orderStatusData = @json($orderStatusStats);
+
+        const dailyRevenue = @json($dailyRevenue);
+        const monthlyRevenue = @json($monthlyRevenue);
+        const yearlyRevenue = @json($yearlyRevenue);
+
+        let ctx = document.getElementById("revenue-chart").getContext("2d");
+        let chart;
 
         let chartData = Array(12).fill(0);
         let labels = [];
@@ -114,6 +121,69 @@
                 chartData[i - 1] = parseFloat(found.revenue) || 0;
             }
         }
+
+        function renderChart(type) {
+            let labels = [],
+                data = [];
+
+            if (type === "day") {
+                labels = dailyRevenue.map(d => "Ngày " + d.day);
+                data = dailyRevenue.map(d => d.revenue);
+            } else if (type === "month") {
+                labels = monthlyRevenue.map(m => "Tháng " + m.month);
+                data = monthlyRevenue.map(m => m.revenue);
+            } else {
+                labels = yearlyRevenue.map(y => "Năm " + y.year);
+                data = yearlyRevenue.map(y => y.revenue);
+            }
+
+            if (chart) chart.destroy();
+
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Doanh thu",
+                        backgroundColor: "#dc3545",
+                        data: data
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                    maximumFractionDigits: 0
+                                }).format(tooltipItem.yLabel);
+                            }
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function(value) {
+                                    if (value >= 1_000_000) {
+                                        return (value / 1_000_000).toLocaleString('vi-VN') + ' Tr';
+                                    }
+                                    return value.toLocaleString('vi-VN');
+                                }
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+        document.getElementById("revenue-type").addEventListener("change", function(e) {
+            renderChart(e.target.value);
+        });
+
+        renderChart("month"); // mặc định theo tháng
 
         // --- Biểu đồ cột: Doanh thu theo tháng ---
         const barCtx = document.getElementById("chartjs-dashboard-bar");
@@ -131,10 +201,12 @@
                 },
                 options: {
                     maintainAspectRatio: false,
-                    legend: { display: false },
+                    legend: {
+                        display: false
+                    },
                     tooltips: {
                         callbacks: {
-                            label: function (tooltipItem) {
+                            label: function(tooltipItem) {
                                 return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN', {
                                     style: 'currency',
                                     currency: 'VND',
@@ -156,7 +228,9 @@
                             }
                         }],
                         xAxes: [{
-                            gridLines: { color: "transparent" }
+                            gridLines: {
+                                color: "transparent"
+                            }
                         }]
                     }
                 }
@@ -198,8 +272,16 @@
                         }
                     },
                     scales: {
-                        yAxes: [{ ticks: { beginAtZero: true } }],
-                        xAxes: [{ gridLines: { color: "rgba(0,0,0,0.05)" } }]
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }],
+                        xAxes: [{
+                            gridLines: {
+                                color: "rgba(0,0,0,0.05)"
+                            }
+                        }]
                     }
                 }
             });
@@ -229,12 +311,12 @@
                             orderStatusData.returned || 0
                         ],
                         backgroundColor: [
-                            infoColor,    // Đang xử lý
+                            infoColor, // Đang xử lý
                             successColor, // Đã xác nhận
                             warningColor, // Đang giao
-                            tealColor,    // Đã giao
-                            dangerColor,  // Đã hủy
-                            darkColor     // Trả hàng
+                            tealColor, // Đã giao
+                            dangerColor, // Đã hủy
+                            darkColor // Trả hàng
                         ],
                         borderColor: "transparent"
                     }]
@@ -242,10 +324,12 @@
                 options: {
                     maintainAspectRatio: false,
                     cutoutPercentage: 65,
-                    legend: { display: false },
+                    legend: {
+                        display: false
+                    },
                     tooltips: {
                         callbacks: {
-                            label: function (tooltipItem, data) {
+                            label: function(tooltipItem, data) {
                                 return data.labels[tooltipItem.index] + ': ' +
                                     data.datasets[0].data[tooltipItem.index] + ' đơn';
                             }
