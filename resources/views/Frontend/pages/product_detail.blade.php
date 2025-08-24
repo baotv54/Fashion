@@ -4936,7 +4936,7 @@
 						selectedVariantId.value = variant.id || '';
 
 						updateProductInfo(variant);
-						// updateProductImage(variant);
+						updateProductImage(variant);
 
 						if (variant.stock && variant.stock > 0) {
 							enableQuantityControls();
@@ -5202,31 +5202,93 @@
 					stockElement.style.color = '#ff6b6b';
 				}
 			}
+			// ảnh biến thể thumbnail
+			// function updateProductImage(variant) {
+			// 	if (!variant.image) return;
 
+			// 	// Ẩn tất cả ảnh hiện tại
+			// 	document.querySelectorAll('.main-image-link.active').forEach(link => {
+			// 		link.classList.remove('active');
+			// 		link.querySelector('img').style.display = 'none';
+			// 	});
+
+			// 	document.querySelectorAll('.thumb-link.active').forEach(link => {
+			// 		link.classList.remove('active');
+			// 	});
+
+			// 	// Hiện ảnh variant
+			// 	const variantImage = document.querySelector(`[data-variant="${variant.id}"].main-image-link`);
+			// 	const variantThumb = document.querySelector(`[data-variant="${variant.id}"].thumb-link`);
+
+			// 	if (variantImage && variantThumb) {
+			// 		variantImage.classList.add('active');
+			// 		variantThumb.classList.add('active');
+			// 		variantImage.querySelector('img').style.display = 'block';
+			// 		variantThumb.style.display = 'block';
+			// 		variantThumb.querySelector('img').style.display = 'block';
+					
+			// 	}
+			// }
 			function updateProductImage(variant) {
-				if (!variant.image) return;
+    if (!variant.image) return;
 
-				// Ẩn tất cả ảnh hiện tại
-				document.querySelectorAll('.main-image-link.active').forEach(link => {
-					link.classList.remove('active');
-					link.querySelector('img').style.display = 'none';
-				});
+    // Ẩn tất cả ảnh chính, ảnh phụ, và ảnh biến thể (main-image-link và thumb-link)
+    document.querySelectorAll('.main-image-link').forEach(link => {
+        link.classList.remove('active');
+        link.querySelector('img').style.display = 'none';
+        // Đảm bảo cả thẻ <picture> cũng ẩn đi nếu có
+        const pictureElement = link.querySelector('picture');
+        if (pictureElement) {
+            pictureElement.style.display = 'none';
+        }
+    });
 
-				document.querySelectorAll('.thumb-link.active').forEach(link => {
-					link.classList.remove('active');
-				});
+    document.querySelectorAll('.thumb-link').forEach(link => {
+        link.classList.remove('active');
+        link.querySelector('img').style.display = 'none';
+    });
 
-				// Hiện ảnh variant
-				const variantImage = document.querySelector(`[data-variant="${variant.id}"].main-image-link`);
-				const variantThumb = document.querySelector(`[data-variant="${variant.id}"].thumb-link`);
+    // Lấy phần tử ảnh chính và thumbnail chính (data-index="0")
+    const mainImageLink = document.querySelector('.main-image-link[data-index="0"]');
+    const mainThumbnailLink = document.querySelector('.thumb-link[data-index="0"]');
 
-				if (variantImage && variantThumb) {
-					variantImage.classList.add('active');
-					variantThumb.classList.add('active');
-					variantImage.querySelector('img').style.display = 'block';
-					variantThumb.style.display = 'block';
-				}
-			}
+    if (mainImageLink && mainThumbnailLink) {
+        const mainImage = mainImageLink.querySelector('img');
+        const mainThumbnail = mainThumbnailLink.querySelector('img');
+        const mainImageSourceMobile = mainImageLink.querySelector('source[media="(max-width: 480px)"]');
+        const mainImageSourceDesktop = mainImageLink.querySelector('source[media="(min-width: 481px)"]');
+
+        // Cập nhật ảnh chính
+        if (mainImage) {
+            mainImage.src = '{{ asset('') }}' + variant.image;
+            mainImage.alt = `{{ $product->name }} - ${variant.sku || variant.id}`;
+            mainImage.title = `{{ $product->name }} - ${variant.sku || variant.id}`;
+            mainImage.style.display = 'block';
+        }
+        if (mainImageSourceMobile) {
+            mainImageSourceMobile.srcset = '{{ asset('') }}' + variant.image;
+        }
+        if (mainImageSourceDesktop) {
+            mainImageSourceDesktop.srcset = '{{ asset('') }}' + variant.image;
+        }
+        // Hiển thị thẻ <picture> nếu có
+        const pictureElement = mainImageLink.querySelector('picture');
+        if (pictureElement) {
+            pictureElement.style.display = 'block';
+        }
+        mainImageLink.classList.add('active');
+
+
+        // Cập nhật thumbnail chính
+        if (mainThumbnail) {
+            mainThumbnail.src = '{{ asset('') }}' + variant.image;
+            mainThumbnail.alt = `{{ $product->name }} - ${variant.sku || variant.id}`;
+            mainThumbnail.title = `{{ $product->name }} - ${variant.sku || variant.id}`;
+            mainThumbnail.style.display = 'block';
+        }
+        mainThumbnailLink.classList.add('active');
+    }
+}
 
 			function enableQuantityControls() {
 				quantityInput.disabled = false;

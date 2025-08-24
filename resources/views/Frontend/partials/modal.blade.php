@@ -2,34 +2,34 @@
     <div class="shop-mobar-wrap">
         <ul>
             <li>
-                <a class="" aria-label="F1GENZ Shoes - Trang chủ"
+                <a class="" aria-label="S7 STUDIO - Trang chủ"
                     href="/" title="Trang chủ">
                     <img loading="lazy" decoding="async" width="64" height="64"
-                        src="{{asset('images/shop_mobar_item_image_1e889.png')}}" alt="F1GENZ Shoes - Trang chủ" title="Trang chủ">
+                        src="{{asset('images/shop_mobar_item_image_1e889.png')}}" alt="S7 STUDIO - Trang chủ" title="Trang chủ">
                     <span>Trang chủ</span>
                 </a>
             </li>
             <li>
-                <a class="" aria-label="F1GENZ Shoes - Trang sản phẩm"
+                <a class="" aria-label="S7 STUDIO - Trang sản phẩm"
                     href="/products" title="Trang sản phẩm">
                     <img loading="lazy" decoding="async" width="64" height="64"
-                        src="{{asset('images/shop_mobar_item_image_2e889.png')}}" alt="F1GENZ Shoes - Trang sản phẩm" title="Trang sản phẩm">
+                        src="{{asset('images/shop_mobar_item_image_2e889.png')}}" alt="S7 STUDIO - Trang sản phẩm" title="Trang sản phẩm">
                     <span>Trang sản phẩm</span>
                 </a>
             </li>
             <li>
-                <a class="" aria-label="F1GENZ Shoes - Trang tin tức"
+                <a class="" aria-label="S7 STUDIO - Trang tin tức"
                     href="/posts" title="Trang tin tức">
                     <img loading="lazy" decoding="async" width="64" height="64"
-                        src="{{asset('images/shop_mobar_item_image_3e889.png')}}" alt="F1GENZ Shoes - Trang tin tức" title="Trang tin tức">
+                        src="{{asset('images/shop_mobar_item_image_3e889.png')}}" alt="S7 STUDIO - Trang tin tức" title="Trang tin tức">
                     <span>Trang tin tức</span>
                 </a>
             </li>
             <li>
-                <a class="tool-contact-popup" aria-label="F1GENZ Shoes - Đăng ký"
+                <a class="tool-contact-popup" aria-label="S7 STUDIO - Đăng ký"
                     href="/account" title="Đăng ký">
                     <img loading="lazy" decoding="async" width="64" height="64"
-                        src="{{asset('images/shop_mobar_item_image_4e889.png')}}" alt="F1GENZ Shoes - Đăng ký" title="Đăng ký">
+                        src="{{asset('images/shop_mobar_item_image_4e889.png')}}" alt="S7 STUDIO - Đăng ký" title="Đăng ký">
                     <span>Đăng ký</span>
                 </a>
             </li>
@@ -143,9 +143,9 @@
     @endforeach
 
     {{-- Nút hỗ trợ --}}
-    <button class="hiddenMob" data-fancybox data-src="#shop-modal-phone" style="background-color: #ffffff;" title="F1GENZ Shoes - Support">
+    <button class="hiddenMob" data-fancybox data-src="#shop-modal-phone" style="background-color: #ffffff;" title="S7 STUDIO - Support">
         <img width="32" height="32" loading="lazy" decoding="async"
-             src="{{ asset('images/shop_social_sidebar_item_image_7e889.png')}}" alt="F1GENZ Shoes - Hổ trợ 24/7" title="Hổ trợ 24/7">
+             src="{{ asset('images/shop_social_sidebar_item_image_7e889.png')}}" alt="S7 STUDIO - Hổ trợ 24/7" title="Hổ trợ 24/7">
         Hổ trợ 24/7
     </button>
 
