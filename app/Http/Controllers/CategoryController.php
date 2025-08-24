@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -104,18 +105,23 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        // Cập nhật tất cả products có category_id = $id thành 0
-        \App\Models\Product::where('category_id', $id)->update(['category_id' => 0]);
+        // Lấy tất cả danh mục con (nếu có)
+        $childCategoryIds = Category::where('parent_id', $id)->pluck('id')->toArray();
 
-        $parentId = $category->parent_id;
-        $category->delete();
+        // Bao gồm luôn chính danh mục hiện tại
+        $allCategoryIds = array_merge([$id], $childCategoryIds);
 
-        if ($parentId) {
-            return redirect()->route('categories.edit', $parentId)
-                ->with('success', 'Danh mục con đã được xóa và sản phẩm đã cập nhật!');
+        // Kiểm tra xem có sản phẩm nào đang sử dụng các danh mục này không
+        $productCount = Product::whereIn('category_id', $allCategoryIds)->count();
+        if ($productCount > 0) {
+            return redirect()->route('categories.index')
+                ->with('error', 'Danh mục này hoặc danh mục con vẫn còn sản phẩm, không thể xóa!');
         }
 
+        // Nếu không có sản phẩm nào, xóa danh mục
+        $category->delete();
+
         return redirect()->route('categories.index')
-            ->with('success', 'Danh mục cha đã được xóa và sản phẩm đã cập nhật!');
+            ->with('success', 'Danh mục đã được xóa thành công!');
     }
 }

@@ -414,7 +414,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-            Route::get('/trashed', [UserController::class, 'trashed'])->name('users.trashed');
+            Route::get('/users/trashed', [UserController::class, 'trashed'])->name('users.trashed');
             Route::post('/restore/{id}', [UserController::class, 'restore'])->name('users.restore');
             Route::delete('/force-delete/{id}', [UserController::class, 'forceDelete'])->name('users.forceDelete');
         });

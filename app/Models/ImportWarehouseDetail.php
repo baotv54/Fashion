@@ -37,4 +37,10 @@ class ImportWarehouseDetail extends Model
         return $this->belongsTo(ProductVariant::class, 'variant_id')->withTrashed();
     }
 
+    public function importWarehouseMain()
+    {
+        return $this->belongsTo(ImportWarehouseMain::class, 'import_warehouse_id');
+        // 'import_id' là khóa ngoại trong bảng ImportWarehouseDetail trỏ tới ImportWarehouseMain
+    }
+
 }

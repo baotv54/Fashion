@@ -22,6 +22,10 @@ use App\Models\AttributeValue;
 use App\Models\VariantAttributeValue;
 use App\Models\ImportWarehouseMain;
 use App\Models\ImportWarehouseDetail;
+use App\Models\PurchaseReturn;  // nếu cần
+use App\Models\ReturnDetail;
+use App\Models\ImportWarehouse;
+
 
 
 use App\Models\Post;
@@ -935,9 +939,9 @@ class ProductController extends Controller
             }
         }
 
-        // 🔎 Kiểm tra phiếu nhập kho liên quan
+        // 🔎 Kiểm tra phiếu nhập kho liên quan (ImportWarehouseDetail -> ImportWarehouseMain)
         $importDetails = ImportWarehouseDetail::where('product_id', $product->id)
-            ->with('importWarehouseMain') // phải có quan hệ trong model
+            ->with('importWarehouseMain')
             ->get();
 
         foreach ($importDetails as $detail) {
@@ -947,29 +951,55 @@ class ProductController extends Controller
             }
         }
 
-        // ✅ Nếu tất cả điều kiện ok thì xóa mềm
+        // 🔎 Kiểm tra phiếu trả hàng liên quan
+        $returnDetails = ReturnDetail::where('product_id', $product->id)
+            ->with('purchaseReturn')
+            ->get();
+
+        foreach ($returnDetails as $detail) {
+            if ($detail->purchaseReturn && $detail->purchaseReturn->refund_status !== 'Đã Hoàn Tiền') {
+                return redirect()->route('products.index')
+                    ->with('error', 'Sản phẩm thuộc phiếu trả hàng chưa hoàn tất, không thể xóa.');
+            }
+        }
+
+        // ✅ Xóa mềm sản phẩm và biến thể
         foreach ($product->variants as $variant) {
             $variant->delete(); // soft delete
         }
-
         $product->delete(); // soft delete product
 
+        // 🔎 Xóa cứng các ImportWarehouse có product_id = $id
+        ImportWarehouse::where('product_id', $product->id)->forceDelete();
+
         return redirect()->route('products.index')
-            ->with('success', 'Đã xóa mềm sản phẩm thành công.');
+            ->with('success', 'Đã xóa Sản Phẩm Thành Công.');
     }
+
 
     public function forceDelete($id)
     {
         $product = Product::withTrashed()->with('variants')->findOrFail($id);
 
-        // 🔎 Lấy tất cả OrderDetail liên quan đến product hoặc variant
+        // 🔎 Xóa OrderDetail liên quan
         $orderDetails = OrderDetail::where('product_id', $product->id)
             ->orWhereIn('variant_id', $product->variants->pluck('id'))
             ->get();
 
-        // 🔎 Xóa OrderDetail (KHÔNG xóa Order)
         foreach ($orderDetails as $detail) {
-            $detail->forceDelete(); // xóa cứng chi tiết đơn hàng
+            $detail->forceDelete();
+        }
+
+        // 🔎 Xóa ImportWarehouseDetail liên quan
+        $importDetails = ImportWarehouseDetail::where('product_id', $product->id)->get();
+        foreach ($importDetails as $detail) {
+            $detail->forceDelete();
+        }
+
+        // 🔎 Xóa ReturnDetail liên quan
+        $returnDetails = ReturnDetail::where('product_id', $product->id)->get();
+        foreach ($returnDetails as $detail) {
+            $detail->forceDelete();
         }
 
         // 🔎 Xóa tất cả biến thể
@@ -980,9 +1010,10 @@ class ProductController extends Controller
         // 🔎 Xóa sản phẩm
         $product->forceDelete();
 
-        return redirect()->route('products.restore')
-            ->with('success', 'Đã xóa vĩnh viễn sản phẩm, biến thể và các chi tiết đơn hàng liên quan.');
+        return redirect()->route('products.index')
+            ->with('success', 'Đã xóa vĩnh viễn sản phẩm, biến thể và các dữ liệu liên quan.');
     }
+
 
 
     public function restore($id)

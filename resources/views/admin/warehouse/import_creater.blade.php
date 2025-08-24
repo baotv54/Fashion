@@ -2,7 +2,6 @@
 
 @section('content')
 @include('admin.check_admin.check')
-
 <div class="container-fluid p-0">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0">Tạo đơn nhập hàng</h3>
@@ -43,19 +42,31 @@
                             </thead>
                             <tbody>
                                 @forelse($items as $index => $item)
+                                @php
+                                $product = $item['product'] ?? null;
+                                $variant = $item['variant'] ?? null;
+                                $attributes = collect($item['attributes'] ?? []);
+                                $quantity = $item['quantity'] ?? 0;
+                                $importPrice = $variant ? $variant->import_price : ($product->import_price ?? 0);
+                                $lineTotal = $importPrice * $quantity;
+                                @endphp
+
+                                @if($product)
                                 <tr>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <img src="{{ asset($item['product']->image) }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded border">
+                                            <img src="{{ asset($product->image ?? 'images/no-image.png') }}"
+                                                style="width: 60px; height: 60px; object-fit: cover;"
+                                                class="rounded border">
                                             <div>
-                                                <strong>{{ $item['product']->name }}</strong>
-                                                @if($item['is_variant'] && $item['variant'])
-                                                - {{ $item['variant']->name }}
+                                                <strong>{{ $product->name ?? 'Sản phẩm không tên' }}</strong>
+                                                @if($variant)
+                                                - {{ $variant->name ?? '' }}
                                                 @endif
                                                 <br>
-                                                @if($item['attributes']->count())
+                                                @if($attributes->count())
                                                 <small>
-                                                    @foreach($item['attributes'] as $attrVal)
+                                                    @foreach($attributes as $attrVal)
                                                     <span class="badge bg-success">
                                                         {{ $attrVal->attributeValue->value ?? '' }}
                                                     </span>
@@ -65,48 +76,48 @@
                                             </div>
                                         </div>
                                         <!-- Hidden inputs -->
-                                        <input type="hidden" name="product_id[]" value="{{ $item['product']->id }}">
-                                        <input type="hidden" name="variant_id[]" value="{{ $item['variant']->id ?? '' }}">
+                                        <input type="hidden" name="product_id[]" value="{{ $product->id ?? '' }}">
+                                        <input type="hidden" name="variant_id[]" value="{{ $variant->id ?? '' }}">
                                     </td>
                                     <td style="width: 120px;">
-                                        <input
-                                            type="number"
+                                        <input type="number"
                                             name="quantity[]"
-                                            value="{{ $item['quantity'] ?? 0 }}"
+                                            value="{{ $quantity }}"
                                             class="form-control form-control-sm quantity-input"
-                                            data-id="{{ $item['import_id'] }}"
+                                            data-id="{{ $item['import_id'] ?? '' }}"
                                             data-index="{{ $index }}"
                                             min="1"
                                             style="width: 80px;">
-
                                     </td>
                                     <td class="text-end">
                                         <a href="#" class="text-primary text-decoration-underline update-price"
                                             data-index="{{ $index }}"
-                                            data-product-id="{{ $item['product']->id }}"
-                                            data-variant-id="{{ $item['variant']->id ?? '' }}"
-                                            data-import-price="{{ $item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price }}"
-                                            data-price="{{ $item['is_variant'] ? $item['variant']->price ?? 0 : $item['product']->price ?? 0 }}"
-                                            data-discount-price="{{ $item['is_variant'] ? $item['variant']->discount_price ?? 0 : $item['product']->discount_price ?? 0 }}">
-                                            {{ number_format($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) }} đ
+                                            data-product-id="{{ $product->id ?? '' }}"
+                                            data-variant-id="{{ $variant->id ?? '' }}"
+                                            data-import-price="{{ $importPrice }}"
+                                            data-price="{{ $variant->price ?? $product->price ?? 0 }}"
+                                            data-discount-price="{{ $variant->discount_price ?? $product->discount_price ?? 0 }}">
+                                            {{ number_format($importPrice) }} đ
                                         </a>
                                     </td>
                                     <td class="text-end fw-semibold">
-                                        {{ number_format(($item['is_variant'] ? $item['variant']->import_price : $item['product']->import_price) * ($item['quantity'] ?? 0)) }}
+                                        {{ number_format($lineTotal) }}
                                     </td>
-
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="{{ $item['import_id'] }}">
+                                        <button type="button" class="btn btn-sm btn-danger btn-delete"
+                                            data-id="{{ $item['import_id'] ?? '' }}">
                                             &times;
                                         </button>
                                     </td>
                                 </tr>
+                                @endif
                                 @empty
                                 <tr>
                                     <td colspan="5" class="text-center text-muted">Không có sản phẩm nào</td>
                                 </tr>
                                 @endforelse
                             </tbody>
+
                         </table>
                     </div>
                 </div>

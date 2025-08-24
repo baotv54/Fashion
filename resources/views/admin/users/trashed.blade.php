@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+@include('admin.check_admin.check')
+
 <div class="container py-4">
     <h4 class="fw-bold mb-3">Danh sách User đã xóa (Thùng rác)</h4>
 

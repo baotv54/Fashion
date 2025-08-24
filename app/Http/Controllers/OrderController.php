@@ -81,7 +81,7 @@ class OrderController extends Controller
             }
         }
     }
-    
+
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -326,7 +326,10 @@ class OrderController extends Controller
     public function print($id)
     {
         // Lấy đơn hàng và sản phẩm liên quan
-        $order = Order::with(['orderDetails.product'])->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $order = Order::with(['orderDetails.product'])
+            ->where('id', $id)
+            ->firstOrFail();
+
 
         // Load view vào PDF
         $pdf = Pdf::loadView('admin.orders.print', compact('order'))
@@ -342,7 +345,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with(['orderDetails.product', 'user'])->findOrFail($id);
-        
+
         return view('admin.orders.show', compact('order'));
     }
 }
