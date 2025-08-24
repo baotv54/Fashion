@@ -23,7 +23,7 @@ class ProductLiveChatAdminController extends Controller
             $query->where('product_id', (int) $request->input('product_id'));
         }
 
-        $threads = $query->latest('updated_at')->paginate(20);
+        $threads = $query->latest('updated_at')->paginate(7);
 
         // Optional: load selected thread (for single-page list + detail view)
         $selectedThread = null;
@@ -129,5 +129,24 @@ class ProductLiveChatAdminController extends Controller
         $thread->save();
 
         return redirect()->route('admin.plc.show', $thread->id)->with('success', 'Đã đóng cuộc trò chuyện');
+    }
+
+    public function destroy(int $id)
+    {
+        $thread = ProductLiveChatThread::findOrFail($id);
+
+        // Delete all messages and their attachments
+        foreach ($thread->messages as $message) {
+            foreach ($message->attachments as $attachment) {
+                Storage::disk('public')->delete($attachment->path);
+                $attachment->delete();
+            }
+            $message->delete();
+        }
+
+        // Delete the thread itself
+        $thread->delete();
+
+        return redirect()->route('admin.plc.index')->with('success', 'Đã xóa cuộc trò chuyện thành công.');
     }
 }

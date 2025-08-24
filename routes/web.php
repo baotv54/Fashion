@@ -288,6 +288,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
             Route::get('/{id}', [ProductLiveChatAdminController::class, 'show'])->name('admin.plc.show');
             Route::post('/reply', [ProductLiveChatAdminController::class, 'reply'])->name('admin.plc.reply');
             Route::post('/{id}/close', [ProductLiveChatAdminController::class, 'close'])->name('admin.plc.close');
+            Route::delete('/{id}', [ProductLiveChatAdminController::class, 'destroy'])->name('admin.plc.destroy');
         });
         // Routes quản lý sản phẩm biến thể
         Route::get('/product/search', [ProductController::class, 'search2'])->name('admin.product.search');

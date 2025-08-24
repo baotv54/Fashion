@@ -144,7 +144,13 @@
 
     async function send(){
         const text = (input.value||'').trim();
-        if(!text || !threadId) return;
+        if(!text) return; // Only check text here
+        
+        if(!threadId) { // Ensure threadId is present
+            await startThread();
+            if (!threadId) { console.error('[PLC] No threadId after startThread'); return; }
+        }
+        
         const toSend = text;
         input.value='';
         try{
@@ -159,14 +165,14 @@
                 localStorage.removeItem(key(productId));
                 threadId = null; lastId = 0;
                 await startThread();
-                if (toSend){
+                if (toSend){ // Retry sending after restarting thread
                     const res2 = await fetch("{{ route('plc.send') }}", {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
                         body: JSON.stringify({ thread_id: threadId, message: toSend })
                     });
                     const data2 = await res2.json().catch(()=>({}));
-                    if (!res2.ok) throw new Error((data2&&data2.message)||'Send failed');
+                    if (!res2.ok) { throw new Error((data2&&data2.message)||'Send failed after retry'); }
                     if (data2 && data2.data && typeof data2.data.id !== 'undefined') {
                         lastId = Math.max(lastId||0, Number(data2.data.id)||0);
                     }
@@ -181,7 +187,7 @@
             if (newId !== null) {
                 lastId = Math.max(lastId||0, newId);
             }
-        }catch(e){ console.error('[PLC] send error', e); }
+        }catch(e){ console.error('[PLC] send error', e); alert('Không thể gửi tin nhắn: ' + e.message); }
         list.scrollTop = list.scrollHeight;
     }
 
@@ -228,9 +234,13 @@
 
     attachBtn.addEventListener('click', ()=> fileInput.click());
     fileInput.addEventListener('change', async (e)=>{
-        if(!threadId){ await startThread(); }
+        // Ensure threadId is present
+        if(!threadId){ 
+            await startThread();
+            if (!threadId) { console.error('[PLC] No threadId after startThread for attachment'); e.target.value = ''; return; }
+        }
         const f = e.target.files[0];
-        if(!f || !threadId) return;
+        if(!f || !threadId) { e.target.value = ''; return; }
         try{
             const fd = new FormData();
             fd.append('thread_id', threadId);
@@ -247,13 +257,13 @@
                 await startThread();
                 return;
             }
-            if(!res.ok) throw new Error(data.message||'Attach failed');
+            if(!res.ok) { throw new Error(data.message||'Attach failed'); }
             addAttachment(data.data.attachment, 'user');
             if (data && data.data && typeof data.data.message_id !== 'undefined') {
                 lastId = Math.max(lastId||0, Number(data.data.message_id)||0);
             }
             list.scrollTop = list.scrollHeight;
-        }catch(err){ console.error('[PLC] attach error', err); }
+        }catch(err){ console.error('[PLC] attach error', err); alert('Không thể đính kèm tệp: ' + err.message); }
         e.target.value = '';
     });
 

@@ -453,8 +453,10 @@ class CartController extends Controller
             return response()->json([
                 'qty' => $item->qty,
                 'subtotal' => number_format($item->price * $item->qty, 0, ',', '.'),
+                'raw_subtotal' => $item->price * $item->qty,
                 'total_items' => $totalItems,
                 'total_price' => $totalPrice,
+                'raw_total_price' => Cart::subtotal(0, '', ''), // Raw total price for calculations
             ]);
         } catch (\Exception $e) {
             Log::error('Error updating cart: ' . $e->getMessage());

@@ -10,7 +10,7 @@
                 <form action="{{ route('admin.plc.close', $thread->id) }}" method="post" class="d-inline">
                     @csrf
                     <button class="btn btn-danger" title="Đóng cuộc trò chuyện" aria-label="Đóng cuộc trò chuyện" onclick="return confirm('Đóng cuộc trò chuyện này?')">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">chặn</span>
                         <span class="visually-hidden">Đóng</span>
                     </button>
                 </form>
