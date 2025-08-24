@@ -69,7 +69,7 @@ class Product extends Model
     }
     public function reviews()
     {
-        return $this->hasMany(\App\Models\ProductReview::class);
+        return $this->hasMany(\App\Models\OrderReview::class);
     }
 
     public function favoritedByUsers()

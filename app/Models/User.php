@@ -65,4 +65,8 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPasswordVi($token));
     }
+    public function orderReviews()
+    {
+        return $this->hasMany(OrderReview::class);
+    }
 }

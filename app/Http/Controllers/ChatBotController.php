@@ -11,7 +11,6 @@ use App\Models\Product;
 use App\Models\ChatSession;
 use App\Models\ChatMessage;
 use App\Models\ProductVariant;
-use App\Models\ProductReview;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\OrderDetail;

@@ -1,4 +1,3 @@
-
 @extends('layouts.admin')
 
 @section('content')
@@ -13,7 +12,7 @@
                             <p class="mb-1">Tổng đánh giá</p>
                             <h4 class="mb-1">{{ number_format($totalReviews ?? 0) }}</h4>
                             <p class="mb-0">
-                                <span class="me-2">Tất cả sản phẩm</span>
+                                <span class="me-2">Tất cả đơn hàng</span>
                                 <span class="badge bg-label-success">+{{ $newReviewsToday ?? 0 }} hôm nay</span>
                             </p>
                         </div>
@@ -81,29 +80,30 @@
             <div class="col-md-3 review_status">
                 <select id="ReviewStatus" class="form-select text-capitalize">
                     <option value="">Trạng thái duyệt</option>
-                    <option value="approved">Đã duyệt</option>
-                    <option value="rejected">Từ chối</option>
+                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Đã duyệt</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Từ chối</option>
                 </select>
             </div>
             <div class="col-md-3 review_rating">
                 <select id="ReviewRating" class="form-select text-capitalize">
                     <option value="">Điểm đánh giá</option>
-                    <option value="5">5 sao</option>
-                    <option value="4">4 sao</option>
-                    <option value="3">3 sao</option>
-                    <option value="2">2 sao</option>
-                    <option value="1">1 sao</option>
+                    <option value="5" {{ request('rating') == '5' ? 'selected' : '' }}>5 sao</option>
+                    <option value="4" {{ request('rating') == '4' ? 'selected' : '' }}>4 sao</option>
+                    <option value="3" {{ request('rating') == '3' ? 'selected' : '' }}>3 sao</option>
+                    <option value="2" {{ request('rating') == '2' ? 'selected' : '' }}>2 sao</option>
+                    <option value="1" {{ request('rating') == '1' ? 'selected' : '' }}>1 sao</option>
                 </select>
             </div>
             <div class="col-md-3 review_media">
                 <select id="ReviewMedia" class="form-select text-capitalize">
                     <option value="">Media</option>
-                    <option value="with_media">Có hình/video</option>
-                    <option value="no_media">Chỉ văn bản</option>
+                    <option value="with_media" {{ request('media') == 'with_media' ? 'selected' : '' }}>Có hình/video</option>
+                    <option value="no_media" {{ request('media') == 'no_media' ? 'selected' : '' }}>Chỉ văn bản</option>
                 </select>
             </div>
             <div class="col-md-3 review_date">
-                <input type="date" id="ReviewDate" class="form-control" placeholder="Ngày tạo">
+                <input type="date" id="ReviewDate" class="form-control" placeholder="Ngày tạo" value="{{ request('date') }}">
             </div>
         </div>
     </div>
@@ -112,18 +112,18 @@
             <div class="row m-3 my-0 justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0">
                     <div class="dt-search mb-0 mb-md-6">
-                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Tìm đánh giá theo tên sản phẩm, khách hàng..." aria-controls="DataTables_Table_0">
+                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Tìm đánh giá theo đơn hàng, khách hàng, sản phẩm..." aria-controls="DataTables_Table_0" value="{{ request('search') }}">
                         <label for="dt-search-0"></label>
                     </div>
                 </div>
-                <!-- <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto gap-md-2 gap-0 mt-0">
                     <div class="dt-buttons btn-group flex-wrap mb-md-0 mb-4">
                         <button class="btn btn-primary" onclick="bulkApproveReviews()">
                             <i class="icon-base ti tabler-check me-1 icon-16px"></i>
                             <span class="d-none d-sm-inline-block">Duyệt hàng loạt</span>
                         </button>
                     </div>
-                </div> -->
+                </div>
             </div>
             <div class="justify-content-between dt-layout-table">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
@@ -134,6 +134,7 @@
                                 <th class="dt-select dt-orderable-none">
                                     <input class="form-check-input" type="checkbox" aria-label="Select all rows" id="selectAll">
                                 </th>
+                                <th>Đơn hàng</th>
                                 <th>Sản phẩm</th>
                                 <th>Khách hàng</th>
                                 <th>Đánh giá</th>
@@ -165,14 +166,13 @@
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <h6>Thông tin sản phẩm</h6>
-                                                            <div class="d-flex align-items-center mb-3">
-                                                                <img src="{{ asset($review->product->image) }}" alt="" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                                                <div>
-                                                                    <strong>{{ $review->product->name }}</strong>
-                                                                    <br>
-                                                                    <small class="text-muted">{{ $review->product->category->name }}</small>
-                                                                </div>
+                                                            <h6>Thông tin đơn hàng</h6>
+                                                            <div class="alert alert-light mb-3">
+                                                                <strong>Mã đơn hàng:</strong> #{{ $review->order->order_number ?? $review->order_id }}<br>
+                                                                <strong>Trạng thái:</strong> 
+                                                                <span class="badge bg-success">
+                                                                    {{ ucfirst($review->order->status ?? 'N/A') }}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
@@ -189,6 +189,22 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    @if($review->orderDetail && $review->orderDetail->product)
+                                                    <div class="mb-3">
+                                                        <h6>Sản phẩm được đánh giá</h6>
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <img src="{{ asset($review->orderDetail->product->image) }}" alt="" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                            <div>
+                                                                <strong>{{ $review->orderDetail->product->name }}</strong>
+                                                                <br>
+                                                                <small class="text-muted">Số lượng: {{ $review->orderDetail->quantity }}</small>
+                                                                <br>
+                                                                <small class="text-muted">Giá: {{ number_format($review->orderDetail->price, 0, ',', '.') }}đ</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
 
                                                     <hr>
 
@@ -287,17 +303,30 @@
                                     <input aria-label="Select row" class="form-check-input row-checkbox" type="checkbox" value="{{ $review->id }}">
                                 </td>
                                 <td class="sorting_1">
+                                    <div class="d-flex flex-column">
+                                        <h6 class="mb-0">#{{ $review->order->order_number ?? $review->order_id }}</h6>
+                                        <small class="text-muted">{{ $review->order->created_at ? $review->order->created_at->format('d/m/Y') : '' }}</small>
+                                    </div>
+                                </td>
+                                <td class="sorting_1">
+                                    @if($review->orderDetail && $review->orderDetail->product)
                                     <div class="d-flex justify-content-start align-items-center product-name">
                                         <div class="avatar-wrapper">
                                             <div class="avatar avatar me-2 me-sm-4 rounded-2 bg-label-secondary">
-                                                <img src="{{ asset($review->product->image) }}" alt="{{ $review->product->name }}" class="rounded">
+                                                <img src="{{ asset($review->orderDetail->product->image) }}" alt="{{ $review->orderDetail->product->name }}" class="rounded">
                                             </div>
                                         </div>
                                         <div class="d-flex flex-column">
-                                            <h6 class="text-nowrap mb-0">{{ Str::limit($review->product->name, 30) }}</h6>
-                                            <small class="text-truncate d-none d-sm-block text-muted">{{ $review->product->category->name }}</small>
+                                            <h6 class="text-nowrap mb-0">{{ Str::limit($review->orderDetail->product->name, 30) }}</h6>
+                                            <small class="text-truncate d-none d-sm-block text-muted">
+                                                SL: {{ $review->orderDetail->quantity }} | 
+                                                {{ number_format($review->orderDetail->price, 0, ',', '.') }}đ
+                                            </small>
                                         </div>
                                     </div>
+                                    @else
+                                    <span class="text-muted">Sản phẩm không tồn tại</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -350,6 +379,15 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
+                                        @if($review->is_approved)
+                                        <button type="button" class="btn btn-sm btn-icon btn-outline-warning" onclick="hideReview({{ $review->id }})" title="Ẩn">
+                                            <i class="icon-base ti tabler-eye-off"></i>
+                                        </button>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-icon btn-outline-success" onclick="showReview({{ $review->id }})" title="Hiển thị">
+                                            <i class="icon-base ti tabler-eye"></i>
+                                        </button>
+                                        @endif
                                         <button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="deleteReview({{ $review->id }})" title="Xóa">
                                             <i class="icon-base ti tabler-trash"></i>
                                         </button>
@@ -358,7 +396,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4">
+                                <td colspan="9" class="text-center py-4">
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="icon-base ti tabler-star icon-48px text-muted mb-3"></i>
                                         <h6 class="text-muted">Chưa có đánh giá nào</h6>
@@ -454,7 +492,7 @@
     // Show review (set is_approved = true)
     function showReview(reviewId) {
         if (confirm('Bạn có chắc muốn hiển thị đánh giá này cho khách hàng?')) {
-            fetch(`/admin/reviews/${reviewId}/hide`, {
+            fetch(`/admin/order-reviews/${reviewId}/toggle-visibility`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -485,7 +523,7 @@
     // Hide review (set is_approved = false)
     function hideReview(reviewId) {
         if (confirm('Bạn có chắc muốn ẩn đánh giá này khỏi khách hàng?')) {
-            fetch(`/admin/reviews/${reviewId}/hide`, {
+            fetch(`/admin/order-reviews/${reviewId}/toggle-visibility`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -516,7 +554,7 @@
     // Delete single review
     function deleteReview(reviewId) {
         if (confirm('Bạn có chắc muốn xóa đánh giá này? Hành động này không thể hoàn tác!')) {
-            fetch(`/admin/reviews/${reviewId}`, {
+            fetch(`/admin/order-reviews/${reviewId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -555,7 +593,7 @@
         const reviewIds = Array.from(checkedBoxes).map(checkbox => checkbox.value);
 
         if (confirm(`Bạn có chắc muốn hiển thị ${reviewIds.length} đánh giá đã chọn?`)) {
-            fetch('/admin/reviews/bulk-approve', {
+            fetch('/admin/order-reviews/bulk-approve', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

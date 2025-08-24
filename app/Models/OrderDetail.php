@@ -29,7 +29,7 @@ class OrderDetail extends Model
         return $this->belongsTo(Product::class)->withTrashed();
     }
 
-     public function products()
+    public function products()
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
@@ -38,5 +38,9 @@ class OrderDetail extends Model
     public function variant()
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id');
+    }
+    public function reviews()
+    {
+        return $this->hasMany(OrderReview::class);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Product;
-use App\Models\ProductReview;
+use App\Models\OrderReview;
 use App\Models\OrderDetail;
 use App\Models\Favorite;
 use Illuminate\Support\Facades\DB;

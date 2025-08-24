@@ -99,154 +99,154 @@ class ProductController extends Controller
 
 
     public function homepage()
-{
-    $products = Product::with(['variants', 'reviews' => function ($query) {
+    {
+        $products = Product::with(['variants', 'reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                ->orWhereHas('variants', function ($q) {
-                    $q->where('quantity', '>', 0);
-                });
-        })
-        ->orderBy('created_at', 'desc')
-        ->take(12)
-        ->get();
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(12)
+            ->get();
 
-    // --- Tạo thêm top 12 sản phẩm nhiều lượt xem ---
-    $topViewed = Product::with(['variants', 'reviews' => function ($query) {
+        // --- Tạo thêm top 12 sản phẩm nhiều lượt xem ---
+        $topViewed = Product::with(['variants', 'reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->where(function ($query) {
-            $query->where('quantity', '>', 0)
-                ->orWhereHas('variants', function ($q) {
-                    $q->where('quantity', '>', 0);
-                });
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('quantity', '>', 0);
+                    });
+            })
+            ->orderByDesc('view_count')
+            ->take(12)
+            ->get();
+
+
+
+        // --- Phần còn lại giữ nguyên ---
+        $carts = Cart::content();
+        $orders = Order::all();
+        $posts = Post::all();
+        $order_details = OrderDetail::with(['product', 'variant'])
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered');
+            })
+            ->get();
+        $coupons = Coupon::latest()->take(4)->get();
+        $banners = Banner::latest()->take(4)->get();
+        $favorites = collect();
+
+        $productSales = $order_details->map(function ($detail) {
+            $mainProductId = $detail->product_variant_id
+                ? $detail->variant->product_id
+                : $detail->product_id;
+            return [
+                'product_id' => $mainProductId,
+                'quantity'   => $detail->quantity,
+            ];
         })
-        ->orderByDesc('view_count')
-        ->take(12)
-        ->get();
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                return $items->sum('quantity');
+            });
 
-        
-
-    // --- Phần còn lại giữ nguyên ---
-    $carts = Cart::content();
-    $orders = Order::all();
-    $posts = Post::all();
-    $order_details = OrderDetail::with(['product', 'variant'])
-        ->whereHas('order', function ($query) {
-            $query->where('status', 'delivered');
-        })
-        ->get();
-    $coupons = Coupon::latest()->take(4)->get();
-    $banners = Banner::latest()->take(4)->get();
-    $favorites = collect();
-
-    $productSales = $order_details->map(function ($detail) {
-        $mainProductId = $detail->product_variant_id
-            ? $detail->variant->product_id
-            : $detail->product_id;
-        return [
-            'product_id' => $mainProductId,
-            'quantity'   => $detail->quantity,
-        ];
-    })
-    ->groupBy('product_id')
-    ->map(function ($items) {
-        return $items->sum('quantity');
-    });
-
-    $products = $products->map(function ($product) use ($productSales) {
-        $product->sold_count = $productSales[$product->id] ?? 0;
-        return $product;
-    });
-
-    $topFavorites = Product::with(['reviews' => function ($query) {
-            $query->where('is_approved', true);
-        }])
-        ->withCount([
-            'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->having('favorites_count', '>', 0)
-        ->orderByDesc('favorites_count')
-        ->take(4)
-        ->get()
-        ->map(function ($product) use ($productSales) {
+        $products = $products->map(function ($product) use ($productSales) {
             $product->sold_count = $productSales[$product->id] ?? 0;
             return $product;
         });
 
-    $topSelling = Product::with(['reviews' => function ($query) {
+        $topFavorites = Product::with(['reviews' => function ($query) {
             $query->where('is_approved', true);
         }])
-        ->withCount([
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->having('favorites_count', '>', 0)
+            ->orderByDesc('favorites_count')
+            ->take(4)
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            });
+
+        $topSelling = Product::with(['reviews' => function ($query) {
+            $query->where('is_approved', true);
+        }])
+            ->withCount([
+                'favorites',
+                'reviews as reviews_count' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ])
+            ->withAvg([
+                'reviews as average_rating' => function ($query) {
+                    $query->where('is_approved', true);
+                }
+            ], 'rating')
+            ->whereIn('id', $productSales->keys())
+            ->get()
+            ->map(function ($product) use ($productSales) {
+                $product->sold_count = $productSales[$product->id] ?? 0;
+                return $product;
+            })
+            ->sortByDesc('sold_count')
+            ->take(8);
+
+        if (Auth::check()) {
+            $favorites = Favorite::with('product')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
+        return view('Frontend.index', compact(
+            'products',
+            'topViewed',  // <--- Thêm biến topViewed
+            'carts',
+            'coupons',
             'favorites',
-            'reviews as reviews_count' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ])
-        ->withAvg([
-            'reviews as average_rating' => function ($query) {
-                $query->where('is_approved', true);
-            }
-        ], 'rating')
-        ->whereIn('id', $productSales->keys())
-        ->get()
-        ->map(function ($product) use ($productSales) {
-            $product->sold_count = $productSales[$product->id] ?? 0;
-            return $product;
-        })
-        ->sortByDesc('sold_count')
-        ->take(8);
-
-    if (Auth::check()) {
-        $favorites = Favorite::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+            'banners',
+            'topFavorites',
+            'topSelling',
+            'posts'
+        ));
     }
-
-    return view('Frontend.index', compact(
-        'products',
-        'topViewed',  // <--- Thêm biến topViewed
-        'carts',
-        'coupons',
-        'favorites',
-        'banners',
-        'topFavorites',
-        'topSelling',
-        'posts'
-    ));
-}
 
 
 
@@ -412,12 +412,18 @@ class ProductController extends Controller
         // Kiểm tra đã mua và trạng thái đơn hàng hoàn thành
         $canReview = false;
         $userReview = null;
+        $order = null; // <-- thêm biến order
         if (Auth::check()) {
-            $hasCompletedOrder = OrderDetail::where('product_id', $id)
-                ->whereHas('order', function ($q) {
-                    $q->where('user_id', Auth::id())
-                        ->where('status', 'delivered');
-                })->exists();
+            $order = Order::with('orderDetails')
+                ->where('user_id', Auth::id())
+                ->whereHas('orderDetails', function ($q) use ($id) {
+                    $q->where('product_id', $id);
+                })
+                ->where('status', 'delivered')
+                ->latest()
+                ->first();
+
+            $hasCompletedOrder = !is_null($order);
 
             // Kiểm tra đã đánh giá chưa
             $userReview = $product->reviews->where('user_id', Auth::id())->first();
@@ -443,10 +449,9 @@ class ProductController extends Controller
             ];
         }
 
-        // FIX: Tạo mapping variants với cách sắp xếp nhất quán
+        // Mapping variants
         $variantMapping = [];
         foreach ($product->variants as $variant) {
-            // Sắp xếp theo ID attribute value để đảm bảo consistency
             $attributeIds = $variant->attributeValues->pluck('id')->sort()->values()->toArray();
             $key = implode('-', $attributeIds);
 
@@ -456,14 +461,12 @@ class ProductController extends Controller
                 'stock' => $variant->stock,
                 'image' => $variant->image,
                 'sku' => $variant->sku,
-                'attribute_value_ids' => $attributeIds, // Thêm dòng này
+                'attribute_value_ids' => $attributeIds,
             ];
 
-            // Debug: Log ra để kiểm tra
             Log::info("Variant {$variant->id}: key={$key}, attributes=" . json_encode($attributeIds));
         }
 
-        // FIX: Tính toán hasVariants chính xác
         $hasVariants = $product->variants->count() > 0;
 
         // Cộng dồn lượt xem
@@ -485,9 +488,11 @@ class ProductController extends Controller
             'ratingStats',
             'canReview',
             'userReview',
-            'sizes'
+            'sizes',
+            'order' // <-- truyền ra view
         ))->with('carts', Cart::content());
     }
+
 
     public function getVariantInfo($id)
     {
