@@ -38,6 +38,7 @@
                                 <th></th>
                                 <th data-dt-column="1" rowspan="1" colspan="1" class="dt-select dt-orderable-none" aria-label=""><span class="dt-column-title"></span><span class="dt-column-order"></span><input class="form-check-input" type="checkbox" aria-label="Select all rows"></th>
                                 <th>Mã</th>
+                                <th>Sự Kiện</th>
                                 <th>Loại</th>
                                 <th>Giá trị</th>
                                 <th>Ngày bắt đầu/kết thúc</th>
@@ -78,6 +79,12 @@
                                                                         <small>{{ Str::limit($coupon->description, 50) }}</small>
                                                                     </div>
                                                                 </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Sự kiện</th>
+                                                            <td>
+                                                                {{ $coupon->event ?? 'Không có' }}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -157,6 +164,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="text-center">{{  $coupon->event ?? 'không có '}}</td>
                                 <td>
                                     <span class="badge bg-{{ $coupon->type === 'percent' ? 'info' : 'secondary' }} text-white">
                                         {{ $coupon->type === 'percent' ? 'Phần trăm' : 'Số tiền cố định' }}

@@ -103,13 +103,19 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+
+        // Cập nhật tất cả products có category_id = $id thành 0
+        \App\Models\Product::where('category_id', $id)->update(['category_id' => 0]);
+
         $parentId = $category->parent_id;
         $category->delete();
 
         if ($parentId) {
-            return redirect()->route('categories.edit', $parentId)->with('success', 'Danh mục con đã được xóa!');
+            return redirect()->route('categories.edit', $parentId)
+                ->with('success', 'Danh mục con đã được xóa và sản phẩm đã cập nhật!');
         }
 
-        return redirect()->route('categories.index')->with('success', 'Danh mục cha đã được xóa!');
+        return redirect()->route('categories.index')
+            ->with('success', 'Danh mục cha đã được xóa và sản phẩm đã cập nhật!');
     }
 }

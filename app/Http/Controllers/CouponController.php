@@ -33,6 +33,7 @@ class CouponController extends Controller
     {
         $request->validate([
             'code' => 'required|string|unique:coupons,code',
+            'event' => 'nullable|string|max:255', // ✅ validate thêm
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'required|numeric|min:0',
@@ -77,6 +78,7 @@ class CouponController extends Controller
 
         $request->validate([
             'code' => 'required|string|unique:coupons,code,' . $coupon->id,
+            'event' => 'nullable|string|max:255', // ✅ validate thêm
             'type' => 'required|in:fixed,percent',
             'value' => 'required|numeric|min:0',
             'min_cart_value' => 'nullable|numeric|min:0',
@@ -214,8 +216,22 @@ class CouponController extends Controller
     }
     public function list()
     {
+        
         $coupons = Coupon::latest()->paginate(10);
+        
+
+    $couponsEvent = Coupon::where('event') // giả sử event = 1 nghĩa là coupon sự kiện
+                    ->where(function ($q) {
+                        $q->whereNull('end_date')
+                          ->orWhere('end_date', '>=', now()); // chưa hết hạn
+                    })
+                    ->latest()
+                    ->get();
+
         $products = Product::latest()->take(8)->get();
-        return view('Frontend.pages.couponList', compact('coupons', 'products'));
+        return view('Frontend.pages.couponList', compact('coupons', 'products', 'couponsEvent'));
     }
+
+    // Giả sử có cột "type" lưu giá trị 'event'
+
 }
