@@ -9,12 +9,14 @@ nixPkgs = [
   "php82Extensions.ctype",
   "php82Extensions.bcmath",
   "php82Extensions.gd",
-  "php82Extensions.opcache",
-  "composer"
+  "php82Extensions.opcache"
 ]
 
 [phases.install]
-cmds = ["composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-gd"]
+cmds = [
+  "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer",
+  "composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-gd"
+]
 
 [phases.build]
 cmds = [
