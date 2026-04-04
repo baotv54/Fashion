@@ -1,13 +1,35 @@
 FROM php:8.2-apache
 
+# Cài extensions cần thiết
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libonig-dev \
     zip \
     unzip \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql mbstring gd bcmath opcache
+
+# Fix lỗi More than one MPM loaded
+RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork rewrite
+
+# Cài Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy code vào container
+WORKDIR /var/www/html
+COPY . .
+
+# Cài dependencies
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-gd
+
+# Cấu hình Apache document root
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
+
+# Phân quyền storage
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 80
