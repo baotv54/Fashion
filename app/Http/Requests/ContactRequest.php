@@ -26,7 +26,7 @@ class ContactRequest extends FormRequest
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|min:10|max:11|regex:/^[0-9]{10,11}$/',
             'subject' => 'required|string|max:255|min:3',
-            'message' => 'required|string|min:10|max:1000',
+            'message' => 'required|string|min:5|max:1000',
         ];
     }
 
@@ -53,7 +53,7 @@ class ContactRequest extends FormRequest
             'subject.max' => 'Chủ đề không được vượt quá 255 ký tự.',
             
             'message.required' => 'Vui lòng nhập nội dung tin nhắn.',
-            'message.min' => 'Nội dung tin nhắn phải có ít nhất 10 ký tự.',
+            'message.min' => 'Nội dung tin nhắn phải có ít nhất 5 ký tự.',
             'message.max' => 'Nội dung tin nhắn không được vượt quá 1000 ký tự.',
         ];
     }
